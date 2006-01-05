@@ -1,0 +1,7 @@
+WRAP_CLASS("LaplacianSegmentationLevelSetImageFilter")
+
+# WRAP_INT(3)
+# WRAP_SIGN_INT(3)
+WRAP_REAL(3)
+
+WRITE_CLASS_POINTER_WRAPPER()

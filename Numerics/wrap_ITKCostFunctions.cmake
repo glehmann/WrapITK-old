@@ -1,0 +1,2 @@
+WRAP_CLASS_NOTPL("CostFunction" POINTER)
+WRAP_CLASS_NOTPL("SingleValuedCostFunction" POINTER)

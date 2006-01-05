@@ -1,0 +1,12 @@
+@WRAP_INCLUDE_FILE@
+
+#ifdef CABLE_CONFIGURATION
+namespace _cable_
+{
+   const char* const group = "@itk_Module@";
+   namespace wrappers
+   {
+@itk_Typedef@
+   }
+}
+#endif

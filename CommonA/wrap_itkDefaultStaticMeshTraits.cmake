@@ -1,0 +1,7 @@
+WRAP_CLASS(DefaultStaticMeshTraits)
+  WRAP("${ITKM_D}22${ITKM_D}${ITKM_D}${ITKM_D}" "${ITKT_D},2,2,${ITKT_D},${ITKT_D},${ITKT_D}")
+  WRAP("${ITKM_D}33${ITKM_D}${ITKM_D}${ITKM_D}" "${ITKT_D},3,3,${ITKT_D},${ITKT_D},${ITKT_D}")
+  
+#   WRAP("${ITKM_PD2}22${ITKM_D}${ITKM_D}${ITKM_PD2}" "${ITKT_PD2},2,2,${ITKT_D},${ITKT_D},${ITKT_PD2}")
+#   WRAP("${ITKM_PD3}33${ITKM_D}${ITKM_D}${ITKM_PD3}" "${ITKT_PD3},3,3,${ITKT_D},${ITKT_D},${ITKT_PD3}")
+END_WRAP_CLASS()

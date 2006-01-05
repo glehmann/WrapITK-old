@@ -1,0 +1,4 @@
+WRAP_CLASS("BinaryPruningImageFilter" POINTER)
+  WRAP_INT(2)
+  WRAP_REAL(2)
+END_WRAP_CLASS()

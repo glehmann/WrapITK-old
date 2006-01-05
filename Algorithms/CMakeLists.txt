@@ -1,0 +1,44 @@
+SET(ITK_LIBRARY "ITKAlgorithms")
+STRING(TOLOWER ${ITK_LIBRARY} ITK_LIBRARY_LANG)
+SET(ITK_LANG_FILE "${ITK_BINARY_DIR}/Wrapping/CSwig/Python/${ITK_LIBRARY_LANG}")
+WRITE_LANG_BEGIN(${ITK_LIBRARY_LANG})
+
+SET(WrapITK_PART_DIR "${WrapITK_BINARY_DIR}/Algorithms")
+
+#------------------------------------------------------------------------------
+# create a list of groups
+# Add here modules that must be imported before the others.
+SET(WRAP_GROUPS
+  # nothing to add here for now
+)
+
+# include every wrap_*.cmake files in the directory
+AUTO_INCLUDE_WRAP_CMAKE(WRAP_GROUPS "")
+
+#------------------------------------------------------------------------------
+# create the wrap_ITKBasicFilters*.cxx files
+WRITE_MODULE("Algorithms" "${WrapITK_PART_DIR}" "${WRAP_GROUPS}")
+
+#------------------------------------------------------------------------------
+# create the ITKBasicFilters libraries
+
+SET(MASTER_INDEX_FILES "${WrapITK_BINARY_DIR}/VXLNumerics/VXLNumerics.mdx"
+                       "${WrapITK_BINARY_DIR}/Numerics/ITKNumerics.mdx"
+                       "${WrapITK_BINARY_DIR}/CommonA/ITKCommonA.mdx"
+                       "${WrapITK_BINARY_DIR}/CommonB/ITKCommonB.mdx"
+                       "${WrapITK_BINARY_DIR}/BasicFiltersA/ITKBasicFiltersA.mdx"
+                       "${WrapITK_BINARY_DIR}/BasicFiltersB/ITKBasicFiltersB.mdx"
+                       "${WrapITK_BINARY_DIR}/BasicFiltersC/ITKBasicFiltersC.mdx"
+                       "${WrapITK_BINARY_DIR}/SpatialObject/ITKSpatialObject.mdx"
+                       "${WrapITK_BINARY_DIR}/Algorithms/ITKAlgorithms.mdx"
+)
+
+ITK_WRAP_LIBRARY("${WRAP_GROUPS}" ITKAlgorithms Algorithms
+  "ITKNumerics;ITKCommonB;ITKCommonA;ITKBasicFiltersA;ITKBasicFiltersB;ITKBasicFiltersC;ITKSpatialObject"
+  "" ""
+  "${MASTER_INDEX_FILES}" "${WrapITK_SOURCE_DIR}" "${WrapITK_BINARY_DIR}")
+  
+#------------------------------------------------------------------------------
+WRITE_LANG_END()
+
+#------------------------------------------------------------------------------

@@ -1,0 +1,7 @@
+WRAP_CLASS_NOTPL("TransformBase" POINTER)
+
+WRAP_CLASS("Transform" POINTER)
+  WRAP("${ITKM_D}22" "${ITKT_D},2,2")
+  WRAP("${ITKM_D}32" "${ITKT_D},3,2")
+  WRAP("${ITKM_D}33" "${ITKT_D},3,3")
+END_WRAP_CLASS()

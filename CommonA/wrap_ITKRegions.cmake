@@ -1,0 +1,7 @@
+WRAP_CLASS_NOTPL("Region")
+WRAP_CLASS_NOTPL("MeshRegion")
+
+WRAP_CLASS("ImageRegion" DEREF)
+  WRAP(2 2)
+  WRAP(3 3)
+END_WRAP_CLASS()

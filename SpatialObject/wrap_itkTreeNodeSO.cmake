@@ -1,0 +1,4 @@
+WRAP_CLASS(TreeNode POINTER)
+  WRAP("${ITKM_SO2}" "${ITKT_SO2}*")
+  WRAP("${ITKM_SO3}" "${ITKT_SO3}*")
+END_WRAP_CLASS()

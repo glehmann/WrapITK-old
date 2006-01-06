@@ -300,7 +300,7 @@ MACRO(CSWIG_CREATE_PYTHON_CXX_FILE Bin MasterIdx InputIdx InputXml OutputTclCxx 
           -I${ITK_SWIG_DEFAULT_LIB}
           -I${ITK_SWIG_DEFAULT_LIB}/python
           -noruntime ${CINDEX} ${CSWIG_IGNORE_WARNINGS} -depend ${Bin}/${InputXml}.depend
-          -outdir "${WrapITK_BINARY_DIR}/${CMAKE_CFG_INTDIR}" 
+          -outdir "${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}" 
           -o ${Bin}/${OutputTclCxx} -python -c++ ${Bin}/${InputXml}
      TARGET ${Library}
      OUTPUTS ${Bin}/${OutputTclCxx}
@@ -512,7 +512,7 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
         SOURCE ${ITK_SWIG_FILE}
         COMMAND ${CSWIG} 
         ARGS -nocable -noruntime ${CSWIG_IGNORE_WARNINGS} -o ${WRAP_FILE}
-         -outdir "${WrapITK_BINARY_DIR}/${CMAKE_CFG_INTDIR}"
+         -outdir "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}"
          -python -c++ ${ITK_SWIG_FILE}
         TARGET _${LIBRARY_NAME}Python
         OUTPUTS ${WRAP_FILE}

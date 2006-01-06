@@ -9,7 +9,7 @@ SET(WrapITK_PART_DIR "${WrapITK_BINARY_DIR}/SpatialObject")
 # create a list of groups
 # Add here modules that must be imported before the others.
 SET(WRAP_GROUPS
-#  itkSpatialObject
+  itkSpatialObject
 )
 
 # include every wrap_*.cmake files in the directory

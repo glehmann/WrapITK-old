@@ -1,10 +1,10 @@
 SET(ITK_TCL_EXE_DIR_BUILD "${ITK_EXECUTABLE_PATH}")
 SET(ITK_TCL_EXE_NAME_ROOT "itkwish")
 
-CONFIGURE_FILE(${ITK_SOURCE_DIR}/Wrapping/CSwig/Tcl/itkTclConfigure.h.in
-               ${ITK_BINARY_DIR}/Wrapping/CSwig/Tcl/itkTclConfigure.h)
+CONFIGURE_FILE(${WrapITK_SOURCE_DIR}/Tcl/itkTclConfigure.h.in
+               ${WrapITK_BINARY_DIR}/Tcl/itkTclConfigure.h)
 
-INCLUDE_DIRECTORIES(${ITK_BINARY_DIR}/Wrapping/CSwig/Tcl)
+INCLUDE_DIRECTORIES(${WrapITK_BINARY_DIR}/Tcl)
 ADD_EXECUTABLE(itkwish itkTclAppInit.cxx)
 TARGET_LINK_LIBRARIES(itkwish
   ITKAlgorithmsTcl

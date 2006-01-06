@@ -32,10 +32,10 @@
 //   ITK_TCL_LIB_DIR  = Location of the pkgIndex.tcl file for ITK.
 #if defined(CMAKE_INTDIR)
 # define ITK_TCL_EXE_DIR ITK_TCL_EXE_DIR_BUILD "/" CMAKE_INTDIR
-# define ITK_TCL_LIB_DIR ITK_BINARY_DIR "/Wrapping/CSwig/Tcl/" CMAKE_INTDIR
+# define ITK_TCL_LIB_DIR WrapITK_BINARY_DIR "/Tcl/" CMAKE_INTDIR
 #else
 # define ITK_TCL_EXE_DIR ITK_TCL_EXE_DIR_BUILD
-# define ITK_TCL_LIB_DIR ITK_BINARY_DIR "/Wrapping/CSwig/Tcl"
+# define ITK_TCL_LIB_DIR WrapITK_BINARY_DIR "/Tcl"
 #endif
 
 // ITK_TCL_EXE_NAME = Name of this executable.

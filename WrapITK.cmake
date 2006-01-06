@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-INCLUDE(${ITK_SOURCE_DIR}/Wrapping/CSwig/WrapITKLang.cmake)
+INCLUDE(${WrapITK_SOURCE_DIR}/WrapITKLang.cmake)
 
 
 #------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ MACRO(WRITE_MODULE MODULE_NAME PATH GROUP)
    STRING(REGEX REPLACE ",\n$" "\n" GROUP_LIST "${GROUP_LIST}")
 
    CONFIGURE_FILE(
-      "${ITK_SOURCE_DIR}/Wrapping/CSwig/wrap_ITK.cxx.in"
+      "${WrapITK_SOURCE_DIR}/wrap_ITK.cxx.in"
       "${PATH}/wrap_ITK${MODULE_NAME}.cxx"
       @ONLY IMMEDIATE
    )
@@ -32,7 +32,7 @@ MACRO(WRITE_MODULE_TCL MODULE_NAME PATH)
    SET(module_name ${MODULE_NAME})
    STRING(TOUPPER ${lang} lang_TOUPPER)
    CONFIGURE_FILE(
-      "${ITK_SOURCE_DIR}/Wrapping/CSwig/wrap_ITKLang.cxx.in"
+      "${WrapITK_SOURCE_DIR}/wrap_ITKLang.cxx.in"
       "${PATH}/wrap_ITK${MODULE_NAME}${lang}.cxx"
       IMMEDIATE
    )
@@ -43,7 +43,7 @@ MACRO(WRITE_MODULE_PYTHON MODULE_NAME PATH)
    SET(module_name ${MODULE_NAME})
    STRING(TOUPPER ${lang} lang_TOUPPER)
    CONFIGURE_FILE(
-      "${ITK_SOURCE_DIR}/Wrapping/CSwig/wrap_ITKLang.cxx.in"
+      "${WrapITK_SOURCE_DIR}/wrap_ITKLang.cxx.in"
       "${PATH}/wrap_ITK${MODULE_NAME}${lang}.cxx"
       IMMEDIATE
    )
@@ -54,7 +54,7 @@ MACRO(WRITE_MODULE_JAVA MODULE_NAME PATH)
    SET(module_name ${MODULE_NAME})
    STRING(TOUPPER ${lang} lang_TOUPPER)
    CONFIGURE_FILE(
-      "${ITK_SOURCE_DIR}/Wrapping/CSwig/wrap_ITKLang.cxx.in"
+      "${WrapITK_SOURCE_DIR}/wrap_ITKLang.cxx.in"
       "${PATH}/wrap_ITK${MODULE_NAME}${lang}.cxx"
       IMMEDIATE
    )
@@ -77,7 +77,7 @@ MACRO(WRITE_WRAP_CXX)
   ENDFOREACH(inc)
 
   CONFIGURE_FILE(
-    "${ITK_SOURCE_DIR}/Wrapping/CSwig/wrap_.cxx.in"
+    "${WrapITK_SOURCE_DIR}/wrap_.cxx.in"
     "${itk_File}"
     IMMEDIATE
   )
@@ -505,30 +505,30 @@ ENDMACRO(WRAP_COV_VECTOR_REAL SIZE)
 
 #------------------------------------------------------------------------------
 MACRO(WRITE_LANG_BEGIN MODULE)
-   IF(ITK_CSWIG_PYTHON)
+   IF(WRAP_ITK_PYTHON)
       # python
       WRITE_PY_BEGIN("${ITK_LANG_FILE}Py.py" ${MODULE})
-   ENDIF(ITK_CSWIG_PYTHON)
+   ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(WRITE_LANG_BEGIN)
 
 MACRO(WRITE_LANG_END)
-   IF(ITK_CSWIG_PYTHON)
+   IF(WRAP_ITK_PYTHON)
       # python
       WRITE_PY_END("${ITK_LANG_FILE}Py.py")
-   ENDIF(ITK_CSWIG_PYTHON)
+   ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(WRITE_LANG_END)
 
 MACRO(WRITE_LANG_WRAP CLASS WRAP)
-   IF(ITK_CSWIG_PYTHON)
+   IF(WRAP_ITK_PYTHON)
       # python
       WRITE_PY_WRAP("${ITK_LANG_FILE}Py.py" ${CLASS} "${WRAP}")
-   ENDIF(ITK_CSWIG_PYTHON)
+   ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(WRITE_LANG_WRAP)
 
 MACRO(WRITE_LANG_WRAP_NOTPL CLASS)
-   IF(ITK_CSWIG_PYTHON)
+   IF(WRAP_ITK_PYTHON)
       # python
       WRITE_PY_WRAP_NOTPL("${ITK_LANG_FILE}Py.py" ${CLASS})
-   ENDIF(ITK_CSWIG_PYTHON)
+   ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(WRITE_LANG_WRAP_NOTPL)
 

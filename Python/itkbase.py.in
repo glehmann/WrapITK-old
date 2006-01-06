@@ -10,7 +10,7 @@ else:
     selfpath = os.path.abspath(os.path.dirname(__file__))
 
 # The directory containing the binary ITK python wrapper libraries.
-pkgdir = @ITK_CSWIG_PACKAGE_DIR@
+pkgdir = @WRAP_ITK_PACKAGE_DIR@
 
 # Python "help(sys.setdlopenflags)" states:
 #
@@ -69,8 +69,8 @@ def postimport(data):
     pass
 
 # Default location for test output
-defaultTestRoot = @ITK_CSWIG_TEST_ROOT@
+defaultTestRoot = @WRAP_ITK_TEST_ROOT@
 
 # Default location for test input
-defaultDataRoot = @ITK_CSWIG_DATA_ROOT@
+defaultDataRoot = @WRAP_ITK_DATA_ROOT@
 

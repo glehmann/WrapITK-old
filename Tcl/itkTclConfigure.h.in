@@ -1,8 +1,8 @@
 #ifndef _itkTclConfigure_h
 #define _itkTclConfigure_h
 
-#undef ITK_BINARY_DIR
-#define ITK_BINARY_DIR "${ITK_BINARY_DIR}"
+#undef WrapITK_BINARY_DIR
+#define WrapITK_BINARY_DIR "${WrapITK_BINARY_DIR}"
 
 #undef ITK_TCL_EXE_DIR_BUILD
 #define ITK_TCL_EXE_DIR_BUILD "${ITK_TCL_EXE_DIR_BUILD}"

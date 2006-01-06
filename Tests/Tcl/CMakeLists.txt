@@ -1,8 +1,8 @@
 
 IF( NOT ITK_DISABLE_TCL_TESTING )
-IF(ITK_CSWIG_TCL)
-    SET(TEMP ${ITK_BINARY_DIR}/Testing/Temporary)
+IF(WRAP_ITK_TCL)
+    SET(TEMP ${WRAP_ITK_TEST_ROOT}/Temporary)
     SET(ITK_WISH ${CXX_TEST_PATH}/itkwish)
-    ADD_TEST(PrintAllTcl ${ITK_WISH} ${ITK_SOURCE_DIR}/Wrapping/CSwig/Tests/Tcl/PrintAll.tcl ${TEMP}/PrintAll.txt)
-ENDIF(ITK_CSWIG_TCL)
+    ADD_TEST(PrintAllTcl ${ITK_WISH} ${WrapITK_SOURCE_DIR}/Tests/Tcl/PrintAll.tcl ${TEMP}/PrintAll.txt)
+ENDIF(WRAP_ITK_TCL)
 ENDIF( NOT ITK_DISABLE_TCL_TESTING )

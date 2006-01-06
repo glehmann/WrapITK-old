@@ -32,7 +32,7 @@ To build ITK with the CSwig wrappers:
 
         3. run cmake on ITK (ccmake or CMakeSetup)
                 - turn on the show advanced values option  (t in ccmake)
-                - Turn on ITK_CSWIG_TCL and/or ITK_CSWIG_PYTHON
+                - Turn on WRAP_ITK_TCL and/or ITK_CSWIG_PYTHON
                 - run cmake configure (c for ccmake, Configure button for CMakeSetup)
                 - if not found already, Set the cache entry for CSWIG to the full path to the 
                   cswig executable built in 1.  Run cmake configure again.

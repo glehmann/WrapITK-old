@@ -1,43 +1,67 @@
 PROJECT(WrapITK)
 
+###############################################################################
+# Find Required Packages
+###############################################################################
+
+#-----------------------------------------------------------------------------
+# Find ITK
+#-----------------------------------------------------------------------------
+FIND_PACKAGE(ITK)
+IF(ITK_FOUND)
+  INCLUDE(${ITK_USE_FILE})
+ELSE(ITK_FOUND)
+  MESSAGE(FATAL_ERROR
+          "Cannot build without ITK.  Please set ITK_DIR.")
+ENDIF(ITK_FOUND)
+
+#-----------------------------------------------------------------------------
+# Load the CableSwig settings used by ITK, or find CableSwig otherwise.
+#-----------------------------------------------------------------------------
+#
+SET(CableSwig_DIR ${ITK_CableSwig_DIR})
 FIND_PACKAGE(CableSwig)
+
+IF(NOT CableSwig_FOUND)
+  # We have not found CableSwig.  Complain.
+  MESSAGE(FATAL_ERROR "CableSwig is required for ITK Wrapping.")
+ENDIF(NOT CableSwig_FOUND)
+
+# Not sure below is needed?
 SET(CMAKE_MODULE_PATH ${CableSwig_DIR}/SWIG/CMake)
 
-IF(ITK_CSWIG_TCL)
-  SET(ITK_INCLUDE_DIRS_SYSTEM ${ITK_INCLUDE_DIRS_SYSTEM} ${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
-ENDIF(ITK_CSWIG_TCL)
+#-----------------------------------------------------------------------------
+# Find wrapping language API libraries.
+#-----------------------------------------------------------------------------
+IF(WRAP_ITK_TCL)
+  FIND_PACKAGE(TCL)
+  # Hide useless settings provided by FindTCL.
+  FOREACH(entry TCL_LIBRARY_DEBUG
+                TK_LIBRARY_DEBUG
+                TCL_STUB_LIBRARY
+                TCL_STUB_LIBRARY_DEBUG
+                TK_STUB_LIBRARY
+                TK_STUB_LIBRARY_DEBUG
+                TK_WISH)
+    SET(${entry} "${${entry}}" CACHE INTERNAL "This value is not used by ITK.")
+  ENDFOREACH(entry)
+ENDIF(WRAP_ITK_TCL)
 
-IF(ITK_CSWIG_PYTHON)
-  # Python include directory.
-  SET(ITK_INCLUDE_DIRS_SYSTEM ${ITK_INCLUDE_DIRS_SYSTEM}
-    ${PYTHON_INCLUDE_PATH})
-ENDIF(ITK_CSWIG_PYTHON)
+IF(WRAP_ITK_PYTHON)
+  INCLUDE(${CMAKE_ROOT}/Modules/FindPythonLibs.cmake)
+  FIND_PACKAGE(PythonInterp)
+  MARK_AS_ADVANCED(PYTHON_EXECUTABLE)
+ENDIF(WRAP_ITK_PYTHON)
 
-IF(ITK_CSWIG_JAVA)
-  # Java include directories.
-  SET(ITK_INCLUDE_DIRS_SYSTEM ${ITK_INCLUDE_DIRS_SYSTEM}
-      ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
-ENDIF(ITK_CSWIG_JAVA)
-
-# Choose an install location for the Java wrapper libraries.  This
-# must be next to the ITKCommon shared library.
-IF(WIN32)
-  SET(ITK_INSTALL_JAVA_LIBS_DIR /bin)
-ELSE(WIN32)
-  SET(ITK_INSTALL_JAVA_LIBS_DIR /lib/InsightToolkit)
-ENDIF(WIN32)
-
-# We have found CableSwig.  Use the settings.
-SET(CABLE_INDEX ${CableSwig_cableidx_EXE})
-SET(CSWIG ${CableSwig_cswig_EXE})
-SET(GCCXML ${CableSwig_gccxml_EXE})
+IF(WRAP_ITK_JAVA)
+  FIND_PACKAGE(Java)
+  FIND_PACKAGE(JNI)
+ENDIF(WRAP_ITK_JAVA)
 
 SET(ITK_WRAP_NEEDS_DEPEND 1)
 IF(${CMAKE_MAKE_PROGRAM} MATCHES make)
   SET(ITK_WRAP_NEEDS_DEPEND 0)
 ENDIF(${CMAKE_MAKE_PROGRAM} MATCHES make)
-
-SET(ITK_TOP ${ITK_SOURCE_DIR})
 
 ###############################################################################
 # Config ITKWrap
@@ -47,28 +71,28 @@ SET(ITK_KITS VXLNumerics CommonA CommonB Numerics
   BasicFiltersA BasicFiltersB BasicFiltersC IO
   SpatialObject Algorithms
   )
-SUBDIRS(SwigRuntime ${ITK_KITS} Tests)
+SUBDIRS(SwigRuntime ${ITK_KITS} Tests Testing)
 
-SET(ITK_CSWIG_PACKAGE_DIR_BUILD "${ITK_LIBRARY_PATH}")
+SET(WRAP_ITK_PACKAGE_DIR_BUILD "${ITK_LIBRARY_PATH}")
 
 #-----------------------------------------------------------------------------
 MACRO(ITK_CONFIG_PACKAGE BINARY_DIR)
-  IF(ITK_CSWIG_TCL)
+  IF(WRAP_ITK_TCL)
     # tcl
     ITK_CONFIG_TCL_PACKAGE(${BINARY_DIR})
-  ENDIF(ITK_CSWIG_TCL)
-  IF(ITK_CSWIG_PERL)
+  ENDIF(WRAP_ITK_TCL)
+  IF(WRAP_ITK_PERL)
     # perl
     ITK_CONFIG_PERL_PACKAGE(${BINARY_DIR})
-  ENDIF(ITK_CSWIG_PERL)
-  IF(ITK_CSWIG_PYTHON)
+  ENDIF(WRAP_ITK_PERL)
+  IF(WRAP_ITK_PYTHON)
     # python
     ITK_CONFIG_PYTHON_PACKAGE(${BINARY_DIR})
-  ENDIF(ITK_CSWIG_PYTHON)
-  IF(ITK_CSWIG_JAVA)
+  ENDIF(WRAP_ITK_PYTHON)
+  IF(WRAP_ITK_JAVA)
     # java
     ITK_CONFIG_JAVA_PACKAGE(${BINARY_DIR})
-  ENDIF(ITK_CSWIG_JAVA)
+  ENDIF(WRAP_ITK_JAVA)
 ENDMACRO(ITK_CONFIG_PACKAGE)
 
 ###############################################################################
@@ -76,34 +100,34 @@ ENDMACRO(ITK_CONFIG_PACKAGE)
 ###############################################################################
 MACRO(ITK_CONFIG_TCL_PACKAGE BINARY_DIR)
   # Configure pkgIndex.tcl for the build tree.
-  SET(ITK_CSWIG_DATA_ROOT "${ITK_DATA_ROOT}")
-  SET(ITK_CSWIG_TEST_ROOT "${ITK_BINARY_DIR}/Testing")
-  SET(ITK_CSWIG_SCRIPT_DIR "${ITK_SOURCE_DIR}/Wrapping/CSwig/Tcl")
+  SET(WRAP_ITK_DATA_ROOT "${ITK_DATA_ROOT}")
+  SET(WRAP_ITK_TEST_ROOT "${WrapITK_BINARY_DIR}/Testing")
+  SET(WRAP_ITK_SCRIPT_DIR "${WrapITK_SOURCE_DIR}/Tcl")
 
   IF(CMAKE_CONFIGURATION_TYPES)
     FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-      SET(ITK_CSWIG_PACKAGE_DIR "${ITK_CSWIG_PACKAGE_DIR_BUILD}/${config}")
-      CONFIGURE_FILE("${ITK_SOURCE_DIR}/Wrapping/CSwig/Tcl/pkgIndex.tcl.in"
+      SET(WRAP_ITK_PACKAGE_DIR "${ITK_CSWIG_PACKAGE_DIR_BUILD}/${config}")
+      CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Tcl/pkgIndex.tcl.in"
                      "${BINARY_DIR}/Tcl/${config}/pkgIndex.tcl"
                      @ONLY IMMEDIATE)
     ENDFOREACH(config)
   ELSE(CMAKE_CONFIGURATION_TYPES)
-    SET(ITK_CSWIG_PACKAGE_DIR "${ITK_CSWIG_PACKAGE_DIR_BUILD}")
-    CONFIGURE_FILE("${ITK_SOURCE_DIR}/Wrapping/CSwig/Tcl/pkgIndex.tcl.in"
+    SET(WRAP_ITK_PACKAGE_DIR "${ITK_CSWIG_PACKAGE_DIR_BUILD}")
+    CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Tcl/pkgIndex.tcl.in"
                    "${BINARY_DIR}/Tcl/pkgIndex.tcl"
                    @ONLY IMMEDIATE)
   ENDIF(CMAKE_CONFIGURATION_TYPES)
 
   # Configure pkgIndex.tcl for the install tree.
-  SET(ITK_CSWIG_SCRIPT_DIR "[file dirname [info script]]")
-  SET(ITK_CSWIG_PACKAGE_DIR "[file dirname [file dirname [info script]]]")
-  SET(ITK_CSWIG_DATA_ROOT "[file dirname [file dirname [info script]]]/Data")
-  SET(ITK_CSWIG_TEST_ROOT "<NO_DEFAULT>")
-  CONFIGURE_FILE("${ITK_SOURCE_DIR}/Wrapping/CSwig/Tcl/pkgIndex.tcl.in"
+  SET(WRAP_ITK_SCRIPT_DIR "[file dirname [info script]]")
+  SET(WRAP_ITK_PACKAGE_DIR "[file dirname [file dirname [info script]]]")
+  SET(WRAP_ITK_DATA_ROOT "[file dirname [file dirname [info script]]]/Data")
+  SET(WRAP_ITK_TEST_ROOT "<NO_DEFAULT>")
+  CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Tcl/pkgIndex.tcl.in"
                  "${BINARY_DIR}/Tcl/InstallOnly/Hide/pkgIndex.tcl"
                  IMMEDIATE @ONLY)
   INSTALL_FILES(/lib/InsightToolkit/tcl FILES
-                "${ITK_BINARY_DIR}/Wrapping/CSwig/Tcl/InstallOnly/Hide/pkgIndex.tcl")
+                "${WrapITK_BINARY_DIR}/Tcl/InstallOnly/Hide/pkgIndex.tcl")
 
   SUBDIRS(Tcl)
 ENDMACRO(ITK_CONFIG_TCL_PACKAGE)
@@ -115,18 +139,18 @@ ENDMACRO(ITK_CONFIG_PERL_PACKAGE)
 # Config Project dependant :-(
 ###############################################################################
 MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
-  SET(ITK_CSWIG_DATA_ROOT "'${ITK_DATA_ROOT}'")
-  SET(ITK_CSWIG_TEST_ROOT "'${ITK_BINARY_DIR}/Testing'")
+  SET(WRAP_ITK_DATA_ROOT "'${ITK_DATA_ROOT}'")
+  SET(WRAP_ITK_TEST_ROOT "'${WrapITK_BINARY_DIR}/Testing'")
   IF(CMAKE_CONFIGURATION_TYPES)
     FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-      SET(ITK_CSWIG_PACKAGE_DIR "'${ITK_CSWIG_PACKAGE_DIR_BUILD}/${config}'")
-      CONFIGURE_FILE("${ITK_SOURCE_DIR}/Wrapping/CSwig/Python/itkbase.py.in"
+      SET(WRAP_ITK_PACKAGE_DIR "'${ITK_CSWIG_PACKAGE_DIR_BUILD}/${config}'")
+      CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/itkbase.py.in"
                      "${BINARY_DIR}/Python/${config}/itkbase.py"
                      @ONLY IMMEDIATE)
     ENDFOREACH(config)
   ELSE(CMAKE_CONFIGURATION_TYPES)
-    SET(ITK_CSWIG_PACKAGE_DIR "'${ITK_CSWIG_PACKAGE_DIR_BUILD}'")
-    CONFIGURE_FILE("${ITK_SOURCE_DIR}/Wrapping/CSwig/Python/itkbase.py.in"
+    SET(WRAP_ITK_PACKAGE_DIR "'${ITK_CSWIG_PACKAGE_DIR_BUILD}'")
+    CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/itkbase.py.in"
                    "${BINARY_DIR}/Python/itkbase.py"
                    @ONLY IMMEDIATE)
   ENDIF(CMAKE_CONFIGURATION_TYPES)
@@ -155,7 +179,7 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
     ADD_CUSTOM_TARGET(itkpython_pyc ALL echo "...")
 
     # Make the necessary directories.
-    MAKE_DIRECTORY(${ITK_BINARY_DIR}/Wrapping/CSwig/Python)
+    MAKE_DIRECTORY(${WrapITK_BINARY_DIR}/Python)
 
     # Now create a list of Python files.
     SET(ITK_PYTHON_FILES)
@@ -196,27 +220,27 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
 
     IF(CMAKE_CONFIGURATION_TYPES)
       FOREACH(file ${ITK_PYTHON_FILES})
-        SET(src "${ITK_BINARY_DIR}/Wrapping/CSwig/Python/${CMAKE_CFG_INTDIR}/${file}.py")
+        SET(src "${WrapITK_BINARY_DIR}/Python/${CMAKE_CFG_INTDIR}/${file}.py")
         SET(ITK_PYTHON_SOURCE_FILES ${ITK_PYTHON_SOURCE_FILES} ${src})
       ENDFOREACH(file)
     ELSE(CMAKE_CONFIGURATION_TYPES)
       FOREACH(file ${ITK_PYTHON_FILES})
-        SET(src "${ITK_BINARY_DIR}/Wrapping/CSwig/Python/${file}.py")
+        SET(src "${WrapITK_BINARY_DIR}/Python/${file}.py")
         SET(ITK_PYTHON_SOURCE_FILES ${ITK_PYTHON_SOURCE_FILES} ${src})
       ENDFOREACH(file)
     ENDIF(CMAKE_CONFIGURATION_TYPES)
 
-    IF ("${ITK_BINARY_DIR}" MATCHES "^${ITK_SOURCE_DIR}$")
+    IF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
       #MESSAGE("In source build -- no need to copy Python files.")
-    ELSE ("${ITK_BINARY_DIR}" MATCHES "^${ITK_SOURCE_DIR}$")
+    ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
       IF(CMAKE_CONFIGURATION_TYPES)
         FOREACH(file ${ITK_PYTHON_FILES})
-          IF(EXISTS ${ITK_SOURCE_DIR}/Wrapping/CSwig/Python/${file}.py)
-            SET(src "${ITK_SOURCE_DIR}/Wrapping/CSwig/Python/${file}.py")
-          ELSE(EXISTS ${ITK_SOURCE_DIR}/Wrapping/CSwig/Python/${file}.py)
-            SET(src "${ITK_BINARY_DIR}/Wrapping/CSwig/Python/${file}.py")
-          ENDIF(EXISTS ${ITK_SOURCE_DIR}/Wrapping/CSwig/Python/${file}.py)
-          SET(tgt "${ITK_BINARY_DIR}/Wrapping/CSwig/Python/${CMAKE_CFG_INTDIR}/${file}.py")
+          IF(EXISTS ${WrapITK_SOURCE_DIR}/Python/${file}.py)
+            SET(src "${WrapITK_SOURCE_DIR}/Python/${file}.py")
+          ELSE(EXISTS ${WrapITK_SOURCE_DIR}/Python/${file}.py)
+            SET(src "${WrapITK_BINARY_DIR}/Python/${file}.py")
+          ENDIF(EXISTS ${WrapITK_SOURCE_DIR}/Python/${file}.py)
+          SET(tgt "${WrapITK_BINARY_DIR}/Python/${CMAKE_CFG_INTDIR}/${file}.py")
 
           IF("${src}" MATCHES "${tgt}")
             #MESSAGE("no need to copy Python file ${src}.")
@@ -231,12 +255,12 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
         ENDFOREACH(file)
       ELSE(CMAKE_CONFIGURATION_TYPES)
         FOREACH(file ${ITK_PYTHON_FILES})
-          IF(EXISTS ${ITK_SOURCE_DIR}/Wrapping/CSwig/Python/${file}.py)
-            SET(src "${ITK_SOURCE_DIR}/Wrapping/CSwig/Python/${file}.py")
-          ELSE(EXISTS ${ITK_SOURCE_DIR}/Wrapping/CSwig/Python/${file}.py)
-            SET(src "${ITK_BINARY_DIR}/Wrapping/CSwig/Python/${file}.py")
-          ENDIF(EXISTS ${ITK_SOURCE_DIR}/Wrapping/CSwig/Python/${file}.py)
-          SET(tgt "${ITK_BINARY_DIR}/Wrapping/CSwig/Python/${file}.py")
+          IF(EXISTS ${WrapITK_SOURCE_DIR}/Python/${file}.py)
+            SET(src "${WrapITK_SOURCE_DIR}/Python/${file}.py")
+          ELSE(EXISTS ${WrapITK_SOURCE_DIR}/Python/${file}.py)
+            SET(src "${WrapITK_BINARY_DIR}/Python/${file}.py")
+          ENDIF(EXISTS ${WrapITK_SOURCE_DIR}/Python/${file}.py)
+          SET(tgt "${WrapITK_BINARY_DIR}/Python/${file}.py")
 
           IF("${src}" MATCHES "${tgt}")
             #MESSAGE("no need to copy Python file ${src}.")
@@ -250,27 +274,27 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
           ENDIF("${src}" MATCHES "${tgt}")
         ENDFOREACH(file)
       ENDIF(CMAKE_CONFIGURATION_TYPES)
-    ENDIF ("${ITK_BINARY_DIR}" MATCHES "^${ITK_SOURCE_DIR}$")
+    ENDIF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
 
     # Byte compile the Python files.
-    WRITE_FILE(${ITK_BINARY_DIR}/Wrapping/CSwig/Python/compile_all_itk
+    WRITE_FILE(${WrapITK_BINARY_DIR}/Python/compile_all_itk
           "import compileall\n"
-          "compileall.compile_dir('${ITK_BINARY_DIR}/Wrapping/CSwig/Python')\n"
-          "file = open('${ITK_BINARY_DIR}/Wrapping/CSwig/Python/itk_compile_complete', 'w')\n"
+          "compileall.compile_dir('${WrapITK_BINARY_DIR}/Python')\n"
+          "file = open('${WrapITK_BINARY_DIR}/Python/itk_compile_complete', 'w')\n"
           "file.write('Done')\n")
 
     ADD_CUSTOM_COMMAND(
-      SOURCE ${ITK_BINARY_DIR}/Wrapping/CSwig/Python/compile_all_itk
+      SOURCE ${WrapITK_BINARY_DIR}/Python/compile_all_itk
       COMMAND ${PYTHON_EXECUTABLE}
-      ARGS ${ITK_BINARY_DIR}/Wrapping/CSwig/Python/compile_all_itk
+      ARGS ${WrapITK_BINARY_DIR}/Python/compile_all_itk
       DEPENDS ${ITK_PYTHON_SOURCE_FILES}
-      OUTPUTS "${ITK_BINARY_DIR}/Wrapping/CSwig/Python/itk_compile_complete"
+      OUTPUTS "${WrapITK_BINARY_DIR}/Python/itk_compile_complete"
       TARGET itkpython_pyc
       )
 
     ADD_CUSTOM_COMMAND(
       SOURCE itkpython_pyc
-      DEPENDS "${ITK_BINARY_DIR}/Wrapping/CSwig/Python/itk_compile_complete"
+      DEPENDS "${WrapITK_BINARY_DIR}/Python/itk_compile_complete"
       TARGET itkpython_pyc
       )
   ENDIF(PYTHON_EXECUTABLE)
@@ -288,7 +312,7 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
       # officially supported by cmake and abuses the implementation of
       # make install.  Good luck figuring out how this works.
       CONFIGURE_FILE(
-        "${ITK_SOURCE_DIR}/Wrapping/CSwig/pythonfiles.sh.in"
+        "${WrapITK_SOURCE_DIR}/pythonfiles.sh.in"
         "${BINARY_DIR}/pythonfiles.sh" @ONLY IMMEDIATE)
       EXEC_PROGRAM(chmod ${BINARY_DIR} ARGS 755 pythonfiles.sh
         OUTPUT_VARIABLE ITK_EXEC_PLEASE_BE_QUIET)
@@ -296,7 +320,7 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
     ENDIF(UNIX)
   ELSE(ITK_OLD_CMAKE_INSTALL)
     CONFIGURE_FILE(
-      "${ITK_SOURCE_DIR}/Wrapping/CSwig/pythonfiles_install.cmake.in"
+      "${WrapITK_SOURCE_DIR}/pythonfiles_install.cmake.in"
       "${BINARY_DIR}/pythonfiles_install.cmake"
       @ONLY IMMEDIATE)
     ADD_CUSTOM_TARGET(python_install)
@@ -307,17 +331,17 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
   # Install the package python files.
   FOREACH(file ${ITK_PYTHON_FILES})
     INSTALL_FILES(/lib/InsightToolkit/python FILES
-      "${ITK_BINARY_DIR}/Wrapping/CSwig/Python/${file}.py")
+      "${WrapITK_BINARY_DIR}/Python/${file}.py")
   ENDFOREACH(file)
 
-  SET(ITK_CSWIG_PACKAGE_DIR "os.path.dirname(selfpath)")
-  SET(ITK_CSWIG_DATA_ROOT "os.path.join(os.path.dirname(selfpath),'Data')")
-  SET(ITK_CSWIG_TEST_ROOT "'<NO_DEFAULT>'")
-  CONFIGURE_FILE("${ITK_SOURCE_DIR}/Wrapping/CSwig/Python/itkbase.py.in"
+  SET(WRAP_ITK_PACKAGE_DIR "os.path.dirname(selfpath)")
+  SET(WRAP_ITK_DATA_ROOT "os.path.join(os.path.dirname(selfpath),'Data')")
+  SET(WRAP_ITK_TEST_ROOT "'<NO_DEFAULT>'")
+  CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/itkbase.py.in"
                  "${BINARY_DIR}/Python/InstallOnly/itkbase.py"
                  @ONLY IMMEDIATE)
   INSTALL_FILES(/lib/InsightToolkit/python FILES
-    "${ITK_BINARY_DIR}/Wrapping/CSwig/Python/InstallOnly/itkbase.py")
+    "${WrapITK_BINARY_DIR}/Python/InstallOnly/itkbase.py")
 ENDMACRO(ITK_CONFIG_PYTHON_PACKAGE)
 
 ###############################################################################

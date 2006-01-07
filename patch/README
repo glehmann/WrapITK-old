@@ -1,0 +1,15 @@
+This dir contains patchs to apply to the ITK sources.
+- patchs in 'required' dir are required to build the wrappers and should be
+integrated in future ITK releases
+- patches in 'optional' are not required but highly recommended because they
+brings new functionnalities to the wrappers
+
+To apply the patches, go in the ITK installation dir and do something like
+
+  cat /home/gaetan/src/WrapITK/patch/required/* | patch -p3
+
+for the required patches, and 
+
+  cat /home/gaetan/src/WrapITK/patch/optional/* | patch -p3
+  
+for the optional patches.

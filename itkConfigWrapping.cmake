@@ -33,8 +33,13 @@ MARK_AS_ADVANCED(WRAP_covariant_vector_double)
 
 SET(ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg")
 
+# Output directories.
 SET (LIBRARY_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
-MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH)
+SET (EXECUTABLE_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
+MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+SET(WRAP_ITK_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
+SET(WRAP_ITK_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
+SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
 
 #------------------------------------------------------------------------------

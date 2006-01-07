@@ -1,0 +1,191 @@
+*** itk/Insight/Code/Common/itkFixedArray.h	2006-01-07 15:10:11.000000000 +0100
+--- itk-mima2/Insight/Code/Common/itkFixedArray.h	2005-10-24 13:50:58.000000000 +0200
+***************
+*** 206,211 ****
+--- 206,238 ----
+    SizeType      Size() const;
+    void Fill(const ValueType&);
+      
++ //#ifdef SWIGPYTHON
++   const ValueType __getitem__(unsigned int dim) const 
++     {
++     if (dim >= VLength)
++       {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: FixedArray: index out of range");}
++     return GetElement(dim);
++     }
++   void __setitem__(unsigned int dim, ValueType value)
++     {
++     if (dim >= VLength)
++       {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: FixedArray: index out of range");}
++     SetElement(dim, value);
++     }
++   
++   const unsigned int __len__() const
++     {
++     return VLength;
++     }
++   
++   const char * __str__() const
++     {
++     OStringStream msg;
++     msg << "<FixedArray " << *this << ">";
++     return msg.str().c_str();
++     }  
++ //#endif
++ 
+  private:
+    /** Internal C array representation. */
+    CArray  m_InternalArray;
+*** itk/Insight/Code/Common/itkIndex.h	2006-01-07 15:10:12.000000000 +0100
+--- itk-mima2/Insight/Code/Common/itkIndex.h	2005-10-24 13:50:58.000000000 +0200
+***************
+*** 239,245 ****
+     * \warning No bound checking is performed
+     * \sa GetIndex()
+     * \sa SetElement() */
+!   IndexValueType GetElement( unsigned long element )
+      { return m_Index[ element ]; }
+  
+    /** Return a basis vector of the form [0, ..., 0, 1, 0, ... 0] where the "1"
+--- 239,245 ----
+     * \warning No bound checking is performed
+     * \sa GetIndex()
+     * \sa SetElement() */
+!   IndexValueType GetElement( unsigned long element ) const
+      { return m_Index[ element ]; }
+  
+    /** Return a basis vector of the form [0, ..., 0, 1, 0, ... 0] where the "1"
+***************
+*** 259,264 ****
+--- 259,292 ----
+     *    Index<3> index = {5, 2, 7}; */
+    IndexValueType m_Index[VIndexDimension];
+    
++ 
++ //#ifdef SWIGPYTHON
++   const IndexValueType __getitem__(unsigned int dim) const 
++     {
++     if (dim >= VIndexDimension)
++       {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: Index: index out of range");}
++     return GetElement(dim);
++     }
++   void __setitem__(unsigned int dim, IndexValueType value)
++     {
++     if (dim >= VIndexDimension)
++       {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: Index: index out of range");}
++     SetElement(dim, value);
++     }
++   
++   const unsigned int __len__() const
++     {
++     return VIndexDimension;
++     }
++   
++   const char * __str__() const
++     {
++     OStringStream msg;
++     msg << "<Index " << *this << ">";
++     return msg.str().c_str();
++     }  
++ //#endif
++ 
+  };
+  
+  namespace Functor
+*** itk/Insight/Code/Common/itkSize.h	2006-01-07 15:09:45.000000000 +0100
+--- itk-mima2/Insight/Code/Common/itkSize.h	2005-10-24 13:50:58.000000000 +0200
+***************
+*** 18,23 ****
+--- 18,24 ----
+  #define __itkSize_h
+  
+  #include "itkMacro.h"
++ #include "itkExceptionObject.h"
+  
+  namespace itk
+  {
+***************
+*** 188,193 ****
+--- 189,221 ----
+     * bracketed initializer. */
+    SizeValueType m_Size[VDimension];
+  
++ //#ifdef SWIGPYTHON
++   const SizeValueType __getitem__(unsigned int dim) const 
++     {
++     if (dim >= VDimension)
++       {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: Size: index out of range");}
++     return GetElement(dim);
++     }
++   void __setitem__(unsigned int dim, SizeValueType value)
++     {
++     if (dim >= VDimension)
++       {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: Size: index out of range");}
++     SetElement(dim, value);
++     }
++   
++   const unsigned int __len__() const
++     {
++     return VDimension;
++     }
++   
++   const char * __str__() const
++     {
++     OStringStream msg;
++     msg << "<Size " << *this << ">";
++     return msg.str().c_str();
++     }  
++ //#endif
++ 
+  };
+  
+  
+***************
+*** 219,224 ****
+--- 247,253 ----
+     extern template std::ostream & operator<<(std::ostream &os, const Size<5> &size);
+  #endif
+  
++ 
+  } // end namespace itk
+  
+  #endif 
+*** itk/Insight/Code/Common/itkLightObject.cxx	2006-01-07 15:17:15.000000000 +0100
+--- itk-mima2/Insight/Code/Common/itkLightObject.cxx	2005-10-24 13:50:52.000000000 +0200
+***************
+*** 115,121 ****
+    this->PrintTrailer(os, indent);
+  }
+  
+! 
+  /**
+   * This method is called when itkExceptionMacro executes. It allows 
+   * the debugger to break on error.
+--- 115,128 ----
+    this->PrintTrailer(os, indent);
+  }
+  
+! const char * LightObject::__str__() const
+! {
+!   OStringStream msg;
+!   this->Print(msg);
+!   return msg.str().c_str();
+! }
+!    
+!    
+  /**
+   * This method is called when itkExceptionMacro executes. It allows 
+   * the debugger to break on error.
+*** itk/Insight/Code/Common/itkLightObject.h	2006-01-07 15:09:45.000000000 +0100
+--- itk-mima2/Insight/Code/Common/itkLightObject.h	2005-10-24 13:50:52.000000000 +0200
+***************
+*** 106,111 ****
+--- 106,113 ----
+     * method, use it with care. */
+    virtual void SetReferenceCount(int);
+  
++   const char * __str__() const;
++   
+  protected:
+    LightObject():m_ReferenceCount(1) {}
+    virtual ~LightObject(); 

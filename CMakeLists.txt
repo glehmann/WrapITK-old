@@ -143,13 +143,13 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
   SET(WRAP_ITK_TEST_ROOT "'${WrapITK_BINARY_DIR}/Testing'")
   IF(CMAKE_CONFIGURATION_TYPES)
     FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-      SET(WRAP_ITK_PACKAGE_DIR "'${ITK_CSWIG_PACKAGE_DIR_BUILD}/${config}'")
+      SET(WRAP_ITK_PACKAGE_DIR "'${LIBRARY_OUTPUT_PATH}/${config}'")
       CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/itkbase.py.in"
                      "${BINARY_DIR}/Python/${config}/itkbase.py"
                      @ONLY IMMEDIATE)
     ENDFOREACH(config)
   ELSE(CMAKE_CONFIGURATION_TYPES)
-    SET(WRAP_ITK_PACKAGE_DIR "'${ITK_CSWIG_PACKAGE_DIR_BUILD}'")
+    SET(WRAP_ITK_PACKAGE_DIR "'${LIBRARY_OUTPUT_PATH}'")
     CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/itkbase.py.in"
                    "${BINARY_DIR}/Python/itkbase.py"
                    @ONLY IMMEDIATE)

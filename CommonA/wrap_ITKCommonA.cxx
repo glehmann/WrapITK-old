@@ -55,8 +55,8 @@ namespace _cable_
 #endif
 #ifdef ITK_PYTHON_WRAP
     "ITKPyUtils",
-    "itkPyBuffer",
 #ifdef ITK_PYTHON_NUMERICS
+    "itkPyBuffer",
 #endif
 #endif
     "SwigExtras",

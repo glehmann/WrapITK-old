@@ -29,7 +29,7 @@ SET(MASTER_INDEX_FILES "${WrapITK_BINARY_DIR}/VXLNumerics/VXLNumerics.mdx"
   "${WrapITK_BINARY_DIR}/BasicFiltersB/ITKBasicFiltersB.mdx"
   )
 
-ITK_WRAP_LIBRARY("${WRAP_GROUPS}" ITKBasicFiltersB BasicFiltersB "ITKNumerics;ITKCommonB;ITKCommonA" "" "ITKBasicFilters"
+ITK_WRAP_LIBRARY("${WRAP_GROUPS}" ITKBasicFiltersB BasicFiltersB "ITKNumerics;ITKCommonB;ITKCommonA" "" "ITKBasicFilters;ITKStatistics;ITKIO"
   "${MASTER_INDEX_FILES}" "${WrapITK_SOURCE_DIR}" "${WrapITK_BINARY_DIR}")
 
 #------------------------------------------------------------------------------

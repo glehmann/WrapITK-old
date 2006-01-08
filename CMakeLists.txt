@@ -69,7 +69,7 @@ ENDIF(${CMAKE_MAKE_PROGRAM} MATCHES make)
 
 SET(ITK_KITS VXLNumerics CommonA CommonB Numerics
   BasicFiltersA BasicFiltersB BasicFiltersC IO
-  SpatialObject Algorithms
+  SpatialObjects Algorithms
   )
 SUBDIRS(SwigRuntime ${ITK_KITS} Tests Testing)
 

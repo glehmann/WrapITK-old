@@ -29,12 +29,12 @@ SET(MASTER_INDEX_FILES "${WrapITK_BINARY_DIR}/VXLNumerics/VXLNumerics.mdx"
                        "${WrapITK_BINARY_DIR}/BasicFiltersA/ITKBasicFiltersA.mdx"
                        "${WrapITK_BINARY_DIR}/BasicFiltersB/ITKBasicFiltersB.mdx"
                        "${WrapITK_BINARY_DIR}/BasicFiltersC/ITKBasicFiltersC.mdx"
-                       "${WrapITK_BINARY_DIR}/SpatialObjects/ITKSpatialObjects.mdx"
+                       "${WrapITK_BINARY_DIR}/SpatialObject/ITKSpatialObject.mdx"
                        "${WrapITK_BINARY_DIR}/Algorithms/ITKAlgorithms.mdx"
 )
 
 ITK_WRAP_LIBRARY("${WRAP_GROUPS}" ITKAlgorithms Algorithms
-  "ITKNumerics;ITKCommonB;ITKCommonA;ITKBasicFiltersA;ITKBasicFiltersB;ITKBasicFiltersC;ITKSpatialObjects"
+  "ITKNumerics;ITKCommonB;ITKCommonA;ITKBasicFiltersA;ITKBasicFiltersB;ITKBasicFiltersC;ITKSpatialObject"
   "" ""
   "${MASTER_INDEX_FILES}" "${WrapITK_SOURCE_DIR}" "${WrapITK_BINARY_DIR}")
   

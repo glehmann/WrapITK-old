@@ -3,33 +3,21 @@ OPTION(WRAP_ITK_PYTHON "Build cswig Python wrapper support (requires CableSwig).
 OPTION(WRAP_ITK_JAVA "Build cswig Java wrapper support (requires CableSwig)." OFF)
 
 OPTION(WRAP_unsigned_char "Wrap unsigned char type" OFF)
-MARK_AS_ADVANCED(WRAP_unsigned_char)
 OPTION(WRAP_unsigned_short "Wrap unsigned short type" ON)
-MARK_AS_ADVANCED(WRAP_unsigned_short)
 OPTION(WRAP_unsigned_long "Wrap unsigned long type" OFF)
-MARK_AS_ADVANCED(WRAP_unsigned_long)
 
 OPTION(WRAP_signed_char "Wrap signed char type" OFF)
-MARK_AS_ADVANCED(WRAP_signed_char)
 OPTION(WRAP_signed_short "Wrap signed short type" OFF)
-MARK_AS_ADVANCED(WRAP_signed_short)
 OPTION(WRAP_signed_long "Wrap signed long type" OFF)
-MARK_AS_ADVANCED(WRAP_signed_long)
 
 OPTION(WRAP_float "Wrap float type" ON)
-MARK_AS_ADVANCED(WRAP_float)
 OPTION(WRAP_double "Wrap double type" OFF)
-MARK_AS_ADVANCED(WRAP_double)
 
 OPTION(WRAP_vector_float "Wrap vector float type" ON)
-MARK_AS_ADVANCED(WRAP_vector_float)
 OPTION(WRAP_vector_double "Wrap vector double type" OFF)
-MARK_AS_ADVANCED(WRAP_vector_double)
 
 OPTION(WRAP_covariant_vector_float "Wrap covariant vector float type" ON)
-MARK_AS_ADVANCED(WRAP_covariant_vector_float)
 OPTION(WRAP_covariant_vector_double "Wrap covariant vector double type" OFF)
-MARK_AS_ADVANCED(WRAP_covariant_vector_double)
 
 SET(ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg")
 

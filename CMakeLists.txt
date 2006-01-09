@@ -361,3 +361,15 @@ INCLUDE(WrapTypePrefix.cmake)
 ITK_CONFIG_PACKAGE(${WrapITK_BINARY_DIR})
 
 
+FOREACH(f
+ itkConfigWrapping.cmake
+ itk.swg
+ wrap_ITK.cxx.in
+ wrap_.cxx.in
+ WrapITK.cmake
+ WrapTypePrefix.cmake
+ WrapTypeBase.cmake
+ wrap_ITKLang.cxx.in
+ WrapITKLang.cmake)
+  INSTALL_FILES(/lib/InsightToolkit ${f})
+ENDFOREACH(f)

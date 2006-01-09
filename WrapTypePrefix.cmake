@@ -42,40 +42,38 @@ SET(itk_DefaultInclude
 )
 
 WRAP_TYPE("Offset" "O")
-  WRAP(2 2)
-  WRAP(3 3)
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${d}"  "${d}")
+  ENDFOREACH(d)
 END_WRAP_TYPE()
 SET(itk_Wrap_Offset ${itk_Wrap})
 
 #------------------------------------------------------------------------------
-SET(WRAP_PREFIX_Vector "V")
-SET(itk_Wrap_Vector
-   "${ITKM_F}2  # ${ITKT_F},2"
-   "${ITKM_F}3  # ${ITKT_F},3"
-   "${ITKM_D}2  # ${ITKT_D},2"
-   "${ITKM_D}3  # ${ITKT_D},3"
-)
-CREATE_WRAP_TYPE("Vector" ${WRAP_PREFIX_Vector} "${itk_Wrap_Vector}")
+WRAP_TYPE("Vector" "V")
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${ITKM_F}${d}"  "${ITKT_F},${d}")
+    WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}")
+  ENDFOREACH(d)
+END_WRAP_TYPE()
+SET(itk_Wrap_Vector ${itk_Wrap})
 
 #------------------------------------------------------------------------------
-SET(WRAP_PREFIX_CovariantVector "CV")
-SET(itk_Wrap_CovariantVector
-   "${ITKM_F}2  # ${ITKT_F},2"
-   "${ITKM_F}3  # ${ITKT_F},3"
-   "${ITKM_D}2  # ${ITKT_D},2"
-   "${ITKM_D}3  # ${ITKT_D},3"
-)
-CREATE_WRAP_TYPE("CovariantVector" ${WRAP_PREFIX_CovariantVector} "${itk_Wrap_CovariantVector}")
+WRAP_TYPE("CovariantVector" "CV")
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${ITKM_F}${d}"  "${ITKT_F},${d}")
+    WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}")
+  ENDFOREACH(d)
+END_WRAP_TYPE()
+SET(itk_Wrap_CovariantVector ${itk_Wrap})
 
 #------------------------------------------------------------------------------
-SET(WRAP_PREFIX_ContinuousIndex "CI")
-SET(itk_Wrap_ContinuousIndex
-    "${ITKM_F}2 # ${ITKT_F},2"
-    "${ITKM_F}3 # ${ITKT_F},3"
-    "${ITKM_D}2 # ${ITKT_D},2"
-    "${ITKM_D}3 # ${ITKT_D},3"
-)
-CREATE_WRAP_TYPE("ContinuousIndex" ${WRAP_PREFIX_ContinuousIndex} "${itk_Wrap_ContinuousIndex}")
+WRAP_TYPE("ContinuousIndex" "CI")
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${ITKM_F}${d}"  "${ITKT_F},${d}")
+    WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}")
+  ENDFOREACH(d)
+END_WRAP_TYPE()
+SET(itk_Wrap_ContinuousIndex ${itk_Wrap})
 
 #------------------------------------------------------------------------------
 SET(WRAP_PREFIX_Array "A")
@@ -122,99 +120,71 @@ CREATE_WRAP_TYPE("FixedArray" ${WRAP_PREFIX_FixedArray} "${itk_Wrap_FixedArray}"
 
 #------------------------------------------------------------------------------
 WRAP_TYPE("Image" "I")
-  COND_WRAP("${ITKM_F}2"  "${ITKT_F},2"  "F")
-  COND_WRAP("${ITKM_D}2"  "${ITKT_D},2"  "") # needed for BSplineDeformableTransform
-  COND_WRAP("${ITKM_UC}2" "${ITKT_UC},2" "") # needed to save in 8 bits
-  COND_WRAP("${ITKM_US}2" "${ITKT_US},2" "US")
-  COND_WRAP("${ITKM_UL}2" "${ITKT_UL},2" "") # needed for watershed and relabel filters
-  COND_WRAP("${ITKM_SC}2" "${ITKT_SC},2" "SC")
-  COND_WRAP("${ITKM_SS}2" "${ITKT_SS},2" "SS")
-  COND_WRAP("${ITKM_SL}2" "${ITKT_SL},2" "SL")
-  COND_WRAP("${ITKM_VF2}2" "${ITKT_VF2},2" "VF")
-  COND_WRAP("${ITKM_VD2}2" "${ITKT_VD2},2" "VD")
-  COND_WRAP("${ITKM_CVF2}2" "${ITKT_CVF2},2" "CVF")
-  COND_WRAP("${ITKM_CVD2}2" "${ITKT_CVD2},2" "CVD")
-  WRAP("${ITKM_O2}2" "${ITKT_O2},2")
+  FOREACH(d ${WRAP_DIMS})
+    COND_WRAP("${ITKM_F}${d}"  "${ITKT_F},${d}"  "F")
+    COND_WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}"  "") # needed for BSplineDeformableTransform
+    COND_WRAP("${ITKM_UC}${d}" "${ITKT_UC},${d}" "") # needed to save in 8 bits
+    COND_WRAP("${ITKM_US}${d}" "${ITKT_US},${d}" "US")
+    COND_WRAP("${ITKM_UL}${d}" "${ITKT_UL},${d}" "") # needed for watershed and relabel filters
+    COND_WRAP("${ITKM_SC}${d}" "${ITKT_SC},${d}" "SC")
+    COND_WRAP("${ITKM_SS}${d}" "${ITKT_SS},${d}" "SS")
+    COND_WRAP("${ITKM_SL}${d}" "${ITKT_SL},${d}" "SL")
+    COND_WRAP("${ITKM_VF${d}}${d}" "${ITKT_VF${d}},${d}" "VF")
+    COND_WRAP("${ITKM_VD${d}}${d}" "${ITKT_VD${d}},${d}" "VD")
+    COND_WRAP("${ITKM_CVF${d}}${d}" "${ITKT_CVF${d}},${d}" "CVF")
+    COND_WRAP("${ITKM_CVD${d}}${d}" "${ITKT_CVD${d}},${d}" "CVD")
+    WRAP("${ITKM_O${d}}${d}" "${ITKT_O${d}},${d}")
+  ENDFOREACH(d)
 END_WRAP_TYPE()
 SET(itk_Wrap_Image_2D ${itk_Wrap})
 
-WRAP_TYPE("Image" "I")
-  COND_WRAP("${ITKM_F}3"  "${ITKT_F},3"  "F")
-  COND_WRAP("${ITKM_D}3"  "${ITKT_D},3"  "") # needed for BSplineDeformableTransform
-  COND_WRAP("${ITKM_UC}3" "${ITKT_UC},3" "") # needed to save in 8 bits
-  COND_WRAP("${ITKM_US}3" "${ITKT_US},3" "US")
-  COND_WRAP("${ITKM_UL}3" "${ITKT_UL},3" "") # needed for watershed and relabel filters
-  COND_WRAP("${ITKM_SC}3" "${ITKT_SC},3" "SC")
-  COND_WRAP("${ITKM_SS}3" "${ITKT_SS},3" "SS")
-  COND_WRAP("${ITKM_SL}3" "${ITKT_SL},3" "SL")
-  COND_WRAP("${ITKM_VF3}3" "${ITKT_VF3},3" "VF")
-  COND_WRAP("${ITKM_VD3}3" "${ITKT_VD3},3" "VD")
-  COND_WRAP("${ITKM_CVF3}3" "${ITKT_CVF3},3" "CVF")
-  COND_WRAP("${ITKM_CVD3}3" "${ITKT_CVD3},3" "CVD")
-  WRAP("${ITKM_O3}3" "${ITKT_O3},3")
+
+#------------------------------------------------------------------------------
+WRAP_TYPE("Point" "P")
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${ITKM_F}${d}"  "${ITKT_F},${d}")
+    WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}")
+  ENDFOREACH(d)
 END_WRAP_TYPE()
-SET(itk_Wrap_Image_3D ${itk_Wrap})
+SET(itk_Wrap_Point ${itk_Wrap})
 
 #------------------------------------------------------------------------------
-SET(WRAP_PREFIX_Point "P")
-SET(itk_Wrap_Point
-   "${ITKM_F}2  # ${ITKT_F},2"
-   "${ITKM_F}3  # ${ITKT_F},3"
-   "${ITKM_D}2  # ${ITKT_D},2"
-   "${ITKM_D}3  # ${ITKT_D},3"
-)
-CREATE_WRAP_TYPE("Point" ${WRAP_PREFIX_Point} "${itk_Wrap_Point}")
+WRAP_TYPE("LevelSetNode" "LSN")
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${ITKM_F}${d}"  "${ITKT_F},${d}")
+    WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}")
+    WRAP("${ITKM_UC}${d}" "${ITKT_UC},${d}")
+    WRAP("${ITKM_US}${d}" "${ITKT_US},${d}")
+    WRAP("${ITKM_UL}${d}" "${ITKT_UL},${d}")
+    WRAP("${ITKM_SC}${d}" "${ITKT_SC},${d}")
+    WRAP("${ITKM_SS}${d}" "${ITKT_SS},${d}")
+    WRAP("${ITKM_SL}${d}" "${ITKT_SL},${d}")
+  ENDFOREACH(d)
+END_WRAP_TYPE()
+SET(itk_Wrap_LevelSetNode ${itk_Wrap})
 
-#------------------------------------------------------------------------------
-SET(WRAP_PREFIX_LevelSetNode "LSN")
-SET(itk_Wrap_LevelSetNode
-   "${ITKM_F}2    # ${ITKT_F},2"
-   "${ITKM_D}2    # ${ITKT_D},2"
-   "${ITKM_UC}2   # ${ITKT_UC},2"
-   "${ITKM_US}2   # ${ITKT_US},2"
-   "${ITKM_UL}2   # ${ITKT_UL},2"
-   "${ITKM_SC}2   # ${ITKT_SC},2"
-   "${ITKM_SS}2   # ${ITKT_SS},2"
-   "${ITKM_SL}2   # ${ITKT_SL},2"
-
-   "${ITKM_F}3    # ${ITKT_F},3"
-   "${ITKM_D}3    # ${ITKT_D},3"
-   "${ITKM_UC}3   # ${ITKT_UC},3"
-   "${ITKM_US}3   # ${ITKT_US},3"
-   "${ITKM_UL}3   # ${ITKT_UL},3"
-   "${ITKM_SC}3   # ${ITKT_SC},3"
-   "${ITKM_SS}3   # ${ITKT_SS},3"
-   "${ITKM_SL}3   # ${ITKT_SL},3"
-)
-CREATE_WRAP_TYPE("LevelSetNode" ${WRAP_PREFIX_LevelSetNode} "${itk_Wrap_LevelSetNode}")
 
 #------------------------------------------------------------------------------
 WRAP_TYPE("BinaryBallStructuringElement" "SE")
-  COND_WRAP("${ITKM_F}2"  "${ITKT_F},2"  "F")
-  COND_WRAP("${ITKM_D}2"  "${ITKT_D},2"  "D")
-  COND_WRAP("${ITKM_UC}2" "${ITKT_UC},2" "UC")
-  COND_WRAP("${ITKM_US}2" "${ITKT_US},2" "US")
-  COND_WRAP("${ITKM_UL}2" "${ITKT_UL},2" "UL")
-  COND_WRAP("${ITKM_SC}2" "${ITKT_SC},2" "SC")
-  COND_WRAP("${ITKM_SS}2" "${ITKT_SS},2" "SS")
-  COND_WRAP("${ITKM_SL}2" "${ITKT_SL},2" "SL")
-  COND_WRAP("${ITKM_F}3"  "${ITKT_F},3"  "F")
-  COND_WRAP("${ITKM_D}3"  "${ITKT_D},3"  "D")
-  COND_WRAP("${ITKM_UC}3" "${ITKT_UC},3" "UC")
-  COND_WRAP("${ITKM_US}3" "${ITKT_US},3" "US")
-  COND_WRAP("${ITKM_UL}3" "${ITKT_UL},3" "UL")
-  COND_WRAP("${ITKM_SC}3" "${ITKT_SC},3" "SC")
-  COND_WRAP("${ITKM_SS}3" "${ITKT_SS},3" "SS")
-  COND_WRAP("${ITKM_SL}3" "${ITKT_SL},3" "SL")
+  FOREACH(d ${WRAP_DIMS})
+    COND_WRAP("${ITKM_F}${d}"  "${ITKT_F},${d}"  "F")
+    COND_WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}"  "D")
+    COND_WRAP("${ITKM_UC}${d}" "${ITKT_UC},${d}" "UC")
+    COND_WRAP("${ITKM_US}${d}" "${ITKT_US},${d}" "US")
+    COND_WRAP("${ITKM_UL}${d}" "${ITKT_UL},${d}" "UL")
+    COND_WRAP("${ITKM_SC}${d}" "${ITKT_SC},${d}" "SC")
+    COND_WRAP("${ITKM_SS}${d}" "${ITKT_SS},${d}" "SS")
+    COND_WRAP("${ITKM_SL}${d}" "${ITKT_SL},${d}" "SL")
+  ENDFOREACH(d)
 END_WRAP_TYPE()
 SET(itk_Wrap_StructuringElement ${itk_Wrap})
 
 #------------------------------------------------------------------------------
-SET(WRAP_PREFIX_SpatialObject "SO")
-SET(itk_Wrap_SpatialObject
-    "2 # 2"
-    "3 # 3"
-)
-CREATE_WRAP_TYPE("SpatialObject" ${WRAP_PREFIX_SpatialObject} "${itk_Wrap_SpatialObject}")
+WRAP_TYPE("SpatialObject" "SO")
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${d}"  "${d}")
+  ENDFOREACH(d)
+END_WRAP_TYPE()
+SET(itk_Wrap_SpatialObject ${itk_Wrap})
 
 #------------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 WRAP_CLASS("RawImageIO" POINTER)
-  WRAP("${ITKM_F}2" "${ITKT_F},2")
-  WRAP("${ITKM_F}3" "${ITKT_F},3")
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${ITKM_F}${d}" "${ITKT_F},${d}")
+  ENDFOREACH(d)
 END_WRAP_CLASS()
 
 WRAP_CLASS_NOTPL("ImageIOBase" POINTER)
@@ -13,4 +14,5 @@ WRAP_CLASS_NOTPL("DicomImageIOFactory" POINTER)
 WRAP_CLASS_NOTPL("DICOMSeriesFileNames" POINTER)
 WRAP_CLASS_NOTPL("NumericSeriesFileNames" POINTER)
 WRAP_CLASS_NOTPL("RegularExpressionSeriesFileNames" POINTER)
+WRAP_CLASS_NOTPL("GDCMImageIO" POINTER)
 

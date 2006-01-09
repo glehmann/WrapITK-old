@@ -1,4 +1,5 @@
 WRAP_CLASS("MatrixOffsetTransformBase" POINTER)
-  WRAP("${ITKM_D}22" "${ITKT_D},2,2")
-  WRAP("${ITKM_D}33" "${ITKT_D},3,3")
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${ITKM_D}${d}${d}" "${ITKT_D},${d},${d}")
+  ENDFOREACH(d)
 END_WRAP_CLASS()

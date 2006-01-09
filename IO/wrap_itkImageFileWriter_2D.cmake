@@ -1,12 +1,12 @@
 WRAP_CLASS("ImageFileWriter" POINTER)
-
-  COND_WRAP("${ITKM_IF2}"  "${ITKT_IF2}"  "F")
-  COND_WRAP("${ITKM_ID2}"  "${ITKT_ID2}"  "D")
-  COND_WRAP("${ITKM_IUC2}" "${ITKT_IUC2}" "")  # neded to save in 8 bits
-  COND_WRAP("${ITKM_IUS2}" "${ITKT_IUS2}" "US")
-  COND_WRAP("${ITKM_IUL2}" "${ITKT_IUL2}" "UL")
-  COND_WRAP("${ITKM_ISC2}" "${ITKT_ISC2}" "SC")
-  COND_WRAP("${ITKM_ISS2}" "${ITKT_ISS2}" "SS")
-  COND_WRAP("${ITKM_ISL2}" "${ITKT_ISL2}" "SL")
-
+  FOREACH(d ${WRAP_DIMS})
+    COND_WRAP("${ITKM_IF${d}}"  "${ITKT_IF${d}}"  "F")
+    COND_WRAP("${ITKM_ID${d}}"  "${ITKT_ID${d}}"  "D")
+    COND_WRAP("${ITKM_IUC${d}}" "${ITKT_IUC${d}}" "")  # neded to save in 8 bits
+    COND_WRAP("${ITKM_IUS${d}}" "${ITKT_IUS${d}}" "US")
+    COND_WRAP("${ITKM_IUL${d}}" "${ITKT_IUL${d}}" "UL")
+    COND_WRAP("${ITKM_ISC${d}}" "${ITKT_ISC${d}}" "SC")
+    COND_WRAP("${ITKM_ISS${d}}" "${ITKT_ISS${d}}" "SS")
+    COND_WRAP("${ITKM_ISL${d}}" "${ITKT_ISL${d}}" "SL")
+  ENDFOREACH(d)
 END_WRAP_CLASS()

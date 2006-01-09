@@ -72,16 +72,16 @@ WRAP_CLASS("ImageToImageFilter" POINTER)
     COND_WRAP("${ITKM_ISC${d}}${ITKM_ISS${d}}" "${ITKT_ISC${d}},${ITKT_ISS${d}}" "SC;SS")
     COND_WRAP("${ITKM_ISC${d}}${ITKM_ISC${d}}" "${ITKT_ISC${d}},${ITKT_ISC${d}}" "SC")
     
-    # dim=3 -> dim=2
-    SET(e ${d} - 1)
-    COND_WRAP("${ITKM_ID${e}}${ITKM_ID${d}}"   "${ITKT_ID${e}},${ITKT_ID${d}}"   "D")
-    COND_WRAP("${ITKM_IF${e}}${ITKM_IF${d}}"   "${ITKT_IF${e}},${ITKT_IF${d}}"   "F")
-    COND_WRAP("${ITKM_IUL${e}}${ITKM_IUL${d}}" "${ITKT_IUL${e}},${ITKT_IUL${d}}" "UL")
-    COND_WRAP("${ITKM_IUS${e}}${ITKM_IUS${d}}" "${ITKT_IUS${e}},${ITKT_IUS${d}}" "US")
-    COND_WRAP("${ITKM_IUC${e}}${ITKM_IUC${d}}" "${ITKT_IUC${e}},${ITKT_IUC${d}}" "UC")
-    COND_WRAP("${ITKM_ISL${e}}${ITKM_ISL${d}}" "${ITKT_ISL${e}},${ITKT_ISL${d}}" "SL")
-    COND_WRAP("${ITKM_ISS${e}}${ITKM_ISS${d}}" "${ITKT_ISS${e}},${ITKT_ISS${d}}" "SS")
-    COND_WRAP("${ITKM_ISC${e}}${ITKM_ISC${d}}" "${ITKT_ISC${e}},${ITKT_ISC${d}}" "SC")
+#     # dim=3 -> dim=2
+#     SET(e ${d} - 1)
+#     COND_WRAP("${ITKM_ID${e}}${ITKM_ID${d}}"   "${ITKT_ID${e}},${ITKT_ID${d}}"   "D")
+#     COND_WRAP("${ITKM_IF${e}}${ITKM_IF${d}}"   "${ITKT_IF${e}},${ITKT_IF${d}}"   "F")
+#     COND_WRAP("${ITKM_IUL${e}}${ITKM_IUL${d}}" "${ITKT_IUL${e}},${ITKT_IUL${d}}" "UL")
+#     COND_WRAP("${ITKM_IUS${e}}${ITKM_IUS${d}}" "${ITKT_IUS${e}},${ITKT_IUS${d}}" "US")
+#     COND_WRAP("${ITKM_IUC${e}}${ITKM_IUC${d}}" "${ITKT_IUC${e}},${ITKT_IUC${d}}" "UC")
+#     COND_WRAP("${ITKM_ISL${e}}${ITKM_ISL${d}}" "${ITKT_ISL${e}},${ITKT_ISL${d}}" "SL")
+#     COND_WRAP("${ITKM_ISS${e}}${ITKM_ISS${d}}" "${ITKT_ISS${e}},${ITKT_ISS${d}}" "SS")
+#     COND_WRAP("${ITKM_ISC${e}}${ITKM_ISC${d}}" "${ITKT_ISC${e}},${ITKT_ISC${d}}" "SC")
     
     # vector types
     COND_WRAP("${ITKM_IVD${d}${d}}${ITKM_IVD${d}${d}}"  "${ITKT_IVD${d}${d}},${ITKT_IVD${d}${d}}"  "VD")

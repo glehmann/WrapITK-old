@@ -1,4 +1,5 @@
 WRAP_CLASS("SpatialObject" POINTER)
-  WRAP("2" "2")
-  WRAP("3" "3")
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${d}" "${d}")
+  ENDFOREACH(d)
 END_WRAP_CLASS()

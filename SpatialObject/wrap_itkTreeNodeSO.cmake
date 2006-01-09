@@ -1,4 +1,5 @@
 WRAP_CLASS(TreeNode POINTER)
-  WRAP("${ITKM_SO2}" "${ITKT_SO2}*")
-  WRAP("${ITKM_SO3}" "${ITKT_SO3}*")
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${ITKM_SO${d}}" "${ITKT_SO${d}}*")
+  ENDFOREACH(d)
 END_WRAP_CLASS()

@@ -1,82 +1,83 @@
 WRAP_CLASS("CastImageFilter" POINTER_WITH_SUPERCLASS)
-
-  COND_WRAP("${ITKM_ID2}${ITKM_ID2}"  "${ITKT_ID2},${ITKT_ID2}"  "D")
-  COND_WRAP("${ITKM_ID2}${ITKM_IF2}"  "${ITKT_ID2},${ITKT_IF2}"  "D;F")
-  COND_WRAP("${ITKM_ID2}${ITKM_IUL2}" "${ITKT_ID2},${ITKT_IUL2}" "D;UL")
-  COND_WRAP("${ITKM_ID2}${ITKM_IUS2}" "${ITKT_ID2},${ITKT_IUS2}" "D;US")
-  COND_WRAP("${ITKM_ID2}${ITKM_IUC2}" "${ITKT_ID2},${ITKT_IUC2}" "D") # needed to save in 8 bits
-  COND_WRAP("${ITKM_ID2}${ITKM_ISL2}" "${ITKT_ID2},${ITKT_ISL2}" "D;SL")
-  COND_WRAP("${ITKM_ID2}${ITKM_ISS2}" "${ITKT_ID2},${ITKT_ISS2}" "D;SS")
-  COND_WRAP("${ITKM_ID2}${ITKM_ISC2}" "${ITKT_ID2},${ITKT_ISC2}" "D;SC")
-  
-  COND_WRAP("${ITKM_IF2}${ITKM_ID2}"  "${ITKT_IF2},${ITKT_ID2}"  "F;D")
-  COND_WRAP("${ITKM_IF2}${ITKM_IF2}"  "${ITKT_IF2},${ITKT_IF2}"  "F")
-  COND_WRAP("${ITKM_IF2}${ITKM_IUL2}" "${ITKT_IF2},${ITKT_IUL2}" "F;UL")
-  COND_WRAP("${ITKM_IF2}${ITKM_IUS2}" "${ITKT_IF2},${ITKT_IUS2}" "F;US")
-  COND_WRAP("${ITKM_IF2}${ITKM_IUC2}" "${ITKT_IF2},${ITKT_IUC2}" "F") # needed to save in 8 bits
-  COND_WRAP("${ITKM_IF2}${ITKM_ISL2}" "${ITKT_IF2},${ITKT_ISL2}" "F;SL")
-  COND_WRAP("${ITKM_IF2}${ITKM_ISS2}" "${ITKT_IF2},${ITKT_ISS2}" "F;SS")
-  COND_WRAP("${ITKM_IF2}${ITKM_ISC2}" "${ITKT_IF2},${ITKT_ISC2}" "F;SC")
-  
-  COND_WRAP("${ITKM_IUL2}${ITKM_ID2}"  "${ITKT_IUL2},${ITKT_ID2}"  "UL;D")
-  COND_WRAP("${ITKM_IUL2}${ITKM_IF2}"  "${ITKT_IUL2},${ITKT_IF2}"  "UL;F")
-  COND_WRAP("${ITKM_IUL2}${ITKM_IUL2}" "${ITKT_IUL2},${ITKT_IUL2}" "UL")
-  COND_WRAP("${ITKM_IUL2}${ITKM_IUS2}" "${ITKT_IUL2},${ITKT_IUS2}" "UL;US")
-  COND_WRAP("${ITKM_IUL2}${ITKM_IUC2}" "${ITKT_IUL2},${ITKT_IUC2}" "UL") # needed to save in 8 bits
-  COND_WRAP("${ITKM_IUL2}${ITKM_ISL2}" "${ITKT_IUL2},${ITKT_ISL2}" "UL;SL")
-  COND_WRAP("${ITKM_IUL2}${ITKM_ISS2}" "${ITKT_IUL2},${ITKT_ISS2}" "UL;SS")
-  COND_WRAP("${ITKM_IUL2}${ITKM_ISC2}" "${ITKT_IUL2},${ITKT_ISC2}" "UL;SC")
-  
-  COND_WRAP("${ITKM_IUS2}${ITKM_ID2}"  "${ITKT_IUS2},${ITKT_ID2}"  "US;D")
-  COND_WRAP("${ITKM_IUS2}${ITKM_IF2}"  "${ITKT_IUS2},${ITKT_IF2}"  "US;F")
-  COND_WRAP("${ITKM_IUS2}${ITKM_IUL2}" "${ITKT_IUS2},${ITKT_IUL2}" "US;UL")
-  COND_WRAP("${ITKM_IUS2}${ITKM_IUS2}" "${ITKT_IUS2},${ITKT_IUS2}" "US")
-  COND_WRAP("${ITKM_IUS2}${ITKM_IUC2}" "${ITKT_IUS2},${ITKT_IUC2}" "US") # needed to save in 8 bits
-  COND_WRAP("${ITKM_IUS2}${ITKM_ISL2}" "${ITKT_IUS2},${ITKT_ISL2}" "US;SL")
-  COND_WRAP("${ITKM_IUS2}${ITKM_ISS2}" "${ITKT_IUS2},${ITKT_ISS2}" "US;SS")
-  COND_WRAP("${ITKM_IUS2}${ITKM_ISC2}" "${ITKT_IUS2},${ITKT_ISC2}" "US;SC")
-  
-  COND_WRAP("${ITKM_IUC2}${ITKM_ID2}"  "${ITKT_IUC2},${ITKT_ID2}"  "UC;D")
-  COND_WRAP("${ITKM_IUC2}${ITKM_IF2}"  "${ITKT_IUC2},${ITKT_IF2}"  "UC;F")
-  COND_WRAP("${ITKM_IUC2}${ITKM_IUL2}" "${ITKT_IUC2},${ITKT_IUL2}" "UC;UL")
-  COND_WRAP("${ITKM_IUC2}${ITKM_IUS2}" "${ITKT_IUC2},${ITKT_IUS2}" "UC;US")
-  COND_WRAP("${ITKM_IUC2}${ITKM_IUC2}" "${ITKT_IUC2},${ITKT_IUC2}" "UC")
-  COND_WRAP("${ITKM_IUC2}${ITKM_ISL2}" "${ITKT_IUC2},${ITKT_ISL2}" "UC;SL")
-  COND_WRAP("${ITKM_IUC2}${ITKM_ISS2}" "${ITKT_IUC2},${ITKT_ISS2}" "UC;SS")
-  COND_WRAP("${ITKM_IUC2}${ITKM_ISC2}" "${ITKT_IUC2},${ITKT_ISC2}" "UC;SC")
-  
-  COND_WRAP("${ITKM_ISL2}${ITKM_ID2}"  "${ITKT_ISL2},${ITKT_ID2}"  "SL;D")
-  COND_WRAP("${ITKM_ISL2}${ITKM_IF2}"  "${ITKT_ISL2},${ITKT_IF2}"  "SL;F")
-  COND_WRAP("${ITKM_ISL2}${ITKM_IUL2}" "${ITKT_ISL2},${ITKT_IUL2}" "SL;UL")
-  COND_WRAP("${ITKM_ISL2}${ITKM_IUS2}" "${ITKT_ISL2},${ITKT_IUS2}" "SL;US")
-  COND_WRAP("${ITKM_ISL2}${ITKM_IUC2}" "${ITKT_ISL2},${ITKT_IUC2}" "SL") # needed to save in 8 bits
-  COND_WRAP("${ITKM_ISL2}${ITKM_ISL2}" "${ITKT_ISL2},${ITKT_ISL2}" "SL")
-  COND_WRAP("${ITKM_ISL2}${ITKM_ISS2}" "${ITKT_ISL2},${ITKT_ISS2}" "SL;SS")
-  COND_WRAP("${ITKM_ISL2}${ITKM_ISC2}" "${ITKT_ISL2},${ITKT_ISC2}" "SL;SC")
-  
-  COND_WRAP("${ITKM_ISS2}${ITKM_ID2}"  "${ITKT_ISS2},${ITKT_ID2}"  "SS;D")
-  COND_WRAP("${ITKM_ISS2}${ITKM_IF2}"  "${ITKT_ISS2},${ITKT_IF2}"  "SS;F")
-  COND_WRAP("${ITKM_ISS2}${ITKM_IUL2}" "${ITKT_ISS2},${ITKT_IUL2}" "SS;UL")
-  COND_WRAP("${ITKM_ISS2}${ITKM_IUS2}" "${ITKT_ISS2},${ITKT_IUS2}" "SS;US")
-  COND_WRAP("${ITKM_ISS2}${ITKM_IUC2}" "${ITKT_ISS2},${ITKT_IUC2}" "SS") # needed to save in 8 bits
-  COND_WRAP("${ITKM_ISS2}${ITKM_ISL2}" "${ITKT_ISS2},${ITKT_ISL2}" "SS;SL")
-  COND_WRAP("${ITKM_ISS2}${ITKM_ISS2}" "${ITKT_ISS2},${ITKT_ISS2}" "SS")
-  COND_WRAP("${ITKM_ISS2}${ITKM_ISC2}" "${ITKT_ISS2},${ITKT_ISC2}" "SS;SC")
-  
-  COND_WRAP("${ITKM_ISC2}${ITKM_ID2}"  "${ITKT_ISC2},${ITKT_ID2}"  "SC;D")
-  COND_WRAP("${ITKM_ISC2}${ITKM_IF2}"  "${ITKT_ISC2},${ITKT_IF2}"  "SC;F")
-  COND_WRAP("${ITKM_ISC2}${ITKM_IUL2}" "${ITKT_ISC2},${ITKT_IUL2}" "SC;UL")
-  COND_WRAP("${ITKM_ISC2}${ITKM_IUS2}" "${ITKT_ISC2},${ITKT_IUS2}" "SC;US")
-  COND_WRAP("${ITKM_ISC2}${ITKM_IUC2}" "${ITKT_ISC2},${ITKT_IUC2}" "SC") # needed to save in 8 bits
-  COND_WRAP("${ITKM_ISC2}${ITKM_ISL2}" "${ITKT_ISC2},${ITKT_ISL2}" "SC;SL")
-  COND_WRAP("${ITKM_ISC2}${ITKM_ISS2}" "${ITKT_ISC2},${ITKT_ISS2}" "SC;SS")
-  COND_WRAP("${ITKM_ISC2}${ITKM_ISC2}" "${ITKT_ISC2},${ITKT_ISC2}" "SC")
-  
-  # vector types
-  COND_WRAP("${ITKM_IVD22}${ITKM_IVD22}"  "${ITKT_IVD22},${ITKT_IVD22}"  "VD")
-  COND_WRAP("${ITKM_IVF22}${ITKM_IVF22}"  "${ITKT_IVF22},${ITKT_IVF22}"  "VF")
-  COND_WRAP("${ITKM_ICVD22}${ITKM_ICVD22}"  "${ITKT_ICVD22},${ITKT_ICVD22}"  "CVD")
-  COND_WRAP("${ITKM_ICVF22}${ITKM_ICVF22}"  "${ITKT_ICVF22},${ITKT_ICVF22}"  "CVF")
+  FOREACH(d ${WRAP_DIMS})
+    COND_WRAP("${ITKM_ID${d}}${ITKM_ID${d}}"  "${ITKT_ID${d}},${ITKT_ID${d}}"  "D")
+    COND_WRAP("${ITKM_ID${d}}${ITKM_IF${d}}"  "${ITKT_ID${d}},${ITKT_IF${d}}"  "D;F")
+    COND_WRAP("${ITKM_ID${d}}${ITKM_IUL${d}}" "${ITKT_ID${d}},${ITKT_IUL${d}}" "D;UL")
+    COND_WRAP("${ITKM_ID${d}}${ITKM_IUS${d}}" "${ITKT_ID${d}},${ITKT_IUS${d}}" "D;US")
+    COND_WRAP("${ITKM_ID${d}}${ITKM_IUC${d}}" "${ITKT_ID${d}},${ITKT_IUC${d}}" "D") # needed to save in 8 bits
+    COND_WRAP("${ITKM_ID${d}}${ITKM_ISL${d}}" "${ITKT_ID${d}},${ITKT_ISL${d}}" "D;SL")
+    COND_WRAP("${ITKM_ID${d}}${ITKM_ISS${d}}" "${ITKT_ID${d}},${ITKT_ISS${d}}" "D;SS")
+    COND_WRAP("${ITKM_ID${d}}${ITKM_ISC${d}}" "${ITKT_ID${d}},${ITKT_ISC${d}}" "D;SC")
+    
+    COND_WRAP("${ITKM_IF${d}}${ITKM_ID${d}}"  "${ITKT_IF${d}},${ITKT_ID${d}}"  "F;D")
+    COND_WRAP("${ITKM_IF${d}}${ITKM_IF${d}}"  "${ITKT_IF${d}},${ITKT_IF${d}}"  "F")
+    COND_WRAP("${ITKM_IF${d}}${ITKM_IUL${d}}" "${ITKT_IF${d}},${ITKT_IUL${d}}" "F;UL")
+    COND_WRAP("${ITKM_IF${d}}${ITKM_IUS${d}}" "${ITKT_IF${d}},${ITKT_IUS${d}}" "F;US")
+    COND_WRAP("${ITKM_IF${d}}${ITKM_IUC${d}}" "${ITKT_IF${d}},${ITKT_IUC${d}}" "F") # needed to save in 8 bits
+    COND_WRAP("${ITKM_IF${d}}${ITKM_ISL${d}}" "${ITKT_IF${d}},${ITKT_ISL${d}}" "F;SL")
+    COND_WRAP("${ITKM_IF${d}}${ITKM_ISS${d}}" "${ITKT_IF${d}},${ITKT_ISS${d}}" "F;SS")
+    COND_WRAP("${ITKM_IF${d}}${ITKM_ISC${d}}" "${ITKT_IF${d}},${ITKT_ISC${d}}" "F;SC")
+    
+    COND_WRAP("${ITKM_IUL${d}}${ITKM_ID${d}}"  "${ITKT_IUL${d}},${ITKT_ID${d}}"  "UL;D")
+    COND_WRAP("${ITKM_IUL${d}}${ITKM_IF${d}}"  "${ITKT_IUL${d}},${ITKT_IF${d}}"  "UL;F")
+    COND_WRAP("${ITKM_IUL${d}}${ITKM_IUL${d}}" "${ITKT_IUL${d}},${ITKT_IUL${d}}" "UL")
+    COND_WRAP("${ITKM_IUL${d}}${ITKM_IUS${d}}" "${ITKT_IUL${d}},${ITKT_IUS${d}}" "UL;US")
+    COND_WRAP("${ITKM_IUL${d}}${ITKM_IUC${d}}" "${ITKT_IUL${d}},${ITKT_IUC${d}}" "UL") # needed to save in 8 bits
+    COND_WRAP("${ITKM_IUL${d}}${ITKM_ISL${d}}" "${ITKT_IUL${d}},${ITKT_ISL${d}}" "UL;SL")
+    COND_WRAP("${ITKM_IUL${d}}${ITKM_ISS${d}}" "${ITKT_IUL${d}},${ITKT_ISS${d}}" "UL;SS")
+    COND_WRAP("${ITKM_IUL${d}}${ITKM_ISC${d}}" "${ITKT_IUL${d}},${ITKT_ISC${d}}" "UL;SC")
+    
+    COND_WRAP("${ITKM_IUS${d}}${ITKM_ID${d}}"  "${ITKT_IUS${d}},${ITKT_ID${d}}"  "US;D")
+    COND_WRAP("${ITKM_IUS${d}}${ITKM_IF${d}}"  "${ITKT_IUS${d}},${ITKT_IF${d}}"  "US;F")
+    COND_WRAP("${ITKM_IUS${d}}${ITKM_IUL${d}}" "${ITKT_IUS${d}},${ITKT_IUL${d}}" "US;UL")
+    COND_WRAP("${ITKM_IUS${d}}${ITKM_IUS${d}}" "${ITKT_IUS${d}},${ITKT_IUS${d}}" "US")
+    COND_WRAP("${ITKM_IUS${d}}${ITKM_IUC${d}}" "${ITKT_IUS${d}},${ITKT_IUC${d}}" "US") # needed to save in 8 bits
+    COND_WRAP("${ITKM_IUS${d}}${ITKM_ISL${d}}" "${ITKT_IUS${d}},${ITKT_ISL${d}}" "US;SL")
+    COND_WRAP("${ITKM_IUS${d}}${ITKM_ISS${d}}" "${ITKT_IUS${d}},${ITKT_ISS${d}}" "US;SS")
+    COND_WRAP("${ITKM_IUS${d}}${ITKM_ISC${d}}" "${ITKT_IUS${d}},${ITKT_ISC${d}}" "US;SC")
+    
+    COND_WRAP("${ITKM_IUC${d}}${ITKM_ID${d}}"  "${ITKT_IUC${d}},${ITKT_ID${d}}"  "UC;D")
+    COND_WRAP("${ITKM_IUC${d}}${ITKM_IF${d}}"  "${ITKT_IUC${d}},${ITKT_IF${d}}"  "UC;F")
+    COND_WRAP("${ITKM_IUC${d}}${ITKM_IUL${d}}" "${ITKT_IUC${d}},${ITKT_IUL${d}}" "UC;UL")
+    COND_WRAP("${ITKM_IUC${d}}${ITKM_IUS${d}}" "${ITKT_IUC${d}},${ITKT_IUS${d}}" "UC;US")
+    COND_WRAP("${ITKM_IUC${d}}${ITKM_IUC${d}}" "${ITKT_IUC${d}},${ITKT_IUC${d}}" "UC")
+    COND_WRAP("${ITKM_IUC${d}}${ITKM_ISL${d}}" "${ITKT_IUC${d}},${ITKT_ISL${d}}" "UC;SL")
+    COND_WRAP("${ITKM_IUC${d}}${ITKM_ISS${d}}" "${ITKT_IUC${d}},${ITKT_ISS${d}}" "UC;SS")
+    COND_WRAP("${ITKM_IUC${d}}${ITKM_ISC${d}}" "${ITKT_IUC${d}},${ITKT_ISC${d}}" "UC;SC")
+    
+    COND_WRAP("${ITKM_ISL${d}}${ITKM_ID${d}}"  "${ITKT_ISL${d}},${ITKT_ID${d}}"  "SL;D")
+    COND_WRAP("${ITKM_ISL${d}}${ITKM_IF${d}}"  "${ITKT_ISL${d}},${ITKT_IF${d}}"  "SL;F")
+    COND_WRAP("${ITKM_ISL${d}}${ITKM_IUL${d}}" "${ITKT_ISL${d}},${ITKT_IUL${d}}" "SL;UL")
+    COND_WRAP("${ITKM_ISL${d}}${ITKM_IUS${d}}" "${ITKT_ISL${d}},${ITKT_IUS${d}}" "SL;US")
+    COND_WRAP("${ITKM_ISL${d}}${ITKM_IUC${d}}" "${ITKT_ISL${d}},${ITKT_IUC${d}}" "SL") # needed to save in 8 bits
+    COND_WRAP("${ITKM_ISL${d}}${ITKM_ISL${d}}" "${ITKT_ISL${d}},${ITKT_ISL${d}}" "SL")
+    COND_WRAP("${ITKM_ISL${d}}${ITKM_ISS${d}}" "${ITKT_ISL${d}},${ITKT_ISS${d}}" "SL;SS")
+    COND_WRAP("${ITKM_ISL${d}}${ITKM_ISC${d}}" "${ITKT_ISL${d}},${ITKT_ISC${d}}" "SL;SC")
+    
+    COND_WRAP("${ITKM_ISS${d}}${ITKM_ID${d}}"  "${ITKT_ISS${d}},${ITKT_ID${d}}"  "SS;D")
+    COND_WRAP("${ITKM_ISS${d}}${ITKM_IF${d}}"  "${ITKT_ISS${d}},${ITKT_IF${d}}"  "SS;F")
+    COND_WRAP("${ITKM_ISS${d}}${ITKM_IUL${d}}" "${ITKT_ISS${d}},${ITKT_IUL${d}}" "SS;UL")
+    COND_WRAP("${ITKM_ISS${d}}${ITKM_IUS${d}}" "${ITKT_ISS${d}},${ITKT_IUS${d}}" "SS;US")
+    COND_WRAP("${ITKM_ISS${d}}${ITKM_IUC${d}}" "${ITKT_ISS${d}},${ITKT_IUC${d}}" "SS") # needed to save in 8 bits
+    COND_WRAP("${ITKM_ISS${d}}${ITKM_ISL${d}}" "${ITKT_ISS${d}},${ITKT_ISL${d}}" "SS;SL")
+    COND_WRAP("${ITKM_ISS${d}}${ITKM_ISS${d}}" "${ITKT_ISS${d}},${ITKT_ISS${d}}" "SS")
+    COND_WRAP("${ITKM_ISS${d}}${ITKM_ISC${d}}" "${ITKT_ISS${d}},${ITKT_ISC${d}}" "SS;SC")
+    
+    COND_WRAP("${ITKM_ISC${d}}${ITKM_ID${d}}"  "${ITKT_ISC${d}},${ITKT_ID${d}}"  "SC;D")
+    COND_WRAP("${ITKM_ISC${d}}${ITKM_IF${d}}"  "${ITKT_ISC${d}},${ITKT_IF${d}}"  "SC;F")
+    COND_WRAP("${ITKM_ISC${d}}${ITKM_IUL${d}}" "${ITKT_ISC${d}},${ITKT_IUL${d}}" "SC;UL")
+    COND_WRAP("${ITKM_ISC${d}}${ITKM_IUS${d}}" "${ITKT_ISC${d}},${ITKT_IUS${d}}" "SC;US")
+    COND_WRAP("${ITKM_ISC${d}}${ITKM_IUC${d}}" "${ITKT_ISC${d}},${ITKT_IUC${d}}" "SC") # needed to save in 8 bits
+    COND_WRAP("${ITKM_ISC${d}}${ITKM_ISL${d}}" "${ITKT_ISC${d}},${ITKT_ISL${d}}" "SC;SL")
+    COND_WRAP("${ITKM_ISC${d}}${ITKM_ISS${d}}" "${ITKT_ISC${d}},${ITKT_ISS${d}}" "SC;SS")
+    COND_WRAP("${ITKM_ISC${d}}${ITKM_ISC${d}}" "${ITKT_ISC${d}},${ITKT_ISC${d}}" "SC")
+    
+    # vector types
+    COND_WRAP("${ITKM_IVD${d}${d}}${ITKM_IVD${d}${d}}"  "${ITKT_IVD${d}${d}},${ITKT_IVD${d}${d}}"  "VD")
+    COND_WRAP("${ITKM_IVF${d}${d}}${ITKM_IVF${d}${d}}"  "${ITKT_IVF${d}${d}},${ITKT_IVF${d}${d}}"  "VF")
+    COND_WRAP("${ITKM_ICVD${d}${d}}${ITKM_ICVD${d}${d}}"  "${ITKT_ICVD${d}${d}},${ITKT_ICVD${d}${d}}"  "CVD")
+    COND_WRAP("${ITKM_ICVF${d}${d}}${ITKM_ICVF${d}${d}}"  "${ITKT_ICVF${d}${d}},${ITKT_ICVF${d}${d}}"  "CVF")
+  ENDFOREACH(d)
   
 END_WRAP_CLASS()
 

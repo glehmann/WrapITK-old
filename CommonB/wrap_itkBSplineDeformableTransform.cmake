@@ -1,4 +1,5 @@
 WRAP_CLASS("BSplineDeformableTransform" POINTER)
-  WRAP("${ITKM_D}23" "${ITKT_D},2,3")
-  WRAP("${ITKM_D}33" "${ITKT_D},3,3")
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${ITKM_D}${d}${d}" "${ITKT_D},${d},${d}")
+  ENDFOREACH(d)
 END_WRAP_CLASS()

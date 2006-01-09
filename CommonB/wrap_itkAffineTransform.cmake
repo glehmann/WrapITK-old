@@ -1,4 +1,5 @@
 WRAP_CLASS("AffineTransform" POINTER)
-  WRAP("${ITKM_D}2" "${ITKT_D},2")
-  WRAP("${ITKM_D}3" "${ITKT_D},3")
+  FOREACH(d ${WRAP_DIMS})
+    WRAP("${ITKM_D}${d}" "${ITKT_D},${d}")
+  ENDFOREACH(d)
 END_WRAP_CLASS()

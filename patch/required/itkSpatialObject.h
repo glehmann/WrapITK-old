@@ -17,16 +17,3 @@
   
     /** Theses functions are just calling the AffineGeometryFrame functions */
     /** Set the spacing of the spatial object. */
-***************
-*** 597,602 ****
---- 597,606 ----
-  
-    /** Default outside value for the ValueAt() */
-    double m_DefaultOutsideValue;
-+ 
-+   SpatialObject(const Self&); //purposely not implemented
-+   void operator=(const Self&); //purposely not implemented
-+    
-  }; 
-  
-  } // end of namespace itk

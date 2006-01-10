@@ -1,64 +1,55 @@
 PROJECT(WrapITK)
 
 ###############################################################################
-# Find Required Packages
-###############################################################################
-
-#-----------------------------------------------------------------------------
-# Find ITK
-#-----------------------------------------------------------------------------
-FIND_PACKAGE(ITK)
-IF(ITK_FOUND)
-  INCLUDE(${ITK_USE_FILE})
-ELSE(ITK_FOUND)
-  MESSAGE(FATAL_ERROR
-          "Cannot build without ITK.  Please set ITK_DIR.")
-ENDIF(ITK_FOUND)
-
-#-----------------------------------------------------------------------------
-# Load the CableSwig settings used by ITK, or find CableSwig otherwise.
-#-----------------------------------------------------------------------------
-#
-SET(CableSwig_DIR ${ITK_CableSwig_DIR})
-FIND_PACKAGE(CableSwig)
-
-IF(NOT CableSwig_FOUND)
-  # We have not found CableSwig.  Complain.
-  MESSAGE(FATAL_ERROR "CableSwig is required for ITK Wrapping.")
-ENDIF(NOT CableSwig_FOUND)
-
-
-#-----------------------------------------------------------------------------
-# Find wrapping language API libraries.
-#-----------------------------------------------------------------------------
-IF(WRAP_ITK_TCL)
-  FIND_PACKAGE(TCL)
-  # Hide useless settings provided by FindTCL.
-  FOREACH(entry TCL_LIBRARY_DEBUG
-                TK_LIBRARY_DEBUG
-                TCL_STUB_LIBRARY
-                TCL_STUB_LIBRARY_DEBUG
-                TK_STUB_LIBRARY
-                TK_STUB_LIBRARY_DEBUG
-                TK_WISH)
-    SET(${entry} "${${entry}}" CACHE INTERNAL "This value is not used by ITK.")
-  ENDFOREACH(entry)
-ENDIF(WRAP_ITK_TCL)
-
-IF(WRAP_ITK_PYTHON)
-  FIND_PACKAGE(PythonLibs)
-  FIND_PACKAGE(PythonInterp)
-  MARK_AS_ADVANCED(PYTHON_EXECUTABLE)
-ENDIF(WRAP_ITK_PYTHON)
-
-IF(WRAP_ITK_JAVA)
-  FIND_PACKAGE(Java)
-  FIND_PACKAGE(JNI)
-ENDIF(WRAP_ITK_JAVA)
-
-###############################################################################
 # Config ITKWrap
 ###############################################################################
+
+# Set up options needed for itkConfigWrapping
+
+OPTION(WRAP_ITK_TCL "Build cswig Tcl wrapper support (requires CableSwig)." OFF)
+OPTION(WRAP_ITK_PYTHON "Build cswig Python wrapper support (requires CableSwig)." OFF)
+OPTION(WRAP_ITK_JAVA "Build cswig Java wrapper support (requires CableSwig)." OFF)
+
+OPTION(WRAP_unsigned_char "Wrap unsigned char type" OFF)
+OPTION(WRAP_unsigned_short "Wrap unsigned short type" ON)
+OPTION(WRAP_unsigned_long "Wrap unsigned long type" OFF)
+
+OPTION(WRAP_signed_char "Wrap signed char type" OFF)
+OPTION(WRAP_signed_short "Wrap signed short type" OFF)
+OPTION(WRAP_signed_long "Wrap signed long type" OFF)
+
+OPTION(WRAP_float "Wrap float type" ON)
+OPTION(WRAP_double "Wrap double type" OFF)
+
+OPTION(WRAP_vector_float "Wrap vector float type" ON)
+OPTION(WRAP_vector_double "Wrap vector double type" OFF)
+
+OPTION(WRAP_covariant_vector_float "Wrap covariant vector float type" ON)
+OPTION(WRAP_covariant_vector_double "Wrap covariant vector double type" OFF)
+
+SET(WRAP_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (;)")
+
+SET(ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg")
+SET(WRAP_ITK_CONFIG_DIR ${WrapITK_SOURCE_DIR})
+SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")
+
+# Now include itkConfigWrapping
+INCLUDE(itkConfigWrapping.cmake)
+
+# WRAP_ITK_SWIG_INCLUDE_DIRS initially populated by itkConfigWrapping 
+SET(WRAP_ITK_SWIG_INCLUDE_DIRS
+  ${WRAP_ITK_SWIG_INCLUDE_DIRS}
+  ${WrapITK_SOURCE_DIR}
+  ${WrapITK_SOURCE_DIR}/CommonA
+  ${WrapITK_SOURCE_DIR}/CommonB
+  ${WrapITK_SOURCE_DIR}/VXLNumerics
+  ${WrapITK_SOURCE_DIR}/Numerics
+  ${WrapITK_SOURCE_DIR}/BasicFiltersA
+  ${WrapITK_SOURCE_DIR}/BasicFiltersB
+  ${WrapITK_SOURCE_DIR}/IO
+  ${WrapITK_SOURCE_DIR}/SpatialObject
+  ${WrapITK_SOURCE_DIR}/Algorithms
+  )
 
 SET(ITK_KITS VXLNumerics CommonA CommonB Numerics
   BasicFiltersA BasicFiltersB BasicFiltersC IO
@@ -66,7 +57,13 @@ SET(ITK_KITS VXLNumerics CommonA CommonB Numerics
   )
 SUBDIRS(SwigRuntime ${ITK_KITS} Tests Testing)
 
-SET(WRAP_ITK_PACKAGE_DIR_BUILD "${ITK_LIBRARY_PATH}")
+# Output directories.
+SET (LIBRARY_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
+SET (EXECUTABLE_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
+MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+SET(WRAP_ITK_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
+SET(WRAP_ITK_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
+SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
 #-----------------------------------------------------------------------------
 MACRO(ITK_CONFIG_PACKAGE BINARY_DIR)
@@ -343,12 +340,6 @@ ENDMACRO(ITK_CONFIG_PYTHON_PACKAGE)
 MACRO(ITK_CONFIG_JAVA_PACKAGE BINARY_DIR)
   SUBDIRS(Java)
 ENDMACRO(ITK_CONFIG_JAVA_PACKAGE)
-
-#-----------------------------------------------------------------------------
-INCLUDE(itkConfigWrapping.cmake)
-INCLUDE(WrapTypeBase.cmake)
-INCLUDE(WrapITK.cmake)
-INCLUDE(WrapTypePrefix.cmake)
 
 #-----------------------------------------------------------------------------
 ITK_CONFIG_PACKAGE(${WrapITK_BINARY_DIR})

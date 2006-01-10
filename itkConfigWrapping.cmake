@@ -1,71 +1,65 @@
-OPTION(WRAP_ITK_TCL "Build cswig Tcl wrapper support (requires CableSwig)." OFF)
-OPTION(WRAP_ITK_PYTHON "Build cswig Python wrapper support (requires CableSwig)." OFF)
-OPTION(WRAP_ITK_JAVA "Build cswig Java wrapper support (requires CableSwig)." OFF)
+###############################################################################
+# itkConfigWrapping.cmake
+#
+# This file sets up all needed macros, paths, and so forth for wrapping itk
+# projects.
+#
+# The following variables should be set before including this file:
+# WRAP_ITK_TCL 
+# WRAP_ITK_PYTHON 
+# WRAP_ITK_JAVA 
+# WRAP_unsigned_char
+# WRAP_unsigned_short 
+# WRAP_unsigned_long 
+# WRAP_signed_char 
+# WRAP_signed_short 
+# WRAP_signed_long 
+# WRAP_float 
+# WRAP_double 
+# WRAP_vector_float 
+# WRAP_vector_double
+# WRAP_covariant_vector_float 
+# WRAP_covariant_vector_double 
+# WRAP_DIMS
+# ITK_SWG_FILES 
+# WRAP_ITK_JAVA_DIR -- directory for java classes to be placed
+# WRAP_ITK_CONFIG_DIR -- directory where XXX.in files for CONFIGURE_FILE
+#                        commands are to be found.
+#
+# Additionally, LINK_DIRECTORIES include the path to libSwigRuntimeXXX.dylib
+# (This is automatic for WrapITK, but not for external projects.)
+#
+# This file sets, among others, WRAP_ITK_SWIG_INCLUDE_DIRS.
+# Modify this variable to add more include directories for SWIG.
+###############################################################################
 
-OPTION(WRAP_unsigned_char "Wrap unsigned char type" OFF)
-OPTION(WRAP_unsigned_short "Wrap unsigned short type" ON)
-OPTION(WRAP_unsigned_long "Wrap unsigned long type" OFF)
 
-OPTION(WRAP_signed_char "Wrap signed char type" OFF)
-OPTION(WRAP_signed_short "Wrap signed short type" OFF)
-OPTION(WRAP_signed_long "Wrap signed long type" OFF)
+###############################################################################
+# Find Required Packages
+###############################################################################
 
-OPTION(WRAP_float "Wrap float type" ON)
-OPTION(WRAP_double "Wrap double type" OFF)
+#-----------------------------------------------------------------------------
+# Find ITK
+#-----------------------------------------------------------------------------
+FIND_PACKAGE(ITK)
+IF(ITK_FOUND)
+  INCLUDE(${ITK_USE_FILE})
+ELSE(ITK_FOUND)
+  MESSAGE(FATAL_ERROR
+          "Cannot build without ITK.  Please set ITK_DIR.")
+ENDIF(ITK_FOUND)
 
-OPTION(WRAP_vector_float "Wrap vector float type" ON)
-OPTION(WRAP_vector_double "Wrap vector double type" OFF)
+#-----------------------------------------------------------------------------
+# Load the CableSwig settings used by ITK, or find CableSwig otherwise.
+#-----------------------------------------------------------------------------
+#
+SET(CableSwig_DIR ${ITK_CableSwig_DIR})
+FIND_PACKAGE(CableSwig)
 
-OPTION(WRAP_covariant_vector_float "Wrap covariant vector float type" ON)
-OPTION(WRAP_covariant_vector_double "Wrap covariant vector double type" OFF)
-
-SET(WRAP_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (;)")
-
-SET(ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg")
-
-# Output directories.
-SET (LIBRARY_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
-SET (EXECUTABLE_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
-MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
-SET(WRAP_ITK_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
-SET(WRAP_ITK_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
-SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
-
-
-#------------------------------------------------------------------------------
-# make sure required stuff is set
-SET(WRAP_ITK_INCLUDE_DIRS "")
-
-IF(WRAP_ITK_TCL)
-  SET(WRAP_ITK_INCLUDE_DIRS ${WRAP_ITK_INCLUDE_DIRS} ${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
-  INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
-ENDIF(WRAP_ITK_TCL)
-
-IF(WRAP_ITK_PYTHON)
-  # Python include directory.
-  SET(WRAP_ITK_INCLUDE_DIRS ${WRAP_ITK_INCLUDE_DIRS}
-    ${PYTHON_INCLUDE_PATH})
-  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH} )
-ENDIF(WRAP_ITK_PYTHON)
-
-IF(WRAP_ITK_PERL)
-  INCLUDE_DIRECTORIES(${PERL_INCLUDE_PATH})
-ENDIF(WRAP_ITK_PERL)
-
-IF(WRAP_ITK_JAVA)
-  # Java include directories.
-  SET(WRAP_ITK_INCLUDE_DIRS ${WRAP_ITK_INCLUDE_DIRS}
-      ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
-  INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
-ENDIF(WRAP_ITK_JAVA)
-
-# Choose an install location for the Java wrapper libraries.  This
-# must be next to the ITKCommon shared library.
-IF(WIN32)
-  SET(ITK_INSTALL_JAVA_LIBS_DIR /bin)
-ELSE(WIN32)
-  SET(ITK_INSTALL_JAVA_LIBS_DIR /lib/InsightToolkit)
-ENDIF(WIN32)
+IF(NOT CableSwig_FOUND)
+  # We have not found CableSwig.  Complain.
+  MESSAGE(FATAL_ERROR "CableSwig is required for ITK Wrapping.")
+ENDIF(NOT CableSwig_FOUND)
 
 # We have found CableSwig.  Use the settings.
 SET(CABLE_INDEX ${CableSwig_cableidx_EXE})
@@ -86,19 +80,70 @@ IF(CSWIG_MISSING_VALUES)
   MESSAGE(SEND_ERROR "To use cswig wrapping, CSWIG, CABLE_INDEX, and GCCXML executables must be specified.  If they are all in the same directory, only specifiy one of them, and then run cmake configure again and the others should be found.\nCurrently, you are missing the following:\n ${CSWIG_MISSING_VALUES}")
 ENDIF(CSWIG_MISSING_VALUES)
 
-SET(SWIG_INC
-  ${WRAP_ITK_INCLUDE_DIRS}
-  ${WrapITK_SOURCE_DIR}
-  ${WrapITK_SOURCE_DIR}/CommonA
-  ${WrapITK_SOURCE_DIR}/CommonB
-  ${WrapITK_SOURCE_DIR}/VXLNumerics
-  ${WrapITK_SOURCE_DIR}/Numerics
-  ${WrapITK_SOURCE_DIR}/BasicFiltersA
-  ${WrapITK_SOURCE_DIR}/BasicFiltersB
-  ${WrapITK_SOURCE_DIR}/IO
-  ${WrapITK_SOURCE_DIR}/SpatialObject
-  ${WrapITK_SOURCE_DIR}/Algorithms
-  )
+#-----------------------------------------------------------------------------
+# Find wrapping language API libraries.
+#-----------------------------------------------------------------------------
+IF(WRAP_ITK_TCL)
+  FIND_PACKAGE(TCL)
+  # Hide useless settings provided by FindTCL.
+  FOREACH(entry TCL_LIBRARY_DEBUG
+                TK_LIBRARY_DEBUG
+                TCL_STUB_LIBRARY
+                TCL_STUB_LIBRARY_DEBUG
+                TK_STUB_LIBRARY
+                TK_STUB_LIBRARY_DEBUG
+                TK_WISH)
+    SET(${entry} "${${entry}}" CACHE INTERNAL "This value is not used by ITK.")
+  ENDFOREACH(entry)
+ENDIF(WRAP_ITK_TCL)
+
+IF(WRAP_ITK_PYTHON)
+  FIND_PACKAGE(PythonLibs)
+  FIND_PACKAGE(PythonInterp)
+  MARK_AS_ADVANCED(PYTHON_EXECUTABLE)
+ENDIF(WRAP_ITK_PYTHON)
+
+IF(WRAP_ITK_JAVA)
+  FIND_PACKAGE(Java)
+  FIND_PACKAGE(JNI)
+ENDIF(WRAP_ITK_JAVA)
+
+
+#------------------------------------------------------------------------------
+# make sure required stuff is set
+SET(WRAP_ITK_SWIG_INCLUDE_DIRS ${ITK_INCLUDE_DIRS})
+
+IF(WRAP_ITK_TCL)
+  SET(WRAP_ITK_SWIG_INCLUDE_DIRS ${WRAP_ITK_SWIG_INCLUDE_DIRS} ${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
+  INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
+ENDIF(WRAP_ITK_TCL)
+
+IF(WRAP_ITK_PYTHON)
+  # Python include directory.
+  SET(WRAP_ITK_SWIG_INCLUDE_DIRS ${WRAP_ITK_SWIG_INCLUDE_DIRS}
+    ${PYTHON_INCLUDE_PATH})
+  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH} )
+ENDIF(WRAP_ITK_PYTHON)
+
+IF(WRAP_ITK_PERL)
+  INCLUDE_DIRECTORIES(${PERL_INCLUDE_PATH})
+ENDIF(WRAP_ITK_PERL)
+
+IF(WRAP_ITK_JAVA)
+  # Java include directories.
+  SET(WRAP_ITK_SWIG_INCLUDE_DIRS ${WRAP_ITK_SWIG_INCLUDE_DIRS}
+      ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
+  INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
+ENDIF(WRAP_ITK_JAVA)
+
+# Choose an install location for the Java wrapper libraries.  This
+# must be next to the ITKCommon shared library.
+IF(WIN32)
+  SET(ITK_INSTALL_JAVA_LIBS_DIR /bin)
+ELSE(WIN32)
+  SET(ITK_INSTALL_JAVA_LIBS_DIR /lib/InsightToolkit)
+ENDIF(WIN32)
+
 
 #------------------------------------------------------------------------------
 # System dependant wraping stuff
@@ -145,7 +190,7 @@ MACRO(GCCXML_CREATE_XML_FILE Source Bin Input Output Library)
      IF(EXISTS ${Bin}/${Output}.depend)
      ELSE(EXISTS ${Bin}/${Output}.depend)
        CONFIGURE_FILE(
-         ${WrapITK_SOURCE_DIR}/empty.depend.in
+         ${WRAP_ITK_CONFIG_DIR}/empty.depend.in
          ${Bin}/${Output}.depend @ONLY IMMEDIATE)
      ENDIF(EXISTS ${Bin}/${Output}.depend)
      INCLUDE(${Bin}/${Output}.depend)
@@ -177,7 +222,7 @@ MACRO(GCCXML_CREATE_XML_FILE Source Bin Input Output Library)
    IF(CABLE_SWIG_DEPEND_REGENERATE)
      SET(CABLE_SWIG_DEPEND ${Bin}/${Output}.depend)
      CONFIGURE_FILE(
-       ${WrapITK_SOURCE_DIR}/empty.depend.in
+       ${WRAP_ITK_CONFIG_DIR}/empty.depend.in
        ${Bin}/${Output}.depend @ONLY IMMEDIATE)
    ENDIF(CABLE_SWIG_DEPEND_REGENERATE)
 
@@ -230,7 +275,7 @@ MACRO(CSWIG_CREATE_TCL_CXX_FILE Bin MasterIdx InputIdx InputXml OutputTclCxx Lib
        SET(ITK_SWG_FILE "-l${file}" ${ITK_SWG_FILE})
    ENDFOREACH(file)
 
-   # Need dependency on ${ITK_BINARY_DIR}/itkConfigure.h so
+   # Need dependency on ${ITK_DIR}/itkConfigure.h so
    # package is rebuilt when the ITK version changes.
    ADD_CUSTOM_COMMAND(
      COMMENT "${OutputTclCxx} from "
@@ -243,7 +288,7 @@ MACRO(CSWIG_CREATE_TCL_CXX_FILE Bin MasterIdx InputIdx InputXml OutputTclCxx Lib
           -o ${Bin}/${OutputTclCxx} -tcl -pkgversion "${ITK_VERSION_STRING}" -c++ ${Bin}/${InputXml}
      TARGET ${Library}
      OUTPUTS ${Bin}/${OutputTclCxx}
-     DEPENDS ${LibraryIndexFiles} ${ITK_SWG_FILES} ${Bin}/${InputXml} ${CSWIG} ${ITK_BINARY_DIR}/itkConfigure.h)
+     DEPENDS ${LibraryIndexFiles} ${ITK_SWG_FILES} ${Bin}/${InputXml} ${CSWIG} ${ITK_DIR}/itkConfigure.h)
 #     MESSAGE("depends are ${CABLE_SWIG_DEPEND}")
 ENDMACRO(CSWIG_CREATE_TCL_CXX_FILE)
 
@@ -258,7 +303,7 @@ MACRO(CSWIG_CREATE_PERL_CXX_FILE Bin MasterIdx InputIdx InputXml OutputPerlCxx L
        SET(ITK_SWG_FILE "-l${file}" ${ITK_SWG_FILE})
    ENDFOREACH(file)
 
-   # Need dependency on ${ITK_BINARY_DIR}/itkConfigure.h so
+   # Need dependency on ${ITK_DIR}/itkConfigure.h so
    # package is rebuilt when the ITK version changes.
    ADD_CUSTOM_COMMAND(
      COMMENT "${OutputPerlCxx} from "
@@ -271,7 +316,7 @@ MACRO(CSWIG_CREATE_PERL_CXX_FILE Bin MasterIdx InputIdx InputXml OutputPerlCxx L
           -o ${Bin}/${OutputPerlCxx} -c++ ${Bin}/${InputXml}
      TARGET ${Library}
      OUTPUTS ${Bin}/${OutputPerlCxx}
-     DEPENDS ${LibraryIndexFiles} ${ITK_SWG_FILES} ${Bin}/${InputXml} ${CSWIG} ${ITK_BINARY_DIR}/itkConfigure.h)
+     DEPENDS ${LibraryIndexFiles} ${ITK_SWG_FILES} ${Bin}/${InputXml} ${CSWIG} ${ITK_DIR}/itkConfigure.h)
 ENDMACRO(CSWIG_CREATE_PERL_CXX_FILE)
 
 SET(WRAP_ITK_PYTHON_NO_EXCEPTION_REGEX "(ContinuousIndex|Python)\\.xml$")
@@ -290,6 +335,9 @@ MACRO(CSWIG_CREATE_PYTHON_CXX_FILE Bin MasterIdx InputIdx InputXml OutputTclCxx 
        SET(ITK_SWG_FILE "-l${file}" ${ITK_SWG_FILE})
      ENDFOREACH(file)
    ENDIF("${InputXml}" MATCHES "${WRAP_ITK_PYTHON_NO_EXCEPTION_REGEX}")
+    
+   # Need dependency on ${ITK_DIR}/itkConfigure.h so
+   # package is rebuilt when the ITK version changes.
    ADD_CUSTOM_COMMAND(
      COMMENT "${OutputTclCxx} from "
      SOURCE ${Bin}/${InputIdx}
@@ -302,7 +350,7 @@ MACRO(CSWIG_CREATE_PYTHON_CXX_FILE Bin MasterIdx InputIdx InputXml OutputTclCxx 
           -o ${Bin}/${OutputTclCxx} -python -c++ ${Bin}/${InputXml}
      TARGET ${Library}
      OUTPUTS ${Bin}/${OutputTclCxx}
-     DEPENDS ${LibraryIndexFiles}  ${ITK_SWG_FILES} ${Bin}/${InputXml} ${CSWIG} )
+     DEPENDS ${LibraryIndexFiles}  ${ITK_SWG_FILES} ${Bin}/${InputXml} ${CSWIG} ${ITK_DIR}/itkConfigure.h)
 ENDMACRO(CSWIG_CREATE_PYTHON_CXX_FILE)
 
 MACRO(CSWIG_CREATE_JAVA_CXX_FILE Bin MasterIdx InputIdx InputXml OutputTclCxx Library LibraryIndexFiles)
@@ -326,7 +374,7 @@ MACRO(CSWIG_CREATE_JAVA_CXX_FILE Bin MasterIdx InputIdx InputXml OutputTclCxx Li
           -I${ITK_SWIG_DEFAULT_LIB}/java
           ${ITK_SWG_FILE}
           -noruntime ${CINDEX} ${CSWIG_IGNORE_WARNINGS} -depend ${Bin}/${InputXml}.depend
-          -outdir ${WrapITK_BINARY_DIR}/Java/InsightToolkit
+          -outdir ${WRAP_ITK_JAVA_DIR}/InsightToolkit
           -o ${Bin}/${OutputTclCxx} -package InsightToolkit -java -c++ ${Bin}/${InputXml}
      TARGET ${Library}
      OUTPUTS ${Bin}/${OutputTclCxx}
@@ -418,7 +466,6 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
   ENDIF("${ITK_LINK_LIBRARIES}" MATCHES "^$")
   IF(WRAP_ITK_TCL)
     IF(ITK_SWIG_FILE)
-      SET(SWIG_INC ${SWIG_INC} ${TCL_INCLUDE_PATH})
       SET_SOURCE_FILES_PROPERTIES(${ITK_SWIG_FILE_CXX}Tcl.cxx GENERATED)
       SET(WRAP_FILE ${ITK_SWIG_FILE_CXX}Tcl.cxx )
     ENDIF(ITK_SWIG_FILE)
@@ -452,7 +499,6 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
 
   IF(WRAP_ITK_PERL)
     IF(ITK_SWIG_FILE)
-      SET(SWIG_INC ${SWIG_INC} ${PERL_INCLUDE_PATH})
       SET_SOURCE_FILES_PROPERTIES(${ITK_SWIG_FILE_CXX}Perl.cxx GENERATED)
       SET(WRAP_FILE ${ITK_SWIG_FILE_CXX}Perl.cxx )
     ENDIF(ITK_SWIG_FILE)
@@ -486,7 +532,6 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
 
   IF(WRAP_ITK_PYTHON)  
     IF(ITK_SWIG_FILE)
-      SET(SWIG_INC ${SWIG_INC} ${PYTHON_INCLUDE_PATH})
       SET_SOURCE_FILES_PROPERTIES(${ITK_SWIG_FILE_CXX}Python.cxx GENERATED)
       SET(WRAP_FILE ${ITK_SWIG_FILE_CXX}Python.cxx )
     ENDIF(ITK_SWIG_FILE)
@@ -520,7 +565,6 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
 
   IF(WRAP_ITK_JAVA)  
     IF(ITK_SWIG_FILE)
-      SET(SWIG_INC ${SWIG_INC} ${JAVA_INCLUDE_PATH})
       SET_SOURCE_FILES_PROPERTIES(${ITK_SWIG_FILE_CXX}Java.cxx GENERATED)
       SET(WRAP_FILE ${ITK_SWIG_FILE_CXX}Java.cxx )
     ENDIF(ITK_SWIG_FILE)
@@ -553,16 +597,16 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
   ENDIF(WRAP_ITK_JAVA)
   
   CONFIGURE_FILE(
-    ${WrapITK_SOURCE_DIR}/Master.mdx.in
+    ${WRAP_ITK_CONFIG_DIR}/Master.mdx.in
     ${BINARY_DIR}/${DIRECTORY}/${LIBRARY_NAME}.mdx IMMEDIATE
     )
 
   SET(SWIG_INC_FILE ${BINARY_DIR}/${DIRECTORY}/SwigInc.txt)
   SET(SWIG_INC_CONTENTS)
-  FOREACH(dir ${SWIG_INC})
+  FOREACH(dir ${WRAP_ITK_SWIG_INCLUDE_DIRS})
     SET(SWIG_INC_CONTENTS "${SWIG_INC_CONTENTS}-I${dir}\n")
   ENDFOREACH(dir)
-  CONFIGURE_FILE(${WrapITK_SOURCE_DIR}/SwigInc.txt.in ${SWIG_INC_FILE}
+  CONFIGURE_FILE(${WRAP_ITK_CONFIG_DIR}/SwigInc.txt.in ${SWIG_INC_FILE}
     @ONLY IMMEDIATE)
   
   FOREACH(Source ${WRAP_SOURCES})
@@ -635,4 +679,8 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
 ENDMACRO(ITK_WRAP_LIBRARY)
 
 #------------------------------------------------------------------------------
+# Include other needed macros -- CMAKE_MODULE_PATH must be set correctly
+INCLUDE(WrapTypeBase.cmake)
+INCLUDE(WrapITK.cmake)
+INCLUDE(WrapTypePrefix.cmake)
 

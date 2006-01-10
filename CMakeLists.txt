@@ -27,8 +27,6 @@ IF(NOT CableSwig_FOUND)
   MESSAGE(FATAL_ERROR "CableSwig is required for ITK Wrapping.")
 ENDIF(NOT CableSwig_FOUND)
 
-# Not sure below is needed?
-SET(CMAKE_MODULE_PATH ${CableSwig_DIR}/SWIG/CMake)
 
 #-----------------------------------------------------------------------------
 # Find wrapping language API libraries.
@@ -48,7 +46,7 @@ IF(WRAP_ITK_TCL)
 ENDIF(WRAP_ITK_TCL)
 
 IF(WRAP_ITK_PYTHON)
-  INCLUDE(${CMAKE_ROOT}/Modules/FindPythonLibs.cmake)
+  FIND_PACKAGE(PythonLibs)
   FIND_PACKAGE(PythonInterp)
   MARK_AS_ADVANCED(PYTHON_EXECUTABLE)
 ENDIF(WRAP_ITK_PYTHON)
@@ -57,11 +55,6 @@ IF(WRAP_ITK_JAVA)
   FIND_PACKAGE(Java)
   FIND_PACKAGE(JNI)
 ENDIF(WRAP_ITK_JAVA)
-
-SET(ITK_WRAP_NEEDS_DEPEND 1)
-IF(${CMAKE_MAKE_PROGRAM} MATCHES make)
-  SET(ITK_WRAP_NEEDS_DEPEND 0)
-ENDIF(${CMAKE_MAKE_PROGRAM} MATCHES make)
 
 ###############################################################################
 # Config ITKWrap

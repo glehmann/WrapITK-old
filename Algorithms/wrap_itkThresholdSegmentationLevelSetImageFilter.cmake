@@ -4,10 +4,9 @@ WRAP_CLASS("ThresholdSegmentationLevelSetImageFilter" POINTER)
   # WRAP_SIGN_INT(2)
   # WRAP_REAL(2)
   
-  COND_WRAP("${ITKM_IF3}${ITKM_IF3}${ITKM_F}" "${ITKT_IF3},${ITKT_IF3},${ITKT_F}" "F")
-  COND_WRAP("${ITKM_ID3}${ITKM_ID3}${ITKM_D}" "${ITKT_ID3},${ITKT_ID3},${ITKT_D}" "D")
-  
-  COND_WRAP("${ITKM_IF2}${ITKM_IF2}${ITKM_F}" "${ITKT_IF2},${ITKT_IF2},${ITKT_F}" "F")
-  COND_WRAP("${ITKM_ID2}${ITKM_ID2}${ITKM_D}" "${ITKT_ID2},${ITKT_ID2},${ITKT_D}" "D")
+  FOREACH(d ${WRAP_DIMS})
+    COND_WRAP("${ITKM_IF${d}}${ITKM_IF${d}}${ITKM_F}" "${ITKT_IF${d}},${ITKT_IF${d}},${ITKT_F}" "F")
+    COND_WRAP("${ITKM_ID${d}}${ITKM_ID${d}}${ITKM_D}" "${ITKT_ID${d}},${ITKT_ID${d}},${ITKT_D}" "D")
+  ENDFOREACH(d)
 
 END_WRAP_CLASS()

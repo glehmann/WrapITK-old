@@ -111,18 +111,19 @@ def classFromObject(obj) :
 
 # return range
 def range(imageOrFilter) :
-  imageOrFilter.UpdateLargestPossibleRegion()
   img = image(imageOrFilter)
+  img.UpdateOutputInformation()
+  img.Update()
   comp = MinimumMaximumImageCalculator[img].New(Image=img)
   comp.Compute()
   return (comp.GetMinimum(), comp.GetMaximum())
 
 # write an image
 def write(imageOrFilter, fileName):
-  imageOrFilter.UpdateLargestPossibleRegion()
   img = image(imageOrFilter)
+  img.UpdateOutputInformation()
   writer = ImageFileWriter[img].New(Input=img, FileName=fileName)
-  writer.UpdateLargestPossibleRegion()
+  writer.Update()
   
 # choose the method to call according to the dimension of the image
 def show(input, **kargs) :
@@ -209,7 +210,8 @@ class show3D :
       # Update to try to avoid to exit if a c++ exception is throwed
       # sadely, it will not prevent the program to exit later...
       # a real fix would be to wrap c++ exception in vtk
-      img.UpdateLargestPossibleRegion()
+      img.UpdateOutputInformation()
+      img.Update()
       import itkvtk
       self.__flipper__ = FlipImageFilter[img].New(Input=img)
       axes = self.__flipper__.GetFlipAxes()

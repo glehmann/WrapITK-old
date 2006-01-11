@@ -36,6 +36,12 @@ def echo(object, f=sys.stderr) :
       print >> f, ss.GetString()
 del sys
 
+# return the size of an imageClass
+def size(imageOrFilter) :
+  imageOrFilter.Update()
+  img = image(imageOrFilter)
+  return img.GetLargestPossibleRegion().GetSize()
+  
 # return a structuring elt
 def strel(imageClass, radius=1) :
   # be sure to have an image class

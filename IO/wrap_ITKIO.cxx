@@ -21,13 +21,11 @@ namespace _cable_
   const char* const groups[] =
   {
     "IOBase",
-    "itkImageFileReader_2D",
-    "itkImageFileReader_3D",
+    "itkImageFileReader",
 #ifdef ITK_TCL_WRAP
     "itkTkImageViewer2D",
 #endif
-    "itkImageFileWriter_2D",
-    "itkImageFileWriter_3D",
+    "itkImageFileWriter",
     "itkImageSeriesReader",
     "itkImageSeriesWriter"
   };

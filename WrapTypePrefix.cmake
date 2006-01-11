@@ -136,7 +136,7 @@ WRAP_TYPE("Image" "I")
     WRAP("${ITKM_O${d}}${d}" "${ITKT_O${d}},${d}")
   ENDFOREACH(d)
 END_WRAP_TYPE()
-SET(itk_Wrap_Image_2D ${itk_Wrap})
+SET(itk_Wrap_Image ${itk_Wrap})
 
 
 #------------------------------------------------------------------------------

@@ -14,8 +14,7 @@ SET(WRAP_GROUPS
     itkContinuousIndex
     itkVector
     itkPoint
-    itkImage_2D
-    itkImage_3D
+    itkImage
     itkLevelSet
     itkDefaultStaticMeshTraits
 
@@ -34,11 +33,9 @@ SET(WRAP_GROUPS
     itkImageRegionIterator
     itkImageRegionConstIterator
     itkImageSource
-    itkImageToImageFilter_2D
-    itkImageToImageFilter_3D
+    itkImageToImageFilter
     itkIndex
-    itkInPlaceImageFilter_2D
-    itkInPlaceImageFilter_3D
+    itkInPlaceImageFilter
     ITKInterpolators
     itkNeighborhood
     itkSize

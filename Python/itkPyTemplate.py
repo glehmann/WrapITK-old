@@ -227,8 +227,16 @@ def New(self, *args, **kargs) :
         # itk.ImageFileWriter.US2.New(s, FileName='result.png').Update()
         try :
                 for setInputNb, arg  in enumerate(args) :
-                        # add filter in the pipeline
-                        newItkObject.SetInput(setInputNb, arg.GetOutput())
+                  methodName = 'SetInput%i' % (setInputNb+1)
+                  if methodName in dir(newItkObject) :
+                    # first try to use methods called SetInput1, SetInput2, ...
+                    # those method should have more chances to work in case of multiple
+                    # input types
+                    getattr(newItkObject, methodName)(arg.GetOutput())
+                  else :
+                    # no method called SetInput?
+                    # try with the standard SetInput(nb, input)
+                    newItkObject.SetInput(setInputNb, arg.GetOutput())
         except TypeError, e :
 	        # the exception have (at least) to possible reasons:
 	        # + the filter don't take the input number as first argument

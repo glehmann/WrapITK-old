@@ -1,7 +1,7 @@
 WRAP_CLASS("LaplacianRecursiveGaussianImageFilter" POINTER)
 
-  WRAP_INT(2)
-  WRAP_SIGN_INT(2)
-  WRAP_REAL(2)
+  WRAP_INT_DIMS(2 2+)
+  WRAP_SIGN_INT_DIMS(2 2+)
+  WRAP_REAL_DIMS(2 2+)
 
 END_WRAP_CLASS()

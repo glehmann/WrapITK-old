@@ -33,7 +33,7 @@ filterFiles = commands.getoutput("find /usr/include/InsightToolkit -name 'itk*Fi
 filters = set([f.split('/')[-1][len('itk'):-len('.h')] for f in filterFiles])
 fDict = {}
 for filterFile in filterFiles :
-            d = filterFile.split('/')[3]
+            d = filterFile.split('/')[4]
 	    f = filterFile.split('/')[-1][len('itk'):-len('.h')]
 	    fDict[f] = d
 			    

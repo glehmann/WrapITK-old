@@ -5,7 +5,7 @@ WRAP_CLASS("ImageFileReader"POINTER)
     COND_WRAP("${ITKM_IUC${d}}" "${ITKT_IUC${d}}" "")  # neded to save in 8 bits
     COND_WRAP("${ITKM_IUS${d}}" "${ITKT_IUS${d}}" "US")
     COND_WRAP("${ITKM_IUL${d}}" "${ITKT_IUL${d}}" "UL")
-#     COND_WRAP("${ITKM_ISC${d}}" "${ITKT_ISC${d}}" "SC")
+    COND_WRAP("${ITKM_ISC${d}}" "${ITKT_ISC${d}}" "SC")
     COND_WRAP("${ITKM_ISS${d}}" "${ITKT_ISS${d}}" "SS")
     COND_WRAP("${ITKM_ISL${d}}" "${ITKT_ISL${d}}" "SL")
   ENDFOREACH(d)

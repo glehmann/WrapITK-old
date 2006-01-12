@@ -29,7 +29,7 @@ if sys.version < '2.4' :
 	    return i
 			    
 # get filters from sources
-filterFiles = commands.getoutput("find ../../Code/ -name 'itk*Filter.h'").splitlines()
+filterFiles = commands.getoutput("find /usr/include/InsightToolkit -name 'itk*Filter.h'").splitlines()
 filters = set([f.split('/')[-1][len('itk'):-len('.h')] for f in filterFiles])
 fDict = {}
 for filterFile in filterFiles :

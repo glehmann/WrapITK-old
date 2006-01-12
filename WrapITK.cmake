@@ -436,7 +436,23 @@ MACRO(COND_WRAP NAME TYPES CONDS)
 ENDMACRO(COND_WRAP)
 
 
-MACRO(WRAP_TYPES_DIMS SIZE TYPES DIMS)
+MACRO(WRAP_TYPES_DIMS SIZE TYPES TMP_DIMS)
+  # implement an argument of type 2+ to say all dims equal or above 2
+
+  SET(DIMS "${TMP_DIMS}")
+
+  IF("${TMP_DIMS}" MATCHES "^[0-9]+\\+$")
+    STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" MAX_DIM "${TMP_DIMS}")
+    SET(DIMS "")
+    FOREACH(d "${WRAP_DIMS}")
+      IF("${d}" GREATER "${MAX_DIM}" OR "${d}" EQUAL "${MAX_DIM}")
+        SET(DIMS "${DIMS}" "${d}")
+      ENDIF("${d}" GREATER "${MAX_DIM}" OR "${d}" EQUAL "${MAX_DIM}")
+    ENDFOREACH(d)
+  ELSE("${TMP_DIMS}" MATCHES "^[0-9]+\\+$")
+    SET(DIMS "${TMP_DIMS}")
+  ENDIF("${TMP_DIMS}" MATCHES "^[0-9]+\\+$")
+
   FOREACH(dim ${DIMS})
     # check if the user have allowed this dim
     SET(allowedDim 0)

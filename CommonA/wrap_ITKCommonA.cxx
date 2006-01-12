@@ -32,6 +32,7 @@ namespace _cable_
     "itkFiniteDifferenceFunction",
     "itkFiniteDifferenceImageFilter",
     "itkFixedArray",
+    "itkRGBPixel",
     "itkFunctionBase",
     "itkImage",
     "itkImageSource",

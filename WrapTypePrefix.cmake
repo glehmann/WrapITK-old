@@ -34,6 +34,7 @@ SET(itk_DefaultInclude
   ContinuousIndex
   Array
   FixedArray
+  RGBPixel
   Image
   Point
   LevelSet
@@ -119,6 +120,14 @@ SET(itk_Wrap_FixedArray
 CREATE_WRAP_TYPE("FixedArray" ${WRAP_PREFIX_FixedArray} "${itk_Wrap_FixedArray}")
 
 #------------------------------------------------------------------------------
+WRAP_TYPE("RGBPixel" "RGB")
+  COND_WRAP("${ITKM_UC}" "${ITKT_UC}" "RGBUC")
+  COND_WRAP("${ITKM_US}" "${ITKT_US}" "RGBUS")
+END_WRAP_TYPE()
+SET(itk_Wrap_RGBPixel ${itk_Wrap})
+
+
+#------------------------------------------------------------------------------
 WRAP_TYPE("Image" "I")
   FOREACH(d ${WRAP_DIMS})
     COND_WRAP("${ITKM_F}${d}"  "${ITKT_F},${d}"  "F")
@@ -134,6 +143,8 @@ WRAP_TYPE("Image" "I")
     COND_WRAP("${ITKM_CVF${d}}${d}" "${ITKT_CVF${d}},${d}" "CVF")
     COND_WRAP("${ITKM_CVD${d}}${d}" "${ITKT_CVD${d}},${d}" "CVD")
     WRAP("${ITKM_O${d}}${d}" "${ITKT_O${d}},${d}")
+    COND_WRAP("${ITKM_RGBUC}${d}" "${ITKT_RGBUC},${d}" "RGBUC")
+    COND_WRAP("${ITKM_RGBUS}${d}" "${ITKT_RGBUS},${d}" "RGBUS")
   ENDFOREACH(d)
 END_WRAP_TYPE()
 SET(itk_Wrap_Image ${itk_Wrap})

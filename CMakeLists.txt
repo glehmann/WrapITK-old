@@ -27,6 +27,9 @@ OPTION(WRAP_vector_double "Wrap vector double type" OFF)
 OPTION(WRAP_covariant_vector_float "Wrap covariant vector float type" ON)
 OPTION(WRAP_covariant_vector_double "Wrap covariant vector double type" OFF)
 
+OPTION(WRAP_rgb_unsigned_char "Wrap RGB< unsigned char > type" ON)
+OPTION(WRAP_rgb_unsigned_short "Wrap RGB< unsigned short > type" OFF)
+
 SET(WRAP_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (;)")
 
 SET(ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg")

@@ -428,6 +428,18 @@ MACRO(COND_WRAP NAME TYPES CONDS)
         SET(will_wrap 0)
       ENDIF(NOT WRAP_covariant_vector_double)
     ENDIF("${t}" STREQUAL "CVD")
+
+    IF("${t}" STREQUAL "RGBUC")
+      IF(NOT WRAP_rgb_unsigned_char)
+        SET(will_wrap 0)
+      ENDIF(NOT WRAP_rgb_unsigned_char)
+    ENDIF("${t}" STREQUAL "RGBUC")
+
+    IF("${t}" STREQUAL "RGBUS")
+      IF(NOT WRAP_rgb_unsigned_short)
+        SET(will_wrap 0)
+      ENDIF(NOT WRAP_rgb_unsigned_short)
+    ENDIF("${t}" STREQUAL "RGBUS")
   ENDFOREACH(t)
 
   IF(${will_wrap})

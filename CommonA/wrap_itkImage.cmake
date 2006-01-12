@@ -1,5 +1,3 @@
-WRAP_INCLUDE(Offset)
-
 WRAP_CLASS(ImageBase POINTER)
   FOREACH(d ${WRAP_DIMS})
     WRAP("${d}"  "${d}")

@@ -14,6 +14,7 @@ SET(WRAP_GROUPS
     itkContinuousIndex
     itkVector
     itkPoint
+    itkRGBPixel
     itkImage
     itkLevelSet
     itkDefaultStaticMeshTraits

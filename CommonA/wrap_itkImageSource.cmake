@@ -1,16 +1,15 @@
 WRAP_CLASS("ImageSource" POINTER)
+
   FOREACH(d ${WRAP_DIMS})
-    COND_WRAP("${ITKM_ID${d}}"  "${ITKT_ID${d}}"  "D")
-    COND_WRAP("${ITKM_IF${d}}"  "${ITKT_IF${d}}"  "F")
-    COND_WRAP("${ITKM_IUL${d}}" "${ITKT_IUL${d}}" "") # needed for watershed
+    COND_WRAP("${ITKM_IUC${d}}" "${ITKT_IUC${d}}" "")  # neded to save in 8 bits
     COND_WRAP("${ITKM_IUS${d}}" "${ITKT_IUS${d}}" "US")
-    COND_WRAP("${ITKM_IUC${d}}" "${ITKT_IUC${d}}" "") # needed to save in 8 bits
-    COND_WRAP("${ITKM_ISL${d}}" "${ITKT_ISL${d}}" "SL")
-    COND_WRAP("${ITKM_ISS${d}}" "${ITKT_ISS${d}}" "SS")
-    COND_WRAP("${ITKM_ISC${d}}" "${ITKT_ISC${d}}" "SC")
-    COND_WRAP("${ITKM_IVD${d}${d}}"  "${ITKT_IVD${d}${d}}"  "VD")
-    COND_WRAP("${ITKM_IVF${d}${d}}"  "${ITKT_IVF${d}${d}}"  "VF")
-    COND_WRAP("${ITKM_ICVD${d}${d}}"  "${ITKT_ICVD${d}${d}}"  "CVD")
-    COND_WRAP("${ITKM_ICVF${d}${d}}"  "${ITKT_ICVF${d}${d}}"  "CVF")
+    COND_WRAP("${ITKM_IUL${d}}" "${ITKT_IUL${d}}" "") # needed to save in 8 bits
   ENDFOREACH(d)
+
+  WRAP_SIGN_INT(1)
+  WRAP_REAL(1)
+  WRAP_VECTOR_REAL(1)
+  WRAP_COV_VECTOR_REAL(1)
+  WRAP_RGB(1)
+
 END_WRAP_CLASS()

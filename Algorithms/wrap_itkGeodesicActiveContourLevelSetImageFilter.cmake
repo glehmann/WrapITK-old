@@ -6,8 +6,8 @@ WRAP_CLASS("GeodesicActiveContourLevelSetImageFilter" POINTER)
 
   FOREACH(d ${WRAP_DIMS})
     IF("${d}" GREATER 1)
-      COND_WRAP_DIMS("${ITKM_IF${d}}${ITKM_IF${d}}${ITKM_F}" "${ITKT_IF${d}},${ITKT_IF${d}},${ITKT_F}" "F")
-      COND_WRAP_DIMS("${ITKM_ID${d}}${ITKM_ID${d}}${ITKM_D}" "${ITKT_ID${d}},${ITKT_ID${d}},${ITKT_D}" "D")
+      COND_WRAP("${ITKM_IF${d}}${ITKM_IF${d}}${ITKM_F}" "${ITKT_IF${d}},${ITKT_IF${d}},${ITKT_F}" "F")
+      COND_WRAP("${ITKM_ID${d}}${ITKM_ID${d}}${ITKM_D}" "${ITKT_ID${d}},${ITKT_ID${d}},${ITKT_D}" "D")
     ENDIF("${d}" GREATER 1)
   ENDFOREACH(d)
 

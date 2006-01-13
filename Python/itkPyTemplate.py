@@ -214,8 +214,13 @@ class itkPyTemplate:
 #------------------------------------------------------------------------------
 # create a new New function to manage parameters
 def New(self, *args, **kargs) :
+        import itk, sys
+        
         newItkObject = self.__New_orig__()
-
+        
+        # try to get the images from the filters in args
+        args = [itk.image(arg) for arg in args]
+        
         # args without name are filter used to set input image
         #
         # count SetInput calls to call SetInput, SetInput2, SetInput3, ...
@@ -232,21 +237,21 @@ def New(self, *args, **kargs) :
                     # first try to use methods called SetInput1, SetInput2, ...
                     # those method should have more chances to work in case of multiple
                     # input types
-                    getattr(newItkObject, methodName)(arg.GetOutput())
+                    getattr(newItkObject, methodName)(arg)
                   else :
                     # no method called SetInput?
                     # try with the standard SetInput(nb, input)
-                    newItkObject.SetInput(setInputNb, arg.GetOutput())
+                    newItkObject.SetInput(setInputNb, arg)
         except TypeError, e :
 	        # the exception have (at least) to possible reasons:
 	        # + the filter don't take the input number as first argument
-		# + arg.GetOutput() return an object of wrong type
+		# + arg is an object of wrong type
 		# 
 		# if it's not the first input, re-raise the exception
 		if setInputNb != 0 :
 		    raise e
 		# it's the first input, try to use the SetInput() method without input number
-		newItkObject.SetInput(args[0].GetOutput())
+		newItkObject.SetInput(args[0])
 		# but raise an exception if there is more than 1 argument
                 if len(args) > 1 :
                         raise TypeError('Object accept only 1 input.')
@@ -255,7 +260,7 @@ def New(self, *args, **kargs) :
 		# but before, check the number of inputs
 		if len(args) > 1 :
 		    raise TypeError('Object accept only 1 input.')
-		newItkObject.SetImage(args[0].GetOutput())
+		newItkObject.SetImage(args[0])
 		
         # named args : name is the function name, value is argument(s)
         for attribName, value in kargs.iteritems() :
@@ -266,7 +271,6 @@ def New(self, *args, **kargs) :
                 attrib(value)
 
         # now, try to add observer to display progress
-        import itk, sys
         if itk.auto_progress :
                 try :
                         def progress() :

@@ -46,9 +46,6 @@ MACRO(WRITE_MODULE_PYTHON MODULE_NAME PATH)
    SET(lang "Python")
    SET(module_name ${MODULE_NAME})
    SET(extra_headers "")
-   IF(PYTHON_NUMARRAY_FOUND)
-      SET(extra_headers "#define ITK_PYTHON_NUMERICS")
-   ENDIF(PYTHON_NUMARRAY_FOUND)
    STRING(TOUPPER ${lang} lang_TOUPPER)
    CONFIGURE_FILE(
       "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"

@@ -159,19 +159,6 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
   #
   # *** Step 1 has to be done carefully to avoid missing out files ***
   IF(PYTHON_EXECUTABLE)
-    # Deal with numarray package  Options
-    SET(CMAKE_MODULE_PATH ${ITK_SOURCE_DIR}/CMake)
-    OPTION(ITK_USE_PYTHON_NUMARRAY "Use the numarray python package" OFF)
-    MARK_AS_ADVANCED(ITK_USE_PYTHON_NUMARRAY)
-    IF( ITK_USE_PYTHON_NUMARRAY )
-      FIND_PACKAGE( NUMARRAY )
-    ENDIF( ITK_USE_PYTHON_NUMARRAY )
-
-    IF(PYTHON_NUMARRAY_FOUND)
-      INCLUDE_DIRECTORIES( ${PYTHON_NUMARRAY_INCLUDE_DIR} )
-      SET(SWIG_INC ${SWIG_INC} ${PYTHON_NUMARRAY_INCLUDE_DIR})
-    ENDIF(PYTHON_NUMARRAY_FOUND)
-
     ADD_CUSTOM_TARGET(itkpython_pyc ALL echo "...")
 
     # Make the necessary directories.

@@ -1,3 +1,5 @@
+WRAP_CLASS_NOTPL("VTKImageExportBase" POINTER)
+
 WRAP_CLASS("VTKImageExport" POINTER)
 
   WRAP_INT(1)

@@ -1,1 +1,0 @@
-WRAP_CLASS_NOTPL("VTKImageExportBase" POINTER)

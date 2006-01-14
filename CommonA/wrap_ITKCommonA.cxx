@@ -28,7 +28,7 @@ namespace _cable_
     "itkContinuousIndex",
     "itkDifferenceImageFilter",
     "itkDenseFiniteDifferenceImageFilter",
-    "itkEventObject", 
+    "itkEventObjects", 
     "itkFiniteDifferenceFunction",
     "itkFiniteDifferenceImageFilter",
     "itkFixedArray",

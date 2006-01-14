@@ -24,7 +24,7 @@ SET(WRAP_GROUPS
     itkBinaryBallStructuringElement
     itkDenseFiniteDifferenceImageFilter
     itkDifferenceImageFilter
-    itkEventObject
+    itkEventObjects
     itkFiniteDifferenceFunction
     itkFiniteDifferenceImageFilter
     itkFixedArray

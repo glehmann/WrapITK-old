@@ -52,7 +52,7 @@ ITK_WRAP_LIBRARY(
   "Wrapping"
   ""
   ""
-  "ITKCommon;vtkImaging;vtkImagingPythonD"
+  "ITKCommon;vtkImaging"
   "${MASTER_INDEX_FILES}"
   "${PROJECT_SOURCE_DIR}"
   "${PROJECT_BINARY_DIR}"
@@ -63,6 +63,7 @@ ITK_WRAP_LIBRARY(
 # install files
 
 IF(ITK_CSWIG_PYTHON)
+  TARGET_LINK_LIBRARIES(_${ITK_LIBRARY}Python vtkImagingPythonD)
   FOREACH(file ${WRAP_GROUPS})
       INSTALL_FILES(/lib/InsightToolkit/python FILES "${ItkVtk_BINARY_DIR}/Wrapping/${file}.py")
   ENDFOREACH(file ${WRAP_GROUPS})

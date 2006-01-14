@@ -7,7 +7,10 @@
 #
 
   FIND_PATH(PYTHON_NUMARRAY_INCLUDE_DIR arrayobject.h
+    /usr/include/python2.4/numarray/
     /usr/include/python2.3/numarray/
+    /usr/include/python2.2/numarray/
+    /usr/include/python2.1/numarray/
     DOC "Directory where the arrayobject.h header file can be found. This file is part of the numarray package"
     )
 

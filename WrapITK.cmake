@@ -550,34 +550,45 @@ MACRO(WRAP_RGB SIZE)
 ENDMACRO(WRAP_RGB)
 
 
-
-
 #------------------------------------------------------------------------------
-MACRO(WRITE_LANG_BEGIN MODULE)
+MACRO(WRITE_SIMPLE_LANG_BEGIN MODULE MODULE_PATH)
+# 'Simple' macro automatically appends the language to the end of the module
+# name to import, as cswig produces library modules with the same naming 
+# convention. In addition, this macro assumes that the lang module will be
+# placed in the same place the libraries are.
+# Use the non-simple macro to support more complex library structures.
+  WRITE_LANG_BEGIN("${MODULE}@MODULE_LANG@" "${LIBRARY_OUTPUT_PATH}")
+ENDMACRO(WRITE_LANG_BEGIN)
+
+MACRO(WRITE_LANG_BEGIN MODULE MODULE_PATH)
+# Placing '@MODULE_LANG@' in the MODULE or MODULE_PATH string will cause that
+# sequence to be replaced by the current language.
    IF(WRAP_ITK_PYTHON)
-      # python
-      WRITE_PY_BEGIN("${ITK_LANG_FILE}Py.py" ${MODULE})
+      SET(MODULE_LANG "Python")
+      STRING(CONFIGURE MODULE_PATH PYTHON_MODULE_PATH @ONLY)
+      STRING(CONFIGURE MODULE PYTHON_MODULE @ONLY)
+      WRITE_PY_BEGIN("${PYTHON_MODULE_PATH}Py.py" ${PYTHON_MODULE})
    ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(WRITE_LANG_BEGIN)
 
 MACRO(WRITE_LANG_END)
    IF(WRAP_ITK_PYTHON)
       # python
-      WRITE_PY_END("${ITK_LANG_FILE}Py.py")
+      WRITE_PY_END("${PYTHON_MODULE_PATH}Py.py")
    ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(WRITE_LANG_END)
 
 MACRO(WRITE_LANG_WRAP CLASS WRAP)
    IF(WRAP_ITK_PYTHON)
       # python
-      WRITE_PY_WRAP("${ITK_LANG_FILE}Py.py" ${CLASS} "${WRAP}")
+      WRITE_PY_WRAP("${PYTHON_MODULE_PATH}Py.py" ${CLASS} "${WRAP}")
    ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(WRITE_LANG_WRAP)
 
 MACRO(WRITE_LANG_WRAP_NOTPL CLASS)
    IF(WRAP_ITK_PYTHON)
       # python
-      WRITE_PY_WRAP_NOTPL("${ITK_LANG_FILE}Py.py" ${CLASS})
+      WRITE_PY_WRAP_NOTPL("${PYTHON_MODULE_PATH}Py.py" ${CLASS})
    ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(WRITE_LANG_WRAP_NOTPL)
 

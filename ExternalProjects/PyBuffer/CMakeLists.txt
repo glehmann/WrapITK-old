@@ -17,16 +17,13 @@ SET(WRAP_ITK_SWIG_INCLUDE_DIRS ${WRAP_ITK_SWIG_INCLUDE_DIRS} ${PYTHON_NUMARRAY_I
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
 
-
+#------------------------------------------------------------------------------
 SET(ITK_LIBRARY "BufferConversion")
-
-SET(ITK_LIBRARY_LANG ${ITK_LIBRARY})
-SET(ITK_LANG_FILE "${PROJECT_BINARY_DIR}/${ITK_LIBRARY_LANG}")
-WRITE_LANG_BEGIN("${ITK_LIBRARY_LANG}Python")
-
 SET(CXX_OUTPUT_DIR "${PROJECT_BINARY_DIR}")
 
 #------------------------------------------------------------------------------
+WRITE_SIMPLE_LANG_BEGIN(${ITK_LIBRARY})
+
 # create a list of groups
 # Add here modules that must be imported before the others.
 SET(WRAP_GROUPS
@@ -37,7 +34,6 @@ SET(WRAP_GROUPS
 # and populate WRAP_GROUPS
 AUTO_INCLUDE_WRAP_CMAKE(WRAP_GROUPS "" "${CXX_OUTPUT_DIR}")
 
-#------------------------------------------------------------------------------
 # create the wrap_${ITK_LIBRARY}*.cxx files
 WRITE_MODULE(${ITK_LIBRARY} "${CXX_OUTPUT_DIR}" "${WRAP_GROUPS}")
 

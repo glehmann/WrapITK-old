@@ -8,7 +8,7 @@ INCLUDE("${WRAP_ITK_DIR}/UseWrapITK.cmake")
 
 SET(WRAP_ITK_SWIG_INCLUDE_DIRS
   ${WRAP_ITK_SWIG_INCLUDE_DIRS}
-  ${itkvtk_SOURCE_DIR}/src
+  ${ItkVtk_SOURCE_DIR}/src
   ${VTK_INCLUDE_DIRS}
 )
 
@@ -63,11 +63,11 @@ ITK_WRAP_LIBRARY(
 
 IF(ITK_CSWIG_PYTHON)
   FOREACH(file ${WRAP_GROUPS})
-      INSTALL_FILES(/lib/InsightToolkit/python FILES "${itkvtk_BINARY_DIR}/Wrapping/${file}.py")
+      INSTALL_FILES(/lib/InsightToolkit/python FILES "${ItkVtk_BINARY_DIR}/Wrapping/${file}.py")
   ENDFOREACH(file ${WRAP_GROUPS})
-  INSTALL_FILES(/lib/InsightToolkit/python FILES "${itkvtk_BINARY_DIR}/Wrapping/${ITK_LIBRARY}Py.py")
-  INSTALL_FILES(/lib/InsightToolkit FILES "${itkvtk_BINARY_DIR}/Wrapping/${ITK_LIBRARY}Python.py")
-  INSTALL_FILES(/lib/InsightToolkit/python FILES "${itkvtk_SOURCE_DIR}/Wrapping/Python/${ITK_LIBRARY}.py")
-  INSTALL_FILES(/lib/InsightToolkit/python FILES "${itkvtk_SOURCE_DIR}/Wrapping/Python/itkvtk.py")
+  INSTALL_FILES(/lib/InsightToolkit/python FILES "${ItkVtk_BINARY_DIR}/Wrapping/${ITK_LIBRARY}Py.py")
+  INSTALL_FILES(/lib/InsightToolkit FILES "${ItkVtk_BINARY_DIR}/Wrapping/${ITK_LIBRARY}Python.py")
+  INSTALL_FILES(/lib/InsightToolkit/python FILES "${ItkVtk_SOURCE_DIR}/Wrapping/Python/${ITK_LIBRARY}.py")
+  INSTALL_FILES(/lib/InsightToolkit/python FILES "${ItkVtk_SOURCE_DIR}/Wrapping/Python/itkvtk.py")
 ENDIF(ITK_CSWIG_PYTHON)
 

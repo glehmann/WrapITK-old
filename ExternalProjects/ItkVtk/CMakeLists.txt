@@ -3,18 +3,18 @@ PROJECT(ItkVtk)
 
 #-----------------------------------------------------------------------------
 # DaVaW version number, usefull for packaging and doxygen doc:
-SET(itkvtk_MAJOR_VERSION 1)
-SET(itkvtk_MINOR_VERSION 0)
-SET(itkvtk_BUILD_VERSION 0)
-SET(itkvtk_VERSION
-    "${itkvtk_MAJOR_VERSION}.${itkvtk_MINOR_VERSION}.${itkvtk_BUILD_VERSION}")
+SET(ItkVtk_MAJOR_VERSION 1)
+SET(ItkVtk_MINOR_VERSION 0)
+SET(ItkVtk_BUILD_VERSION 0)
+SET(ItkVtk_VERSION
+    "${ItkVtk_MAJOR_VERSION}.${ItkVtk_MINOR_VERSION}.${ItkVtk_BUILD_VERSION}")
 
 #-----------------------------------------------------------------------------
-SET (EXECUTABLE_OUTPUT_PATH ${itkvtk_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
-SET (LIBRARY_OUTPUT_PATH ${itkvtk_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
+SET (EXECUTABLE_OUTPUT_PATH ${ItkVtk_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
+SET (LIBRARY_OUTPUT_PATH ${ItkVtk_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
-SET(itkvtk_LIBRARY_DIR ${LIBRARY_OUTPUT_PATH})
-SET(itkvtk_EXECUTABLE_DIR ${EXECUTABLE_OUTPUT_PATH})
+SET(ItkVtk_LIBRARY_DIR ${LIBRARY_OUTPUT_PATH})
+SET(ItkVtk_EXECUTABLE_DIR ${EXECUTABLE_OUTPUT_PATH})
 
 #-----------------------------------------------------------------------------
 SET(BUILD_WRAPPERS OFF CACHE BOOL "Wrap library")
@@ -35,7 +35,7 @@ INCLUDE (${VTK_USE_FILE})
 ENDIF (VTK_FOUND)
 
 #-----------------------------------------------------------------------------
-INCLUDE_DIRECTORIES(${VTK_INCLUDE_DIRS} ${ITK_INCLUDE_DIRS} ${itkvtk_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(${VTK_INCLUDE_DIRS} ${ITK_INCLUDE_DIRS} ${ItkVtk_SOURCE_DIR}/src)
 LINK_DIRECTORIES(${VTK_LIBRARY_DIRS} ${ITK_LIBRARY_DIRS})
 
 #-----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ IF(BUILD_WRAPPERS)
 ENDIF(BUILD_WRAPPERS)
 
 #-----------------------------------------------------------------------------
-INSTALL_FILES(/include/InsightToolkit/BasicFilters FILES ${itkvtk_SOURCE_DIR}/src/itkImageToVTKImageFilter.h)
-INSTALL_FILES(/include/InsightToolkit/BasicFilters FILES ${itkvtk_SOURCE_DIR}/src/itkImageToVTKImageFilter.txx)
-INSTALL_FILES(/include/InsightToolkit/BasicFilters FILES ${itkvtk_SOURCE_DIR}/src/itkVTKImageToImageFilter.h)
-INSTALL_FILES(/include/InsightToolkit/BasicFilters FILES ${itkvtk_SOURCE_DIR}/src/itkVTKImageToImageFilter.txx)
+INSTALL_FILES(/include/InsightToolkit/BasicFilters FILES ${ItkVtk_SOURCE_DIR}/src/itkImageToVTKImageFilter.h)
+INSTALL_FILES(/include/InsightToolkit/BasicFilters FILES ${ItkVtk_SOURCE_DIR}/src/itkImageToVTKImageFilter.txx)
+INSTALL_FILES(/include/InsightToolkit/BasicFilters FILES ${ItkVtk_SOURCE_DIR}/src/itkVTKImageToImageFilter.h)
+INSTALL_FILES(/include/InsightToolkit/BasicFilters FILES ${ItkVtk_SOURCE_DIR}/src/itkVTKImageToImageFilter.txx)

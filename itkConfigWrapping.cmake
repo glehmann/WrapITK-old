@@ -25,8 +25,9 @@
 # WRAP_ITK_JAVA_DIR -- directory for java classes to be placed
 # WRAP_ITK_CONFIG_DIR -- directory where XXX.in files for CONFIGURE_FILE
 #                        commands are to be found.
+# WRAP_ITK_CMAKE_DIR -- directory where XXX.cmake files are to be found
 #
-# Additionally, LINK_DIRECTORIES include the path to libSwigRuntimeXXX.dylib
+# Additionally, LINK_DIRECTORIES must include the path to libSwigRuntimeXXX.dylib
 # (This is automatic for WrapITK, but not for external projects.)
 #
 # This file sets, among others, WRAP_ITK_SWIG_INCLUDE_DIRS.
@@ -679,8 +680,9 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
 ENDMACRO(ITK_WRAP_LIBRARY)
 
 #------------------------------------------------------------------------------
-# Include other needed macros -- CMAKE_MODULE_PATH must be set correctly
-INCLUDE(WrapTypeBase.cmake)
-INCLUDE(WrapITK.cmake)
-INCLUDE(WrapTypePrefix.cmake)
+# Include other needed macros -- WRAP_ITK_CMAKE_DIR must be set correctly
+INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapTypeBase.cmake")
+INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapITK.cmake")
+INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapITKLang.cmake")
+INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapTypePrefix.cmake")
 

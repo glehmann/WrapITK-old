@@ -8,9 +8,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.2)
 
 # Set up options needed for itkConfigWrapping
 
-OPTION(WRAP_ITK_TCL "Build cswig Tcl wrapper support (requires CableSwig)." OFF)
-OPTION(WRAP_ITK_PYTHON "Build cswig Python wrapper support (requires CableSwig)." OFF)
-OPTION(WRAP_ITK_JAVA "Build cswig Java wrapper support (requires CableSwig)." OFF)
+OPTION(WRAP_ITK_TCL "Build cswig Tcl wrapper support." OFF)
+OPTION(WRAP_ITK_PYTHON "Build cswig Python wrapper support." OFF)
+OPTION(WRAP_ITK_JAVA "Build cswig Java wrapper support." OFF)
 
 OPTION(WRAP_unsigned_char "Wrap unsigned char type" OFF)
 OPTION(WRAP_unsigned_short "Wrap unsigned short type" ON)
@@ -36,6 +36,7 @@ SET(WRAP_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (
 
 SET(ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg")
 SET(WRAP_ITK_CONFIG_DIR ${WrapITK_SOURCE_DIR})
+SET(WRAP_ITK_CMAKE_DIR ${WrapITK_SOURCE_DIR})
 SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")
 
 # Now include itkConfigWrapping
@@ -349,6 +350,37 @@ ENDMACRO(ITK_CONFIG_JAVA_PACKAGE)
 #-----------------------------------------------------------------------------
 ITK_CONFIG_PACKAGE(${WrapITK_BINARY_DIR})
 
+###############################################################################
+# Configure UseWrapITK.cmake and related files for external projects
+###############################################################################
+
+# First, configure for use directly from the build dir.
+SET(CONFIG_SWIG_DIR "${WrapITK_SOURCE_DIR}")
+SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}")
+SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
+SET(CONFIG_WRAP_ITK_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
+
+SET(CONFIG_MIDX_FILES "")
+FOREACH(midx 
+    "VXLNumerics/VXLNumerics"
+    "Numerics/ITKNumerics"
+    "CommonA/ITKCommonA"
+    "CommonB/ITKCommonB"
+    "BasicFiltersA/ITKBasicFiltersA"
+    "BasicFiltersB/ITKBasicFiltersB"
+    "BasicFiltersC/ITKBasicFiltersC"
+    "SpatialObject/ITKSpatialObject"
+    "Algorithms/ITKAlgorithms"
+    "IO/ITKIO")
+  SET(CONFIG_MIDX_FILES "${CONFIG_MIDX_FILES}\n  \"${WrapITK_BINARY_DIR}/${midx}.mdx\"")
+ENDFOREACH(midx)
+
+CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/UseWrapITK.cmake.in"
+               "${WrapITK_BINARY_DIR}/UseWrapITK.cmake"
+               @ONLY IMMEDIATE)
+
+# Second, configure for installed use.
+# Nothing here yet... got to figure out where installed things go.
 
 FOREACH(f
  itkConfigWrapping.cmake

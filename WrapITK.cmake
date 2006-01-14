@@ -1,8 +1,4 @@
 #------------------------------------------------------------------------------
-INCLUDE(${WrapITK_SOURCE_DIR}/WrapITKLang.cmake)
-
-
-#------------------------------------------------------------------------------
 # Macros for modules
 #------------------------------------------------------------------------------
 MACRO(WRITE_MODULE MODULE_NAME PATH GROUP)
@@ -13,8 +9,8 @@ MACRO(WRITE_MODULE MODULE_NAME PATH GROUP)
    STRING(REGEX REPLACE ",\n$" "\n" GROUP_LIST "${GROUP_LIST}")
 
    CONFIGURE_FILE(
-      "${WrapITK_SOURCE_DIR}/wrap_ITK.cxx.in"
-      "${PATH}/wrap_ITK${MODULE_NAME}.cxx"
+      "${WRAP_ITK_CONFIG_DIR}/wrap_ITK.cxx.in"
+      "${PATH}/wrap_${MODULE_NAME}.cxx"
       @ONLY IMMEDIATE
    )
 
@@ -22,9 +18,16 @@ MACRO(WRITE_MODULE MODULE_NAME PATH GROUP)
 ENDMACRO(WRITE_MODULE)
 
 MACRO(WRITE_MODULE_LANG MODULE_NAME PATH)
-   WRITE_MODULE_TCL(${MODULE_NAME} ${PATH})
-   WRITE_MODULE_PYTHON(${MODULE_NAME} ${PATH})
-   WRITE_MODULE_JAVA(${MODULE_NAME} ${PATH})
+  IF(WRAP_ITK_TCL)
+    WRITE_MODULE_TCL(${MODULE_NAME} ${PATH})
+  ENDIF(WRAP_ITK_TCL)
+  IF(WRAP_ITK_PYTHON)
+    WRITE_MODULE_PYTHON(${MODULE_NAME} ${PATH})
+  ENDIF(WRAP_ITK_PYTHON)
+  IF(WRAP_ITK_JAVA)
+    WRITE_MODULE_JAVA(${MODULE_NAME} ${PATH})
+  ENDIF(WRAP_ITK_JAVA)
+  # Need perl stuff too
 ENDMACRO(WRITE_MODULE_LANG)
 
 MACRO(WRITE_MODULE_TCL MODULE_NAME PATH)
@@ -33,8 +36,8 @@ MACRO(WRITE_MODULE_TCL MODULE_NAME PATH)
    SET(extra_headers "")
    STRING(TOUPPER ${lang} lang_TOUPPER)
    CONFIGURE_FILE(
-      "${WrapITK_SOURCE_DIR}/wrap_ITKLang.cxx.in"
-      "${PATH}/wrap_ITK${MODULE_NAME}${lang}.cxx"
+      "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
+      "${PATH}/wrap_${MODULE_NAME}${lang}.cxx"
       IMMEDIATE
    )
 ENDMACRO(WRITE_MODULE_TCL)
@@ -48,8 +51,8 @@ MACRO(WRITE_MODULE_PYTHON MODULE_NAME PATH)
    ENDIF(PYTHON_NUMARRAY_FOUND)
    STRING(TOUPPER ${lang} lang_TOUPPER)
    CONFIGURE_FILE(
-      "${WrapITK_SOURCE_DIR}/wrap_ITKLang.cxx.in"
-      "${PATH}/wrap_ITK${MODULE_NAME}${lang}.cxx"
+      "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
+      "${PATH}/wrap_${MODULE_NAME}${lang}.cxx"
       IMMEDIATE
    )
 ENDMACRO(WRITE_MODULE_PYTHON)
@@ -60,8 +63,8 @@ MACRO(WRITE_MODULE_JAVA MODULE_NAME PATH)
    SET(extra_headers "")
    STRING(TOUPPER ${lang} lang_TOUPPER)
    CONFIGURE_FILE(
-      "${WrapITK_SOURCE_DIR}/wrap_ITKLang.cxx.in"
-      "${PATH}/wrap_ITK${MODULE_NAME}${lang}.cxx"
+      "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
+      "${PATH}/wrap_${MODULE_NAME}${lang}.cxx"
       IMMEDIATE
    )
 ENDMACRO(WRITE_MODULE_JAVA)
@@ -83,7 +86,7 @@ MACRO(WRITE_WRAP_CXX)
   ENDFOREACH(inc)
 
   CONFIGURE_FILE(
-    "${WrapITK_SOURCE_DIR}/wrap_.cxx.in"
+    "${WRAP_ITK_CONFIG_DIR}/wrap_.cxx.in"
     "${itk_File}"
     IMMEDIATE
   )

@@ -17,9 +17,7 @@ SET(itkvtk_LIBRARY_DIR ${LIBRARY_OUTPUT_PATH})
 SET(itkvtk_EXECUTABLE_DIR ${EXECUTABLE_OUTPUT_PATH})
 
 #-----------------------------------------------------------------------------
-SET(WRAP_PYTHON OFF CACHE BOOL "Wrap library in Python")
-SET(WRAP_TCL OFF CACHE BOOL "Wrap library in Tcl")
-SET(WRAP_JAVA OFF CACHE BOOL "Wrap library in Java")
+SET(BUILD_WRAPPERS OFF CACHE BOOL "Wrap library")
 
 #-----------------------------------------------------------------------------
 # Find ITK
@@ -45,9 +43,9 @@ SUBDIRS(
    src 
 )
 
-IF(WRAP_PYTHON OR WRAP_TCL OR WRAP_JAVA)
+IF(BUILD_WRAPPERS)
    SUBDIRS(Wrapping)
-ENDIF(WRAP_PYTHON OR WRAP_TCL OR WRAP_JAVA)
+ENDIF(BUILD_WRAPPERS)
 
 #-----------------------------------------------------------------------------
 INSTALL_FILES(/include/InsightToolkit/BasicFilters FILES ${itkvtk_SOURCE_DIR}/src/itkImageToVTKImageFilter.h)

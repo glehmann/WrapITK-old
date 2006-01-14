@@ -1,0 +1,57 @@
+# Set up options needed for itkConfigWrapping
+# Useful Variables:
+# The user should set JAVA_OUTPUT_DIR if they want generated Java classes to go
+# anywhere other than ${PROJECT_BINARY_DIR}/Java.
+# If SWIG needs to include any files in nonstandard locations, the directories 
+# must be added to WRAP_ITK_SWIG_INCLUDE_DIRS, which is initially populated by 
+# this file.
+
+SET(ITK_DIR "@ITK_DIR@" CACHE PATH "Path to ITK build or install.")
+SET(CableSwig_DIR "@CableSwig_DIR@"  CACHE PATH "Path to CableSwig build or install")
+SET(WRAP_ITK_TCL @WRAP_ITK_TCL@ CACHE BOOL "Build cswig Tcl wrapper support (requires CableSwig).")
+SET(WRAP_ITK_PYTHON @WRAP_ITK_PYTHON@ CACHE BOOL "Build cswig Python wrapper support (requires CableSwig).")
+SET(WRAP_ITK_JAVA @WRAP_ITK_JAVA@ CACHE BOOL "Build cswig Java wrapper support (requires CableSwig).")
+SET(WRAP_unsigned_char @WRAP_unsigned_char@ CACHE BOOL "Wrap unsigned char type")
+SET(WRAP_unsigned_short @WRAP_unsigned_short@ CACHE BOOL "Wrap unsigned short type")
+SET(WRAP_unsigned_long @WRAP_unsigned_long@ CACHE BOOL "Wrap unsigned long type")
+SET(WRAP_signed_char @WRAP_signed_char@ CACHE BOOL "Wrap signed char type")
+SET(WRAP_signed_short @WRAP_signed_short@ CACHE BOOL "Wrap signed short type")
+SET(WRAP_signed_long @WRAP_signed_long@ CACHE BOOL "Wrap signed long type")
+SET(WRAP_float @WRAP_float@ CACHE BOOL "Wrap float type")
+SET(WRAP_double @WRAP_double@ CACHE BOOL "Wrap double type")
+SET(WRAP_vector_float @WRAP_vector_float@ CACHE BOOL "Wrap vector float type")
+SET(WRAP_vector_double @WRAP_vector_double@ CACHE BOOL "Wrap vector double type")
+SET(WRAP_covariant_vector_float @WRAP_covariant_vector_float@ CACHE BOOL "Wrap covariant vector float type")
+SET(WRAP_covariant_vector_double @WRAP_covariant_vector_double@ CACHE BOOL "Wrap covariant vector double type")
+SET(WRAP_DIMS "@WRAP_DIMS@" CACHE STRING "dimensions available separated by semicolons (;)")
+
+FOREACH(var ITK_DIR CableSwig_DIR WRAP_ITK_TCL WRAP_ITK_PYTHON WRAP_ITK_JAVA 
+    WRAP_unsigned_char WRAP_unsigned_short WRAP_unsigned_long WRAP_signed_char
+    WRAP_signed_short WRAP_signed_long WRAP_float WRAP_double WRAP_vector_float
+    WRAP_vector_double WRAP_covariant_vector_float WRAP_covariant_vector_double
+    WRAP_DIMS)
+  MARK_AS_ADVANCED(${var})
+ENDFOREACH(var)
+
+SET(ITK_SWG_FILES "@CONFIG_SWIG_DIR@/itk.swg")
+SET(WRAP_ITK_CONFIG_DIR "@CONFIG_CONFIG_DIR@")
+SET(WRAP_ITK_CMAKE_DIR "@CONFIG_CMAKE_DIR@")
+IF(JAVA_OUTPUT_DIR)
+  SET(WRAP_ITK_JAVA_DIR "${JAVA_OUTPUT_DIR}")
+ELSE(JAVA_OUTPUT_DIR)
+  SET(WRAP_ITK_JAVA_DIR "${PROJECT_BINARY_DIR}/Java")
+  IF(WRAP_ITK_JAVA)
+    FILE(MAKE_DIRECTORY "${WRAP_ITK_JAVA_DIR}")
+  ENDIF(WRAP_ITK_JAVA)
+ENDIF(JAVA_OUTPUT_DIR)
+
+SET(WRAP_ITK_MASTER_INDEX_FILES @CONFIG_MIDX_FILES@)
+
+LINK_DIRECTORIES("@CONFIG_WRAP_ITK_LIBRARY_DIR@")
+
+# Now include itkConfigWrapping
+INCLUDE("${WRAP_ITK_CMAKE_DIR}/itkConfigWrapping.cmake")
+
+# WRAP_ITK_SWIG_INCLUDE_DIRS initially populated by itkConfigWrapping 
+SET(WRAP_ITK_SWIG_INCLUDE_DIRS ${WRAP_ITK_SWIG_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR})
+  

@@ -557,7 +557,7 @@ MACRO(WRITE_SIMPLE_LANG_BEGIN MODULE)
 # convention. In addition, this macro assumes that the lang module will be
 # placed in the same place the libraries are.
 # Use the non-simple macro to support more complex library structures.
-  WRITE_LANG_BEGIN("${MODULE}#MODULE_LANG#" "${LIBRARY_OUTPUT_PATH}")
+  WRITE_LANG_BEGIN("${MODULE}#MODULE_LANG#" "${LIBRARY_OUTPUT_PATH}/${MODULE}")
 ENDMACRO(WRITE_SIMPLE_LANG_BEGIN)
 
 MACRO(WRITE_LANG_BEGIN MODULE MODULE_PATH)

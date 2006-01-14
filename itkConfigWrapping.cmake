@@ -276,8 +276,6 @@ MACRO(CSWIG_CREATE_TCL_CXX_FILE Bin MasterIdx InputIdx InputXml OutputTclCxx Lib
        SET(ITK_SWG_FILE "-l${file}" ${ITK_SWG_FILE})
    ENDFOREACH(file)
 
-   # Need dependency on ${ITK_DIR}/itkConfigure.h so
-   # package is rebuilt when the ITK version changes.
    ADD_CUSTOM_COMMAND(
      COMMENT "${OutputTclCxx} from "
      SOURCE ${Bin}/${InputIdx}
@@ -304,8 +302,6 @@ MACRO(CSWIG_CREATE_PERL_CXX_FILE Bin MasterIdx InputIdx InputXml OutputPerlCxx L
        SET(ITK_SWG_FILE "-l${file}" ${ITK_SWG_FILE})
    ENDFOREACH(file)
 
-   # Need dependency on ${ITK_DIR}/itkConfigure.h so
-   # package is rebuilt when the ITK version changes.
    ADD_CUSTOM_COMMAND(
      COMMENT "${OutputPerlCxx} from "
      SOURCE ${Bin}/${InputIdx}
@@ -337,8 +333,6 @@ MACRO(CSWIG_CREATE_PYTHON_CXX_FILE Bin MasterIdx InputIdx InputXml OutputTclCxx 
      ENDFOREACH(file)
    ENDIF("${InputXml}" MATCHES "${WRAP_ITK_PYTHON_NO_EXCEPTION_REGEX}")
     
-   # Need dependency on ${ITK_DIR}/itkConfigure.h so
-   # package is rebuilt when the ITK version changes.
    ADD_CUSTOM_COMMAND(
      COMMENT "${OutputTclCxx} from "
      SOURCE ${Bin}/${InputIdx}
@@ -347,7 +341,7 @@ MACRO(CSWIG_CREATE_PYTHON_CXX_FILE Bin MasterIdx InputIdx InputXml OutputTclCxx 
           -I${ITK_SWIG_DEFAULT_LIB}
           -I${ITK_SWIG_DEFAULT_LIB}/python
           -noruntime ${CINDEX} ${CSWIG_IGNORE_WARNINGS} -depend ${Bin}/${InputXml}.depend
-          -outdir "${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}" 
+          -outdir "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}" 
           -o ${Bin}/${OutputTclCxx} -python -c++ ${Bin}/${InputXml}
      TARGET ${Library}
      OUTPUTS ${Bin}/${OutputTclCxx}

@@ -451,8 +451,6 @@ ENDMACRO(COND_WRAP)
 MACRO(WRAP_TYPES_DIMS SIZE TYPES TMP_DIMS)
   # implement an argument of type 2+ to say all dims equal or above 2
 
-  SET(DIMS "${TMP_DIMS}")
-
   IF("${TMP_DIMS}" MATCHES "^[0-9]+\\+$")
     STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" MAX_DIM "${TMP_DIMS}")
     SET(DIMS "")
@@ -464,13 +462,7 @@ MACRO(WRAP_TYPES_DIMS SIZE TYPES TMP_DIMS)
     WRAP_TYPES_DIMS_NO_DIM_TEST("${SIZE}" "${TYPES}" "${DIMS}")
 
   ELSE("${TMP_DIMS}" MATCHES "^[0-9]+\\+$")
-    SET(DIMS "")
-    FOREACH(d ${WRAP_DIMS})
-      IF("${d}" EQUAL "${dim}")
-        SET(DIMS "${DIMS}" "${d}")
-      ENDIF("${d}" EQUAL "${dim}")
-    ENDFOREACH(d)
-    WRAP_TYPES_DIMS_NO_DIM_TEST("${SIZE}" "${TYPES}" "${DIMS}")
+    WRAP_TYPES_DIMS_NO_DIM_TEST("${SIZE}" "${TYPES}" "${WRAP_DIMS}")
 
   ENDIF("${TMP_DIMS}" MATCHES "^[0-9]+\\+$")
 

@@ -54,4 +54,7 @@ INCLUDE("${WRAP_ITK_CMAKE_DIR}/itkConfigWrapping.cmake")
 
 # WRAP_ITK_SWIG_INCLUDE_DIRS initially populated by itkConfigWrapping 
 SET(WRAP_ITK_SWIG_INCLUDE_DIRS ${WRAP_ITK_SWIG_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR})
-  
+
+# Some macros require LIBRARY_OUTPUT_PATH to be set. For now, set it to its default.
+# Re-set later if a different library output path is needed.
+SET(LIBRARY_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}")

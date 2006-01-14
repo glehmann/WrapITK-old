@@ -558,7 +558,7 @@ MACRO(WRITE_SIMPLE_LANG_BEGIN MODULE MODULE_PATH)
 # placed in the same place the libraries are.
 # Use the non-simple macro to support more complex library structures.
   WRITE_LANG_BEGIN("${MODULE}@MODULE_LANG@" "${LIBRARY_OUTPUT_PATH}")
-ENDMACRO(WRITE_LANG_BEGIN)
+ENDMACRO(WRITE_SIMPLE_LANG_BEGIN)
 
 MACRO(WRITE_LANG_BEGIN MODULE MODULE_PATH)
 # Placing '@MODULE_LANG@' in the MODULE or MODULE_PATH string will cause that

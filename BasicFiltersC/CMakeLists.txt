@@ -18,7 +18,7 @@ AUTO_INCLUDE_WRAP_CMAKE(WRAP_GROUPS "")
 
 #------------------------------------------------------------------------------
 # create the wrap_ITKBasicFilters*.cxx files
-WRITE_MODULE("BasicFiltersC" "${WrapITK_PART_DIR}" "${WRAP_GROUPS}")
+WRITE_MODULE("ITKBasicFiltersC" "${WrapITK_PART_DIR}" "${WRAP_GROUPS}")
 
 #------------------------------------------------------------------------------
 # create the ITKBasicFilters libraries

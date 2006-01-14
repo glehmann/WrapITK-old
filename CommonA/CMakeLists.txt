@@ -49,7 +49,7 @@ SET(WRAP_GROUPS
 
 #------------------------------------------------------------------------------
 # create the wrap_ITKCommon*.cxx files
-WRITE_MODULE_LANG("CommonA" "${WrapITK_PART_DIR}" "${WRAP_GROUPS}")
+WRITE_MODULE_LANG("ITKCommonA" "${WrapITK_PART_DIR}" "${WRAP_GROUPS}")
 
 #------------------------------------------------------------------------------
 # create a list of files for templating

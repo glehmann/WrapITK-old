@@ -284,6 +284,7 @@ MACRO(CSWIG_CREATE_TCL_CXX_FILE Bin MasterIdx InputIdx InputXml OutputTclCxx Lib
           -I${ITK_SWIG_DEFAULT_LIB}
           -I${ITK_SWIG_DEFAULT_LIB}/tcl
           -noruntime ${CINDEX} ${CSWIG_IGNORE_WARNINGS} -depend ${Bin}/${InputXml}.depend
+          -outdir "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}"
           -o ${Bin}/${OutputTclCxx} -tcl -pkgversion "${ITK_VERSION_STRING}" -c++ ${Bin}/${InputXml}
      TARGET ${Library}
      OUTPUTS ${Bin}/${OutputTclCxx}
@@ -310,6 +311,7 @@ MACRO(CSWIG_CREATE_PERL_CXX_FILE Bin MasterIdx InputIdx InputXml OutputPerlCxx L
           ${ITK_SWG_FILE}
           -I${ITK_SWIG_DEFAULT_LIB}
           -noruntime ${CINDEX} ${CSWIG_IGNORE_WARNINGS} -depend ${Bin}/${InputXml}.depend
+          -outdir "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}"
           -o ${Bin}/${OutputPerlCxx} -c++ ${Bin}/${InputXml}
      TARGET ${Library}
      OUTPUTS ${Bin}/${OutputPerlCxx}

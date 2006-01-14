@@ -3,7 +3,7 @@ STRING(TOLOWER ${ITK_LIBRARY} ITK_LIBRARY_LANG)
 SET(ITK_LANG_FILE "${WrapITK_BINARY_DIR}/Python/${ITK_LIBRARY_LANG}")
 WRITE_LANG_BEGIN("itkcommon")
 
-SET(WrapITK_PART_DIR "${WrapITK_BINARY_DIR}/CommonA")
+SET(CXX_OUTPUT_DIR "${WrapITK_BINARY_DIR}/CommonA")
 
 #------------------------------------------------------------------------------
 # create a list of groups
@@ -49,7 +49,7 @@ SET(WRAP_GROUPS
 
 #------------------------------------------------------------------------------
 # create the wrap_ITKCommon*.cxx files
-WRITE_MODULE_LANG("ITKCommonA" "${WrapITK_PART_DIR}" "${WRAP_GROUPS}")
+WRITE_MODULE_LANG("ITKCommonA" "${CXX_OUTPUT_DIR}" "${WRAP_GROUPS}")
 
 #------------------------------------------------------------------------------
 # create a list of files for templating
@@ -60,7 +60,7 @@ SET(WRAP_CXX_EXTRA
 )
 
 FOREACH(file ${WRAP_GROUPS} ${WRAP_CXX_EXTRA})
-   INCLUDE_WRAP_CMAKE(${file})
+   INCLUDE_WRAP_CMAKE(${file} "${CXX_OUTPUT_DIR}")
 ENDFOREACH(file ${WRAP_CXX_SOURCES})
 
 #------------------------------------------------------------------------------

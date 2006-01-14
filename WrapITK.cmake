@@ -266,7 +266,7 @@ ENDMACRO(WRAP_CLASS_NOTPL)
 
 
 
-MACRO(INCLUDE_WRAP_CMAKE module)
+MACRO(INCLUDE_WRAP_CMAKE module output_dir)
   # include a cmake module file and generate the associated wrap_???.cxx file
   #
   # Global vars used: none
@@ -275,7 +275,7 @@ MACRO(INCLUDE_WRAP_CMAKE module)
 
   # preset the vars before include the file 
   SET(itk_Module "${module}")
-  SET(itk_File "${WrapITK_PART_DIR}/wrap_${itk_Module}.cxx")
+  SET(itk_File "${output_dir}/wrap_${itk_Module}.cxx")
   SET(itk_Typedef)
   SET(itk_Include ${itk_DefaultInclude})
   SET(itk_AutoInclude 1)
@@ -288,12 +288,12 @@ MACRO(INCLUDE_WRAP_CMAKE module)
 ENDMACRO(INCLUDE_WRAP_CMAKE)
 
 
-MACRO(AUTO_INCLUDE_WRAP_CMAKE LISTNAME EXCLUDE_LIST)
+MACRO(AUTO_INCLUDE_WRAP_CMAKE LISTNAME EXCLUDE_LIST CXX_OUTPUT_DIR)
   # automatically include the wrap_*.cmake file in the current directory"
   # 
   # first, include modules already in list
   FOREACH(module ${${LISTNAME}})
-      INCLUDE_WRAP_CMAKE("${module}")
+      INCLUDE_WRAP_CMAKE("${module}" "${CXX_OUTPUT_DIR}")
   ENDFOREACH(module)
 
   # search files to include
@@ -318,7 +318,7 @@ MACRO(AUTO_INCLUDE_WRAP_CMAKE LISTNAME EXCLUDE_LIST)
     IF(${willInclude})
       # add the module name to the list
       SET(${LISTNAME} ${${LISTNAME}} "${module}")
-      INCLUDE_WRAP_CMAKE("${module}")
+      INCLUDE_WRAP_CMAKE("${module}" "${CXX_OUTPUT_DIR}")
     ENDIF(${willInclude})
   ENDFOREACH(file)
 ENDMACRO(AUTO_INCLUDE_WRAP_CMAKE)

@@ -3,7 +3,7 @@ STRING(TOLOWER ${ITK_LIBRARY} ITK_LIBRARY_LANG)
 SET(ITK_LANG_FILE "${WrapITK_BINARY_DIR}/Python/${ITK_LIBRARY_LANG}")
 WRITE_LANG_BEGIN(${ITK_LIBRARY_LANG})
 
-SET(WrapITK_PART_DIR "${WrapITK_BINARY_DIR}/Patented")
+SET(CXX_OUTPUT_DIR "${WrapITK_BINARY_DIR}/Patented")
 
 #------------------------------------------------------------------------------
 # create a list of groups
@@ -13,11 +13,11 @@ SET(WRAP_GROUPS
 )
 
 # include every wrap_*.cmake files in the directory
-AUTO_INCLUDE_WRAP_CMAKE(WRAP_GROUPS "")
+AUTO_INCLUDE_WRAP_CMAKE(WRAP_GROUPS "" "${CXX_OUTPUT_DIR}")
 
 #------------------------------------------------------------------------------
 # create the wrap_ITKBasicFilters*.cxx files
-WRITE_MODULE("ITKPatented" "${WrapITK_PART_DIR}" "${WRAP_GROUPS}")
+WRITE_MODULE("ITKPatented" "${CXX_OUTPUT_DIR}" "${WRAP_GROUPS}")
 
 #------------------------------------------------------------------------------
 # create the ITKBasicFilters libraries

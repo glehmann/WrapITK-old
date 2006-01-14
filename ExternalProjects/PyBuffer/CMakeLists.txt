@@ -24,7 +24,7 @@ SET(ITK_LIBRARY_LANG ${ITK_LIBRARY})
 SET(ITK_LANG_FILE "${PROJECT_BINARY_DIR}/${ITK_LIBRARY_LANG}")
 WRITE_LANG_BEGIN("${ITK_LIBRARY_LANG}Python")
 
-SET(WrapITK_PART_DIR "${PROJECT_BINARY_DIR}")
+SET(CXX_OUTPUT_DIR "${PROJECT_BINARY_DIR}")
 
 #------------------------------------------------------------------------------
 # create a list of groups
@@ -35,11 +35,11 @@ SET(WRAP_GROUPS
 
 # include every wrap_*.cmake files in the directory
 # and populate WRAP_GROUPS
-AUTO_INCLUDE_WRAP_CMAKE(WRAP_GROUPS "")
+AUTO_INCLUDE_WRAP_CMAKE(WRAP_GROUPS "" "${CXX_OUTPUT_DIR}")
 
 #------------------------------------------------------------------------------
 # create the wrap_${ITK_LIBRARY}*.cxx files
-WRITE_MODULE(${ITK_LIBRARY} "${WrapITK_PART_DIR}" "${WRAP_GROUPS}")
+WRITE_MODULE(${ITK_LIBRARY} "${CXX_OUTPUT_DIR}" "${WRAP_GROUPS}")
 
 WRITE_LANG_END()
 

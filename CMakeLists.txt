@@ -378,6 +378,7 @@ FOREACH(f
  WrapTypePrefix.cmake
  WrapTypeBase.cmake
  wrap_ITKLang.cxx.in
- WrapITKLang.cmake)
-  INSTALL_FILES(/lib/InsightToolkit ${f})
+ WrapITKLang.cmake
+ "${WrapITK_BINARY_DIR}/UseWrapITK.cmake")
+  INSTALL_FILES(/lib/InsightToolkit FILES "${f}")
 ENDFOREACH(f)

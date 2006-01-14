@@ -551,7 +551,7 @@ ENDMACRO(WRAP_RGB)
 
 
 #------------------------------------------------------------------------------
-MACRO(WRITE_SIMPLE_LANG_BEGIN MODULE MODULE_PATH)
+MACRO(WRITE_SIMPLE_LANG_BEGIN MODULE)
 # 'Simple' macro automatically appends the language to the end of the module
 # name to import, as cswig produces library modules with the same naming 
 # convention. In addition, this macro assumes that the lang module will be

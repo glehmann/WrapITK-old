@@ -416,6 +416,16 @@ ENDMACRO(WRAP_JAVA_SOURCES)
 
 #------------------------------------------------------------------------------
 MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES ITK_LINK_LIBRARIES MASTER_IDX SOURCE_DIR BINARY_DIR)
+  # Work around CMake bug where CMake doesn't understand paths to generated files (e.g. not yet extant)
+  # if those paths have a '//' or '/./' motif in them
+  IF("${DIRECTORY}" MATCHES "^[\\.]?$")
+    SET(Source_Directory "${SOURCE_DIR}")
+    SET(Binary_Directory "${BINARY_DIR}")
+  ELSE("${DIRECTORY}" MATCHES "^[\\.]?$")
+    SET(Source_Directory "${SOURCE_DIR}/${DIRECTORY}")
+    SET(Binary_Directory "${BINARY_DIR}/${DIRECTORY}")
+  ENDIF("${DIRECTORY}" MATCHES "^[\\.]?$")
+  
   SET(WRAP_SOURCES)
   FOREACH(src ${SRCS})
     SET(WRAP_SOURCES ${WRAP_SOURCES} wrap_${src})
@@ -431,8 +441,8 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
     SET(WRAP_JAVA_SOURCES ${WRAP_JAVA_SOURCES} ${Source}Java.cxx)
     STRING(REGEX REPLACE wrap_ "" JAVA_DEP ${Source})
     SET(${LIBRARY_NAME}_JAVA_DEPENDS_INIT ${${LIBRARY_NAME}_JAVA_DEPENDS_INIT} ${JAVA_DEP}.java)
-    SET(ALL_IDX_FILES ${ALL_IDX_FILES} ${BINARY_DIR}/${DIRECTORY}/${Source}.idx )
-    SET(INDEX_FILE_CONTENT "${INDEX_FILE_CONTENT}${BINARY_DIR}/${DIRECTORY}/${Source}.idx\n")
+    SET(ALL_IDX_FILES ${ALL_IDX_FILES} ${Binary_Directory}/${Source}.idx )
+    SET(INDEX_FILE_CONTENT "${INDEX_FILE_CONTENT}${Binary_Directory}/${Source}.idx\n")
   ENDFOREACH(Source)
   SET(${LIBRARY_NAME}_JAVA_DEPENDS  "${${LIBRARY_NAME}_JAVA_DEPENDS_INIT}" CACHE INTERNAL "" FORCE)
   # add the package wrappers 
@@ -569,7 +579,7 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
       SET_SOURCE_FILES_PROPERTIES(${ITK_SWIG_FILE_CXX}Java.cxx GENERATED)
       SET(WRAP_FILE ${ITK_SWIG_FILE_CXX}Java.cxx )
     ENDIF(ITK_SWIG_FILE)
-    MAKE_DIRECTORY("${BINARY_DIR}/Java/InsightToolkit")
+    MAKE_DIRECTORY("${WRAP_ITK_JAVA_DIR}/InsightToolkit")
     ADD_LIBRARY(${LIBRARY_NAME}Java MODULE 
       ${WRAP_JAVA_SOURCES} 
       ${ITK_EXTRA_JAVA_SOURCES} 
@@ -589,7 +599,7 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
         COMMAND ${CSWIG} 
         ARGS -nocable -noruntime ${CSWIG_IGNORE_WARNINGS} -o ${WRAP_FILE}
         -I${ITK_SOURCE_DIR}/Code/Common -DITKCommon_EXPORT=
-        -outdir ${BINARY_DIR}/Java/InsightToolkit
+        -outdir ${WRAP_ITK_JAVA_DIR}/InsightToolkit
         -package InsightToolkit -java -c++ ${ITK_SWIG_FILE}
         TARGET ${LIBRARY_NAME}Java
         OUTPUTS ${WRAP_FILE}
@@ -599,10 +609,10 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
   
   CONFIGURE_FILE(
     ${WRAP_ITK_CONFIG_DIR}/Master.mdx.in
-    ${BINARY_DIR}/${DIRECTORY}/${LIBRARY_NAME}.mdx IMMEDIATE
+    ${Binary_Directory}/${LIBRARY_NAME}.mdx IMMEDIATE
     )
 
-  SET(SWIG_INC_FILE ${BINARY_DIR}/${DIRECTORY}/SwigInc.txt)
+  SET(SWIG_INC_FILE ${Binary_Directory}/SwigInc.txt)
   SET(SWIG_INC_CONTENTS)
   FOREACH(dir ${WRAP_ITK_SWIG_INCLUDE_DIRS})
     SET(SWIG_INC_CONTENTS "${SWIG_INC_CONTENTS}-I${dir}\n")
@@ -613,25 +623,25 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
   FOREACH(Source ${WRAP_SOURCES})
     IF(WRAP_ITK_TCL)
       # tcl
-      WRAP_TCL_SOURCES(${SOURCE_DIR}/${DIRECTORY} ${BINARY_DIR}/${DIRECTORY}
+      WRAP_TCL_SOURCES(${Source_Directory} ${Binary_Directory}
         ${Source} ${LIBRARY_NAME}Tcl "${MASTER_IDX}" "${ALL_IDX_FILES}")
     ENDIF(WRAP_ITK_TCL)
 
     IF(WRAP_ITK_PERL)
       # tcl
-      WRAP_PERL_SOURCES(${SOURCE_DIR}/${DIRECTORY} ${BINARY_DIR}/${DIRECTORY}
+      WRAP_PERL_SOURCES(${Source_Directory} ${Binary_Directory}
         ${Source} ${LIBRARY_NAME}Perl "${MASTER_IDX}" "${ALL_IDX_FILES}")
     ENDIF(WRAP_ITK_PERL)
     
     IF(WRAP_ITK_PYTHON)
       # python
-      WRAP_PYTHON_SOURCES(${SOURCE_DIR}/${DIRECTORY} ${BINARY_DIR}/${DIRECTORY}
+      WRAP_PYTHON_SOURCES(${Source_Directory} ${Binary_Directory}
         ${Source} _${LIBRARY_NAME}Python "${MASTER_IDX}" "${ALL_IDX_FILES}")
     ENDIF(WRAP_ITK_PYTHON)
     
     IF(WRAP_ITK_JAVA)
       # java
-      WRAP_JAVA_SOURCES(${SOURCE_DIR}/${DIRECTORY} ${BINARY_DIR}/${DIRECTORY}
+      WRAP_JAVA_SOURCES(${Source_Directory} ${Binary_Directory}
         ${Source} ${LIBRARY_NAME}Java "${MASTER_IDX}" "${ALL_IDX_FILES}")
     ENDIF(WRAP_ITK_JAVA)
   ENDFOREACH(Source)
@@ -640,31 +650,31 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
   # wrap the package files for tcl and python
   IF(WRAP_ITK_TCL)
     # tcl
-    WRAP_TCL_SOURCES(${SOURCE_DIR}/${DIRECTORY} ${BINARY_DIR}/${DIRECTORY}
+    WRAP_TCL_SOURCES(${Source_Directory} ${Binary_Directory}
       wrap_${LIBRARY_NAME}Tcl ${LIBRARY_NAME}Tcl "${MASTER_IDX}" "${ALL_IDX_FILES}")
     IF(ITK_EXTRA_TCL_WRAP)
-      WRAP_TCL_SOURCES(${SOURCE_DIR}/${DIRECTORY} ${BINARY_DIR}/${DIRECTORY}
+      WRAP_TCL_SOURCES(${Source_Directory} ${Binary_Directory}
         "${ITK_EXTRA_TCL_WRAP}" ${LIBRARY_NAME}Tcl "${MASTER_IDX}" "${ALL_IDX_FILES}")
     ENDIF(ITK_EXTRA_TCL_WRAP)
   ENDIF(WRAP_ITK_TCL)
 
   IF(WRAP_ITK_PERL)
     # perl
-    WRAP_PERL_SOURCES(${SOURCE_DIR}/${DIRECTORY} ${BINARY_DIR}/${DIRECTORY}
+    WRAP_PERL_SOURCES(${Source_Directory} ${Binary_Directory}
       wrap_${LIBRARY_NAME}Perl ${LIBRARY_NAME}Perl "${MASTER_IDX}" "${ALL_IDX_FILES}")
     IF(ITK_EXTRA_PERL_WRAP)
-      WRAP_PERL_SOURCES(${SOURCE_DIR}/${DIRECTORY} ${BINARY_DIR}/${DIRECTORY}
+      WRAP_PERL_SOURCES(${Source_Directory} ${Binary_Directory}
         "${ITK_EXTRA_PERL_WRAP}" ${LIBRARY_NAME}Perl "${MASTER_IDX}" "${ALL_IDX_FILES}")
     ENDIF(ITK_EXTRA_PERL_WRAP)
   ENDIF(WRAP_ITK_PERL)
    
   IF(WRAP_ITK_PYTHON)
     # python
-    WRAP_PYTHON_SOURCES(${SOURCE_DIR}/${DIRECTORY} ${BINARY_DIR}/${DIRECTORY}
+    WRAP_PYTHON_SOURCES(${Source_Directory} ${Binary_Directory}
       wrap_${LIBRARY_NAME}Python _${LIBRARY_NAME}Python "${MASTER_IDX}" "${ALL_IDX_FILES}")
     IF(ITK_EXTRA_PYTHON_WRAP)
       FOREACH( extraPython ${ITK_EXTRA_PYTHON_WRAP})
-        WRAP_PYTHON_SOURCES(${SOURCE_DIR}/${DIRECTORY} ${BINARY_DIR}/${DIRECTORY}
+        WRAP_PYTHON_SOURCES(${Source_Directory} ${Binary_Directory}
           ${extraPython} _${LIBRARY_NAME}Python "${MASTER_IDX}" "${ALL_IDX_FILES}")
       ENDFOREACH( extraPython )
     ENDIF(ITK_EXTRA_PYTHON_WRAP)
@@ -673,7 +683,7 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
 
   IF(WRAP_ITK_JAVA)
     # python
-    WRAP_JAVA_SOURCES(${SOURCE_DIR}/${DIRECTORY} ${BINARY_DIR}/${DIRECTORY}
+    WRAP_JAVA_SOURCES(${Source_Directory} ${Binary_Directory}
       wrap_${LIBRARY_NAME}Java ${LIBRARY_NAME}Java "${MASTER_IDX}" "${ALL_IDX_FILES}")
   ENDIF(WRAP_ITK_JAVA)
 

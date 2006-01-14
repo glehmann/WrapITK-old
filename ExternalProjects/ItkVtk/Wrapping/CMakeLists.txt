@@ -5,6 +5,7 @@ IF(NOT WRAP_ITK_DIR)
 ENDIF(NOT WRAP_ITK_DIR)
 
 INCLUDE("${WRAP_ITK_DIR}/UseWrapITK.cmake")
+SET(ITK_SWG_FILES ${ITK_SWG_FILES} "${ItkVtk_SOURCE_DIR}/Wrapping/itk.swg")
 
 SET(WRAP_ITK_SWIG_INCLUDE_DIRS
   ${WRAP_ITK_SWIG_INCLUDE_DIRS}
@@ -51,7 +52,7 @@ ITK_WRAP_LIBRARY(
   "Wrapping"
   ""
   ""
-  "ITKCommon;vtkImaging"
+  "ITKCommon;vtkImaging;vtkImagingPythonD"
   "${MASTER_INDEX_FILES}"
   "${PROJECT_SOURCE_DIR}"
   "${PROJECT_BINARY_DIR}"

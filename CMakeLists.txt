@@ -167,7 +167,7 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
     # Now create a list of Python files.
     SET(ITK_PYTHON_FILES)
 
-    # Wrapping/CSwig/Python/*.py
+    # WrapITK/Python/*.py
     SET(ITK_PYTHON_FILES
       ${ITK_PYTHON_FILES}
       InsightToolkit

@@ -12,7 +12,18 @@ execfile(join(dirname(__file__), "itkbasicfilterscPy.py"))
 execfile(join(dirname(__file__), "itkspatialobjectPy.py"))
 execfile(join(dirname(__file__), "itkalgorithmsPy.py"))
 execfile(join(dirname(__file__), "itkioPy.py"))
-del dirname, join
+
+# now, include files in auto dir
+from os import listdir
+auto_path = join(dirname(__file__), "auto")
+for f in listdir(auto_path) :
+  if f.endswith('.py') :
+    execfile(join(dirname(__file__), "auto", f))
+try :
+  del f
+except :
+  pass
+del dirname, join, listdir, auto_path
 
 # new features introduced by itk module
 # each new feature use a name in lower case

@@ -2,7 +2,7 @@
 SET(itk_AutoInclude OFF)
 WRAP_INCLUDE(NarrowBand)
 
-WRAP_CLASS(BandNode)
+WRAP_CLASS(BandNode DEREF)
   FOREACH(d ${WRAP_DIMS})
     COND_WRAP("I${d}${ITKM_D}"  "itk::Index < ${d} >, ${ITKT_D}"  "D")
     COND_WRAP("I${d}${ITKM_F}"  "itk::Index < ${d} >, ${ITKT_F}"  "F")

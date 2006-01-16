@@ -15,15 +15,17 @@ execfile(join(dirname(__file__), "itkioPy.py"))
 
 # now, include files in auto dir
 from os import listdir
-auto_path = join(dirname(__file__), "auto")
-for f in listdir(auto_path) :
-  if f.endswith('.py') :
-    execfile(join(dirname(__file__), "auto", f))
-try :
-  del f
-except :
-  pass
-del dirname, join, listdir, auto_path
+try:
+  auto_path = f = ""  # to be sure to have something to delete !
+  auto_path = join(dirname(__file__), "auto")
+  for f in listdir(auto_path) :
+    if f.endswith('.py') :
+      execfile(join(auto_path, "auto", f))
+except OSError, e :
+  import sys
+  print >> sys.stderr, e
+
+del dirname, join, listdir, auto_path, f
 
 # new features introduced by itk module
 # each new feature use a name in lower case

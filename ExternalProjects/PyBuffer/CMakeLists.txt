@@ -1,6 +1,6 @@
 PROJECT(WrapITKPyBuffer)
 
-SET(WRAP_ITK_DIR "NOTFOUND" CACHE PATH "Path to build or install location of WrapITK")
+SET(WRAP_ITK_DIR "WRAP_ITK_DIR-NOTFOUND" CACHE PATH "Path to build or install location of WrapITK")
 IF(NOT WRAP_ITK_DIR)
   MESSAGE(FATAL_ERROR
           "Cannot build without WrapITK.  Please set WRAP_ITK_DIR.")

@@ -75,7 +75,7 @@ itkSTypemap(Index, 3)*/
   signed char &, const signed char &, \
   unsigned short &, const unsigned short &, \
   signed short &, const signed short &, \
-  unsigned long &, const unsigned long, & \
+  unsigned long &, const unsigned long &, \
   signed long &, const signed long & \
   {$result = PyInt_FromLong( *$1 );}
 

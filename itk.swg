@@ -71,6 +71,19 @@ itkSTypemap(Index, 3)*/
    }
 }
 
+%typemap(out) unsigned char &, const unsigned char &, \
+  signed char &, const signed char &, \
+  unsigned short &, const unsigned short &, \
+  signed short &, const signed short &, \
+  unsigned long &, const unsigned long, & \
+  signed long &, const signed long & \
+  {$result = PyInt_FromLong( *$1 );}
+
+%typemap(out) float &, const float &, \
+  double &, const double & \
+  {$result = PyFloat_FromDouble( *$1 );}
+
+
 // a implementation of %extend in cableswig would also be great to move back __getitem__ method 
 // added in some files in this one
    

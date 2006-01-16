@@ -5,8 +5,17 @@
 # PYTHON_NUMARRAY_INCLUDE_DIR  - directory where the arrayobject.h header file can be found
 #
 #
+  IF(PYTHON_EXECUTABLE)
+    EXEC_PROGRAM("${PYTHON_EXECUTABLE}"
+      ARGS "-c 'try:\n  import numpy; print numpy.get_numpy_include()\nexcept: pass\n'"
+      OUTPUT_VARIABLE NUMPY_PATH
+    )
+  ENDIF(PYTHON_EXECUTABLE)
 
   FIND_PATH(PYTHON_NUMARRAY_INCLUDE_DIR arrayobject.h
+    "${NUMPY_PATH}/numpy/"
+    "${PYTHON_INCLUDE_PATH}/numarray/"
+    "${PYTHON_INCLUDE_PATH}/Numeric/"
     /usr/include/python2.4/numarray/
     /usr/include/python2.3/numarray/
     /usr/include/python2.2/numarray/

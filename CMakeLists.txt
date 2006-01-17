@@ -157,140 +157,70 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
   #
   #  1. Create a list of Python files to be installed/copied.
   #  2. Copy them to BINARY_DIR if it is different from SOURCE_DIR.
-  #  3. Use Python's compileall to compile the copied files.
   #
   # *** Step 1 has to be done carefully to avoid missing out files ***
-  IF(PYTHON_EXECUTABLE)
-    ADD_CUSTOM_TARGET(itkpython_pyc ALL echo "...")
+  ADD_CUSTOM_TARGET(copy_python_files ALL)
 
-    # Make the necessary directories.
-    MAKE_DIRECTORY(${WrapITK_BINARY_DIR}/Python)
+  # Now create a list of Python files.
+  # WrapITK/Python/*.py
+  SET(ITK_PYTHON_FILES
+    ${ITK_PYTHON_FILES}
+    InsightToolkit
+    itkspatialobject
+    itkalgorithms
+    itkbasicfilters
+    itkcommon
+    itkio
+    itktesting
+    itkdata
+    itknumerics
+    vxlnumerics
 
-    # Now create a list of Python files.
-    SET(ITK_PYTHON_FILES)
+    itk
+    itkPyTemplate
+    itktypes
+    )
+  # Done listing files.
 
-    # WrapITK/Python/*.py
-    SET(ITK_PYTHON_FILES
-      ${ITK_PYTHON_FILES}
-      InsightToolkit
-      itkspatialobject
-      itkalgorithms
-      itkbasicfilters
-      itkcommon
-      itkio
-      itktesting
-      itkdata
-      itknumerics
-      vxlnumerics
+  # Now copy these files if necessary.
+  SET(WRAP_ITK_PYTHON_FILES)
 
-      itk
-      itkPyTemplate
-      itktypes
-
-      itkbasicfiltersaPy
-      itkbasicfiltersbPy
-      itkbasicfilterscPy
-      itkcommonaPy
-      itkcommonbPy
-      itkioPy
-      itknumericsPy
-      itkspatialobjectPy
-      itkalgorithmsPy
-      )
-    # Done listing files.
-
-    # Now copy these files if necessary.
-    SET(ITK_PYTHON_SOURCE_FILES)
-    SET(ITK_PYTHON_OUTPUT_FILES)
-
+  IF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
+    # In source build -- no need to copy Python files.
+  ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
     IF(CMAKE_CONFIGURATION_TYPES)
       FOREACH(file ${ITK_PYTHON_FILES})
-        SET(src "${WrapITK_BINARY_DIR}/Python/${CMAKE_CFG_INTDIR}/${file}.py")
-        SET(ITK_PYTHON_SOURCE_FILES ${ITK_PYTHON_SOURCE_FILES} ${src})
+        SET(src "${WrapITK_SOURCE_DIR}/Python/${file}.py")
+        SET(tgt "${WrapITK_BINARY_DIR}/Python/${CMAKE_CFG_INTDIR}/${file}.py")
+        SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} ${tgt})
+        ADD_CUSTOM_COMMAND(SOURCE ${src}
+          COMMAND ${CMAKE_COMMAND}
+          ARGS -E copy ${src} ${tgt}
+          OUTPUTS ${tgt}
+          TARGET copy_python_files
+          COMMENT "source copy")
       ENDFOREACH(file)
     ELSE(CMAKE_CONFIGURATION_TYPES)
       FOREACH(file ${ITK_PYTHON_FILES})
-        SET(src "${WrapITK_BINARY_DIR}/Python/${file}.py")
-        SET(ITK_PYTHON_SOURCE_FILES ${ITK_PYTHON_SOURCE_FILES} ${src})
+        SET(src "${WrapITK_SOURCE_DIR}/Python/${file}.py")
+        SET(tgt "${WrapITK_BINARY_DIR}/Python/${file}.py")
+        SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} ${tgt})
+        ADD_CUSTOM_COMMAND(SOURCE ${src}
+          COMMAND ${CMAKE_COMMAND}
+          ARGS -E copy ${src} ${tgt}
+          OUTPUTS ${tgt}
+          TARGET copy_python_files
+          COMMENT "source copy")
       ENDFOREACH(file)
     ENDIF(CMAKE_CONFIGURATION_TYPES)
+  ENDIF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
 
-    IF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
-      #MESSAGE("In source build -- no need to copy Python files.")
-    ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
-      IF(CMAKE_CONFIGURATION_TYPES)
-        FOREACH(file ${ITK_PYTHON_FILES})
-          IF(EXISTS ${WrapITK_SOURCE_DIR}/Python/${file}.py)
-            SET(src "${WrapITK_SOURCE_DIR}/Python/${file}.py")
-          ELSE(EXISTS ${WrapITK_SOURCE_DIR}/Python/${file}.py)
-            SET(src "${WrapITK_BINARY_DIR}/Python/${file}.py")
-          ENDIF(EXISTS ${WrapITK_SOURCE_DIR}/Python/${file}.py)
-          SET(tgt "${WrapITK_BINARY_DIR}/Python/${CMAKE_CFG_INTDIR}/${file}.py")
-
-          IF("${src}" MATCHES "${tgt}")
-            #MESSAGE("no need to copy Python file ${src}.")
-          ELSE("${src}" MATCHES "${tgt}")
-            ADD_CUSTOM_COMMAND(SOURCE ${src}
-              COMMAND ${CMAKE_COMMAND}
-              ARGS -E copy ${src} ${tgt}
-              OUTPUTS ${tgt}
-              TARGET itkpython_pyc
-              COMMENT "source copy")
-          ENDIF("${src}" MATCHES "${tgt}")
-        ENDFOREACH(file)
-      ELSE(CMAKE_CONFIGURATION_TYPES)
-        FOREACH(file ${ITK_PYTHON_FILES})
-          IF(EXISTS ${WrapITK_SOURCE_DIR}/Python/${file}.py)
-            SET(src "${WrapITK_SOURCE_DIR}/Python/${file}.py")
-          ELSE(EXISTS ${WrapITK_SOURCE_DIR}/Python/${file}.py)
-            SET(src "${WrapITK_BINARY_DIR}/Python/${file}.py")
-          ENDIF(EXISTS ${WrapITK_SOURCE_DIR}/Python/${file}.py)
-          SET(tgt "${WrapITK_BINARY_DIR}/Python/${file}.py")
-
-          IF("${src}" MATCHES "${tgt}")
-            #MESSAGE("no need to copy Python file ${src}.")
-          ELSE("${src}" MATCHES "${tgt}")
-            ADD_CUSTOM_COMMAND(SOURCE ${src}
-              COMMAND ${CMAKE_COMMAND}
-              ARGS -E copy ${src} ${tgt}
-              OUTPUTS ${tgt}
-              TARGET itkpython_pyc
-              COMMENT "source copy")
-          ENDIF("${src}" MATCHES "${tgt}")
-        ENDFOREACH(file)
-      ENDIF(CMAKE_CONFIGURATION_TYPES)
-    ENDIF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
-
-    # Byte compile the Python files.
-    WRITE_FILE(${WrapITK_BINARY_DIR}/Python/compile_all_itk
-          "import compileall\n"
-          "compileall.compile_dir('${WrapITK_BINARY_DIR}/Python')\n"
-          "file = open('${WrapITK_BINARY_DIR}/Python/itk_compile_complete', 'w')\n"
-          "file.write('Done')\n")
-
-    ADD_CUSTOM_COMMAND(
-      SOURCE ${WrapITK_BINARY_DIR}/Python/compile_all_itk
-      COMMAND ${PYTHON_EXECUTABLE}
-      ARGS ${WrapITK_BINARY_DIR}/Python/compile_all_itk
-      DEPENDS ${ITK_PYTHON_SOURCE_FILES}
-      OUTPUTS "${WrapITK_BINARY_DIR}/Python/itk_compile_complete"
-      TARGET itkpython_pyc
-      )
-
-    ADD_CUSTOM_COMMAND(
-      SOURCE itkpython_pyc
-      DEPENDS "${WrapITK_BINARY_DIR}/Python/itk_compile_complete"
-      TARGET itkpython_pyc
-      )
-  ENDIF(PYTHON_EXECUTABLE)
-
-  CONFIGURE_FILE(
-    "${WrapITK_SOURCE_DIR}/pythonfiles_install.cmake.in"
-    "${BINARY_DIR}/pythonfiles_install.cmake"
-    @ONLY IMMEDIATE)
-  ADD_CUSTOM_TARGET(python_install)
-  SET_TARGET_PROPERTIES(python_install PROPERTIES
-    POST_INSTALL_SCRIPT "${BINARY_DIR}/pythonfiles_install.cmake")
+  # driver command to make the copy happen.
+  ADD_CUSTOM_COMMAND(
+    SOURCE copy_python_files
+    DEPENDS ${WRAP_ITK_PYTHON_FILES}
+    TARGET copy_python_files
+    )
 
   # Install the package python files.
   FOREACH(file ${ITK_PYTHON_FILES})

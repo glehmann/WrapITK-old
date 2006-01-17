@@ -24,6 +24,7 @@ try:
 except OSError, e :
   import sys
   print >> sys.stderr, e
+  del e
 
 del dirname, join, listdir, auto_path, f
 

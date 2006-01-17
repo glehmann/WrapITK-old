@@ -324,6 +324,9 @@ FOREACH(f
  WrapITK.cmake
  WrapTypePrefix.cmake
  WrapTypeBase.cmake
+ Master.mdx.in
+ SwigInc.txt.in
+ empty.depend.in
  wrap_ITKLang.cxx.in
  WrapITKLang.cmake)
   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration" FILES "${f}")

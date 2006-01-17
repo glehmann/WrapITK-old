@@ -284,34 +284,13 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
       )
   ENDIF(PYTHON_EXECUTABLE)
 
-  SET(ITK_OLD_CMAKE_INSTALL 0)
-  IF(${CMAKE_MAJOR_VERSION} LESS 2)
-    IF(${CMAKE_MINOR_VERSION} LESS 9)
-      SET(ITK_OLD_CMAKE_INSTALL 1)
-    ENDIF(${CMAKE_MINOR_VERSION} LESS 9)
-  ENDIF(${CMAKE_MAJOR_VERSION} LESS 2)
-
-  IF(ITK_OLD_CMAKE_INSTALL)
-    IF(UNIX)
-      # Ultra-hackery to install the generated python files.  This is not
-      # officially supported by cmake and abuses the implementation of
-      # make install.  Good luck figuring out how this works.
-      CONFIGURE_FILE(
-        "${WrapITK_SOURCE_DIR}/pythonfiles.sh.in"
-        "${BINARY_DIR}/pythonfiles.sh" @ONLY IMMEDIATE)
-      EXEC_PROGRAM(chmod ${BINARY_DIR} ARGS 755 pythonfiles.sh
-        OUTPUT_VARIABLE ITK_EXEC_PLEASE_BE_QUIET)
-      INSTALL_FILES(/lib/InsightToolkit FILES "`${BINARY_DIR}/pythonfiles.sh`")
-    ENDIF(UNIX)
-  ELSE(ITK_OLD_CMAKE_INSTALL)
-    CONFIGURE_FILE(
-      "${WrapITK_SOURCE_DIR}/pythonfiles_install.cmake.in"
-      "${BINARY_DIR}/pythonfiles_install.cmake"
-      @ONLY IMMEDIATE)
-    ADD_CUSTOM_TARGET(python_install)
-    SET_TARGET_PROPERTIES(python_install PROPERTIES
-      POST_INSTALL_SCRIPT "${BINARY_DIR}/pythonfiles_install.cmake")
-  ENDIF(ITK_OLD_CMAKE_INSTALL)
+  CONFIGURE_FILE(
+    "${WrapITK_SOURCE_DIR}/pythonfiles_install.cmake.in"
+    "${BINARY_DIR}/pythonfiles_install.cmake"
+    @ONLY IMMEDIATE)
+  ADD_CUSTOM_TARGET(python_install)
+  SET_TARGET_PROPERTIES(python_install PROPERTIES
+    POST_INSTALL_SCRIPT "${BINARY_DIR}/pythonfiles_install.cmake")
 
   # Install the package python files.
   FOREACH(file ${ITK_PYTHON_FILES})

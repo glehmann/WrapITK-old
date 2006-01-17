@@ -20,7 +20,8 @@ TARGET_LINK_LIBRARIES(itkwish
   ${TK_LIBRARY}
 )
 
-INSTALL_PROGRAMS(/bin itkwish itkwish)
-INSTALL_TARGETS(/lib/InsightToolkit itkwish)
-
-INSTALL_FILES(/lib/InsightToolkit/tcl .tcl itkinteraction itktesting itkdata)
+# install the driver itkwish script
+INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Tcl" FILES itkwish)
+#install the actual executable
+INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/Tcl/bin" itkwish)
+INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Tcl" .tcl itkinteraction itktesting itkdata itkutils)

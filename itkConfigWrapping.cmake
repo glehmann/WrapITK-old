@@ -139,16 +139,6 @@ IF(WRAP_ITK_JAVA)
   INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
 ENDIF(WRAP_ITK_JAVA)
 
-# Choose an install location for the Java wrapper libraries.  This
-# must be next to the ITKCommon shared library.
-# TODO: Is this even needed? Deprecate as fast as possible!
-IF(WIN32)
-  SET(ITK_INSTALL_JAVA_LIBS_DIR /bin)
-ELSE(WIN32)
-  SET(ITK_INSTALL_JAVA_LIBS_DIR /lib/InsightToolkit)
-ENDIF(WIN32)
-
-
 #------------------------------------------------------------------------------
 # System dependant wraping stuff
 SET(ITK_WRAP_NEEDS_DEPEND 1)

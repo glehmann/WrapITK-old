@@ -58,12 +58,3 @@ ITK_WRAP_LIBRARY(
   "${PROJECT_SOURCE_DIR}"
   "${PROJECT_BINARY_DIR}"
 )
-
-IF(ITK_CSWIG_PYTHON)
-  FOREACH(file ${WRAP_GROUPS})
-      INSTALL_FILES(/lib/InsightToolkit/python FILES "${PROJECT_BINARY_DIR}/${file}.py")
-  ENDFOREACH(file ${WRAP_GROUPS})
-  INSTALL_FILES(/lib/InsightToolkit/python/auto FILES "${PROJECT_BINARY_DIR}/${ITK_LIBRARY}Py.py")
-  INSTALL_FILES(/lib/InsightToolkit/python FILES "${PROJECT_BINARY_DIR}/${ITK_LIBRARY}Python.py")
-  INSTALL_FILES(/lib/InsightToolkit/python FILES "${PROJECT_BINARY_DIR}/_${ITK_LIBRARY}Python.so")
-ENDIF(ITK_CSWIG_PYTHON)

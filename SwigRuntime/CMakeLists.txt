@@ -1,36 +1,25 @@
-#goes ignored. The solution for me was to add a .i with just the
-#following:
-
-#%module swigruntime
-
-#And compile it without -c, while compiling the others with -c. Then
-#using -DSWIG_GLOBAL in my CFLAGS for everything. I expected I might
-#get some linker clashes from this but it went smoothly. I'll have to
-#dig around the automake docs to see if i can set it for just the
-#swigruntime.cc.
-
-SET_SOURCE_FILES_PROPERTIES(${WrapITK_BINARY_DIR}/SwigRuntime/swigrunTcl.cxx GENERATED)
-SET_SOURCE_FILES_PROPERTIES(${WrapITK_BINARY_DIR}/SwigRuntime/swigrunPython.cxx GENERATED)
-
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 IF(WRAP_ITK_TCL)
+  SET_SOURCE_FILES_PROPERTIES(${WrapITK_BINARY_DIR}/SwigRuntime/swigrunTcl.cxx GENERATED)
   ADD_LIBRARY(SwigRuntimeTcl SHARED ${WrapITK_BINARY_DIR}/SwigRuntime/swigrunTcl.cxx)
   SET_TARGET_PROPERTIES(SwigRuntimeTcl PROPERTIES LINK_FLAGS "${CSWIG_EXTRA_LINKFLAGS}")
   TARGET_LINK_LIBRARIES(SwigRuntimeTcl ${TCL_LIBRARY})
-  INSTALL_TARGETS(/lib/InsightToolkit SwigRuntimeTcl)
+  INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/Tcl-SWIG" SwigRuntimeTcl)
 ENDIF(WRAP_ITK_TCL)
 
 IF(WRAP_ITK_PYTHON)
+  SET_SOURCE_FILES_PROPERTIES(${WrapITK_BINARY_DIR}/SwigRuntime/swigrunPython.cxx GENERATED)
   ADD_LIBRARY(SwigRuntimePython SHARED ${WrapITK_BINARY_DIR}/SwigRuntime/swigrunPython.cxx)
   TARGET_LINK_LIBRARIES(SwigRuntimePython ${PYTHON_LIBRARY})
-  INSTALL_TARGETS(/lib/InsightToolkit SwigRuntimePython)
+  INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/Python-SWIG" SwigRuntimePython)
 ENDIF(WRAP_ITK_PYTHON)
 
 IF(WRAP_ITK_PERL)
+  SET_SOURCE_FILES_PROPERTIES(${WrapITK_BINARY_DIR}/SwigRuntime/swigrunPerl.cxx GENERATED)
   ADD_LIBRARY(SwigRuntimePerl SHARED ${WrapITK_BINARY_DIR}/SwigRuntime/swigrunPerl.cxx)
   TARGET_LINK_LIBRARIES(SwigRuntimePerl "${PERL_LIBRARY}")
-  INSTALL_TARGETS(/lib/InsightToolkit SwigRuntimePerl)
+  INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/Perl-SWIG" SwigRuntimePerl)
 ENDIF(WRAP_ITK_PERL)
 
 MACRO(CREATE_SWIG_RUNTIME LangOption LibName LangPostFix)
@@ -68,14 +57,14 @@ ENDIF(WRAP_ITK_PERL)
 IF(WRAP_ITK_JAVA)
   SET_SOURCE_FILES_PROPERTIES(${WrapITK_BINARY_DIR}/SwigRuntime/JavaCWDJava.cxx GENERATED)
   ADD_LIBRARY(SwigRuntimeJava MODULE ${WrapITK_BINARY_DIR}/SwigRuntime/JavaCWDJava.cxx JavaCWD.cxx)
-  INSTALL_TARGETS(${ITK_INSTALL_JAVA_LIBS_DIR} SwigRuntimeJava)
-  MAKE_DIRECTORY(${WrapITK_BINARY_DIR}/Java/InsightToolkit)
+  INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/Java-SWIG" SwigRuntimeJava)
+  MAKE_DIRECTORY(${WRAP_ITK_JAVA_DIR}/InsightToolkit)
   ADD_CUSTOM_COMMAND(
         COMMENT "run native swig on SwigExtras.i"
         SOURCE ${WrapITK_SOURCE_DIR}/SwigRuntime/JavaCWD.i
         COMMAND ${CSWIG} 
         ARGS -nocable -noruntime ${IGNORE_WARNINGS} -o ${WrapITK_BINARY_DIR}/SwigRuntime/JavaCWDJava.cxx
-        -outdir ${WrapITK_BINARY_DIR}/Java/InsightToolkit
+        -outdir "${WRAP_ITK_JAVA_DIR}/InsightToolkit"
         -package InsightToolkit
         -java -c++ ${WrapITK_SOURCE_DIR}/SwigRuntime/JavaCWD.i
         TARGET ${LIBRARY_NAME}Java

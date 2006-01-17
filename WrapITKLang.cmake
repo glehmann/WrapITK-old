@@ -63,31 +63,46 @@ MACRO(WRITE_PY_WRAP FILE CLASS WRAP wrapPointer)
     ENDIF(wrapPointer)
 ENDMACRO(WRITE_PY_WRAP)
 
-MACRO(WRITE_PY_WRAP_NOTPL FILE CLASS)
-   STRING(REGEX REPLACE "(.*::)" "" class_name ${CLASS})
+MACRO(WRITE_PY_WRAP_NOTPL FILE CLASS wrapPointer)
+  STRING(REGEX REPLACE "(.*::)" "" class_name ${CLASS})
 
-   # Find Tcl or Tk references... unvailable in python
-   SET(tcltk_class FALSE)
-   IF("${CLASS}" MATCHES "^Tcl.*")
-      SET(tcltk_class TRUE)
-   ENDIF("${CLASS}" MATCHES "^Tcl.*")
-   IF("${CLASS}" MATCHES "^Tk.*")
-      SET(tcltk_class TRUE)
-   ENDIF("${CLASS}" MATCHES "^Tk.*")
+  # Find Tcl or Tk references... unvailable in python
+  SET(tcltk_class FALSE)
+  IF("${CLASS}" MATCHES "^Tcl.*")
+    SET(tcltk_class TRUE)
+  ENDIF("${CLASS}" MATCHES "^Tcl.*")
+  IF("${CLASS}" MATCHES "^Tk.*")
+    SET(tcltk_class TRUE)
+  ENDIF("${CLASS}" MATCHES "^Tk.*")
 
-   IF(NOT tcltk_class)
+  IF(NOT tcltk_class)
+    WRITE_FILE("${FILE}"
+      "try:\n"
+      "   if(not ${class_name}==itkModule.itk${class_name}):\n"
+      "      raise AttributeError\n"
+      "except:\n"
+      "   try:\n"
+      "      ${class_name} = itkModule.itk${class_name}\n"
+      "      itkPyTemplate.registerNoTpl(\"itk::${CLASS}\", itkModule.itk${class_name})\n"
+      "   except:\n"
+      "      print \"Warning: itk${class_name} not found\"\n"
+      APPEND
+    )
+    IF(wrapPointer)
       WRITE_FILE("${FILE}"
         "try:\n"
-        "   if(not ${class_name}==itkModule.itk${class_name}):\n"
+        "   if(not isinstance(SmartPointer,itkPyTemplate.itkPyTemplate)):\n"
         "      raise AttributeError\n"
         "except:\n"
-        "   try:\n"
-        "      ${class_name} = itkModule.itk${class_name}\n"
-        "   except:\n"
-        "      print \"Warning: itk${class_name} not found\"\n"
+        "   SmartPointer = itkPyTemplate.itkPyTemplate(\"itkSmartPointer\")\n"
+        "try:\n"
+        "   SmartPointer.set(\"itk::${CLASS}\",itkModule.itk${class_name}_Pointer)\n"
+        "except:\n"
+        "   print \"Warning: itk${class_name}_Pointer not found\"\n"
         APPEND
       )
-   ENDIF(NOT tcltk_class)
+    ENDIF(wrapPointer)
+  ENDIF(NOT tcltk_class)
 ENDMACRO(WRITE_PY_WRAP_NOTPL)
 
 #------------------------------------------------------------------------------

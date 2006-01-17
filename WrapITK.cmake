@@ -207,6 +207,7 @@ ENDMACRO(END_WRAP_CLASS)
 
 
 MACRO(WRAP_CLASS_NOTPL CLASS)
+  SET(wrapPointer 0)
   # first, we must be sure the wrapMethod is valid
   IF("${ARGC}" EQUAL 1)
     # store the wrap method
@@ -244,11 +245,13 @@ MACRO(WRAP_CLASS_NOTPL CLASS)
   ENDIF("${itk_WrapMethod}" STREQUAL "")
 
   IF("${itk_WrapMethod}" STREQUAL "POINTER")
+    SET(wrapPointer 1)
     SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::${class_name} itk${class_name};\n")
     SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::Pointer::SmartPointer itk${class_name}_Pointer;\n")
   ENDIF("${itk_WrapMethod}" STREQUAL "POINTER")
 
   IF("${itk_WrapMethod}" STREQUAL "POINTER_WITH_SUPERCLASS")
+    SET(wrapPointer 1)
     SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::${class_name} itk${class_name};\n")
     SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::Pointer::SmartPointer itk${class_name}_Pointer;\n")
     SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::Superclass::Self itk${class_name}_Superclass;\n")
@@ -591,7 +594,7 @@ ENDMACRO(WRITE_LANG_WRAP)
 MACRO(WRITE_LANG_WRAP_NOTPL CLASS)
    IF(WRAP_ITK_PYTHON)
       # python
-      WRITE_PY_WRAP_NOTPL("${PYTHON_MODULE_PATH}Py.py" ${CLASS})
+      WRITE_PY_WRAP_NOTPL("${PYTHON_MODULE_PATH}Py.py" ${CLASS} ${wrapPointer})
    ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(WRITE_LANG_WRAP_NOTPL)
 

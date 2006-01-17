@@ -102,5 +102,6 @@ namespace eval itk {
   namespace export ConfigureItkTclPackages
 }
 
-# Configure packages with version @ITK_VERSION_STRING@.
-itk::ConfigureItkTclPackages @ITK_VERSION_STRING@
+# Configure packages with version.
+itk::ConfigureItkTclPackages "@ITK_VERSION_MAJOR@.@ITK_VERSION_MINOR@.@ITK_VERSION_PATCH@"
+

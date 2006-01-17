@@ -98,7 +98,7 @@ ENDMACRO(ITK_CONFIG_PACKAGE)
 ###############################################################################
 MACRO(ITK_CONFIG_TCL_PACKAGE BINARY_DIR)
   # Configure pkgIndex.tcl for the build tree.
-  SET(WRAP_ITK_DATA_ROOT "${ITK_DATA_ROOT}")
+  SET(WRAP_ITK_DATA_ROOT "${WrapITK_BINARY_DIR}/Data")
   SET(WRAP_ITK_TEST_ROOT "${WrapITK_BINARY_DIR}/Testing")
   SET(WRAP_ITK_SCRIPT_DIR "${WrapITK_SOURCE_DIR}/Tcl")
 
@@ -117,15 +117,15 @@ MACRO(ITK_CONFIG_TCL_PACKAGE BINARY_DIR)
   ENDIF(CMAKE_CONFIGURATION_TYPES)
 
   # Configure pkgIndex.tcl for the install tree.
-  SET(WRAP_ITK_SCRIPT_DIR "[file dirname [info script]]")
-  SET(WRAP_ITK_PACKAGE_DIR "[file dirname [file dirname [info script]]]")
-  SET(WRAP_ITK_DATA_ROOT "[file dirname [file dirname [info script]]]/Data")
+  SET(WRAP_ITK_SCRIPT_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_LOCATION}/Tcl")
+  SET(WRAP_ITK_PACKAGE_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_LOCATION}/Tcl-SWIG")
+  SET(WRAP_ITK_DATA_ROOT "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_LOCATION}/Data")
   SET(WRAP_ITK_TEST_ROOT "<NO_DEFAULT>")
   CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Tcl/pkgIndex.tcl.in"
-                 "${BINARY_DIR}/Tcl/InstallOnly/Hide/pkgIndex.tcl"
+                 "${BINARY_DIR}/Tcl/InstallOnly/pkgIndex.tcl"
                  IMMEDIATE @ONLY)
-  INSTALL_FILES(/lib/InsightToolkit/tcl FILES
-                "${WrapITK_BINARY_DIR}/Tcl/InstallOnly/Hide/pkgIndex.tcl")
+  INSTALL_FILES( "${WRAP_ITK_INSTALL_LOCATION}/Tcl" FILES
+                "${BINARY_DIR}/Tcl/InstallOnly/pkgIndex.tcl")
 
   SUBDIRS(Tcl)
 ENDMACRO(ITK_CONFIG_TCL_PACKAGE)
@@ -137,17 +137,17 @@ ENDMACRO(ITK_CONFIG_PERL_PACKAGE)
 # Config Project dependant :-(
 ###############################################################################
 MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
-  SET(WRAP_ITK_DATA_ROOT "'${ITK_DATA_ROOT}'")
-  SET(WRAP_ITK_TEST_ROOT "'${WrapITK_BINARY_DIR}/Testing'")
+  SET(WRAP_ITK_DATA_ROOT "${WrapITK_BINARY_DIR}/Data")
+  SET(WRAP_ITK_TEST_ROOT "${WrapITK_BINARY_DIR}/Testing")
   IF(CMAKE_CONFIGURATION_TYPES)
     FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-      SET(WRAP_ITK_PACKAGE_DIR "'${LIBRARY_OUTPUT_PATH}/${config}'")
+      SET(WRAP_ITK_PACKAGE_DIR "${LIBRARY_OUTPUT_PATH}/${config}")
       CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/itkbase.py.in"
                      "${BINARY_DIR}/Python/${config}/itkbase.py"
                      @ONLY IMMEDIATE)
     ENDFOREACH(config)
   ELSE(CMAKE_CONFIGURATION_TYPES)
-    SET(WRAP_ITK_PACKAGE_DIR "'${LIBRARY_OUTPUT_PATH}'")
+    SET(WRAP_ITK_PACKAGE_DIR "${LIBRARY_OUTPUT_PATH}")
     CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/itkbase.py.in"
                    "${BINARY_DIR}/Python/itkbase.py"
                    @ONLY IMMEDIATE)
@@ -315,17 +315,17 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
 
   # Install the package python files.
   FOREACH(file ${ITK_PYTHON_FILES})
-    INSTALL_FILES(/lib/InsightToolkit/python FILES
+    INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python" FILES
       "${WrapITK_BINARY_DIR}/Python/${file}.py")
   ENDFOREACH(file)
 
-  SET(WRAP_ITK_PACKAGE_DIR "os.path.dirname(selfpath)")
-  SET(WRAP_ITK_DATA_ROOT "os.path.join(os.path.dirname(selfpath),'Data')")
-  SET(WRAP_ITK_TEST_ROOT "'<NO_DEFAULT>'")
+  SET(WRAP_ITK_PACKAGE_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_LOCATION}/Python-SWIG")
+  SET(WRAP_ITK_DATA_ROOT "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_LOCATION}/Data")
+  SET(WRAP_ITK_TEST_ROOT "<NO_DEFAULT>")
   CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/itkbase.py.in"
                  "${BINARY_DIR}/Python/InstallOnly/itkbase.py"
                  @ONLY IMMEDIATE)
-  INSTALL_FILES(/lib/InsightToolkit/python FILES
+  INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python" FILES
     "${WrapITK_BINARY_DIR}/Python/InstallOnly/itkbase.py")
 ENDMACRO(ITK_CONFIG_PYTHON_PACKAGE)
 
@@ -369,7 +369,30 @@ CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/UseWrapITK.cmake.in"
                @ONLY IMMEDIATE)
 
 # Second, configure for installed use.
-# Nothing here yet... got to figure out where installed things go.
+SET(CONFIG_SWIG_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_LOCATION}/Configuration")
+SET(CONFIG_CONFIG_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_LOCATION}/Configuration")
+SET(CONFIG_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_LOCATION}/Configuration")
+SET(CONFIG_WRAP_ITK_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
+
+SET(CONFIG_MIDX_FILES "")
+FOREACH(midx 
+    "VXLNumerics"
+    "ITKNumerics"
+    "ITKCommonA"
+    "ITKCommonB"
+    "ITKBasicFiltersA"
+    "ITKBasicFiltersB"
+    "ITKBasicFiltersC"
+    "ITKSpatialObject"
+    "ITKAlgorithms"
+    "ITKIO")
+  SET(CONFIG_MIDX_FILES "${CONFIG_MIDX_FILES}\n  \"${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_LOCATION}/ClassIndex/${midx}.mdx\"")
+ENDFOREACH(midx)
+
+CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/UseWrapITK.cmake.in"
+               "${WrapITK_BINARY_DIR}/InstallOnly/UseWrapITK.cmake"
+               @ONLY IMMEDIATE)
+
 
 FOREACH(f
  itkConfigWrapping.cmake
@@ -380,7 +403,8 @@ FOREACH(f
  WrapTypePrefix.cmake
  WrapTypeBase.cmake
  wrap_ITKLang.cxx.in
- WrapITKLang.cmake
- "${WrapITK_BINARY_DIR}/UseWrapITK.cmake")
-  INSTALL_FILES(/lib/InsightToolkit FILES "${f}")
+ WrapITKLang.cmake)
+  INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration" FILES "${f}")
 ENDFOREACH(f)
+
+INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}" FILES "${WrapITK_BINARY_DIR}/InstallOnly/UseWrapITK.cmake")

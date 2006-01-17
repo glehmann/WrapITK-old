@@ -26,8 +26,8 @@
 # WRAP_ITK_CONFIG_DIR -- directory where XXX.in files for CONFIGURE_FILE
 #                        commands are to be found.
 # WRAP_ITK_CMAKE_DIR -- directory where XXX.cmake files are to be found
-# WRAPPER_INSTALL_LOCATION -- directory where wrapper files should be installed
-#    (Install will be in ${CMAKE_INSTALL_PREFIX}/${WRAPPER_INSTALL_LOCATION}/${lang} )
+# WRAP_ITK_INSTALL_LOCATION -- directory where wrapper files should be installed
+#    (Install will be in ${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_LOCATION}/${lang} )
 #
 # Additionally, LINK_DIRECTORIES must include the path to libSwigRuntimeXXX.dylib
 # (This is automatic for WrapITK, but not for external projects.)
@@ -376,9 +376,9 @@ MACRO(WRAP_TCL_SOURCES Source Bin BaseName LibraryName MasterIdx LibraryIndexFil
    CINDEX_CREATE_IDX_FILE(${Bin} ${BaseName}.xml  ${BaseName}.idx ${LibraryName})
    CSWIG_CREATE_TCL_CXX_FILE(${Bin} "${MasterIdx}" ${BaseName}.idx ${BaseName}.xml
                              ${BaseName}Tcl.cxx ${LibraryName} "${LibraryIndexFiles}")
-   INSTALL_FILES("${WRAPPER_INSTALL_LOCATION}/ClassIndex" FILES "${Bin}/${BaseName}.idx")
+   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/ClassIndex" FILES "${Bin}/${BaseName}.idx")
    STRING(REGEX REPLACE "wrap_" "" swig_language_file "${BaseName}")
-   INSTALL_FILES("${WRAPPER_INSTALL_LOCATION}/Tcl-SWIG" FILES "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/${swig_language_file}.tcl")
+   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Tcl-SWIG" FILES "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/${swig_language_file}.tcl")
 ENDMACRO(WRAP_TCL_SOURCES)
 
 # macro to create .xml, .idx and Tcl.cxx files
@@ -387,9 +387,9 @@ MACRO(WRAP_PERL_SOURCES Source Bin BaseName LibraryName MasterIdx LibraryIndexFi
    CINDEX_CREATE_IDX_FILE(${Bin} ${BaseName}.xml  ${BaseName}.idx ${LibraryName})
    CSWIG_CREATE_PERL_CXX_FILE(${Bin} "${MasterIdx}" ${BaseName}.idx ${BaseName}.xml
                              ${BaseName}Perl.cxx ${LibraryName} "${LibraryIndexFiles}")
-   INSTALL_FILES("${WRAPPER_INSTALL_LOCATION}/ClassIndex" FILES "${Bin}/${BaseName}.idx")
+   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/ClassIndex" FILES "${Bin}/${BaseName}.idx")
    STRING(REGEX REPLACE "wrap_" "" swig_language_file "${BaseName}")
-   INSTALL_FILES("${WRAPPER_INSTALL_LOCATION}/Perl-SWIG" FILES "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/${swig_language_file}.pl")
+   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Perl-SWIG" FILES "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/${swig_language_file}.pl")
 ENDMACRO(WRAP_PERL_SOURCES)
 
 # macro to create .xml, .idx and Python.cxx files
@@ -398,9 +398,9 @@ MACRO(WRAP_PYTHON_SOURCES Source Bin BaseName LibraryName MasterIdx LibraryIndex
    CINDEX_CREATE_IDX_FILE(${Bin} ${BaseName}.xml  ${BaseName}.idx ${LibraryName})
    CSWIG_CREATE_PYTHON_CXX_FILE(${Bin} "${MasterIdx}" ${BaseName}.idx ${BaseName}.xml
                              ${BaseName}Python.cxx ${LibraryName} "${LibraryIndexFiles}")
-   INSTALL_FILES("${WRAPPER_INSTALL_LOCATION}/ClassIndex" FILES "${Bin}/${BaseName}.idx")
+   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/ClassIndex" FILES "${Bin}/${BaseName}.idx")
    STRING(REGEX REPLACE "wrap_" "" swig_language_file "${BaseName}")
-   INSTALL_FILES("${WRAPPER_INSTALL_LOCATION}/Python-SWIG" FILES "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/${swig_language_file}.py")
+   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python-SWIG" FILES "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/${swig_language_file}.py")
 ENDMACRO(WRAP_PYTHON_SOURCES)
 
 # macro to create .xml, .idx and Python.cxx files
@@ -409,9 +409,9 @@ MACRO(WRAP_JAVA_SOURCES Source Bin BaseName LibraryName MasterIdx LibraryIndexFi
    CINDEX_CREATE_IDX_FILE(${Bin} ${BaseName}.xml  ${BaseName}.idx ${LibraryName})
    CSWIG_CREATE_JAVA_CXX_FILE(${Bin} "${MasterIdx}" ${BaseName}.idx ${BaseName}.xml
                              ${BaseName}Java.cxx ${LibraryName} "${LibraryIndexFiles}")
-   INSTALL_FILES("${WRAPPER_INSTALL_LOCATION}/ClassIndex" FILES "${Bin}/${BaseName}.idx")
+   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/ClassIndex" FILES "${Bin}/${BaseName}.idx")
    STRING(REGEX REPLACE "wrap_" "" swig_language_file "${BaseName}")
-   INSTALL_FILES("${WRAPPER_INSTALL_LOCATION}/Java-SWIG" FILES "${WRAP_ITK_JAVA_DIR}/InsightToolkit/${swig_language_file}.java")
+   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Java-SWIG" FILES "${WRAP_ITK_JAVA_DIR}/InsightToolkit/${swig_language_file}.java")
 ENDMACRO(WRAP_JAVA_SOURCES)
 
 #------------------------------------------------------------------------------
@@ -444,7 +444,7 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
     SET(${LIBRARY_NAME}_JAVA_DEPENDS_INIT ${${LIBRARY_NAME}_JAVA_DEPENDS_INIT} ${JAVA_DEP}.java)
     SET(ALL_IDX_FILES ${ALL_IDX_FILES} ${Binary_Directory}/${Source}.idx )
     SET(INDEX_FILE_CONTENT "${INDEX_FILE_CONTENT}${Binary_Directory}/${Source}.idx\n")
-    SET(INSTALL_INDEX_FILE_CONTENT "${INSTALL_INDEX_FILE_CONTENT}${CMAKE_INSTALL_PREFIX}${WRAPPER_INSTALL_LOCATION}/ClassIndex/${Source}.idx\n")
+    SET(INSTALL_INDEX_FILE_CONTENT "${INSTALL_INDEX_FILE_CONTENT}${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/ClassIndex/${Source}.idx\n")
   ENDFOREACH(Source)
   SET(${LIBRARY_NAME}_JAVA_DEPENDS  "${${LIBRARY_NAME}_JAVA_DEPENDS_INIT}" CACHE INTERNAL "" FORCE)
   # add the package wrappers 
@@ -495,7 +495,7 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
     ENDIF(ITK_WRAP_NEEDS_DEPEND)
     SET_TARGET_PROPERTIES(${LIBRARY_NAME}Tcl PROPERTIES LINK_FLAGS "${CSWIG_EXTRA_LINKFLAGS}")
     TARGET_LINK_LIBRARIES(${LIBRARY_NAME}Tcl ${EXTRA_LIBS} SwigRuntimeTcl ${TCL_LIBRARY})
-    INSTALL_TARGETS("${WRAPPER_INSTALL_LOCATION}/Tcl-SWIG" ${LIBRARY_NAME}Tcl )
+    INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/Tcl-SWIG" ${LIBRARY_NAME}Tcl )
     IF(ITK_SWIG_FILE)
       ADD_CUSTOM_COMMAND(
         COMMENT "run native swig on ${ITK_SWIG_FILE}"
@@ -528,7 +528,7 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
         ADD_DEPENDENCIES(${LIBRARY_NAME}Perl ${lib}Perl)
       ENDFOREACH(lib)
     ENDIF(ITK_WRAP_NEEDS_DEPEND)
-    INSTALL_TARGETS("${WRAPPER_INSTALL_LOCATION}/Perl-SWIG" ${LIBRARY_NAME}Perl )
+    INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/Perl-SWIG" ${LIBRARY_NAME}Perl )
     IF(ITK_SWIG_FILE)
       ADD_CUSTOM_COMMAND(
         COMMENT "run native swig on ${ITK_SWIG_FILE}"
@@ -561,7 +561,7 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
     ENDIF(ITK_WRAP_NEEDS_DEPEND)
     SET_TARGET_PROPERTIES( _${LIBRARY_NAME}Python PROPERTIES PREFIX "")
     TARGET_LINK_LIBRARIES(_${LIBRARY_NAME}Python ${EXTRA_LIBS} SwigRuntimePython ${PYTHON_LIBRARY})
-    INSTALL_TARGETS("${WRAPPER_INSTALL_LOCATION}/Python-SWIG" _${LIBRARY_NAME}Python) 
+    INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/Python-SWIG" _${LIBRARY_NAME}Python) 
     IF(ITK_SWIG_FILE)
       ADD_CUSTOM_COMMAND(
         COMMENT "run native swig on ${ITK_SWIG_FILE}"
@@ -593,7 +593,7 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
         ADD_DEPENDENCIES(${LIBRARY_NAME}Java ${lib}Java)
       ENDFOREACH(lib)
     ENDIF(ITK_WRAP_NEEDS_DEPEND)
-    INSTALL_TARGETS("${WRAPPER_INSTALL_LOCATION}/Java-SWIG" ${LIBRARY_NAME}Java)
+    INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/Java-SWIG" ${LIBRARY_NAME}Java)
     IF(ITK_SWIG_FILE)
       ADD_CUSTOM_COMMAND(
         COMMENT "run native swig on ${ITK_SWIG_FILE}"
@@ -618,7 +618,7 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
     ${WRAP_ITK_CONFIG_DIR}/Master.mdx.in
     ${Binary_Directory}/InstallOnly/${LIBRARY_NAME}.mdx IMMEDIATE
     )
-   INSTALL_FILES("${WRAPPER_INSTALL_LOCATION}/ClassIndex" FILES "${Binary_Directory}/InstallOnly/${LIBRARY_NAME}.mdx")
+   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/ClassIndex" FILES "${Binary_Directory}/InstallOnly/${LIBRARY_NAME}.mdx")
 
   SET(SWIG_INC_FILE ${Binary_Directory}/SwigInc.txt)
   SET(SWIG_INC_CONTENTS)

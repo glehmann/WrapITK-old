@@ -31,6 +31,24 @@ class itkCType :
    
 classToTemplateDict = {}
 
+
+def registerNoTpl(name, cl):
+  itkPyTemplate.__templates__[normalizeName(name)] = cl
+  
+  
+def normalizeName(name):
+  # Normalize the class name to have no ambiguity
+  # while searching them
+  try:
+      name=name.replace(" ","")
+      name=name.replace("::","")
+      name=name.replace("*","")
+  except:
+      return("")
+  else:
+      return(name)
+
+
 #------------------------------------------------------------------------------
 class itkPyTemplate:
    """
@@ -43,7 +61,7 @@ class itkPyTemplate:
       self.__template__={}
 
    def set(self,type,cl):
-      fullName=self.__normalize_name__(self.__name__+"<"+type+">")
+      fullName=normalizeName(self.__name__+"<"+type+">")
 
       if(itkPyTemplate.__templates__.has_key(fullName)):
          print >>sys.stderr,"Warning: templated class already defined '%s'" % fullName
@@ -89,7 +107,7 @@ class itkPyTemplate:
       # convert types into classes (if possible)
       param=[]
       for elt in type:
-         eltNorm=self.__normalize_name__(elt)
+         eltNorm=normalizeName(elt)
 
          if(itkPyTemplate.__templates__.has_key(eltNorm)):
             # elt is a template class
@@ -108,18 +126,6 @@ class itkPyTemplate:
          param.append(elt)
 
       return(param)
-
-   def __normalize_name__(self,name):
-      # Normalize the class name to have no ambiguity
-      # while searching them
-      try:
-         name=name.replace(" ","")
-         name=name.replace("::","")
-         name=name.replace("*","")
-      except:
-         return("")
-      else:
-         return(name)
 
    def __getitem__(self,key):
       # Types accepted :
@@ -168,7 +174,7 @@ class itkPyTemplate:
 
    def keys(self):
       return(self.__template__.keys())
-
+   
    # everything after this comment is for dict interface
    # and is a copy/paste from DictMixin
    # only methods to edit dictionary are not there

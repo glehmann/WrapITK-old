@@ -221,6 +221,30 @@ MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
     TARGET copy_python_files
     )
 
+  # Configure the custom python pth files
+  SET(CONFIG_WRAP_ITK_PYTHON_DIR "${WrapITK_BINARY_DIR}/Python")
+  CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/WrapITK.pth.in"
+               "${WrapITK_BINARY_DIR}/Python/WrapITK.pth"
+               @ONLY IMMEDIATE)
+               
+  SET(CONFIG_WRAP_ITK_PYTHON_DIR "${WRAP_ITK_INSTALL_LOCATION}/Python")
+  CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/WrapITK.pth.in"
+               "${WrapITK_BINARY_DIR}/Python/InstallOnly/WrapITK.pth"
+               @ONLY IMMEDIATE)
+  
+  IF(PYTHON_EXECUTABLE)
+    EXEC_PROGRAM("${PYTHON_EXECUTABLE}"
+      ARGS "-c 'try:\n  import distutils.sysconfig; print distutils.sysconfig.get_python_lib()\nexcept: pass\n'"
+      OUTPUT_VARIABLE py_spp
+    )
+  ENDIF(PYTHON_EXECUTABLE)
+  SET(PY_SITE_PACKAGES_PATH "${py_spp}" CACHE PATH "Path to Python site-packages directory to install a .pth file pointing at WrapITK/Python")
+  MARK_AS_ADVANCED(PY_SITE_PACKAGES_PATH)
+  IF(PY_SITE_PACKAGES_PATH)
+    # INTSTALL doesn't work with absolute paths... can't install yet.
+    # INSTALL_FILES("${PY_SITE_PACKAGES_PATH}" FILES "${WrapITK_BINARY_DIR}/Python/InstallOnly/WrapITK.pth")
+  ENDIF(PY_SITE_PACKAGES_PATH)
+
   # Install the package python files.
   FOREACH(file ${ITK_PYTHON_FILES})
     INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python" FILES

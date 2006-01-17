@@ -20,7 +20,7 @@ try:
   auto_path = join(dirname(__file__), "auto")
   for f in listdir(auto_path) :
     if f.endswith('.py') :
-      execfile(join(auto_path, "auto", f))
+      execfile(join(auto_path, f))
 except OSError, e :
   import sys
   print >> sys.stderr, e

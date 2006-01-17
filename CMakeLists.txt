@@ -300,6 +300,11 @@ CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/UseWrapITK.cmake.in"
                "${WrapITK_BINARY_DIR}/UseWrapITK.cmake"
                @ONLY IMMEDIATE)
 
+SET(CONFIG_WRAP_ITK_DIR "${WrapITK_BINARY_DIR}")
+CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/FindWrapITK.cmake.in"
+               "${WrapITK_BINARY_DIR}/FindWrapITK.cmake"
+               @ONLY IMMEDIATE)
+
 # Second, configure for installed use.
 SET(CONFIG_SWIG_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration")
 SET(CONFIG_CONFIG_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration")
@@ -326,6 +331,10 @@ CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/UseWrapITK.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/UseWrapITK.cmake"
                @ONLY IMMEDIATE)
 
+SET(CONFIG_WRAP_ITK_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}")
+CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/FindWrapITK.cmake.in"
+               "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake"
+               @ONLY IMMEDIATE)
 
 FOREACH(f
  itkConfigWrapping.cmake
@@ -344,3 +353,5 @@ FOREACH(f
 ENDFOREACH(f)
 
 INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}" FILES "${WrapITK_BINARY_DIR}/InstallOnly/UseWrapITK.cmake")
+# INTSTALL doesn't work with absolute paths... can't install yet.
+# INSTALL_FILES( "${CMAKE_ROOT}/Modules" FILES "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake")

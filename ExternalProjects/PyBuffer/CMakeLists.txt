@@ -1,12 +1,12 @@
 PROJECT(WrapITKPyBuffer)
 
-SET(WRAP_ITK_DIR "WRAP_ITK_DIR-NOTFOUND" CACHE PATH "Path to build or install location of WrapITK")
-IF(NOT WRAP_ITK_DIR)
+SET(WrapITK_DIR "WrapITK_DIR-NOTFOUND" CACHE PATH "Path to build or install location of WrapITK")
+IF(NOT WrapITK_DIR)
   MESSAGE(FATAL_ERROR
-          "Cannot build without WrapITK.  Please set WRAP_ITK_DIR.")
-ENDIF(NOT WRAP_ITK_DIR)
+          "Cannot build without WrapITK.  Please set WrapITK_DIR.")
+ENDIF(NOT WrapITK_DIR)
 
-INCLUDE("${WRAP_ITK_DIR}/UseWrapITK.cmake")
+INCLUDE("${WrapITK_DIR}/UseWrapITK.cmake")
 
 # Deal with numarray package  Options
 SET(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")

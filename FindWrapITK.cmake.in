@@ -1,0 +1,8 @@
+# CMake module to find the WrapITK project.
+# To create external language wrappers, start by including the following
+# lines in a CMakeLists.txt:
+# FIND_PACKAGE(WrapITK)
+# INCLUDE(${WrapITK_USE_FILE})
+
+SET(WrapITK_DIR "@CONFIG_WRAP_ITK_DIR@")
+SET(WrapITK_USE_FILE "${WrapITK_DIR}/UseWrapITK.cmake")

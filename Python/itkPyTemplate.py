@@ -59,7 +59,10 @@ class itkPyTemplate:
       classToTemplateDict[cl] = (self, param)
       
       # Add in parameters
-      param=cl.__name__[len(self.__name__):]
+      if cl.__name__.endswith("_Pointer") :
+        param=cl.__name__[len("itk"):-len("_Pointer")]
+      else :
+        param=cl.__name__[len(self.__name__):]
       if(param.isdigit()):
          param="_"+param
       self.__dict__[param]=cl

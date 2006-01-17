@@ -45,7 +45,7 @@ MACRO(WRITE_PY_WRAP FILE CLASS WRAP wrapPointer)
       FOREACH(wrap ${WRAP})
         STRING(REGEX REPLACE
             "([0-9A-Za-z]*)[ ]*#[ ]*(.*)"
-            "try:\n       SmartPointer.__set__(\"itk::${CLASS}<\\2>\",itkModule.itk${class_name}\\1_Pointer)\nexcept:\n       print \"Warning: itk${class_name}\\1_Pointer not found\"\n"
+            "try:\n       SmartPointer.__set__(\"itk::${class_name}<\\2>\",itkModule.itk${class_name}\\1_Pointer)\nexcept:\n       print \"Warning: itk${class_name}\\1_Pointer not found\"\n"
             wrapClass "${wrap}"
         )
         SET(itk_PyWrap "${itk_PyWrap}${wrapClass}\n")
@@ -83,7 +83,7 @@ MACRO(WRITE_PY_WRAP_NOTPL FILE CLASS wrapPointer)
       "except:\n"
       "   try:\n"
       "      ${class_name} = itkModule.itk${class_name}\n"
-      "      itkPyTemplate.registerNoTpl(\"itk::${CLASS}\", itkModule.itk${class_name})\n"
+      "      itkPyTemplate.registerNoTpl(\"itk::${class_name}\", itkModule.itk${class_name})\n"
       "   except:\n"
       "      print \"Warning: itk${class_name} not found\"\n"
       APPEND
@@ -96,7 +96,7 @@ MACRO(WRITE_PY_WRAP_NOTPL FILE CLASS wrapPointer)
         "except:\n"
         "   SmartPointer = itkPyTemplate.itkPyTemplate(\"itkSmartPointer\")\n"
         "try:\n"
-        "   SmartPointer.__set__(\"itk::${CLASS}\",itkModule.itk${class_name}_Pointer)\n"
+        "   SmartPointer.__set__(\"itk::${class_name}\",itkModule.itk${class_name}_Pointer)\n"
         "except:\n"
         "   print \"Warning: itk${class_name}_Pointer not found\"\n"
         APPEND

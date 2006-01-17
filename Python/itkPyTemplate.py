@@ -60,7 +60,7 @@ class itkPyTemplate:
       self.__name__=name
       self.__template__={}
 
-   def set(self,type,cl):
+   def __set__(self,type,cl):
       fullName=normalizeName(self.__name__+"<"+type+">")
 
       if(itkPyTemplate.__templates__.has_key(fullName)):

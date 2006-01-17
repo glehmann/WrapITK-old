@@ -139,6 +139,7 @@ MACRO(END_WRAP_CLASS)
   # the regexp used to get the values separated by a #
   SET(sharpRegexp "([0-9A-Za-z]*)[ ]*#[ ]*(.*)")
   SET(wrapClass)
+  SET(wrapPointer 0)
 
   # insert a blank line to separate the classes
   SET(itk_Typedef "${itk_Typedef}      \n")
@@ -155,6 +156,7 @@ MACRO(END_WRAP_CLASS)
   ENDIF("${itk_WrapMethod}" STREQUAL "")
 
   IF("${itk_WrapMethod}" STREQUAL "POINTER")
+    SET(wrapPointer 1)
     FOREACH(wrap ${itk_Wrap})
       STRING(REGEX REPLACE
         "${sharpRegexp}"
@@ -166,6 +168,7 @@ MACRO(END_WRAP_CLASS)
   ENDIF("${itk_WrapMethod}" STREQUAL "POINTER")
 
   IF("${itk_WrapMethod}" STREQUAL "POINTER_WITH_SUPERCLASS")
+    SET(wrapPointer 1)
     FOREACH(wrap ${itk_Wrap})
       STRING(REGEX REPLACE
         "${sharpRegexp}"
@@ -198,7 +201,7 @@ MACRO(END_WRAP_CLASS)
     ENDFOREACH(wrap)
   ENDIF("${itk_WrapMethod}" STREQUAL "SELF")
   
-  WRITE_LANG_WRAP("${itk_Class}" "${itk_Wrap}")
+  WRITE_LANG_WRAP("${itk_Class}" "${itk_Wrap}" ${wrapPointer})
 ENDMACRO(END_WRAP_CLASS)
 
 
@@ -578,10 +581,10 @@ MACRO(WRITE_LANG_END)
    ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(WRITE_LANG_END)
 
-MACRO(WRITE_LANG_WRAP CLASS WRAP)
+MACRO(WRITE_LANG_WRAP CLASS WRAP wrapPointer)
    IF(WRAP_ITK_PYTHON)
       # python
-      WRITE_PY_WRAP("${PYTHON_MODULE_PATH}Py.py" ${CLASS} "${WRAP}")
+      WRITE_PY_WRAP("${PYTHON_MODULE_PATH}Py.py" ${CLASS} "${WRAP}" ${wrapPointer})
    ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(WRITE_LANG_WRAP)
 

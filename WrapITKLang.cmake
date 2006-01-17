@@ -18,39 +18,49 @@ MACRO(WRITE_PY_END FILE)
    )
 ENDMACRO(WRITE_PY_END)
 
-MACRO(WRITE_PY_WRAP FILE CLASS WRAP)
+MACRO(WRITE_PY_WRAP FILE CLASS WRAP wrapPointer)
    STRING(REGEX REPLACE "(.*::)" "" class_name ${CLASS})
 
-   # Find Tcl or Tk references... unvailable in python
-   SET(tcltk_class FALSE)
-   IF("${CLASS}" MATCHES "^Tcl.*")
-      SET(tcltk_class TRUE)
-   ENDIF("${CLASS}" MATCHES "^Tcl.*")
-   IF("${CLASS}" MATCHES "^Tk.*")
-      SET(tcltk_class TRUE)
-   ENDIF("${CLASS}" MATCHES "^Tk.*")
+    SET(itk_PyWrap "")
+    FOREACH(wrap ${WRAP})
+      STRING(REGEX REPLACE
+          "([0-9A-Za-z]*)[ ]*#[ ]*(.*)"
+          "try:\n       ${class_name}.set(\"\\2\",itkModule.itk${class_name}\\1)\nexcept:\n       print \"Warning: itk${class_name}\\1 not found\"\n"
+          wrapClass "${wrap}"
+      )
+      SET(itk_PyWrap "${itk_PyWrap}${wrapClass}\n")
+    ENDFOREACH(wrap ${WRAP})
 
-   IF(NOT tcltk_class)
+    WRITE_FILE("${FILE}"
+      "try:\n"
+      "   if(not isinstance(${class_name},itkPyTemplate.itkPyTemplate)):\n"
+      "      raise AttributeError\n"
+      "except:\n"
+      "   ${class_name} = itkPyTemplate.itkPyTemplate(\"itk${class_name}\")\n"
+      "${itk_PyWrap}"
+      APPEND
+    )
+    IF(wrapPointer)
       SET(itk_PyWrap "")
       FOREACH(wrap ${WRAP})
         STRING(REGEX REPLACE
             "([0-9A-Za-z]*)[ ]*#[ ]*(.*)"
-            "try:\n       ${class_name}.set(\"\\2\",itkModule.itk${class_name}\\1)\nexcept:\n       print \"Warning: itk${class_name}\\1 not found\"\n"
+            "try:\n       SmartPointer.set(\"itk::${CLASS}<\\2>\",itkModule.itk${class_name}\\1_Pointer)\nexcept:\n       print \"Warning: itk${class_name}\\1_Pointer not found\"\n"
             wrapClass "${wrap}"
         )
         SET(itk_PyWrap "${itk_PyWrap}${wrapClass}\n")
       ENDFOREACH(wrap ${WRAP})
-
+  
       WRITE_FILE("${FILE}"
         "try:\n"
-        "   if(not isinstance(${class_name},itkPyTemplate.itkPyTemplate)):\n"
+        "   if(not isinstance(SmartPointer,itkPyTemplate.itkPyTemplate)):\n"
         "      raise AttributeError\n"
         "except:\n"
-        "   ${class_name} = itkPyTemplate.itkPyTemplate(\"itk${class_name}\")\n"
+        "   SmartPointer = itkPyTemplate.itkPyTemplate(\"itkSmartPointer\")\n"
         "${itk_PyWrap}"
         APPEND
       )
-   ENDIF(NOT tcltk_class)
+    ENDIF(wrapPointer)
 ENDMACRO(WRITE_PY_WRAP)
 
 MACRO(WRITE_PY_WRAP_NOTPL FILE CLASS)

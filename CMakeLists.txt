@@ -33,7 +33,7 @@ OPTION(WRAP_rgb_unsigned_char "Wrap RGB< unsigned char > type" ON)
 OPTION(WRAP_rgb_unsigned_short "Wrap RGB< unsigned short > type" OFF)
 
 SET(WRAP_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (;)")
-SET(WRAP_ITK_INSTALL_LOCATION "/lib/InsightToolKit/WrapITK" CACHE STRING "Path to the top of the WrapITK install tree (will be appended to CMAKE_INSTALL_PREFIX).")
+SET(WRAP_ITK_INSTALL_LOCATION "/lib/InsightToolkit/WrapITK" CACHE STRING "Path to the top of the WrapITK install tree (will be appended to CMAKE_INSTALL_PREFIX).")
 
 SET(WRAPPER_INSTALL_LOCATION "${WRAP_ITK_INSTALL_LOCATION}")
 SET(ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg")

@@ -2,11 +2,17 @@
 # To create external language wrappers, start by including the following
 # lines in a CMakeLists.txt:
 # FIND_PACKAGE(WrapITK)
-# INCLUDE(${WrapITK_USE_FILE})
+# This will automatically include WrapITKConfig.cmake
+# and set WrapITK_DIR to the location of the WrapITK tree.
 
 FIND_PATH(WrapITK_DIR WrapITKConfig.cmake
-  "@CMAKE_INSTALL_PREFIX@@WRAP_ITK_INSTALL_LOCATION@"
   "@CONFIG_WRAP_ITK_DIR@"
   DOC "Path to build or install location of WrapITK"
 )
-SET(WrapITK_USE_FILE "${WrapITK_DIR}/WrapITKConfig.cmake")
+
+IF(WrapITK_DIR)
+  SET(WrapITK_FOUND 1)
+  INCLUDE("${WrapITK_DIR}/WrapITKConfig.cmake")
+ELSE(WrapITK_DIR)
+  SET(WrapITK_FOUND 0)
+ENDIF(WrapITK_DIR)

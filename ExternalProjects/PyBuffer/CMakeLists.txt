@@ -1,8 +1,7 @@
 FIND_PACKAGE(WrapITK)
-IF(NOT WrapITK_DIR)
+IF(NOT WrapITK_FOUND)
   MESSAGE(FATAL_ERROR "Cannot build without WrapITK.  Please set WrapITK_DIR.")
-ENDIF(NOT WrapITK_DIR)
-INCLUDE("${WrapITK_DIR}/WrapITKConfig.cmake")
+ENDIF(NOT WrapITK_FOUND)
 
 # Deal with numarray package  Options
 SET(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")

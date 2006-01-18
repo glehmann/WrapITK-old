@@ -72,207 +72,27 @@ SET(WRAP_ITK_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
 SET(WRAP_ITK_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
 SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
-#-----------------------------------------------------------------------------
-MACRO(ITK_CONFIG_PACKAGE BINARY_DIR)
-  IF(WRAP_ITK_TCL)
-    # tcl
-    ITK_CONFIG_TCL_PACKAGE(${BINARY_DIR})
-  ENDIF(WRAP_ITK_TCL)
-  IF(WRAP_ITK_PERL)
-    # perl
-    ITK_CONFIG_PERL_PACKAGE(${BINARY_DIR})
-  ENDIF(WRAP_ITK_PERL)
-  IF(WRAP_ITK_PYTHON)
-    # python
-    ITK_CONFIG_PYTHON_PACKAGE(${BINARY_DIR})
-  ENDIF(WRAP_ITK_PYTHON)
-  IF(WRAP_ITK_JAVA)
-    # java
-    ITK_CONFIG_JAVA_PACKAGE(${BINARY_DIR})
-  ENDIF(WRAP_ITK_JAVA)
-ENDMACRO(ITK_CONFIG_PACKAGE)
-
 ###############################################################################
-# Config Project dependant :-(
+# Configure language-specific features
 ###############################################################################
-MACRO(ITK_CONFIG_TCL_PACKAGE BINARY_DIR)
-  # Configure pkgIndex.tcl for the build tree.
-  SET(WRAP_ITK_DATA_ROOT "${WrapITK_BINARY_DIR}/Data")
-  SET(WRAP_ITK_TEST_ROOT "${WrapITK_BINARY_DIR}/Testing")
-  SET(WRAP_ITK_SCRIPT_DIR "${WrapITK_SOURCE_DIR}/Tcl")
-
-  IF(CMAKE_CONFIGURATION_TYPES)
-    FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-      SET(WRAP_ITK_PACKAGE_DIR "${ITK_CSWIG_PACKAGE_DIR_BUILD}/${config}")
-      CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Tcl/pkgIndex.tcl.in"
-                     "${BINARY_DIR}/Tcl/${config}/pkgIndex.tcl"
-                     @ONLY IMMEDIATE)
-    ENDFOREACH(config)
-  ELSE(CMAKE_CONFIGURATION_TYPES)
-    SET(WRAP_ITK_PACKAGE_DIR "${ITK_CSWIG_PACKAGE_DIR_BUILD}")
-    CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Tcl/pkgIndex.tcl.in"
-                   "${BINARY_DIR}/Tcl/pkgIndex.tcl"
-                   @ONLY IMMEDIATE)
-  ENDIF(CMAKE_CONFIGURATION_TYPES)
-
-  # Configure pkgIndex.tcl for the install tree.
-  SET(WRAP_ITK_SCRIPT_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Tcl")
-  SET(WRAP_ITK_PACKAGE_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Tcl-SWIG")
-  SET(WRAP_ITK_DATA_ROOT "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Data")
-  SET(WRAP_ITK_TEST_ROOT "<NO_DEFAULT>")
-  CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Tcl/pkgIndex.tcl.in"
-                 "${BINARY_DIR}/Tcl/InstallOnly/pkgIndex.tcl"
-                 IMMEDIATE @ONLY)
-  INSTALL_FILES( "${WRAP_ITK_INSTALL_LOCATION}/Tcl" FILES
-                "${BINARY_DIR}/Tcl/InstallOnly/pkgIndex.tcl")
-
+IF(WRAP_ITK_TCL)
   SUBDIRS(Tcl)
-ENDMACRO(ITK_CONFIG_TCL_PACKAGE)
+ENDIF(WRAP_ITK_TCL)
 
-MACRO(ITK_CONFIG_PERL_PACKAGE BINARY_DIR)
-ENDMACRO(ITK_CONFIG_PERL_PACKAGE)
+IF(WRAP_ITK_PERL)
+  # Nothing yet
+ENDIF(WRAP_ITK_PERL)
 
-###############################################################################
-# Config Project dependant :-(
-###############################################################################
-MACRO(ITK_CONFIG_PYTHON_PACKAGE BINARY_DIR)
-  SET(WRAP_ITK_DATA_ROOT "${WrapITK_BINARY_DIR}/Data")
-  SET(WRAP_ITK_TEST_ROOT "${WrapITK_BINARY_DIR}/Testing")
-  IF(CMAKE_CONFIGURATION_TYPES)
-    FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-      SET(WRAP_ITK_PACKAGE_DIR "${LIBRARY_OUTPUT_PATH}/${config}")
-      CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/itkbase.py.in"
-                     "${BINARY_DIR}/Python/${config}/itkbase.py"
-                     @ONLY IMMEDIATE)
-    ENDFOREACH(config)
-  ELSE(CMAKE_CONFIGURATION_TYPES)
-    SET(WRAP_ITK_PACKAGE_DIR "${LIBRARY_OUTPUT_PATH}")
-    CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/itkbase.py.in"
-                   "${BINARY_DIR}/Python/itkbase.py"
-                   @ONLY IMMEDIATE)
-  ENDIF(CMAKE_CONFIGURATION_TYPES)
+IF(WRAP_ITK_PYTHON)
+  SUBDIRS(Python)
+ENDIF(WRAP_ITK_PYTHON)
 
-  # Handle out-of-source builds correctly.
-  #
-  #  1. Create a list of Python files to be installed/copied.
-  #  2. Copy them to BINARY_DIR if it is different from SOURCE_DIR.
-  #
-  # *** Step 1 has to be done carefully to avoid missing out files ***
-  ADD_CUSTOM_TARGET(copy_python_files ALL)
-
-  # Now create a list of Python files.
-  # WrapITK/Python/*.py
-  SET(ITK_PYTHON_FILES
-    ${ITK_PYTHON_FILES}
-    InsightToolkit
-    itkspatialobject
-    itkalgorithms
-    itkbasicfilters
-    itkcommon
-    itkio
-    itktesting
-    itkdata
-    itknumerics
-    vxlnumerics
-
-    itk
-    itkPyTemplate
-    itktypes
-    )
-  # Done listing files.
-
-  # Now copy these files if necessary.
-  SET(WRAP_ITK_PYTHON_FILES)
-
-  IF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
-    # In source build -- no need to copy Python files.
-  ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
-    IF(CMAKE_CONFIGURATION_TYPES)
-      FOREACH(file ${ITK_PYTHON_FILES})
-        SET(src "${WrapITK_SOURCE_DIR}/Python/${file}.py")
-        SET(tgt "${WrapITK_BINARY_DIR}/Python/${CMAKE_CFG_INTDIR}/${file}.py")
-        SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} ${tgt})
-        ADD_CUSTOM_COMMAND(SOURCE ${src}
-          COMMAND ${CMAKE_COMMAND}
-          ARGS -E copy ${src} ${tgt}
-          OUTPUTS ${tgt}
-          TARGET copy_python_files
-          COMMENT "source copy")
-      ENDFOREACH(file)
-    ELSE(CMAKE_CONFIGURATION_TYPES)
-      FOREACH(file ${ITK_PYTHON_FILES})
-        SET(src "${WrapITK_SOURCE_DIR}/Python/${file}.py")
-        SET(tgt "${WrapITK_BINARY_DIR}/Python/${file}.py")
-        SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} ${tgt})
-        ADD_CUSTOM_COMMAND(SOURCE ${src}
-          COMMAND ${CMAKE_COMMAND}
-          ARGS -E copy ${src} ${tgt}
-          OUTPUTS ${tgt}
-          TARGET copy_python_files
-          COMMENT "source copy")
-      ENDFOREACH(file)
-    ENDIF(CMAKE_CONFIGURATION_TYPES)
-  ENDIF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
-
-  # driver command to make the copy happen.
-  ADD_CUSTOM_COMMAND(
-    SOURCE copy_python_files
-    DEPENDS ${WRAP_ITK_PYTHON_FILES}
-    TARGET copy_python_files
-    )
-
-  # Configure the custom python pth files
-  SET(CONFIG_WRAP_ITK_PYTHON_DIR "${WrapITK_BINARY_DIR}/Python")
-  CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/WrapITK.pth.in"
-               "${WrapITK_BINARY_DIR}/Python/WrapITK.pth"
-               @ONLY IMMEDIATE)
-               
-  SET(CONFIG_WRAP_ITK_PYTHON_DIR "${WRAP_ITK_INSTALL_LOCATION}/Python")
-  CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/WrapITK.pth.in"
-               "${WrapITK_BINARY_DIR}/Python/InstallOnly/WrapITK.pth"
-               @ONLY IMMEDIATE)
-  
-  IF(PYTHON_EXECUTABLE)
-    EXEC_PROGRAM("${PYTHON_EXECUTABLE}"
-      ARGS "-c 'try:\n  import distutils.sysconfig; print distutils.sysconfig.get_python_lib()\nexcept: pass\n'"
-      OUTPUT_VARIABLE py_spp
-    )
-  ENDIF(PYTHON_EXECUTABLE)
-  SET(PY_SITE_PACKAGES_PATH "${py_spp}" CACHE PATH "Path to Python site-packages directory to install a .pth file pointing at WrapITK/Python")
-  MARK_AS_ADVANCED(PY_SITE_PACKAGES_PATH)
-  IF(PY_SITE_PACKAGES_PATH)
-    # INTSTALL doesn't work with absolute paths... can't install yet.
-    # INSTALL_FILES("${PY_SITE_PACKAGES_PATH}" FILES "${WrapITK_BINARY_DIR}/Python/InstallOnly/WrapITK.pth")
-  ENDIF(PY_SITE_PACKAGES_PATH)
-
-  # Install the package python files.
-  FOREACH(file ${ITK_PYTHON_FILES})
-    INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python" FILES
-      "${WrapITK_BINARY_DIR}/Python/${file}.py")
-  ENDFOREACH(file)
-
-  SET(WRAP_ITK_PACKAGE_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Python-SWIG")
-  SET(WRAP_ITK_DATA_ROOT "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Data")
-  SET(WRAP_ITK_TEST_ROOT "<NO_DEFAULT>")
-  CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/Python/itkbase.py.in"
-                 "${BINARY_DIR}/Python/InstallOnly/itkbase.py"
-                 @ONLY IMMEDIATE)
-  INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python" FILES
-    "${WrapITK_BINARY_DIR}/Python/InstallOnly/itkbase.py")
-ENDMACRO(ITK_CONFIG_PYTHON_PACKAGE)
-
-###############################################################################
-# Config Project dependant :-(
-###############################################################################
-MACRO(ITK_CONFIG_JAVA_PACKAGE BINARY_DIR)
+IF(WRAP_ITK_JAVA)
   SUBDIRS(Java)
-ENDMACRO(ITK_CONFIG_JAVA_PACKAGE)
-
-#-----------------------------------------------------------------------------
-ITK_CONFIG_PACKAGE(${WrapITK_BINARY_DIR})
+ENDIF(WRAP_ITK_JAVA)
 
 ###############################################################################
-# Configure UseWrapITK.cmake and related files for external projects
+# Configure UseWrapITK.cmake and FindWrapITK.cmale for external projects
 ###############################################################################
 
 # First, configure for use directly from the build dir.

@@ -9,12 +9,6 @@ SET(ItkVtk_BUILD_VERSION 0)
 SET(ItkVtk_VERSION
     "${ItkVtk_MAJOR_VERSION}.${ItkVtk_MINOR_VERSION}.${ItkVtk_BUILD_VERSION}")
 
-#-----------------------------------------------------------------------------
-SET (EXECUTABLE_OUTPUT_PATH ${ItkVtk_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
-SET (LIBRARY_OUTPUT_PATH ${ItkVtk_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
-MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
-SET(ItkVtk_LIBRARY_DIR ${LIBRARY_OUTPUT_PATH})
-SET(ItkVtk_EXECUTABLE_DIR ${EXECUTABLE_OUTPUT_PATH})
 
 #-----------------------------------------------------------------------------
 SET(BUILD_WRAPPERS OFF CACHE BOOL "Wrap library")
@@ -31,7 +25,9 @@ ENDIF(NOT ITK_FOUND)
 # Find VTK
 FIND_PACKAGE(VTK)
 IF (VTK_FOUND)
-INCLUDE (${VTK_USE_FILE})
+  INCLUDE (${VTK_USE_FILE})
+ELSE(VTK_FOUND)
+  MESSAGE(FATAL_ERROR "VTK Library can't be found")
 ENDIF (VTK_FOUND)
 
 #-----------------------------------------------------------------------------
@@ -39,9 +35,7 @@ INCLUDE_DIRECTORIES(${VTK_INCLUDE_DIRS} ${ITK_INCLUDE_DIRS} ${ItkVtk_SOURCE_DIR}
 LINK_DIRECTORIES(${VTK_LIBRARY_DIRS} ${ITK_LIBRARY_DIRS})
 
 #-----------------------------------------------------------------------------
-SUBDIRS(
-   src 
-)
+SUBDIRS(src)
 
 IF(BUILD_WRAPPERS)
    SUBDIRS(Wrapping)

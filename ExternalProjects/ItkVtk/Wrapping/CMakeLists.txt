@@ -1,10 +1,9 @@
-SET(WrapITK_DIR "WrapITK_DIR-NOTFOUND" CACHE PATH "Path to build or install location of WrapITK")
+FIND_PACKAGE(WrapITK)
 IF(NOT WrapITK_DIR)
-  MESSAGE(FATAL_ERROR
-          "Cannot build without WrapITK.  Please set WrapITK_DIR.")
+  MESSAGE(FATAL_ERROR "Cannot build without WrapITK.  Please set WrapITK_DIR.")
 ENDIF(NOT WrapITK_DIR)
+INCLUDE("${WrapITK_DIR}/WrapITKConfig.cmake")
 
-INCLUDE("${WrapITK_DIR}/UseWrapITK.cmake")
 SET(ITK_SWG_FILES ${ITK_SWG_FILES} "${ItkVtk_SOURCE_DIR}/Wrapping/itk.swg")
 
 SET(WRAP_ITK_SWIG_INCLUDE_DIRS

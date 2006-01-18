@@ -4,9 +4,9 @@
 # FIND_PACKAGE(WrapITK)
 # INCLUDE(${WrapITK_USE_FILE})
 
-FIND_PATH(WrapITK_DIR UseWrapITK.cmake
+FIND_PATH(WrapITK_DIR WrapITKConfig.cmake
   "@CMAKE_INSTALL_PREFIX@@WRAP_ITK_INSTALL_LOCATION@"
   "@CONFIG_WRAP_ITK_DIR@"
   DOC "Path to build or install location of WrapITK"
 )
-SET(WrapITK_USE_FILE "${WrapITK_DIR}/UseWrapITK.cmake")
+SET(WrapITK_USE_FILE "${WrapITK_DIR}/WrapITKConfig.cmake")

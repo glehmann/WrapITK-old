@@ -1,8 +1,4 @@
-FIND_PACKAGE(WrapITK)
-IF(NOT WrapITK_DIR)
-  MESSAGE(FATAL_ERROR "Cannot build without WrapITK.  Please set WrapITK_DIR.")
-ENDIF(NOT WrapITK_DIR)
-INCLUDE("${WrapITK_DIR}/WrapITKConfig.cmake")
+FIND_PACKAGE(WrapITK REQUIRED)
 
 SET(ITK_SWG_FILES ${ITK_SWG_FILES} "${ItkVtk_SOURCE_DIR}/Wrapping/itk.swg")
 

@@ -62,8 +62,6 @@ ITK_WRAP_LIBRARY(
 #------------------------------------------------------------------------------
 # install language specific files and link with the language specific libs
 
-SET(WRAP_ITK_INSTALL_LOCATION /lib64/InsightToolkit/WrapITK)
-
 IF(ITK_CSWIG_PYTHON)
   TARGET_LINK_LIBRARIES(_${ITK_LIBRARY}Python vtkImagingPythonD)
   INSTALL_FILES(${WRAP_ITK_INSTALL_LOCATION}/Python FILES "${ItkVtk_SOURCE_DIR}/Wrapping/Python/${ITK_LIBRARY}.py")

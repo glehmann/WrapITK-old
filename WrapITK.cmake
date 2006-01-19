@@ -33,7 +33,6 @@ ENDMACRO(WRITE_MODULE_LANG)
 MACRO(WRITE_MODULE_TCL MODULE_NAME PATH)
    SET(lang "Tcl")
    SET(module_name ${MODULE_NAME})
-   SET(extra_headers "")
    STRING(TOUPPER ${lang} lang_TOUPPER)
    CONFIGURE_FILE(
       "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
@@ -45,7 +44,6 @@ ENDMACRO(WRITE_MODULE_TCL)
 MACRO(WRITE_MODULE_PYTHON MODULE_NAME PATH)
    SET(lang "Python")
    SET(module_name ${MODULE_NAME})
-   SET(extra_headers "")
    STRING(TOUPPER ${lang} lang_TOUPPER)
    CONFIGURE_FILE(
       "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
@@ -57,7 +55,6 @@ ENDMACRO(WRITE_MODULE_PYTHON)
 MACRO(WRITE_MODULE_JAVA MODULE_NAME PATH)
    SET(lang "Java")
    SET(module_name ${MODULE_NAME})
-   SET(extra_headers "")
    STRING(TOUPPER ${lang} lang_TOUPPER)
    CONFIGURE_FILE(
       "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"

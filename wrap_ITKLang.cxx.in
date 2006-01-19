@@ -1,5 +1,4 @@
 #define ITK_WRAP_PACKAGE "${module_name}${lang}"
 #define ITK_${lang_TOUPPER}_WRAP
-${extra_headers}
 #include "wrap_${module_name}.cxx"
 

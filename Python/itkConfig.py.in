@@ -1,0 +1,17 @@
+"""InsightToolkit configuration module: contains paths to libraries and language support files."""
+
+# Assume that 'xxx' is the name of a wrapped library:
+# swig_lib: location of the _xxxPython.so swig-generated libraries
+swig_lib = '@CONFIG_PYTHON_SWIGLIB_DIR@'
+
+# swig_py: location of the xxxPython.py swig-generated python interfaces
+swig_py = '@CONFIG_PYTHON_SWIGPY_DIR@'
+
+# config_py: location of xxxConfix.py CMake-generated library descriptions 
+config_py = '@CONFIG_PYTHON_CONFIGPY_DIR@'
+
+# location of test files
+test_root = '@CONFIG_WRAP_ITK_TEST_ROOT@'
+
+# location for test input
+data_root = '@CONFIG_WRAP_ITK_DATA_ROOT@'

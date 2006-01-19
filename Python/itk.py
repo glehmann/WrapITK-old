@@ -1,32 +1,21 @@
-from itktypes import *
 
-# the following modules are not imported to avoid problems with classes wrapped
-# in several modules (for example Image)
-from os.path import dirname, join
-execfile(join(dirname(__file__), "itkcommonaPy.py"))
-execfile(join(dirname(__file__), "itkcommonbPy.py"))
-execfile(join(dirname(__file__), "itknumericsPy.py"))
-execfile(join(dirname(__file__), "itkbasicfiltersaPy.py"))
-execfile(join(dirname(__file__), "itkbasicfiltersbPy.py"))
-execfile(join(dirname(__file__), "itkbasicfilterscPy.py"))
-execfile(join(dirname(__file__), "itkspatialobjectPy.py"))
-execfile(join(dirname(__file__), "itkalgorithmsPy.py"))
-execfile(join(dirname(__file__), "itkioPy.py"))
+# Auto-load the modules described in the itkConfig.config_py directory (usually
+# WrapITK/Python/Configuration, and populate the 'itk' namespace with the templates.
 
-# now, include files in auto dir
-from os import listdir
-try:
-  auto_path = f = ""  # to be sure to have something to delete !
-  auto_path = join(dirname(__file__), "auto")
-  for f in listdir(auto_path) :
-    if f.endswith('.py') :
-      execfile(join(auto_path, f))
-except OSError, e :
-  import sys
-  print >> sys.stderr, e
-  del e
+import itkBase, itkConfig, os
+# First, find all the xxxConfig.py files in the config_py dir, and strip off the
+# 'Config.py' part of the filename.
+configModules = [f[:-9] for f in os.listdir(itkConfig.config_py) if f.endswith('Config.py')]
 
-del dirname, join, listdir, auto_path, f
+for module in configModules:
+  # If the configuration defines an auto_load attribute and it's set to True
+  # then load the module into the global 'itk' namespace
+  if ( hasattr(itkBase.module_data[module], 'auto_load') and 
+       itkBase.module_data[module].auto_load == True ):
+    itkBase.LoadModule(module, globals())
+
+del itkBase, itkConfig, os
+
 
 # new features introduced by itk module
 # each new feature use a name in lower case

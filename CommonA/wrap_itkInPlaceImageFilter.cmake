@@ -77,5 +77,10 @@ WRAP_CLASS("InPlaceImageFilter" POINTER)
     COND_WRAP("${ITKM_IVF${d}${d}}${ITKM_IVF${d}${d}}"  "${ITKT_IVF${d}${d}},${ITKT_IVF${d}${d}}"  "VF")
     COND_WRAP("${ITKM_ICVD${d}${d}}${ITKM_ICVD${d}${d}}"  "${ITKT_ICVD${d}${d}},${ITKT_ICVD${d}${d}}"  "CVD")
     COND_WRAP("${ITKM_ICVF${d}${d}}${ITKM_ICVF${d}${d}}"  "${ITKT_ICVF${d}${d}},${ITKT_ICVF${d}${d}}"  "CVF")
+
+    # int -> RGB
+    COND_WRAP("${ITKM_IUC${d}}${ITKM_IRGBUC${d}}" "${ITKT_IUC${d}},${ITKT_IRGBUC${d}}" "UC;RGBUC")
+    COND_WRAP("${ITKM_IUS${d}}${ITKM_IRGBUS${d}}" "${ITKT_IUS${d}},${ITKT_IRGBUS${d}}" "US;RGBUS")
+
   ENDFOREACH(d)
 END_WRAP_CLASS()

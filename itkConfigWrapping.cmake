@@ -480,7 +480,7 @@ MACRO(ITK_WRAP_LIBRARY SRCS LIBRARY_NAME DIRECTORY DEPEND_LIBRARY EXTRA_SOURCES 
   
   # Try to extract the module name from the ITK_SWIG_FILE path... this assumes
   # that the module name is the same as the file name, less the .i extension.
-  STRING(REGEX REPLACE "^.*/([^/]+)\\.i$" "\\1" itk_swig_file_module "${ITK_SWIG_FILE}")
+  GET_FILENAME_COMPONENT(itk_swig_file_module "${ITK_SWIG_FILE}" NAME_WE)
 
   IF(WRAP_ITK_TCL)
     IF(ITK_SWIG_FILE)

@@ -105,8 +105,7 @@ ENDIF(PYTHON_EXECUTABLE)
 SET(PY_SITE_PACKAGES_PATH "${py_spp}" CACHE PATH "Python site-packages directory to install a .pth file pointing at WrapITK Python modules.")
 MARK_AS_ADVANCED(PY_SITE_PACKAGES_PATH)
 IF(PY_SITE_PACKAGES_PATH)
-  # INTSTALL doesn't work with absolute paths... can't install yet.
-  # INSTALL_FILES("${PY_SITE_PACKAGES_PATH}" FILES "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/WrapITK.pth")
+  INSTALL_AT_ABSOLUTE_PATH("${PY_SITE_PACKAGES_PATH}" "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/WrapITK.pth")
 ENDIF(PY_SITE_PACKAGES_PATH)
 
 # Install the package python files.

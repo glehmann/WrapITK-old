@@ -35,7 +35,7 @@ OPTION(WRAP_rgb_unsigned_short "Wrap RGB< unsigned short > type" OFF)
 SET(WRAP_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (;)")
 SET(WRAP_ITK_INSTALL_LOCATION "/lib/InsightToolkit/WrapITK" CACHE STRING "Path to the top of the WrapITK install tree (will be appended to CMAKE_INSTALL_PREFIX).")
 
-SET(ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg")
+SET(WRAP_ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg")
 SET(WRAP_ITK_CONFIG_DIR ${WrapITK_SOURCE_DIR})
 SET(WRAP_ITK_CMAKE_DIR ${WrapITK_SOURCE_DIR})
 SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")
@@ -43,9 +43,9 @@ SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")
 # Now include itkConfigWrapping
 INCLUDE(itkConfigWrapping.cmake)
 
-# WRAP_ITK_SWIG_INCLUDE_DIRS initially populated by itkConfigWrapping 
-SET(WRAP_ITK_SWIG_INCLUDE_DIRS
-  ${WRAP_ITK_SWIG_INCLUDE_DIRS}
+# WRAP_ITK_GCCXML_INCLUDE_DIRS initially populated by itkConfigWrapping 
+SET(WRAP_ITK_GCCXML_INCLUDE_DIRS
+  ${WRAP_ITK_GCCXML_INCLUDE_DIRS}
   ${WrapITK_SOURCE_DIR}
   ${WrapITK_SOURCE_DIR}/CommonA
   ${WrapITK_SOURCE_DIR}/CommonB
@@ -134,7 +134,7 @@ FOREACH(f
  WrapTypePrefix.cmake
  WrapTypeBase.cmake
  Master.mdx.in
- SwigInc.txt.in
+ gcc_xml.inc.in
  empty.depend.in
  wrap_ITKLang.cxx.in
  WrapITKLang.cmake)

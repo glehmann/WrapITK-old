@@ -86,5 +86,9 @@ WRAP_CLASS("InPlaceImageFilter" POINTER)
     COND_WRAP("${ITKM_IRGBUS${d}}${ITKM_IUS${d}}" "${ITKT_IRGBUS${d}},${ITKT_IUS${d}}" "US;RGBUS")
     COND_WRAP("${ITKM_IRGBUC${d}}${ITKM_IUC${d}}" "${ITKT_IRGBUC${d}},${ITKT_IUC${d}}" "UC;RGBUC")
 
+    # RGB -> RGB
+    COND_WRAP("${ITKM_IRGBUS${d}}${ITKM_IRGBUS${d}}" "${ITKT_IRGBUS${d}},${ITKT_IRGBUS${d}}" "RGBUS")
+    COND_WRAP("${ITKM_IRGBUC${d}}${ITKM_IRGBUC${d}}" "${ITKT_IRGBUC${d}},${ITKT_IRGBUC${d}}" "RGBUC")
+
   ENDFOREACH(d)
 END_WRAP_CLASS()

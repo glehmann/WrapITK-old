@@ -94,28 +94,12 @@ ENDIF(WRAP_ITK_JAVA)
 ###############################################################################
 # Configure WrapITKConfig.cmake and FindWrapITK.cmale for external projects
 ###############################################################################
-
 # First, configure for use directly from the build dir.
 SET(CONFIG_SWIG_DIR "${WrapITK_SOURCE_DIR}")
 SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}")
 SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
-
-SET(CONFIG_MIDX_FILES "")
-FOREACH(midx 
-    "VXLNumerics/VXLNumerics"
-    "Numerics/ITKNumerics"
-    "CommonA/ITKCommonA"
-    "CommonB/ITKCommonB"
-    "BasicFiltersA/ITKBasicFiltersA"
-    "BasicFiltersB/ITKBasicFiltersB"
-    "BasicFiltersC/ITKBasicFiltersC"
-    "SpatialObject/ITKSpatialObject"
-    "Algorithms/ITKAlgorithms"
-    "IO/ITKIO")
-  SET(CONFIG_MIDX_FILES "${CONFIG_MIDX_FILES}\n  \"${WrapITK_BINARY_DIR}/${midx}.mdx\"")
-ENDFOREACH(midx)
-
+SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}")
 CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/WrapITKConfig.cmake"
                @ONLY IMMEDIATE)
@@ -129,23 +113,8 @@ CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/FindWrapITK.cmake.in"
 SET(CONFIG_SWIG_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration")
 SET(CONFIG_CONFIG_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration")
 SET(CONFIG_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration")
-
 SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/lib")
-
-SET(CONFIG_MIDX_FILES "")
-FOREACH(midx 
-    "VXLNumerics"
-    "ITKNumerics"
-    "ITKCommonA"
-    "ITKCommonB"
-    "ITKBasicFiltersA"
-    "ITKBasicFiltersB"
-    "ITKBasicFiltersC"
-    "ITKSpatialObject"
-    "ITKAlgorithms"
-    "ITKIO")
-  SET(CONFIG_MIDX_FILES "${CONFIG_MIDX_FILES}\n  \"${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/ClassIndex/${midx}.mdx\"")
-ENDFOREACH(midx)
+SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/ClassIndex")
 
 CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake"

@@ -396,17 +396,38 @@ MACRO(WRAP_INCLUDE INC)
 ENDMACRO(WRAP_INCLUDE)
 
 
+################################################################################
+# Macros which cause one or more template instantiations to be added to the
+# itk_Wrap list. This list is initialized by the macro WRAP_CLASS above, and
+# used by the macro END_WRAP_CLASS to produce the wrap_xxx.cxx files with
+# the correct templates. These cxx files serve as the CableSwig inputs.
+################################################################################
+
+
 MACRO(WRAP NAME TYPES)
-  # add a wrapped type and mask the not so clean notation "name # types"
+  # This is the fundamental macro for adding a template to be wrapped.
+  # NAME is a mangles suffix to be added to the class name (defined in WRAP_CLASS)
+  # to uniquely identify this instantiation.
+  # TYPE is a comma-separated list of the template parameters (in C++ form),
+  # some common parameters (e.g. for images) are stored in variables by 
+  # WrapTypeBase.cmake and WrapTypePrefix.cmake.
+  # 
+  # The format of the itk_Wrap list is a series of "name # types" strings
+  # (because there's no CMake support for nested lists, name and types are 
+  # separated out from the strings with a regex).
   #
   # Global vars used: itk_Wrap
   # Global vars modified: itk_Wrap
-  #
+
   SET(itk_Wrap ${itk_Wrap} "${NAME} # ${TYPES}")
 ENDMACRO(WRAP)
 
 
 MACRO(COND_WRAP NAME TYPES CONDS)
+  # COND_WRAP will call WRAP(NAME TYPES) only if the wrapping types selected
+  # in cmake (e.g. WRAP_unsigned_char) match one of the conditions listed in
+  # CONDS.
+  
   SET(will_wrap 1)
   FOREACH(t ${CONDS})
     IF("${t}" STREQUAL "UC")
@@ -501,27 +522,48 @@ ENDMACRO(COND_WRAP)
 
 
 MACRO(WRAP_TYPES_DIMS SIZE TYPES TMP_DIMS)
-  # implement an argument of type 2+ to say all dims equal or above 2
+  # WRAP_TYPES_DIMS filters input to WRAP_TYPES_DIMS_NO_DIM_TEST.
+  # The former macro allows a "TMP_DIMS" agrument of the format "2+" to
+  # specify that a given image filter is only to be instantiated for all of 
+  # the user-selected (via cmake) dimensions, provided the dimension is at 
+  # least 2. The SIZE parameter refers to the number of Image classes that
+  # must be in the template definition. (E.g. Filter<Image, Image> has SIZE of
+  # 2. The TYPES parameter refers to the image pixel types to be wrapped.
 
   IF("${TMP_DIMS}" MATCHES "^[0-9]+\\+$")
-    STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" MAX_DIM "${TMP_DIMS}")
+    # If the parameter is of form '2+', make a list of the user-selected
+    # dimensions (WRAP_DIMS) that match this criterion.
+    STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" MIN_DIM "${TMP_DIMS}")
     SET(DIMS "")
     FOREACH(d "${WRAP_DIMS}")
-      IF("${d}" GREATER "${MAX_DIM}" OR "${d}" EQUAL "${MAX_DIM}")
+      IF("${d}" GREATER "${MIN_DIM}" OR "${d}" EQUAL "${MIN_DIM}")
         SET(DIMS "${DIMS}" "${d}")
-      ENDIF("${d}" GREATER "${MAX_DIM}" OR "${d}" EQUAL "${MAX_DIM}")
+      ENDIF("${d}" GREATER "${MIN_DIM}" OR "${d}" EQUAL "${MIN_DIM}")
     ENDFOREACH(d)
     WRAP_TYPES_DIMS_NO_DIM_TEST("${SIZE}" "${TYPES}" "${DIMS}")
 
   ELSE("${TMP_DIMS}" MATCHES "^[0-9]+\\+$")
-    WRAP_TYPES_DIMS_NO_DIM_TEST("${SIZE}" "${TYPES}" "${WRAP_DIMS}")
+    # Otherwise, jsut make a list of the intersection between the user-selected
+    # dimensions and the allowed dimensions provided by the parameter.
+    SET(DIMS "")
+    FOREACH(d "${WRAP_DIMS}")
+      FOREACH(td "${TMP_DIMS}")
+        IF(d EQUAL td)
+          SET(DIMS "${DIMS}" "${d}")
+        ENDIF(d EQUAL td)
+      ENDFOREACH(td)
+    ENDFOREACH(d)
+    WRAP_TYPES_DIMS_NO_DIM_TEST("${SIZE}" "${TYPES}" "${DIMS}")
 
   ENDIF("${TMP_DIMS}" MATCHES "^[0-9]+\\+$")
-
 ENDMACRO(WRAP_TYPES_DIMS)
 
-
 MACRO(WRAP_TYPES_DIMS_NO_DIM_TEST SIZE TYPES DIMS)
+  # WRAP_TYPES_DIMS_NO_DIM_TEST wraps a given filter for all of the user-
+  # specified wrap dimensions. The SIZE parameter refers to the number of Image 
+  # classes that must be in the template definition. (E.g. Filter<Image, Image> 
+  # has SIZE of 2. The TYPES parameter refers to the image pixel types to be wrapped.
+
   FOREACH(dim ${DIMS})
     FOREACH(type ${TYPES})
       SET(name "")
@@ -540,6 +582,18 @@ MACRO(WRAP_TYPES_DIMS_NO_DIM_TEST SIZE TYPES DIMS)
   ENDFOREACH(dim)
 ENDMACRO(WRAP_TYPES_DIMS_NO_DIM_TEST)
 
+
+# The following macros specify that a filter is to be wrapped with 
+# a specific class of pixel types (say, integral or real types).
+# The exact pixel types from the class are selected by the user at 
+# configure time. These macros just say, e.g., "if the user has selected 
+# any or all integer types, wrap a filter with those types selected."
+# As above, the SIZE parameter refers to the number of image types required
+# in the template.
+# There are also variants that take a DIMS parameter. This parameter restricts
+# the filter instantiation to specific set of dimensions. Those dimensions will
+# be further restricted by the user's selection of dimensions at configure time.
+
 MACRO(WRAP_INT_DIMS SIZE DIMS)
   WRAP_TYPES_DIMS(${SIZE} "UL;US;UC" "${DIMS}")
 ENDMACRO(WRAP_INT_DIMS)
@@ -547,7 +601,6 @@ ENDMACRO(WRAP_INT_DIMS)
 MACRO(WRAP_INT SIZE)
   WRAP_INT_DIMS(${SIZE} "${WRAP_DIMS}")
 ENDMACRO(WRAP_INT)
-
 
 MACRO(WRAP_SIGN_INT_DIMS SIZE DIMS)
   WRAP_TYPES_DIMS(${SIZE} "SL;SS;SC" "${DIMS}")

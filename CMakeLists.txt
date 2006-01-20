@@ -127,17 +127,18 @@ CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/FindWrapITK.cmake.in"
 
 FOREACH(f
  itkConfigWrapping.cmake
- itk.swg
- wrap_ITK.cxx.in
- wrap_.cxx.in
- WrapITK.cmake
+ CreateCableSwigInputs.cmake
+ CreateLanguageSupport.cmake
+ CreateWrapperLibrary.cmake
  WrapTypePrefix.cmake
  WrapTypeBase.cmake
+ itk.swg
+ wrap_ITKLang.cxx.in
+ wrap_ITK.cxx.in
+ wrap_.cxx.in
  Master.mdx.in
  gcc_xml.inc.in
- empty.depend.in
- wrap_ITKLang.cxx.in
- WrapITKLang.cmake)
+ empty.depend.in)
   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration" FILES "${f}")
 ENDFOREACH(f)
 

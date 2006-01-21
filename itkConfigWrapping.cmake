@@ -168,6 +168,21 @@ ENDIF(WRAP_ITK_JAVA)
 ###############################################################################
 # Set various variables in order
 ###############################################################################
+# set the default include files for the generated wrapper files
+SET(WRAPPER_DEFAULT_INCLUDE
+  Offset
+  Vector
+  CovariantVector
+  ContinuousIndex
+  Array
+  FixedArray
+  RGBPixel
+  Image
+  Point
+  LevelSet
+  BinaryBallStructuringElement
+  SpatialObject
+)
 
 # make sure required stuff is set
 SET(WRAP_ITK_GCCXML_INCLUDE_DIRS ${ITK_INCLUDE_DIRS})

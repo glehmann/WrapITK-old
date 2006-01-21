@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
 # Macros for modules
 #------------------------------------------------------------------------------
-MACRO(WRITE_MODULE module_name path group)
+MACRO(WRITE_MODULE_FILES)
    SET(group_list "")
-   FOREACH(group_name ${group})
+   FOREACH(group_name ${WRAPPER_LIBRARY_GROUPS})
       SET(group_list "${group_list}    \"${group_name}\",\n")
    ENDFOREACH(group_name ${group})
    STRING(REGEX REPLACE ",\n$" "\n" group_list "${group_list}")
@@ -15,26 +15,26 @@ MACRO(WRITE_MODULE module_name path group)
       @ONLY IMMEDIATE)
 
   IF(WRAP_ITK_TCL)
-    WRITE_MODULE_FOR_LANGUAGE("Tcl" ${module_name} ${path})
+    WRITE_MODULE_FOR_LANGUAGE("Tcl")
   ENDIF(WRAP_ITK_TCL)
   IF(WRAP_ITK_PYTHON)
-    WRITE_MODULE_FOR_LANGUAGE("Python" ${module_name} ${path})
+    WRITE_MODULE_FOR_LANGUAGE("Python")
   ENDIF(WRAP_ITK_PYTHON)
   IF(WRAP_ITK_JAVA)
-    WRITE_MODULE_FOR_LANGUAGE("Java" ${module_name} ${path})
+    WRITE_MODULE_FOR_LANGUAGE("Java")
   ENDIF(WRAP_ITK_JAVA)
   IF(WRAP_ITK_PERL)
-    WRITE_MODULE_FOR_LANGUAGE("Perl" ${module_name} ${path})
+    WRITE_MODULE_FOR_LANGUAGE("Perl")
   ENDIF(WRAP_ITK_PERL)
 ENDMACRO(WRITE_MODULE)
 
-MACRO(WRITE_MODULE_FOR_LANGUAGE language module_name path)
+MACRO(WRITE_MODULE_FOR_LANGUAGE language)
    SET(CONFIG_LANGUAGE "${language}")
-   SET(CONFIG_MODULE_NAME ${module_name})
+   SET(CONFIG_MODULE_NAME ${WRAPPER_LIBRARY_NAME})
    STRING(TOUPPER ${lang} CONFIG_UPPER_LANG)
    CONFIGURE_FILE(
       "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
-      "${path}/wrap_${module_name}${language}.cxx"
+      "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx"
       @ONLY IMMEDIATE)
 ENDMACRO(WRITE_MODULE_FOR_LANGUAGE)
 
@@ -60,6 +60,9 @@ MACRO(WRITE_WRAP_CXX)
     "${WRAP_ITK_CONFIG_DIR}/wrap_.cxx.in"
     "${WRAPPER_FILE_NAME}"
     @ONLY IMMEDIATE)
+  
+  SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS 
+    ${WRAPPER_LIBRARY_CABLESWIG_INPUTS} "${WRAPPER_FILE_NAME}")
 ENDMACRO(WRITE_WRAP_CXX)
 
 
@@ -100,9 +103,9 @@ MACRO(WRAP_CLASS class)
   # clear the wrap parameters
   SET(WRAPPER_TEMPLATES)
   # and include the class
-  IF(${itk_AutoInclude})
+  IF(${WRAPPER_AUTO_INCLUDE_HEADERS})
     WRAP_INCLUDE(${class_name})
-  ENDIF(${itk_AutoInclude})
+  ENDIF(${WRAPPER_AUTO_INCLUDE_HEADERS})
 ENDMACRO(WRAP_CLASS)
 
 
@@ -244,9 +247,9 @@ MACRO(WRAP_CLASS_NOTPL class)
 
   STRING(REGEX REPLACE "(.*::)" "" class_name ${class})
 
-  IF(${itk_AutoInclude})
+  IF(${WRAPPER_AUTO_INCLUDE_HEADERS})
     WRAP_INCLUDE(${class_name})
-  ENDIF(${itk_AutoInclude})
+  ENDIF(${WRAPPER_AUTO_INCLUDE_HEADERS})
 
   # insert a blank line to separate the classes
   SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      \n")
@@ -282,82 +285,96 @@ ENDMACRO(WRAP_CLASS_NOTPL)
 
 
 
-
-MACRO(INCLUDE_WRAP_CMAKE module output_dir)
+MACRO(INCLUDE_WRAP_CMAKE module)
   # include a cmake module file and generate the associated wrap_???.cxx file
   #
   # Global vars used: none
-  # Global vars modified: WRAPPER_MODULE_NAME WRAPPER_FILE_NAME WRAPPER_WRAP_METHOD
-  #
+  # Global vars modified: WRAPPER_MODULE_NAME WRAPPER_FILE_NAME WRAPPER_TYPEDEFS
+  #                       WRAPPER_INCLUDE_FILES WRAPPER_AUTO_INCLUDE_HEADERS
 
   # preset the vars before include the file 
   SET(WRAPPER_MODULE_NAME "${module}")
-  SET(WRAPPER_FILE_NAME "${output_dir}/wrap_${WRAPPER_MODULE_NAME}.cxx")
+  SET(WRAPPER_FILE_NAME "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${module}.cxx")
   SET(WRAPPER_TYPEDEFS)
-  SET(WRAPPER_INCLUDE_FILES ${itk_DefaultInclude})
-  SET(itk_AutoInclude 1)
+  SET(WRAPPER_INCLUDE_FILES ${WRAPPER_DEFAULT_INCLUDE})
+  SET(WRAPPER_AUTO_INCLUDE_HEADERS ON)
 
   # now include the file
-  INCLUDE("wrap_${module}.cmake")
+  INCLUDE("${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
 
   # and write the file
   WRITE_WRAP_CXX()
 ENDMACRO(INCLUDE_WRAP_CMAKE)
 
 
-MACRO(AUTO_INCLUDE_WRAP_CMAKE LISTNAME EXCLUDE_LIST CXX_OUTPUT_DIR)
-  # automatically include the wrap_*.cmake file in the current directory"
-  # 
-  # first, include modules already in list
-  FOREACH(module ${${LISTNAME}})
-      INCLUDE_WRAP_CMAKE("${module}" "${CXX_OUTPUT_DIR}")
+MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
+  # Include the wrap_*.cmake files in WRAPPER_LIBRARY_SOURCE_DIR. This causes 
+  # corresponding wrap_*.cxx files to be generated WRAPPER_LIBRARY_OUTPUT_DIR, 
+  # and added to the WRAPPER_LIBRARY_CABLESWIG_INPUTS list.
+  # In addition, this causes the other required wrap_*.cxx files for the entire
+  # library and each wrapper language to be created.
+  # Finally, this macro causes the language support files for the templates and
+  # library here defined to be created.
+  
+  # First, initialize the language support file generation. This must be 
+  # initialized before any wrap_*.cmake files are included, because those files
+  # call macros which store information about the templated classes for language
+  # support.
+  LANGUAGE_SUPPORT_INITIALIZE()
+
+  # Next, include modules already in WRAPPER_LIBRARY_GROUPS, because those are
+  # guaranteed to be processed first.
+  FOREACH(module ${WRAPPER_LIBRARY_GROUPS})
+      INCLUDE_WRAP_CMAKE("${module}")
   ENDFOREACH(module)
 
-  # search files to include
-  FILE(GLOB filesToInclude "wrap_*.cmake")
-  FOREACH(file ${filesToInclude})
-    # get the module name: wrap_module.cmake
-    STRING(REGEX REPLACE ".*wrap_" "" module "${file}")
-    STRING(REGEX REPLACE ".cmake$" "" module "${module}")
+  # Now search for other wrap_*.cmake files to include
+  FILE(GLOB wrap_cmake_files "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_*.cmake")
+  FOREACH(file ${wrap_cmake_files})
+    # get the module name from wrap_module.cmake
+    GET_FILENAME_COMPONENT(module "${file}" NAME_WE)
+    STRING(REGEX REPLACE "^wrap_" "" module "${module}")
 
-    # if the module is already in the list, it mean that it is already included
+    # if the module is already in the list, it means that it is already included
     # ... and do not include excluded modules
-    SET(willInclude 1)
-    FOREACH(alreadyIncl ${${LISTNAME}} ${EXCLUDE_LIST})
-      IF("${alreadyIncl}" STREQUAL "${module}")
-        SET(willInclude 0)
-      ENDIF("${alreadyIncl}" STREQUAL "${module}")
-      IF("${excluded}" STREQUAL "${module}")
-        SET(willInclude 0)
-      ENDIF("${excluded}" STREQUAL "${module}")
-    ENDFOREACH(alreadyIncl)
+    SET(will_include 1)
+    FOREACH(already_included ${WRAPPER_LIBRARY_GROUPS})
+      IF("${already_included}" STREQUAL "${module}")
+        SET(will_include 0)
+      ENDIF("${already_included}" STREQUAL "${module}")
+    ENDFOREACH(already_included)
 
-    IF(${willInclude})
-      # add the module name to the list
-      SET(${LISTNAME} ${${LISTNAME}} "${module}")
-      INCLUDE_WRAP_CMAKE("${module}" "${CXX_OUTPUT_DIR}")
-    ENDIF(${willInclude})
+    IF(${will_include})
+      # Add the module name to the list. WRITE_MODULE_FILES uses this list
+      # to create the master library wrapper file.
+      SET(WRAPPER_LIBRARY_GROUPS ${WRAPPER_LIBRARY_GROUPS} "${module}")
+      INCLUDE_WRAP_CMAKE("${module}")
+    ENDIF(${will_include})
   ENDFOREACH(file)
-ENDMACRO(AUTO_INCLUDE_WRAP_CMAKE)
+  
+  LANGUAGE_SUPPORT_CONFIGURE_FILES()
+  WRITE_MODULE_FILES()
+ENDMACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
 
 
 
 
 
-MACRO(WRAP_INCLUDE INC)
-  SET(alreadyInclude 0)
-  FOREACH(inc ${WRAPPER_INCLUDE_FILES})
-    IF("${INC}" STREQUAL "${inc}")
-      SET(alreadyInclude 1)
-    ENDIF("${INC}" STREQUAL "${inc}")
-  ENDFOREACH(inc)
-  IF(NOT ${alreadyInclude})
+MACRO(WRAP_INCLUDE include_file)
+  SET(already_included 0)
+  FOREACH(included ${WRAPPER_INCLUDE_FILES})
+    IF("${include_file}" STREQUAL "${already_included}")
+      SET(already_included 1)
+    ENDIF("${include_file}" STREQUAL "${already_included}")
+  ENDFOREACH(included)
+  
+  IF(NOT already_included)
     # include order IS important. Default values must be before the other ones
     SET(WRAPPER_INCLUDE_FILES 
       ${WRAPPER_INCLUDE_FILES}
-      ${INC}
+      ${include_file}
     )
-  ENDIF(NOT ${alreadyInclude})
+  ENDIF(NOT already_included)
 ENDMACRO(WRAP_INCLUDE)
 
 

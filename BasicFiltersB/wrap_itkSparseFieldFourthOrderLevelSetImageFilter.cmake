@@ -1,5 +1,5 @@
 # auto include feature must be disable because all the following classes are in the same file
-SET(itk_AutoInclude OFF)
+SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
 WRAP_INCLUDE(SparseFieldFourthOrderLevelSetImageFilter)
 
 WRAP_CLASS("NormalBandNode" DEREF)

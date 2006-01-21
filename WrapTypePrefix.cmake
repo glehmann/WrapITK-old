@@ -27,21 +27,6 @@ MACRO(END_WRAP_TYPE)
    CREATE_WRAP_TYPE("${itk_Wrap_Class}" "${itk_Wrap_Prefix}" "${itk_Wrap}")
 ENDMACRO(END_WRAP_TYPE)
 
-SET(itk_DefaultInclude
-  Offset
-  Vector
-  CovariantVector
-  ContinuousIndex
-  Array
-  FixedArray
-  RGBPixel
-  Image
-  Point
-  LevelSet
-  BinaryBallStructuringElement
-  SpatialObject
-)
-
 WRAP_TYPE("Offset" "O")
   FOREACH(d ${WRAP_DIMS})
     WRAP("${d}"  "${d}")

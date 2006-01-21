@@ -1,18 +1,140 @@
-#------------------------------------------------------------------------------
-# Macros for modules
-#------------------------------------------------------------------------------
-MACRO(WRITE_MODULE_FILES)
-   SET(group_list "")
-   FOREACH(group_name ${WRAPPER_LIBRARY_GROUPS})
-      SET(group_list "${group_list}    \"${group_name}\",\n")
-   ENDFOREACH(group_name ${group})
-   STRING(REGEX REPLACE ",\n$" "\n" group_list "${group_list}")
+################################################################################
+# Macro definitions for creating proper CableSwig input files from wrap_*.cmake
+# files.
+# This file includes definitions for the macros to call from a CMakeList file
+# to cause wrap_*.cmake files to be turned into CXX files, and definitions for
+# the macros to use in the wrap_*.cmake files themselves to declare that certain
+# classes and template instantiations be wrapped.
+# Note on convention: variable names in ALL_CAPS are global, and shared between
+# macros or between CMake and files that are configured. Variable names in
+# lower_case are local to a given macro.
+################################################################################
 
-   SET(CONFIG_GROUP_LIST "${group_list}")
-   CONFIGURE_FILE(
-      "${WRAP_ITK_CONFIG_DIR}/wrap_ITK.cxx.in"
-      "${path}/wrap_${module_name}.cxx"
-      @ONLY IMMEDIATE)
+
+################################################################################
+# Macros for finding and processing wrap_*.cmake files.
+################################################################################
+
+MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
+  # Include the wrap_*.cmake files in WRAPPER_LIBRARY_SOURCE_DIR. This causes 
+  # corresponding wrap_*.cxx files to be generated WRAPPER_LIBRARY_OUTPUT_DIR, 
+  # and added to the WRAPPER_LIBRARY_CABLESWIG_INPUTS list.
+  # In addition, this causes the other required wrap_*.cxx files for the entire
+  # library and each wrapper language to be created.
+  # Finally, this macro causes the language support files for the templates and
+  # library here defined to be created.
+  
+  # First, initialize the language support file generation. This must be 
+  # initialized before any wrap_*.cmake files are included, because those files
+  # call macros which store information about the templated classes for language
+  # support. This macro and the other LANGUAGE_SUPPORT macros are defined in
+  # CreateLanguageSupport.cmake
+  LANGUAGE_SUPPORT_INITIALIZE()
+
+  # Next, include modules already in WRAPPER_LIBRARY_GROUPS, because those are
+  # guaranteed to be processed first.
+  FOREACH(module ${WRAPPER_LIBRARY_GROUPS})
+      INCLUDE_WRAP_CMAKE("${module}")
+  ENDFOREACH(module)
+
+  # Now search for other wrap_*.cmake files to include
+  FILE(GLOB wrap_cmake_files "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_*.cmake")
+  FOREACH(file ${wrap_cmake_files})
+    # get the module name from wrap_module.cmake
+    GET_FILENAME_COMPONENT(module "${file}" NAME_WE)
+    STRING(REGEX REPLACE "^wrap_" "" module "${module}")
+
+    # if the module is already in the list, it means that it is already included
+    # ... and do not include excluded modules
+    SET(will_include 1)
+    FOREACH(already_included ${WRAPPER_LIBRARY_GROUPS})
+      IF("${already_included}" STREQUAL "${module}")
+        SET(will_include 0)
+      ENDIF("${already_included}" STREQUAL "${module}")
+    ENDFOREACH(already_included)
+
+    IF(${will_include})
+      # Add the module name to the list. WRITE_MODULE_FILES uses this list
+      # to create the master library wrapper file.
+      SET(WRAPPER_LIBRARY_GROUPS ${WRAPPER_LIBRARY_GROUPS} "${module}")
+      INCLUDE_WRAP_CMAKE("${module}")
+    ENDIF(${will_include})
+  ENDFOREACH(file)
+  
+  LANGUAGE_SUPPORT_CONFIGURE_FILES()
+  WRITE_MODULE_FILES()
+ENDMACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
+
+
+MACRO(INCLUDE_WRAP_CMAKE module)
+  # include a cmake module file and generate the associated wrap_*.cxx file.
+  # This basically sets the global vars that will be added to or modified
+  # by the commands in the included wrap_*.cmake module.
+  #
+  # Global vars used: none
+  # Global vars modified: WRAPPER_MODULE_NAME WRAPPER_FILE_NAME WRAPPER_TYPEDEFS
+  #                       WRAPPER_INCLUDE_FILES WRAPPER_AUTO_INCLUDE_HEADERS
+
+  # preset the vars before include the file 
+  SET(WRAPPER_MODULE_NAME "${module}")
+  SET(WRAPPER_FILE_NAME "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${module}.cxx")
+  SET(WRAPPER_TYPEDEFS)
+  SET(WRAPPER_INCLUDE_FILES ${WRAPPER_DEFAULT_INCLUDE})
+  SET(WRAPPER_AUTO_INCLUDE_HEADERS ON)
+
+  # now include the file
+  INCLUDE("${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
+
+  # and write the file
+  WRITE_WRAP_CXX()
+ENDMACRO(INCLUDE_WRAP_CMAKE)
+
+
+MACRO(WRITE_WRAP_CXX)
+  # write the wrap_*.cxx file
+  #
+  # Global vars used: WRAPPER_FILE_NAME WRAPPER_INCLUDE_FILES WRAPPER_MODULE_NAME and WRAPPER_TYPEDEFS
+  # Global vars modified: none
+
+  # Create the '#include' statements.
+  SET(CONFIG_WRAPPER_INCLUDES)
+  FOREACH(inc ${WRAPPER_INCLUDE_FILES})
+    SET(CONFIG_WRAPPER_INCLUDES "${CONFIG_WRAPPER_INCLUDES}#include \"itk${inc}.h\"\n")
+  ENDFOREACH(inc)
+  SET(CONFIG_WRAPPER_MODULE_NAME "${WRAPPER_MODULE_NAME}")
+  SET(CONFIG_WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}")
+
+  # Create the cxx file
+  CONFIGURE_FILE(
+    "${WRAP_ITK_CONFIG_DIR}/wrap_.cxx.in"
+    "${WRAPPER_FILE_NAME}"
+    @ONLY IMMEDIATE)
+  
+  # And add the cxx file to the list of cableswig inputs.
+  SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS 
+    ${WRAPPER_LIBRARY_CABLESWIG_INPUTS} "${WRAPPER_FILE_NAME}")
+ENDMACRO(WRITE_WRAP_CXX)
+
+
+################################################################################
+# Macros for writing the global module CableSwig inputs which specify all the
+# groups to be bundled together into one module. 
+################################################################################
+
+MACRO(WRITE_MODULE_FILES)
+  # Write the wrap_LIBRARY_NAME.cxx file which specifies all the wrapped groups.
+  
+  SET(group_list "")
+  FOREACH(group_name ${WRAPPER_LIBRARY_GROUPS})
+    SET(group_list "${group_list}    \"${group_name}\",\n")
+  ENDFOREACH(group_name ${group})
+  STRING(REGEX REPLACE ",\n$" "\n" group_list "${group_list}")
+
+  SET(CONFIG_GROUP_LIST "${group_list}")
+  CONFIGURE_FILE(
+    "${WRAP_ITK_CONFIG_DIR}/wrap_ITK.cxx.in"
+    "${path}/wrap_${module_name}.cxx"
+    @ONLY IMMEDIATE)
 
   IF(WRAP_ITK_TCL)
     WRITE_MODULE_FOR_LANGUAGE("Tcl")
@@ -29,51 +151,41 @@ MACRO(WRITE_MODULE_FILES)
 ENDMACRO(WRITE_MODULE)
 
 MACRO(WRITE_MODULE_FOR_LANGUAGE language)
-   SET(CONFIG_LANGUAGE "${language}")
-   SET(CONFIG_MODULE_NAME ${WRAPPER_LIBRARY_NAME})
-   STRING(TOUPPER ${lang} CONFIG_UPPER_LANG)
-   CONFIGURE_FILE(
-      "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
-      "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx"
-      @ONLY IMMEDIATE)
+  # Write the language specific CableSwig input which declares which language is
+  # to be used and includes the general module cableswig input.
+  SET(CONFIG_LANGUAGE "${language}")
+  SET(CONFIG_MODULE_NAME ${WRAPPER_LIBRARY_NAME})
+  STRING(TOUPPER ${lang} CONFIG_UPPER_LANG)
+  CONFIGURE_FILE(
+    "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
+    "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx"
+    @ONLY IMMEDIATE)
 ENDMACRO(WRITE_MODULE_FOR_LANGUAGE)
 
 
-
-#------------------------------------------------------------------------------
-# macros to generate the wrap_*.cxx files
-#------------------------------------------------------------------------------
-MACRO(WRITE_WRAP_CXX)
-  # write the wrap_???.cxx file
-  #
-  # Global vars used: WRAPPER_FILE_NAME WRAPPER_INCLUDE_FILES WRAPPER_MODULE_NAME and WRAPPER_TYPEDEFS
-  # Global vars modified: none
-  #
-  SET(CONFIG_WRAPPER_INCLUDES)
-  FOREACH(inc ${WRAPPER_INCLUDE_FILES})
-    SET(CONFIG_WRAPPER_INCLUDES "${CONFIG_WRAPPER_INCLUDES}#include \"itk${inc}.h\"\n")
-  ENDFOREACH(inc)
-  SET(CONFIG_WRAPPER_MODULE_NAME "${WRAPPER_MODULE_NAME}")
-  SET(CONFIG_WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}")
-
-  CONFIGURE_FILE(
-    "${WRAP_ITK_CONFIG_DIR}/wrap_.cxx.in"
-    "${WRAPPER_FILE_NAME}"
-    @ONLY IMMEDIATE)
-  
-  SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS 
-    ${WRAPPER_LIBRARY_CABLESWIG_INPUTS} "${WRAPPER_FILE_NAME}")
-ENDMACRO(WRITE_WRAP_CXX)
-
+################################################################################
+# Macros to be used in the wrap_*.cmake files themselves.
+# These macros specify that a class is to be wrapped, that certain itk headers
+# are to be included, and what specific template instatiations are to be wrapped.
+################################################################################
 
 MACRO(WRAP_CLASS class)
-  # begin the wrapping of a new class
+  # Begin the wrapping of a new templated class. The 'class' parameter is a 
+  # fully-qualified C++ type name. Between WRAP_CLASS and END_WRAP_CLASS
+  # various macros should be called to cause certain template instances to be
+  # automatically added to the wrap_*.cxx file. END_WRAP_CLASS actually parses
+  # through the template instaces that have been recorded and creates the content
+  # of that cxx file. WRAP_NON_TEMPLATE_CLASS should be used to create a definition
+  # for a non-templated class.
+  # This class takes an optional 'wrap method' parameter. Valid values are:
+  # POINTER, POINTER_WITH_SUPERCLASS, DEREF and SELF. 
+  # TODO: document what each of these methods does!
   #
   # Global vars used: none
   # Global vars modified: WRAPPER_CLASS WRAPPER_TEMPLATES WRAPPER_INCLUDE_FILES
-  #
+  #                       WRAPPER_WRAP_METHOD
 
-  # first, we must be sure the wrapMethod is valid
+  # first, we must be sure the wrap method is valid
   IF("${ARGC}" EQUAL 1)
     # store the wrap method
     SET(WRAPPER_WRAP_METHOD "")
@@ -102,14 +214,45 @@ MACRO(WRAP_CLASS class)
   STRING(REGEX REPLACE "(.*::)" "" class_name ${class})
   # clear the wrap parameters
   SET(WRAPPER_TEMPLATES)
-  # and include the class
+  # and include the class's header
   IF(${WRAPPER_AUTO_INCLUDE_HEADERS})
     WRAP_INCLUDE(${class_name})
   ENDIF(${WRAPPER_AUTO_INCLUDE_HEADERS})
 ENDMACRO(WRAP_CLASS)
 
 
+MACRO(WRAP_INCLUDE include_file)
+  # Add a header file to the list of files to be #included in the final 
+  # cxx file. This list is actually processed in WRITE_WRAP_CXX.
+  #
+  # Global vars used: WRAPPER_INCLUDE_FILES
+  # Global vars modified: WRAPPER_INCLUDE_FILES
+  
+  SET(already_included 0)
+  FOREACH(included ${WRAPPER_INCLUDE_FILES})
+    IF("${include_file}" STREQUAL "${already_included}")
+      SET(already_included 1)
+    ENDIF("${include_file}" STREQUAL "${already_included}")
+  ENDFOREACH(included)
+  
+  IF(NOT already_included)
+    # include order IS important. Default values must be before the other ones
+    SET(WRAPPER_INCLUDE_FILES 
+      ${WRAPPER_INCLUDE_FILES}
+      ${include_file}
+    )
+  ENDIF(NOT already_included)
+ENDMACRO(WRAP_INCLUDE)
+
+
 MACRO(END_WRAP_CLASS)
+  # Parse through the list of WRAPPER_TEMPLATES set up by the macros at the bottom
+  # of this file, turning them into proper C++ type definitions suitable for
+  # input to CableSwig. The C++ definitions are stored in WRAPPER_TYPEDEFS.
+  #
+  # Global vars used: WRAPPER_CLASS WRAPPER_WRAP_METHOD
+  # Global vars modified: WRAPPER_TYPEDEFS
+
   # remove the namespace prefix
   STRING(REGEX REPLACE "(.*::)" "" class_name ${WRAPPER_CLASS})
   # the regexp used to get the values separated by a #
@@ -177,7 +320,7 @@ MACRO(END_WRAP_CLASS)
     ENDFOREACH(wrap)
   ENDIF("${itk_WrapMethod}" STREQUAL "SELF")
   
-  WRITE_LANG_WRAP("${WRAPPER_CLASS}" "${WRAPPER_TEMPLATES}" ${wrap_pointer})
+  LANGUAGE_SUPPORT_ADD_CLASS("${WRAPPER_CLASS}" "${WRAPPER_TEMPLATES}" ${wrap_pointer})
 ENDMACRO(END_WRAP_CLASS)
 
 MACRO(SMART_POINTER_TYPEMAP typemap_type)
@@ -220,7 +363,15 @@ MACRO(SMART_POINTER_TYPEMAP typemap_type)
 ENDMACRO(SMART_POINTER_TYPEMAP)
 
 
-MACRO(WRAP_CLASS_NOTPL class)
+MACRO(WRAP_NON_TEMPLATE_CLASS class)
+  # Similar to END_WRAP_CLASS in that it generates typedefs for CableSwig input.
+  # However, since no templates need to be declared, there's no need for 
+  # WRAP_CLASS ... (declare templates) .. END_WRAP_CLASS. Instead
+  # WRAP_NON_TEMPLATE_CLASS takes care of it all.
+  #
+  # Global vars used: WRAPPER_CLASS 
+  # Global vars modified: WRAPPER_WRAP_METHOD
+
   SET(wrap_pointer 0)
   # first, we must be sure the wrapMethod is valid
   IF("${ARGC}" EQUAL 1)
@@ -380,8 +531,8 @@ ENDMACRO(WRAP_INCLUDE)
 
 ################################################################################
 # Macros which cause one or more template instantiations to be added to the
-# WRAPPER_TEMPLATES list. This list is initialized by the macro WRAP_CLASS above, and
-# used by the macro END_WRAP_CLASS to produce the wrap_xxx.cxx files with
+# WRAPPER_TEMPLATES list. This list is initialized by the macro WRAP_CLASS above,
+# and used by the macro END_WRAP_CLASS to produce the wrap_xxx.cxx files with
 # the correct templates. These cxx files serve as the CableSwig inputs.
 ################################################################################
 

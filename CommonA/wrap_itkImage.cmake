@@ -5,5 +5,5 @@ WRAP_CLASS(ImageBase POINTER)
 END_WRAP_CLASS()
 
 WRAP_CLASS("Image" POINTER)
-  SET(itk_Wrap "${itk_Wrap_Image}")
+  SET(WRAPPER_TEMPLATES "${itk_Wrap_Image}")
 END_WRAP_CLASS()

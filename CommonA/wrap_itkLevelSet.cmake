@@ -3,5 +3,5 @@
 SET(itk_AutoInclude OFF)
 
 WRAP_CLASS("LevelSetNode" DEREF)
-  SET(itk_Wrap "${itk_Wrap_LevelSetNode}")
+  SET(WRAPPER_TEMPLATES "${itk_Wrap_LevelSetNode}")
 END_WRAP_CLASS()

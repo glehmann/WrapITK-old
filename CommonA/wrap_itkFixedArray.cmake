@@ -1,3 +1,3 @@
 WRAP_CLASS("FixedArray" DEREF)
-  SET(itk_Wrap ${itk_Wrap_FixedArray})
+  SET(WRAPPER_TEMPLATES ${itk_Wrap_FixedArray})
 END_WRAP_CLASS()

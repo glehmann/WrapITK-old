@@ -18,7 +18,7 @@ MACRO(CREATE_WRAP_TYPE CLASS PREFIX WRAP)
 ENDMACRO(CREATE_WRAP_TYPE)
 
 MACRO(WRAP_TYPE class prefix)
-   SET(itk_Wrap "")
+   SET(WRAPPER_TEMPLATES "")
    SET(itk_Wrap_Prefix "${prefix}")
    SET(itk_Wrap_Class "${class}")
 ENDMACRO(WRAP_TYPE)

@@ -16,16 +16,15 @@
 %typemap(in)   p._object "$1 = $input;";
 %typemap(out)  p._object "$result = $1;";
 
-// some nice typemaps to be able to give size and index object as python sequences (list or tuple or anything with a 
-// working __getitem__ method
-// sadely, at this time, %typemap(typecheck) cause swig to not declare SWIGTYPE_p_itk__*T*_t, and typemap is not usable
-// without typecheck because of poor management of overloaded methods in swig (and in C++)
+// some nice typemaps to be able to give size and index object as python sequences (list, tuple
+// or anything with a working __getitem__ method)
 
-/*#define itkSTypemap(name, VDimension) \
+#define itkSTypemap(name, VDimension) \
 %typemap(in) itk::##name##<##VDimension##>& (itk::##name##<##VDimension##> itks) { \
-  if ((SWIG_ConvertPtr($input,(void **)(&$1),SWIGTYPE_p_itk__##name##T##VDimension##_t, SWIG_POINTER_EXCEPTION | 0)) == -1) { \
-    if (PySequence_Check($input) && PyObject_Length($input) == VDimension) { \
-      for (int i =0; i < VDimension; i++) { \
+  if ((SWIG_ConvertPtr($input,(void **)(&$1),$1_descriptor, 0)) == -1) { \
+    PyErr_Clear(); \
+    if (PySequence_Check($input) && PyObject_Length($input) == ##VDimension##) { \
+      for (int i =0; i < ##VDimension##; i++) { \
           PyObject *o = PySequence_GetItem($input,i); \
           if (!PyInt_Check(o)) { \
             PyErr_SetString(PyExc_ValueError,"Expecting a sequence of int"); \
@@ -34,25 +33,38 @@
           itks[i] = PyInt_AsLong(o); \
       } \
       $1 = &itks; \
-    }else { \
+    }else if (PyInt_Check($input)) { \
+      for (int i =0; i < ##VDimension##; i++) { \
+          itks[i] = PyInt_AsLong($input); \
+      } \
+      $1 = &itks; \
+    } else { \
       SWIG_fail; \
     } \
   } \
 } \
 %typemap(typecheck) itk::##name##<##VDimension##>& { \
-void *ptr = NULL; \
-  $1 = 1; \
-  if (!PySequence_Check($input)&&(SWIG_ConvertPtr($input,(void**)(&ptr),SWIGTYPE_p_itk__##name##T##VDimension##_t, 0) == -1)) { \
-    $1 = 0; \
+  void *ptr; \
+  if (SWIG_ConvertPtr($input, &ptr, $1_descriptor, 0) == -1 \
+      && ( !PySequence_Check($input) || PyObject_Length($input) != ##VDimension## ) \
+      && !PyInt_Check($input) ) { \
+    _v = 0; \
+    PyErr_Clear(); \
+  } else { \
+    _v = 1; \
   } \
 } \
 
 
+itkSTypemap(Index, 1)
+itkSTypemap(Index, 2)
+itkSTypemap(Index, 3)
+itkSTypemap(Index, 4)
+
+itkSTypemap(Size, 1)
 itkSTypemap(Size, 2)
 itkSTypemap(Size, 3)
-
-itkSTypemap(Index, 2)
-itkSTypemap(Index, 3)*/
+itkSTypemap(Size, 4)
 
 
 // check if exception is an 'index out of range' exception. If so, throw a python IndexError.

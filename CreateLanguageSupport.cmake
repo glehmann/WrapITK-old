@@ -1,3 +1,12 @@
+  LANGUAGE_SUPPORT_INITIALIZE()
+  LANGUAGE_SUPPORT_CONFIGURE_FILES()
+  LANGUAGE_SUPPORT_ADD_CLASS("${WRAPPER_CLASS}" "${WRAPPER_TEMPLATES}" ${wrap_pointer})
+  LANGUAGE_SUPPORT_ADD_NON_TEMPLATE_CLASS("${class}" wrap_pointer)
+
+
+
+
+
 #------------------------------------------------------------------------------
 MACRO(WRITE_SIMPLE_LANG_BEGIN MODULE)
 # 'Simple' macro automatically appends the language to the end of the module

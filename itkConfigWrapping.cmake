@@ -36,6 +36,13 @@
 # Modify this variable to add more include directories for gcc_xml.
 # This file also sets a default value for WRAPPER_MASTER_INDEX_OUTPUT_DIR.
 # Change it after including this file if needed.
+#
+# A note on convention: Global variables (those shared between macros) are
+# defined in ALL_CAPS (or partially all-caps, for the WRAP_pixel_type) values
+# listed above. Variables local to a macro are in lower-case.
+# Moreover, only variables defined in this file (or listed) above are shared
+# across macros defined in different files. All other global variables are
+# only used by the macros defined in a given cmake file.
 ###############################################################################
 
 ###############################################################################

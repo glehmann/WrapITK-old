@@ -3,10 +3,10 @@
 #ifdef CABLE_CONFIGURATION
 namespace _cable_
 {
-   const char* const group = "@itk_Module@";
+   const char* const group = "@WRAPPER_MODULE_NAME@";
    namespace wrappers
    {
-@itk_Typedef@
+@WRAPPER_TYPEDEFS@
    }
 }
 #endif

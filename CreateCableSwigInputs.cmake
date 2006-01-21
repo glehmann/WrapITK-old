@@ -71,17 +71,17 @@ ENDMACRO(WRITE_MODULE_JAVA)
 MACRO(WRITE_WRAP_CXX)
   # write the wrap_???.cxx file
   #
-  # Global vars used: itk_File itk_Include itk_Module and itk_Typedef
+  # Global vars used: WRAPPER_FILE_NAME WRAPPER_INCLUDE_FILES WRAPPER_MODULE_NAME and WRAPPER_TYPEDEFS
   # Global vars modified: none
   #
   SET(WRAP_INCLUDE_FILE)
-  FOREACH(inc ${itk_Include})
+  FOREACH(inc ${WRAPPER_INCLUDE_FILES})
     SET(WRAP_INCLUDE_FILE "${WRAP_INCLUDE_FILE}#include \"itk${inc}.h\"\n")
   ENDFOREACH(inc)
 
   CONFIGURE_FILE(
     "${WRAP_ITK_CONFIG_DIR}/wrap_.cxx.in"
-    "${itk_File}"
+    "${WRAPPER_FILE_NAME}"
     IMMEDIATE
   )
 ENDMACRO(WRITE_WRAP_CXX)
@@ -91,25 +91,25 @@ MACRO(WRAP_CLASS CLASS)
   # begin the wrapping of a new class
   #
   # Global vars used: none
-  # Global vars modified: itk_Class itk_Wrap itk_Include
+  # Global vars modified: itk_Class WRAPPER_TEMPLATES WRAPPER_INCLUDE_FILES
   #
 
   # first, we must be sure the wrapMethod is valid
   IF("${ARGC}" EQUAL 1)
     # store the wrap method
-    SET(itk_WrapMethod "")
+    SET(WRAPPER_WRAP_METHOD "")
   ENDIF("${ARGC}" EQUAL 1)
 
   IF("${ARGC}" EQUAL 2)
-    SET(itk_WrapMethod "${ARGV1}")
+    SET(WRAPPER_WRAP_METHOD "${ARGV1}")
     SET(ok 0)
     FOREACH(opt POINTER POINTER_WITH_SUPERCLASS DEREF SELF)
-      IF("${opt}" STREQUAL "${itk_WrapMethod}")
+      IF("${opt}" STREQUAL "${WRAPPER_WRAP_METHOD}")
         SET(ok 1)
-      ENDIF("${opt}" STREQUAL "${itk_WrapMethod}")
+      ENDIF("${opt}" STREQUAL "${WRAPPER_WRAP_METHOD}")
     ENDFOREACH(opt)
     IF(ok EQUAL 0)
-      MESSAGE(SEND_ERROR "WRAP_CLASS: Invalid option '${itk_WrapMethod}'. Possible values are POINTER, POINTER_WITH_SUPERCLASS, DEREF and SELF")
+      MESSAGE(SEND_ERROR "WRAP_CLASS: Invalid option '${WRAPPER_WRAP_METHOD}'. Possible values are POINTER, POINTER_WITH_SUPERCLASS, DEREF and SELF")
     ENDIF(ok EQUAL 0)
   ENDIF("${ARGC}" EQUAL 2)
 
@@ -122,7 +122,7 @@ MACRO(WRAP_CLASS CLASS)
   # drop the namespace prefix
   STRING(REGEX REPLACE "(.*::)" "" class_name ${CLASS})
   # clear the wrap parameters
-  SET(itk_Wrap)
+  SET(WRAPPER_TEMPLATES)
   # and include the class
   IF(${itk_AutoInclude})
     WRAP_INCLUDE(${class_name})
@@ -139,73 +139,66 @@ MACRO(END_WRAP_CLASS)
   SET(wrapPointer 0)
 
   # insert a blank line to separate the classes
-  SET(itk_Typedef "${itk_Typedef}      \n")
+  SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      \n")
   
-  IF("${itk_WrapMethod}" STREQUAL "")
-    FOREACH(wrap ${itk_Wrap})
+  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "")
+    FOREACH(wrap ${WRAPPER_TEMPLATES})
       STRING(REGEX REPLACE
         "${sharpRegexp}"
         "typedef itk::${itk_Class}< \\2 > itk${class_name}\\1"
         wrapClass "${wrap}"
       )
-      SET(itk_Typedef "${itk_Typedef}      ${wrapClass};\n")
+      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrapClass};\n")
     ENDFOREACH(wrap)
-  ENDIF("${itk_WrapMethod}" STREQUAL "")
+  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "")
 
-  IF("${itk_WrapMethod}" STREQUAL "POINTER")
+  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER")
     SET(wrapPointer 1)
-    FOREACH(wrap ${itk_Wrap})
+    FOREACH(wrap ${WRAPPER_TEMPLATES})
       STRING(REGEX REPLACE
         "${sharpRegexp}"
         "typedef itk::${itk_Class}< \\2 >::${class_name} itk${class_name}\\1;\n      typedef itk::${itk_Class}< \\2 >::Pointer::SmartPointer itk${class_name}\\1_Pointer"
         wrapClass "${wrap}"
       )
-      SET(itk_Typedef "${itk_Typedef}      ${wrapClass};\n")
+      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrapClass};\n")
     ENDFOREACH(wrap)
-  ENDIF("${itk_WrapMethod}" STREQUAL "POINTER")
+  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER")
 
-  IF("${itk_WrapMethod}" STREQUAL "POINTER_WITH_SUPERCLASS")
+  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER_WITH_SUPERCLASS")
     SET(wrapPointer 1)
-    FOREACH(wrap ${itk_Wrap})
+    FOREACH(wrap ${WRAPPER_TEMPLATES})
       STRING(REGEX REPLACE
         "${sharpRegexp}"
         "typedef itk::${itk_Class}< \\2 >::${class_name} itk${class_name}\\1;\n      typedef itk::${itk_Class}< \\2 >::Pointer::SmartPointer itk${class_name}\\1_Pointer;\n      typedef itk::${itk_Class}< \\2 >::Superclass::Self itk${class_name}\\1_Superclass;\n      typedef itk::${itk_Class}< \\2 >::Superclass::Pointer::SmartPointer itk${class_name}\\1_Superclass_Pointer"
         wrapClass "${wrap}"
       )
-      SET(itk_Typedef "${itk_Typedef}      ${wrapClass};\n")
+      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrapClass};\n")
     ENDFOREACH(wrap)
-  ENDIF("${itk_WrapMethod}" STREQUAL "POINTER_WITH_SUPERCLASS")
+  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER_WITH_SUPERCLASS")
 
-  IF("${itk_WrapMethod}" STREQUAL "DEREF")
-    FOREACH(wrap ${itk_Wrap})
+  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "DEREF")
+    FOREACH(wrap ${WRAPPER_TEMPLATES})
       STRING(REGEX REPLACE
         "${sharpRegexp}"
         "typedef itk::${itk_Class}< \\2 >::${class_name} itk${class_name}\\1"
         wrapClass "${wrap}"
       )
-      SET(itk_Typedef "${itk_Typedef}      ${wrapClass};\n")
+      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrapClass};\n")
     ENDFOREACH(wrap)
-  ENDIF("${itk_WrapMethod}" STREQUAL "DEREF")
+  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "DEREF")
 
-  IF("${itk_WrapMethod}" STREQUAL "SELF")
-    FOREACH(wrap ${itk_Wrap})
+  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "SELF")
+    FOREACH(wrap ${WRAPPER_TEMPLATES})
       STRING(REGEX REPLACE
         "${sharpRegexp}"
         "typedef itk::${itk_Class}< \\2 >::Self itk${class_name}\\1"
         wrapClass "${wrap}"
       )
-      SET(itk_Typedef "${itk_Typedef}      ${wrapClass};\n")
+      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrapClass};\n")
     ENDFOREACH(wrap)
   ENDIF("${itk_WrapMethod}" STREQUAL "SELF")
-
-  IF(wrapPointer)
-    FOREACH(wrap ${itk_Wrap})
-      STRING(REGEX REPLACE "${sharpRegexp}" "itk::${itk_Class}< \\2 >" typemap_type "${wrap}")
-      SMART_POINTER_TYPEMAP(${typemap_type})
-    ENDFOREACH(wrap)
-  ENDIF(wrapPointer)
   
-  WRITE_LANG_WRAP("${itk_Class}" "${itk_Wrap}" ${wrapPointer})
+  WRITE_LANG_WRAP("${itk_Class}" "${WRAPPER_TEMPLATES}" ${wrapPointer})
 ENDMACRO(END_WRAP_CLASS)
 
 MACRO(SMART_POINTER_TYPEMAP typemap_type)
@@ -253,19 +246,19 @@ MACRO(WRAP_CLASS_NOTPL CLASS)
   # first, we must be sure the wrapMethod is valid
   IF("${ARGC}" EQUAL 1)
     # store the wrap method
-    SET(itk_WrapMethod "")
+    SET(WRAPPER_WRAP_METHOD "")
   ENDIF("${ARGC}" EQUAL 1)
 
   IF("${ARGC}" EQUAL 2)
-    SET(itk_WrapMethod "${ARGV1}")
+    SET(WRAPPER_WRAP_METHOD "${ARGV1}")
     SET(ok 0)
     FOREACH(opt POINTER POINTER_WITH_SUPERCLASS DEREF SELF)
-      IF("${opt}" STREQUAL "${itk_WrapMethod}")
+      IF("${opt}" STREQUAL "${WRAPPER_WRAP_METHOD}")
         SET(ok 1)
-      ENDIF("${opt}" STREQUAL "${itk_WrapMethod}")
+      ENDIF("${opt}" STREQUAL "${WRAPPER_WRAP_METHOD}")
     ENDFOREACH(opt)
     IF(ok EQUAL 0)
-      MESSAGE(SEND_ERROR "WRAP_CLASS: Invalid option '${itk_WrapMethod}'. Possible values are POINTER, POINTER_WITH_SUPERCLASS, DEREF and SELF")
+      MESSAGE(SEND_ERROR "WRAP_CLASS: Invalid option '${WRAPPER_WRAP_METHOD}'. Possible values are POINTER, POINTER_WITH_SUPERCLASS, DEREF and SELF")
     ENDIF(ok EQUAL 0)
   ENDIF("${ARGC}" EQUAL 2)
 
@@ -280,33 +273,33 @@ MACRO(WRAP_CLASS_NOTPL CLASS)
   ENDIF(${itk_AutoInclude})
 
   # insert a blank line to separate the classes
-  SET(itk_Typedef "${itk_Typedef}      \n")
+  SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      \n")
   
-  IF("${itk_WrapMethod}" STREQUAL "")
-    SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS} itk${class_name};\n")
-  ENDIF("${itk_WrapMethod}" STREQUAL "")
+  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS} itk${class_name};\n")
+  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "")
 
-  IF("${itk_WrapMethod}" STREQUAL "POINTER")
+  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER")
     SET(wrapPointer 1)
-    SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::${class_name} itk${class_name};\n")
-    SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::Pointer::SmartPointer itk${class_name}_Pointer;\n")
-  ENDIF("${itk_WrapMethod}" STREQUAL "POINTER")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::${class_name} itk${class_name};\n")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::Pointer::SmartPointer itk${class_name}_Pointer;\n")
+  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER")
 
-  IF("${itk_WrapMethod}" STREQUAL "POINTER_WITH_SUPERCLASS")
+  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER_WITH_SUPERCLASS")
     SET(wrapPointer 1)
-    SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::${class_name} itk${class_name};\n")
-    SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::Pointer::SmartPointer itk${class_name}_Pointer;\n")
-    SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::Superclass::Self itk${class_name}_Superclass;\n")
-    SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::Superclass::Pointer::SmartPointer itk${class_name}_Superclass_Pointer;\n")
-  ENDIF("${itk_WrapMethod}" STREQUAL "POINTER_WITH_SUPERCLASS")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::${class_name} itk${class_name};\n")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::Pointer::SmartPointer itk${class_name}_Pointer;\n")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::Superclass::Self itk${class_name}_Superclass;\n")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::Superclass::Pointer::SmartPointer itk${class_name}_Superclass_Pointer;\n")
+  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER_WITH_SUPERCLASS")
 
-  IF("${itk_WrapMethod}" STREQUAL "DEREF")
-    SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::${class_name} itk${class_name};\n")
-  ENDIF("${itk_WrapMethod}" STREQUAL "DEREF")
+  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "DEREF")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::${class_name} itk${class_name};\n")
+  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "DEREF")
 
-  IF("${itk_WrapMethod}" STREQUAL "SELF")
-    SET(itk_Typedef "${itk_Typedef}      typedef itk::${CLASS}::Self itk${class_name};\n")
-  ENDIF("${itk_WrapMethod}" STREQUAL "SELF")
+  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "SELF")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::Self itk${class_name};\n")
+  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "SELF")
   
   IF(wrapPointer)
     SMART_POINTER_TYPEMAP("itk::${CLASS}")
@@ -322,14 +315,14 @@ MACRO(INCLUDE_WRAP_CMAKE module output_dir)
   # include a cmake module file and generate the associated wrap_???.cxx file
   #
   # Global vars used: none
-  # Global vars modified: itk_Module itk_File itk_WrapMethod
+  # Global vars modified: WRAPPER_MODULE_NAME WRAPPER_FILE_NAME WRAPPER_WRAP_METHOD
   #
 
   # preset the vars before include the file 
-  SET(itk_Module "${module}")
-  SET(itk_File "${output_dir}/wrap_${itk_Module}.cxx")
-  SET(itk_Typedef)
-  SET(itk_Include ${itk_DefaultInclude})
+  SET(WRAPPER_MODULE_NAME "${module}")
+  SET(WRAPPER_FILE_NAME "${output_dir}/wrap_${WRAPPER_MODULE_NAME}.cxx")
+  SET(WRAPPER_TYPEDEFS)
+  SET(WRAPPER_INCLUDE_FILES ${itk_DefaultInclude})
   SET(itk_AutoInclude 1)
 
   # now include the file
@@ -381,15 +374,15 @@ ENDMACRO(AUTO_INCLUDE_WRAP_CMAKE)
 
 MACRO(WRAP_INCLUDE INC)
   SET(alreadyInclude 0)
-  FOREACH(inc ${itk_Include})
+  FOREACH(inc ${WRAPPER_INCLUDE_FILES})
     IF("${INC}" STREQUAL "${inc}")
       SET(alreadyInclude 1)
     ENDIF("${INC}" STREQUAL "${inc}")
   ENDFOREACH(inc)
   IF(NOT ${alreadyInclude})
     # include order IS important. Default values must be before the other ones
-    SET(itk_Include 
-      ${itk_Include}
+    SET(WRAPPER_INCLUDE_FILES 
+      ${WRAPPER_INCLUDE_FILES}
       ${INC}
     )
   ENDIF(NOT ${alreadyInclude})
@@ -398,38 +391,38 @@ ENDMACRO(WRAP_INCLUDE)
 
 ################################################################################
 # Macros which cause one or more template instantiations to be added to the
-# itk_Wrap list. This list is initialized by the macro WRAP_CLASS above, and
+# WRAPPER_TEMPLATES list. This list is initialized by the macro WRAP_CLASS above, and
 # used by the macro END_WRAP_CLASS to produce the wrap_xxx.cxx files with
 # the correct templates. These cxx files serve as the CableSwig inputs.
 ################################################################################
 
 
-MACRO(WRAP NAME TYPES)
+MACRO(WRAP name types)
   # This is the fundamental macro for adding a template to be wrapped.
-  # NAME is a mangles suffix to be added to the class name (defined in WRAP_CLASS)
+  # 'name' is a mangled suffix to be added to the class name (defined in WRAP_CLASS)
   # to uniquely identify this instantiation.
-  # TYPE is a comma-separated list of the template parameters (in C++ form),
+  # 'types' is a comma-separated list of the template parameters (in C++ form),
   # some common parameters (e.g. for images) are stored in variables by 
   # WrapTypeBase.cmake and WrapTypePrefix.cmake.
   # 
-  # The format of the itk_Wrap list is a series of "name # types" strings
+  # The format of the WRAPPER_TEMPLATES list is a series of "name # types" strings
   # (because there's no CMake support for nested lists, name and types are 
   # separated out from the strings with a regex).
   #
-  # Global vars used: itk_Wrap
-  # Global vars modified: itk_Wrap
+  # Global vars used: WRAPPER_TEMPLATES
+  # Global vars modified: WRAPPER_TEMPLATES
 
-  SET(itk_Wrap ${itk_Wrap} "${NAME} # ${TYPES}")
+  SET(WRAPPER_TEMPLATES ${WRAPPER_TEMPLATES} "${name} # ${types}")
 ENDMACRO(WRAP)
 
 
-MACRO(COND_WRAP NAME TYPES CONDS)
-  # COND_WRAP will call WRAP(NAME TYPES) only if the wrapping types selected
+MACRO(COND_WRAP name types conditions)
+  # COND_WRAP will call WRAP(name types) only if the wrapping types selected
   # in cmake (e.g. WRAP_unsigned_char) match one of the conditions listed in
-  # CONDS.
+  # the 'conditions' parameter.
   
   SET(will_wrap 1)
-  FOREACH(t ${CONDS})
+  FOREACH(t ${conditions})
     IF("${t}" STREQUAL "UC")
       IF(NOT WRAP_unsigned_char)
         SET(will_wrap 0)
@@ -516,66 +509,66 @@ MACRO(COND_WRAP NAME TYPES CONDS)
   ENDFOREACH(t)
 
   IF(${will_wrap})
-    WRAP("${NAME}" "${TYPES}")
+    WRAP("${name}" "${types}")
   ENDIF(${will_wrap})
 ENDMACRO(COND_WRAP)
 
 
-MACRO(WRAP_TYPES_DIMS SIZE TYPES TMP_DIMS)
+MACRO(WRAP_TYPES_DIMS size types template_dims)
   # WRAP_TYPES_DIMS filters input to WRAP_TYPES_DIMS_NO_DIM_TEST.
-  # The former macro allows a "TMP_DIMS" agrument of the format "2+" to
+  # The former macro allows a "template_dims" agrument of the format "2+" to
   # specify that a given image filter is only to be instantiated for all of 
   # the user-selected (via cmake) dimensions, provided the dimension is at 
-  # least 2. The SIZE parameter refers to the number of Image classes that
-  # must be in the template definition. (E.g. Filter<Image, Image> has SIZE of
-  # 2. The TYPES parameter refers to the image pixel types to be wrapped.
+  # least 2. The size parameter refers to the number of Image classes that
+  # must be in the template definition. (E.g. Filter<Image, Image> has size of
+  # 2. The types parameter refers to the image pixel types to be wrapped.
 
-  IF("${TMP_DIMS}" MATCHES "^[0-9]+\\+$")
+  IF("${template_dims}" MATCHES "^[0-9]+\\+$")
     # If the parameter is of form '2+', make a list of the user-selected
     # dimensions (WRAP_DIMS) that match this criterion.
-    STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" MIN_DIM "${TMP_DIMS}")
-    SET(DIMS "")
+    STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" MIN_DIM "${template_dims}")
+    SET(dims "")
     FOREACH(d "${WRAP_DIMS}")
       IF("${d}" GREATER "${MIN_DIM}" OR "${d}" EQUAL "${MIN_DIM}")
-        SET(DIMS "${DIMS}" "${d}")
+        SET(dims "${dims}" "${d}")
       ENDIF("${d}" GREATER "${MIN_DIM}" OR "${d}" EQUAL "${MIN_DIM}")
     ENDFOREACH(d)
-    WRAP_TYPES_DIMS_NO_DIM_TEST("${SIZE}" "${TYPES}" "${DIMS}")
+    WRAP_TYPES_DIMS_NO_DIM_TEST("${size}" "${types}" "${dims}")
 
-  ELSE("${TMP_DIMS}" MATCHES "^[0-9]+\\+$")
+  ELSE("${template_dims}" MATCHES "^[0-9]+\\+$")
     # Otherwise, jsut make a list of the intersection between the user-selected
     # dimensions and the allowed dimensions provided by the parameter.
-    SET(DIMS "")
+    SET(dims "")
     FOREACH(d "${WRAP_DIMS}")
-      FOREACH(td "${TMP_DIMS}")
+      FOREACH(td "${template_dims}")
         IF(d EQUAL td)
-          SET(DIMS "${DIMS}" "${d}")
+          SET(dims "${dims}" "${d}")
         ENDIF(d EQUAL td)
       ENDFOREACH(td)
     ENDFOREACH(d)
-    WRAP_TYPES_DIMS_NO_DIM_TEST("${SIZE}" "${TYPES}" "${DIMS}")
+    WRAP_TYPES_DIMS_NO_DIM_TEST("${size}" "${types}" "${dims}")
 
-  ENDIF("${TMP_DIMS}" MATCHES "^[0-9]+\\+$")
+  ENDIF("${template_dims}" MATCHES "^[0-9]+\\+$")
 ENDMACRO(WRAP_TYPES_DIMS)
 
-MACRO(WRAP_TYPES_DIMS_NO_DIM_TEST SIZE TYPES DIMS)
+MACRO(WRAP_TYPES_DIMS_NO_DIM_TEST size types dims)
   # WRAP_TYPES_DIMS_NO_DIM_TEST wraps a given filter for all of the user-
-  # specified wrap dimensions. The SIZE parameter refers to the number of Image 
+  # specified wrap dimensions. The size parameter refers to the number of Image 
   # classes that must be in the template definition. (E.g. Filter<Image, Image> 
-  # has SIZE of 2. The TYPES parameter refers to the image pixel types to be wrapped.
+  # has size of 2. The types parameter refers to the image pixel types to be wrapped.
 
-  FOREACH(dim ${DIMS})
-    FOREACH(type ${TYPES})
+  FOREACH(dim ${dims})
+    FOREACH(type ${types})
       SET(name "")
       SET(params "")
-      FOREACH(i RANGE 1 ${SIZE})
+      FOREACH(i RANGE 1 ${size})
         SET(varname "ITKM_I${type}${dim}")
         SET(name "${name}${${varname}}")
         SET(varname "ITKT_I${type}${dim}")
         SET(params "${params}${${varname}}")
-        IF(NOT ${i} EQUAL ${SIZE})
+        IF(NOT ${i} EQUAL ${size})
           SET(params "${params}, ")
-        ENDIF(NOT ${i} EQUAL ${SIZE})
+        ENDIF(NOT ${i} EQUAL ${size})
       ENDFOREACH(i)
       COND_WRAP("${name}" "${params}" "${type}")
     ENDFOREACH(type)
@@ -588,69 +581,69 @@ ENDMACRO(WRAP_TYPES_DIMS_NO_DIM_TEST)
 # The exact pixel types from the class are selected by the user at 
 # configure time. These macros just say, e.g., "if the user has selected 
 # any or all integer types, wrap a filter with those types selected."
-# As above, the SIZE parameter refers to the number of image types required
+# As above, the size parameter refers to the number of image types required
 # in the template.
-# There are also variants that take a DIMS parameter. This parameter restricts
+# There are also variants that take a dims parameter. This parameter restricts
 # the filter instantiation to specific set of dimensions. Those dimensions will
 # be further restricted by the user's selection of dimensions at configure time.
 
-MACRO(WRAP_INT_DIMS SIZE DIMS)
-  WRAP_TYPES_DIMS(${SIZE} "UL;US;UC" "${DIMS}")
+MACRO(WRAP_INT_DIMS size dims)
+  WRAP_TYPES_DIMS(${size} "UL;US;UC" "${dims}")
 ENDMACRO(WRAP_INT_DIMS)
 
-MACRO(WRAP_INT SIZE)
-  WRAP_INT_DIMS(${SIZE} "${WRAP_DIMS}")
+MACRO(WRAP_INT size)
+  WRAP_INT_DIMS(${size} "${WRAP_DIMS}")
 ENDMACRO(WRAP_INT)
 
-MACRO(WRAP_SIGN_INT_DIMS SIZE DIMS)
-  WRAP_TYPES_DIMS(${SIZE} "SL;SS;SC" "${DIMS}")
+MACRO(WRAP_SIGN_INT_DIMS size dims)
+  WRAP_TYPES_DIMS(${size} "SL;SS;SC" "${dims}")
 ENDMACRO(WRAP_SIGN_INT_DIMS)
 
-MACRO(WRAP_SIGN_INT SIZE)
-  WRAP_SIGN_INT_DIMS(${SIZE} "${WRAP_DIMS}")
+MACRO(WRAP_SIGN_INT size)
+  WRAP_SIGN_INT_DIMS(${size} "${WRAP_DIMS}")
 ENDMACRO(WRAP_SIGN_INT)
 
 
-MACRO(WRAP_REAL_DIMS SIZE DIMS)
-  WRAP_TYPES_DIMS(${SIZE} "F;D" "${DIMS}")
-ENDMACRO(WRAP_REAL_DIMS SIZE)
+MACRO(WRAP_REAL_DIMS size dims)
+  WRAP_TYPES_DIMS(${size} "F;D" "${dims}")
+ENDMACRO(WRAP_REAL_DIMS size)
 
-MACRO(WRAP_REAL SIZE)
-  WRAP_REAL_DIMS(${SIZE} "${WRAP_DIMS}")
-ENDMACRO(WRAP_REAL SIZE)
+MACRO(WRAP_REAL size)
+  WRAP_REAL_DIMS(${size} "${WRAP_DIMS}")
+ENDMACRO(WRAP_REAL size)
 
 
-MACRO(WRAP_VECTOR_REAL_DIMS SIZE DIMS)
+MACRO(WRAP_VECTOR_REAL_DIMS size dims)
   SET(ddims "")
-  FOREACH(d ${DIMS})
+  FOREACH(d ${dims})
     SET(ddims ${ddims} "${d}${d}")
   ENDFOREACH(d)
-  WRAP_TYPES_DIMS_NO_DIM_TEST(${SIZE} "VF;VD" "${ddims}")
-ENDMACRO(WRAP_VECTOR_REAL_DIMS SIZE)
+  WRAP_TYPES_DIMS_NO_DIM_TEST(${size} "VF;VD" "${ddims}")
+ENDMACRO(WRAP_VECTOR_REAL_DIMS size)
 
-MACRO(WRAP_VECTOR_REAL SIZE)
-  WRAP_VECTOR_REAL_DIMS(${SIZE} "${WRAP_DIMS}")
-ENDMACRO(WRAP_VECTOR_REAL SIZE)
+MACRO(WRAP_VECTOR_REAL size)
+  WRAP_VECTOR_REAL_DIMS(${size} "${WRAP_DIMS}")
+ENDMACRO(WRAP_VECTOR_REAL size)
 
 
-MACRO(WRAP_COV_VECTOR_REAL_DIMS SIZE DIMS)
+MACRO(WRAP_COV_VECTOR_REAL_DIMS size dims)
   SET(ddims "")
-  FOREACH(d ${DIMS})
+  FOREACH(d ${dims})
     SET(ddims ${ddims} "${d}${d}")
   ENDFOREACH(d)
-  WRAP_TYPES_DIMS_NO_DIM_TEST(${SIZE} "CVF;CVD" "${ddims}")
-ENDMACRO(WRAP_COV_VECTOR_REAL_DIMS SIZE)
+  WRAP_TYPES_DIMS_NO_DIM_TEST(${size} "CVF;CVD" "${ddims}")
+ENDMACRO(WRAP_COV_VECTOR_REAL_DIMS size)
 
-MACRO(WRAP_COV_VECTOR_REAL SIZE)
-  WRAP_COV_VECTOR_REAL_DIMS(${SIZE} "${WRAP_DIMS}")
-ENDMACRO(WRAP_COV_VECTOR_REAL SIZE)
+MACRO(WRAP_COV_VECTOR_REAL size)
+  WRAP_COV_VECTOR_REAL_DIMS(${size} "${WRAP_DIMS}")
+ENDMACRO(WRAP_COV_VECTOR_REAL size)
 
 
-MACRO(WRAP_RGB_DIMS SIZE DIMS)
-  WRAP_TYPES_DIMS(${SIZE} "RGBUS;RGBUC" "${DIMS}")
+MACRO(WRAP_RGB_DIMS size dims)
+  WRAP_TYPES_DIMS(${size} "RGBUS;RGBUC" "${dims}")
 ENDMACRO(WRAP_RGB_DIMS)
 
-MACRO(WRAP_RGB SIZE)
-  WRAP_RGB_DIMS(${SIZE} "${WRAP_DIMS}")
+MACRO(WRAP_RGB size)
+  WRAP_RGB_DIMS(${size} "${WRAP_DIMS}")
 ENDMACRO(WRAP_RGB)
 

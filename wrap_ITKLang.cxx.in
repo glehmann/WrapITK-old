@@ -1,4 +1,4 @@
-#define ITK_WRAP_PACKAGE "${module_name}${lang}"
-#define ITK_${lang_TOUPPER}_WRAP
-#include "wrap_${module_name}.cxx"
+#define ITK_WRAP_PACKAGE "@CONFIG_MODULE_NAME@@CONFIG_LANGUAGE@"
+#define ITK_@CONFIG_UPPER_LANG@_WRAP
+#include "wrap_@CONFIG_MODULE_NAME@.cxx"
 

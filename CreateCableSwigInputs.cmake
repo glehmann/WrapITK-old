@@ -1,67 +1,42 @@
 #------------------------------------------------------------------------------
 # Macros for modules
 #------------------------------------------------------------------------------
-MACRO(WRITE_MODULE MODULE_NAME PATH GROUP)
-   SET(GROUP_LIST "")
-   FOREACH(group_name ${GROUP})
-      SET(GROUP_LIST "${GROUP_LIST}    \"${group_name}\",\n")
-   ENDFOREACH(group_name ${GROUP})
-   STRING(REGEX REPLACE ",\n$" "\n" GROUP_LIST "${GROUP_LIST}")
+MACRO(WRITE_MODULE module_name path group)
+   SET(group_list "")
+   FOREACH(group_name ${group})
+      SET(group_list "${group_list}    \"${group_name}\",\n")
+   ENDFOREACH(group_name ${group})
+   STRING(REGEX REPLACE ",\n$" "\n" group_list "${group_list}")
 
+   SET(CONFIG_GROUP_LIST "${group_list}")
    CONFIGURE_FILE(
       "${WRAP_ITK_CONFIG_DIR}/wrap_ITK.cxx.in"
-      "${PATH}/wrap_${MODULE_NAME}.cxx"
-      @ONLY IMMEDIATE
-   )
+      "${path}/wrap_${module_name}.cxx"
+      @ONLY IMMEDIATE)
 
-   WRITE_MODULE_LANG(${MODULE_NAME} ${PATH})
-ENDMACRO(WRITE_MODULE)
-
-MACRO(WRITE_MODULE_LANG MODULE_NAME PATH)
   IF(WRAP_ITK_TCL)
-    WRITE_MODULE_TCL(${MODULE_NAME} ${PATH})
+    WRITE_MODULE_FOR_LANGUAGE("Tcl" ${module_name} ${path})
   ENDIF(WRAP_ITK_TCL)
   IF(WRAP_ITK_PYTHON)
-    WRITE_MODULE_PYTHON(${MODULE_NAME} ${PATH})
+    WRITE_MODULE_FOR_LANGUAGE("Python" ${module_name} ${path})
   ENDIF(WRAP_ITK_PYTHON)
   IF(WRAP_ITK_JAVA)
-    WRITE_MODULE_JAVA(${MODULE_NAME} ${PATH})
+    WRITE_MODULE_FOR_LANGUAGE("Java" ${module_name} ${path})
   ENDIF(WRAP_ITK_JAVA)
-  # Need perl stuff too
-ENDMACRO(WRITE_MODULE_LANG)
+  IF(WRAP_ITK_PERL)
+    WRITE_MODULE_FOR_LANGUAGE("Perl" ${module_name} ${path})
+  ENDIF(WRAP_ITK_PERL)
+ENDMACRO(WRITE_MODULE)
 
-MACRO(WRITE_MODULE_TCL MODULE_NAME PATH)
-   SET(lang "Tcl")
-   SET(module_name ${MODULE_NAME})
-   STRING(TOUPPER ${lang} lang_TOUPPER)
+MACRO(WRITE_MODULE_FOR_LANGUAGE language module_name path)
+   SET(CONFIG_LANGUAGE "${language}")
+   SET(CONFIG_MODULE_NAME ${module_name})
+   STRING(TOUPPER ${lang} CONFIG_UPPER_LANG)
    CONFIGURE_FILE(
       "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
-      "${PATH}/wrap_${MODULE_NAME}${lang}.cxx"
-      IMMEDIATE
-   )
-ENDMACRO(WRITE_MODULE_TCL)
-
-MACRO(WRITE_MODULE_PYTHON MODULE_NAME PATH)
-   SET(lang "Python")
-   SET(module_name ${MODULE_NAME})
-   STRING(TOUPPER ${lang} lang_TOUPPER)
-   CONFIGURE_FILE(
-      "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
-      "${PATH}/wrap_${MODULE_NAME}${lang}.cxx"
-      IMMEDIATE
-   )
-ENDMACRO(WRITE_MODULE_PYTHON)
-
-MACRO(WRITE_MODULE_JAVA MODULE_NAME PATH)
-   SET(lang "Java")
-   SET(module_name ${MODULE_NAME})
-   STRING(TOUPPER ${lang} lang_TOUPPER)
-   CONFIGURE_FILE(
-      "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
-      "${PATH}/wrap_${MODULE_NAME}${lang}.cxx"
-      IMMEDIATE
-   )
-ENDMACRO(WRITE_MODULE_JAVA)
+      "${path}/wrap_${module_name}${language}.cxx"
+      @ONLY IMMEDIATE)
+ENDMACRO(WRITE_MODULE_FOR_LANGUAGE)
 
 
 
@@ -74,24 +49,25 @@ MACRO(WRITE_WRAP_CXX)
   # Global vars used: WRAPPER_FILE_NAME WRAPPER_INCLUDE_FILES WRAPPER_MODULE_NAME and WRAPPER_TYPEDEFS
   # Global vars modified: none
   #
-  SET(WRAP_INCLUDE_FILE)
+  SET(CONFIG_WRAPPER_INCLUDES)
   FOREACH(inc ${WRAPPER_INCLUDE_FILES})
-    SET(WRAP_INCLUDE_FILE "${WRAP_INCLUDE_FILE}#include \"itk${inc}.h\"\n")
+    SET(CONFIG_WRAPPER_INCLUDES "${CONFIG_WRAPPER_INCLUDES}#include \"itk${inc}.h\"\n")
   ENDFOREACH(inc)
+  SET(CONFIG_WRAPPER_MODULE_NAME "${WRAPPER_MODULE_NAME}")
+  SET(CONFIG_WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}")
 
   CONFIGURE_FILE(
     "${WRAP_ITK_CONFIG_DIR}/wrap_.cxx.in"
     "${WRAPPER_FILE_NAME}"
-    IMMEDIATE
-  )
+    @ONLY IMMEDIATE)
 ENDMACRO(WRITE_WRAP_CXX)
 
 
-MACRO(WRAP_CLASS CLASS)
+MACRO(WRAP_CLASS class)
   # begin the wrapping of a new class
   #
   # Global vars used: none
-  # Global vars modified: itk_Class WRAPPER_TEMPLATES WRAPPER_INCLUDE_FILES
+  # Global vars modified: WRAPPER_CLASS WRAPPER_TEMPLATES WRAPPER_INCLUDE_FILES
   #
 
   # first, we must be sure the wrapMethod is valid
@@ -114,13 +90,13 @@ MACRO(WRAP_CLASS CLASS)
   ENDIF("${ARGC}" EQUAL 2)
 
   IF("${ARGC}" EQUAL 3)
-    MESSAGE(SEND_ERROR "Too much arguments")
+    MESSAGE(SEND_ERROR "Too many arguments")
   ENDIF("${ARGC}" EQUAL 3)
 
 
-  SET(itk_Class ${CLASS})
+  SET(WRAPPER_CLASS ${class})
   # drop the namespace prefix
-  STRING(REGEX REPLACE "(.*::)" "" class_name ${CLASS})
+  STRING(REGEX REPLACE "(.*::)" "" class_name ${class})
   # clear the wrap parameters
   SET(WRAPPER_TEMPLATES)
   # and include the class
@@ -132,11 +108,11 @@ ENDMACRO(WRAP_CLASS)
 
 MACRO(END_WRAP_CLASS)
   # remove the namespace prefix
-  STRING(REGEX REPLACE "(.*::)" "" class_name ${itk_Class})
+  STRING(REGEX REPLACE "(.*::)" "" class_name ${WRAPPER_CLASS})
   # the regexp used to get the values separated by a #
-  SET(sharpRegexp "([0-9A-Za-z]*)[ ]*#[ ]*(.*)")
-  SET(wrapClass)
-  SET(wrapPointer 0)
+  SET(sharp_regexp "([0-9A-Za-z]*)[ ]*#[ ]*(.*)")
+  SET(wrap_class)
+  SET(wrap_pointer 0)
 
   # insert a blank line to separate the classes
   SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      \n")
@@ -144,61 +120,61 @@ MACRO(END_WRAP_CLASS)
   IF("${WRAPPER_WRAP_METHOD}" STREQUAL "")
     FOREACH(wrap ${WRAPPER_TEMPLATES})
       STRING(REGEX REPLACE
-        "${sharpRegexp}"
-        "typedef itk::${itk_Class}< \\2 > itk${class_name}\\1"
-        wrapClass "${wrap}"
+        "${sharp_regexp}"
+        "typedef itk::${WRAPPER_CLASS}< \\2 > itk${class_name}\\1"
+        wrap_class "${wrap}"
       )
-      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrapClass};\n")
+      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrap_class};\n")
     ENDFOREACH(wrap)
   ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "")
 
   IF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER")
-    SET(wrapPointer 1)
+    SET(wrap_pointer 1)
     FOREACH(wrap ${WRAPPER_TEMPLATES})
       STRING(REGEX REPLACE
-        "${sharpRegexp}"
-        "typedef itk::${itk_Class}< \\2 >::${class_name} itk${class_name}\\1;\n      typedef itk::${itk_Class}< \\2 >::Pointer::SmartPointer itk${class_name}\\1_Pointer"
-        wrapClass "${wrap}"
+        "${sharp_regexp}"
+        "typedef itk::${WRAPPER_CLASS}< \\2 >::${class_name} itk${class_name}\\1;\n      typedef itk::${WRAPPER_CLASS}< \\2 >::Pointer::SmartPointer itk${class_name}\\1_Pointer"
+        wrap_class "${wrap}"
       )
-      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrapClass};\n")
+      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrap_class};\n")
     ENDFOREACH(wrap)
   ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER")
 
   IF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER_WITH_SUPERCLASS")
-    SET(wrapPointer 1)
+    SET(wrap_pointer 1)
     FOREACH(wrap ${WRAPPER_TEMPLATES})
       STRING(REGEX REPLACE
-        "${sharpRegexp}"
-        "typedef itk::${itk_Class}< \\2 >::${class_name} itk${class_name}\\1;\n      typedef itk::${itk_Class}< \\2 >::Pointer::SmartPointer itk${class_name}\\1_Pointer;\n      typedef itk::${itk_Class}< \\2 >::Superclass::Self itk${class_name}\\1_Superclass;\n      typedef itk::${itk_Class}< \\2 >::Superclass::Pointer::SmartPointer itk${class_name}\\1_Superclass_Pointer"
-        wrapClass "${wrap}"
+        "${sharp_regexp}"
+        "typedef itk::${WRAPPER_CLASS}< \\2 >::${class_name} itk${class_name}\\1;\n      typedef itk::${WRAPPER_CLASS}< \\2 >::Pointer::SmartPointer itk${class_name}\\1_Pointer;\n      typedef itk::${WRAPPER_CLASS}< \\2 >::Superclass::Self itk${class_name}\\1_Superclass;\n      typedef itk::${WRAPPER_CLASS}< \\2 >::Superclass::Pointer::SmartPointer itk${class_name}\\1_Superclass_Pointer"
+        wrap_class "${wrap}"
       )
-      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrapClass};\n")
+      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrap_class};\n")
     ENDFOREACH(wrap)
   ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER_WITH_SUPERCLASS")
 
   IF("${WRAPPER_WRAP_METHOD}" STREQUAL "DEREF")
     FOREACH(wrap ${WRAPPER_TEMPLATES})
       STRING(REGEX REPLACE
-        "${sharpRegexp}"
-        "typedef itk::${itk_Class}< \\2 >::${class_name} itk${class_name}\\1"
-        wrapClass "${wrap}"
+        "${sharp_regexp}"
+        "typedef itk::${WRAPPER_CLASS}< \\2 >::${class_name} itk${class_name}\\1"
+        wrap_class "${wrap}"
       )
-      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrapClass};\n")
+      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrap_class};\n")
     ENDFOREACH(wrap)
   ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "DEREF")
 
   IF("${WRAPPER_WRAP_METHOD}" STREQUAL "SELF")
     FOREACH(wrap ${WRAPPER_TEMPLATES})
       STRING(REGEX REPLACE
-        "${sharpRegexp}"
-        "typedef itk::${itk_Class}< \\2 >::Self itk${class_name}\\1"
-        wrapClass "${wrap}"
+        "${sharp_regexp}"
+        "typedef itk::${WRAPPER_CLASS}< \\2 >::Self itk${class_name}\\1"
+        wrap_class "${wrap}"
       )
-      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrapClass};\n")
+      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrap_class};\n")
     ENDFOREACH(wrap)
   ENDIF("${itk_WrapMethod}" STREQUAL "SELF")
   
-  WRITE_LANG_WRAP("${itk_Class}" "${WRAPPER_TEMPLATES}" ${wrapPointer})
+  WRITE_LANG_WRAP("${WRAPPER_CLASS}" "${WRAPPER_TEMPLATES}" ${wrap_pointer})
 ENDMACRO(END_WRAP_CLASS)
 
 MACRO(SMART_POINTER_TYPEMAP typemap_type)
@@ -241,8 +217,8 @@ MACRO(SMART_POINTER_TYPEMAP typemap_type)
 ENDMACRO(SMART_POINTER_TYPEMAP)
 
 
-MACRO(WRAP_CLASS_NOTPL CLASS)
-  SET(wrapPointer 0)
+MACRO(WRAP_CLASS_NOTPL class)
+  SET(wrap_pointer 0)
   # first, we must be sure the wrapMethod is valid
   IF("${ARGC}" EQUAL 1)
     # store the wrap method
@@ -266,7 +242,7 @@ MACRO(WRAP_CLASS_NOTPL CLASS)
     MESSAGE(SEND_ERROR "Too much arguments")
   ENDIF("${ARGC}" EQUAL 3)
 
-  STRING(REGEX REPLACE "(.*::)" "" class_name ${CLASS})
+  STRING(REGEX REPLACE "(.*::)" "" class_name ${class})
 
   IF(${itk_AutoInclude})
     WRAP_INCLUDE(${class_name})
@@ -276,35 +252,31 @@ MACRO(WRAP_CLASS_NOTPL CLASS)
   SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      \n")
   
   IF("${WRAPPER_WRAP_METHOD}" STREQUAL "")
-    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS} itk${class_name};\n")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${class} itk${class_name};\n")
   ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "")
 
   IF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER")
-    SET(wrapPointer 1)
-    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::${class_name} itk${class_name};\n")
-    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::Pointer::SmartPointer itk${class_name}_Pointer;\n")
+    SET(wrap_pointer 1)
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${class}::${class_name} itk${class_name};\n")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${class}::Pointer::SmartPointer itk${class_name}_Pointer;\n")
   ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER")
 
   IF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER_WITH_SUPERCLASS")
-    SET(wrapPointer 1)
-    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::${class_name} itk${class_name};\n")
-    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::Pointer::SmartPointer itk${class_name}_Pointer;\n")
-    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::Superclass::Self itk${class_name}_Superclass;\n")
-    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::Superclass::Pointer::SmartPointer itk${class_name}_Superclass_Pointer;\n")
+    SET(wrap_pointer 1)
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${class}::${class_name} itk${class_name};\n")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${class}::Pointer::SmartPointer itk${class_name}_Pointer;\n")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${class}::Superclass::Self itk${class_name}_Superclass;\n")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${class}::Superclass::Pointer::SmartPointer itk${class_name}_Superclass_Pointer;\n")
   ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER_WITH_SUPERCLASS")
 
   IF("${WRAPPER_WRAP_METHOD}" STREQUAL "DEREF")
-    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::${class_name} itk${class_name};\n")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${class}::${class_name} itk${class_name};\n")
   ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "DEREF")
 
   IF("${WRAPPER_WRAP_METHOD}" STREQUAL "SELF")
-    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${CLASS}::Self itk${class_name};\n")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${class}::Self itk${class_name};\n")
   ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "SELF")
   
-  IF(wrapPointer)
-    SMART_POINTER_TYPEMAP("itk::${CLASS}")
-  ENDIF(wrapPointer)
-
   WRITE_LANG_WRAP_NOTPL("${CLASS}")
 ENDMACRO(WRAP_CLASS_NOTPL)
 

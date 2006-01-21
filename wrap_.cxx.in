@@ -1,12 +1,12 @@
-@WRAP_INCLUDE_FILE@
+@CONFIG_WRAPPER_INCLUDES@
 
 #ifdef CABLE_CONFIGURATION
 namespace _cable_
 {
-   const char* const group = "@WRAPPER_MODULE_NAME@";
+   const char* const group = "@CONFIG_WRAPPER_MODULE_NAME@";
    namespace wrappers
    {
-@WRAPPER_TYPEDEFS@
+@CONFIG_WRAPPER_TYPEDEFS@
    }
 }
 #endif

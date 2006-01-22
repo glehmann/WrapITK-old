@@ -19,7 +19,7 @@
 // some nice typemaps to be able to give size and index object as python sequences (list, tuple
 // or anything with a working __getitem__ method)
 
-#define itkSTypemap(name, VDimension) \
+#define pySequenceTypemap(name, VDimension) \
 %typemap(in) itk::##name##<##VDimension##>& (itk::##name##<##VDimension##> itks) { \
   if ((SWIG_ConvertPtr($input,(void **)(&$1),$1_descriptor, 0)) == -1) { \
     PyErr_Clear(); \
@@ -55,15 +55,15 @@
   } \
 } \
 
-itkSTypemap(Index, 1)
-itkSTypemap(Index, 2)
-itkSTypemap(Index, 3)
-itkSTypemap(Index, 4)
+pySequenceTypemap(Index, 1)
+pySequenceTypemap(Index, 2)
+pySequenceTypemap(Index, 3)
+pySequenceTypemap(Index, 4)
 
-itkSTypemap(Size, 1)
-itkSTypemap(Size, 2)
-itkSTypemap(Size, 3)
-itkSTypemap(Size, 4)
+pySequenceTypemap(Size, 1)
+pySequenceTypemap(Size, 2)
+pySequenceTypemap(Size, 3)
+pySequenceTypemap(Size, 4)
 
 
 

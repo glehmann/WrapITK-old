@@ -54,6 +54,41 @@
     _v = 1; \
   } \
 } \
+%typemap(in) itk::##name##<##VDimension##> { \
+  itk::##name##<##VDimension##> * s; \
+  if ((SWIG_ConvertPtr($input,(void **)(&s),$1_descriptor, 0)) == -1) { \
+    PyErr_Clear(); \
+    if (PySequence_Check($input) && PyObject_Length($input) == ##VDimension##) { \
+      for (int i =0; i < ##VDimension##; i++) { \
+          PyObject *o = PySequence_GetItem($input,i); \
+          if (!PyInt_Check(o)) { \
+            PyErr_SetString(PyExc_ValueError,"Expecting a sequence of int"); \
+            return NULL; \
+          } \
+          $1[i] = PyInt_AsLong(o); \
+      } \
+    }else if (PyInt_Check($input)) { \
+      for (int i =0; i < ##VDimension##; i++) { \
+          $1[i] = PyInt_AsLong($input); \
+      } \
+    } else { \
+      SWIG_fail; \
+    } \
+  } else { \
+    $1 = *s; \
+  } \
+} \
+%typemap(typecheck) itk::##name##<##VDimension##> { \
+  void *ptr; \
+  if (SWIG_ConvertPtr($input, &ptr, $1_descriptor, 0) == -1 \
+       && ( !PySequence_Check($input) || PyObject_Length($input) != ##VDimension## ) \
+       && !PyInt_Check($input) ) { \
+    _v = 0; \
+    PyErr_Clear(); \
+  } else { \
+    _v = 1; \
+  } \
+} \
 
 pySequenceTypemap(Index, 1)
 pySequenceTypemap(Index, 2)

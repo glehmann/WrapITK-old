@@ -19,13 +19,28 @@ def LoadModule(name, namespace):
   data = module_data[name]
   if data:
     for template in data.templates:
-      pyTemplateName, swigTemplateName, templateParams, mangledName = template
-      templateContainer = namespace.setdefault(pyTemplateName, itkPyTemplate.itkPyTemplate(swigTemplateName))
-      if isinstance(templateContainer, itkPyTemplate.itkPyTemplate):
-        try: templateContainer.__set__(templateParams, getattr(module, mangledName))
-        except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(mangledName, name, e))
+      if len(template) == 4: 
+        # this is a template description      
+        pyClassName, swigClassName, templateParams, templateMangledSuffix = template
+        mangledClassName = swigClassName + templateMangledSuffix
+        templateContainer = namespace.setdefault(pyClassName, itkPyTemplate.itkPyTemplate(swigClassName))
+        if isinstance(templateContainer, itkPyTemplate.itkPyTemplate):
+          try: templateContainer.__set__(templateParams, getattr(module, mangledClassName))
+          except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(mangledClassName, name, e))
+        else:
+          DebugPrintError("Cannot update template information for %s because there is a non itkPyTemplate instance with that name." %pyClassName)
       else:
-        DebugPrintError("Cannot update template information for %s because there is a non itkPyTemplate instance with that name." %pyTemplateName)
+        # this is a description of a non-templated class
+        pyClassName, swigClassName, fullyQualifiedName = template
+        try: swigClass = getattr(module, swigClassName)
+        except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(swigClassName, name, e))
+        currentClass = namespace.get(pyClassName)
+        if currentClass == None
+          namespace[pyClassName] = swigClass
+          itkPyTemplate.registerNoTpl(fullyQualifiedName, swigClass)
+        elif currentClass != swigClass: 
+          DebugPrintError("Class named %s found in module %s is different than an already-defined class of that same name." %(swigClassName, name))
+
 
 def SatisfyDependenciesAndLoad(name):
   """Recursively satisfy the dependencies of named module and load that module.

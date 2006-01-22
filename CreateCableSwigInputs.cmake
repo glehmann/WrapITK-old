@@ -318,50 +318,17 @@ MACRO(END_WRAP_CLASS)
       )
       SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrap_class};\n")
     ENDFOREACH(wrap)
-  ENDIF("${itk_WrapMethod}" STREQUAL "SELF")
+  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "SELF")
+
+  IF(wrap_pointer)
+    FOREACH(wrap ${WRAPPER_TEMPLATES})
+      STRING(REGEX REPLACE "${sharp_regexp}" "itk::${WRAPPER_CLASS}< \\2 >" typemap_type "${wrap}")
+      SMART_POINTER_TYPEMAP(${typemap_type})
+    ENDFOREACH(wrap)
+  ENDIF(wrap_pointer)
   
   LANGUAGE_SUPPORT_ADD_CLASS("${WRAPPER_CLASS}" "${WRAPPER_TEMPLATES}" ${wrap_pointer})
 ENDMACRO(END_WRAP_CLASS)
-
-MACRO(SMART_POINTER_TYPEMAP typemap_type)
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}%typemap(out) ${typemap_type} * {\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  std::string methodName = \"\$symname\";\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  if(methodName.find(\"GetPointer\") != -1) {\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    // really return a pointer in that case\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    \$result = SWIG_NewPointerObj((void *)(\$1), \$1_descriptor, 1);\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  } else {\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    itk::SmartPointer<${typemap_type} > * ptr;\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    ptr = new itk::SmartPointer<${typemap_type} >(\$1);\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    \$result = SWIG_NewPointerObj((void *)(ptr), \$descriptor(itk::SmartPointer<${typemap_type} > *), 1);\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  }\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}}\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}%typemap(in) ${typemap_type} * {\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  itk::SmartPointer<${typemap_type} > * sptr;\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  ${typemap_type} * ptr;\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  if ((SWIG_ConvertPtr(\$input,(void **) &sptr, \$descriptor(itk::SmartPointer<${typemap_type} > *), SWIG_POINTER_EXCEPTION)) == -1) {\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    // not a smart pointer\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    if ((SWIG_ConvertPtr(\$input,(void **) &ptr, \$1_descriptor, SWIG_POINTER_EXCEPTION)) == -1) {\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}      SWIG_fail;\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    } else {\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}      // we have a simple pointer\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}      \$1 = ptr;\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    }\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  } else {\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    \$1 = sptr->GetPointer();\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  }\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}}\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}%typemap(typecheck) ${typemap_type} * {\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  void *ptr;\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  if (SWIG_ConvertPtr(\$input, &ptr, \$1_descriptor, 0) == -1\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}      && SWIG_ConvertPtr(\$input, &ptr, \$descriptor(itk::SmartPointer<${typemap_type} > *), 0) == -1) {\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    _v = 0;\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    PyErr_Clear();\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  } else {\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    _v = 1;\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  }\n")
-  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}}\n")
-ENDMACRO(SMART_POINTER_TYPEMAP)
-
 
 MACRO(WRAP_NON_TEMPLATE_CLASS class)
   # Similar to END_WRAP_CLASS in that it generates typedefs for CableSwig input.
@@ -369,7 +336,7 @@ MACRO(WRAP_NON_TEMPLATE_CLASS class)
   # WRAP_CLASS ... (declare templates) .. END_WRAP_CLASS. Instead
   # WRAP_NON_TEMPLATE_CLASS takes care of it all.
   #
-  # Global vars used: WRAPPER_CLASS 
+  # Global vars used: none 
   # Global vars modified: WRAPPER_WRAP_METHOD
 
   SET(wrap_pointer 0)
@@ -431,103 +398,52 @@ MACRO(WRAP_NON_TEMPLATE_CLASS class)
     SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      typedef itk::${class}::Self itk${class_name};\n")
   ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "SELF")
   
-  WRITE_LANG_WRAP_NOTPL("${CLASS}")
-ENDMACRO(WRAP_CLASS_NOTPL)
+  IF(wrap_pointer)
+    SMART_POINTER_TYPEMAP("itk::${class}")
+  ENDIF(wrap_pointer)
+
+  LANGUAGE_SUPPORT_ADD_NON_TEMPLATE_CLASS("${class}" ${wrap_pointer})
+ENDMACRO(WRAP_NON_TEMPLATE_CLASS)
 
 
-
-MACRO(INCLUDE_WRAP_CMAKE module)
-  # include a cmake module file and generate the associated wrap_???.cxx file
-  #
-  # Global vars used: none
-  # Global vars modified: WRAPPER_MODULE_NAME WRAPPER_FILE_NAME WRAPPER_TYPEDEFS
-  #                       WRAPPER_INCLUDE_FILES WRAPPER_AUTO_INCLUDE_HEADERS
-
-  # preset the vars before include the file 
-  SET(WRAPPER_MODULE_NAME "${module}")
-  SET(WRAPPER_FILE_NAME "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${module}.cxx")
-  SET(WRAPPER_TYPEDEFS)
-  SET(WRAPPER_INCLUDE_FILES ${WRAPPER_DEFAULT_INCLUDE})
-  SET(WRAPPER_AUTO_INCLUDE_HEADERS ON)
-
-  # now include the file
-  INCLUDE("${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
-
-  # and write the file
-  WRITE_WRAP_CXX()
-ENDMACRO(INCLUDE_WRAP_CMAKE)
-
-
-MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
-  # Include the wrap_*.cmake files in WRAPPER_LIBRARY_SOURCE_DIR. This causes 
-  # corresponding wrap_*.cxx files to be generated WRAPPER_LIBRARY_OUTPUT_DIR, 
-  # and added to the WRAPPER_LIBRARY_CABLESWIG_INPUTS list.
-  # In addition, this causes the other required wrap_*.cxx files for the entire
-  # library and each wrapper language to be created.
-  # Finally, this macro causes the language support files for the templates and
-  # library here defined to be created.
-  
-  # First, initialize the language support file generation. This must be 
-  # initialized before any wrap_*.cmake files are included, because those files
-  # call macros which store information about the templated classes for language
-  # support.
-  LANGUAGE_SUPPORT_INITIALIZE()
-
-  # Next, include modules already in WRAPPER_LIBRARY_GROUPS, because those are
-  # guaranteed to be processed first.
-  FOREACH(module ${WRAPPER_LIBRARY_GROUPS})
-      INCLUDE_WRAP_CMAKE("${module}")
-  ENDFOREACH(module)
-
-  # Now search for other wrap_*.cmake files to include
-  FILE(GLOB wrap_cmake_files "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_*.cmake")
-  FOREACH(file ${wrap_cmake_files})
-    # get the module name from wrap_module.cmake
-    GET_FILENAME_COMPONENT(module "${file}" NAME_WE)
-    STRING(REGEX REPLACE "^wrap_" "" module "${module}")
-
-    # if the module is already in the list, it means that it is already included
-    # ... and do not include excluded modules
-    SET(will_include 1)
-    FOREACH(already_included ${WRAPPER_LIBRARY_GROUPS})
-      IF("${already_included}" STREQUAL "${module}")
-        SET(will_include 0)
-      ENDIF("${already_included}" STREQUAL "${module}")
-    ENDFOREACH(already_included)
-
-    IF(${will_include})
-      # Add the module name to the list. WRITE_MODULE_FILES uses this list
-      # to create the master library wrapper file.
-      SET(WRAPPER_LIBRARY_GROUPS ${WRAPPER_LIBRARY_GROUPS} "${module}")
-      INCLUDE_WRAP_CMAKE("${module}")
-    ENDIF(${will_include})
-  ENDFOREACH(file)
-  
-  LANGUAGE_SUPPORT_CONFIGURE_FILES()
-  WRITE_MODULE_FILES()
-ENDMACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
-
-
-
-
-
-MACRO(WRAP_INCLUDE include_file)
-  SET(already_included 0)
-  FOREACH(included ${WRAPPER_INCLUDE_FILES})
-    IF("${include_file}" STREQUAL "${already_included}")
-      SET(already_included 1)
-    ENDIF("${include_file}" STREQUAL "${already_included}")
-  ENDFOREACH(included)
-  
-  IF(NOT already_included)
-    # include order IS important. Default values must be before the other ones
-    SET(WRAPPER_INCLUDE_FILES 
-      ${WRAPPER_INCLUDE_FILES}
-      ${include_file}
-    )
-  ENDIF(NOT already_included)
-ENDMACRO(WRAP_INCLUDE)
-
+MACRO(SMART_POINTER_TYPEMAP typemap_type)
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}%typemap(out) ${typemap_type} * {\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  std::string methodName = \"\$symname\";\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  if(methodName.find(\"GetPointer\") != -1) {\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    // really return a pointer in that case\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    \$result = SWIG_NewPointerObj((void *)(\$1), \$1_descriptor, 1);\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  } else {\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    itk::SmartPointer<${typemap_type} > * ptr;\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    ptr = new itk::SmartPointer<${typemap_type} >(\$1);\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    \$result = SWIG_NewPointerObj((void *)(ptr), \$descriptor(itk::SmartPointer<${typemap_type} > *), 1);\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  }\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}}\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}%typemap(in) ${typemap_type} * {\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  itk::SmartPointer<${typemap_type} > * sptr;\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  ${typemap_type} * ptr;\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  if ((SWIG_ConvertPtr(\$input,(void **) &sptr, \$descriptor(itk::SmartPointer<${typemap_type} > *), SWIG_POINTER_EXCEPTION)) == -1) {\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    // not a smart pointer\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    if ((SWIG_ConvertPtr(\$input,(void **) &ptr, \$1_descriptor, SWIG_POINTER_EXCEPTION)) == -1) {\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}      SWIG_fail;\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    } else {\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}      // we have a simple pointer\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}      \$1 = ptr;\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    }\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  } else {\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    \$1 = sptr->GetPointer();\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  }\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}}\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}%typemap(typecheck) ${typemap_type} * {\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  void *ptr;\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  if (SWIG_ConvertPtr(\$input, &ptr, \$1_descriptor, 0) == -1\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}      && SWIG_ConvertPtr(\$input, &ptr, \$descriptor(itk::SmartPointer<${typemap_type} > *), 0) == -1) {\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    _v = 0;\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    PyErr_Clear();\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  } else {\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    _v = 1;\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  }\n")
+  SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}}\n")
+ENDMACRO(SMART_POINTER_TYPEMAP)
 
 ################################################################################
 # Macros which cause one or more template instantiations to be added to the

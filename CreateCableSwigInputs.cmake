@@ -250,7 +250,10 @@ MACRO(END_WRAP_CLASS)
   # of this file, turning them into proper C++ type definitions suitable for
   # input to CableSwig. The C++ definitions are stored in WRAPPER_TYPEDEFS.
   #
-  # Global vars used: WRAPPER_CLASS WRAPPER_WRAP_METHOD
+  # TODO: Currently this only supports classes in the itk namespace because
+  # the namespace is hard-coded. This should be fixed.
+  #
+  # Global vars used: WRAPPER_CLASS WRAPPER_WRAP_METHOD WRAPPER_TEMPLATES
   # Global vars modified: WRAPPER_TYPEDEFS
 
   # remove the namespace prefix
@@ -327,14 +330,19 @@ MACRO(END_WRAP_CLASS)
     ENDFOREACH(wrap)
   ENDIF(wrap_pointer)
   
-  LANGUAGE_SUPPORT_ADD_CLASS("${WRAPPER_CLASS}" "${WRAPPER_TEMPLATES}" ${wrap_pointer})
+  LANGUAGE_SUPPORT_ADD_CLASS("${WRAPPER_CLASS}" "itk::${WRAPPER_CLASS}" "itk${WRAPPER_CLASS}"
+    "${WRAPPER_TEMPLATES}" ${wrap_pointer})
 ENDMACRO(END_WRAP_CLASS)
+
 
 MACRO(WRAP_NON_TEMPLATE_CLASS class)
   # Similar to END_WRAP_CLASS in that it generates typedefs for CableSwig input.
   # However, since no templates need to be declared, there's no need for 
   # WRAP_CLASS ... (declare templates) .. END_WRAP_CLASS. Instead
   # WRAP_NON_TEMPLATE_CLASS takes care of it all.
+  #
+  # TODO: Currently this only supports classes in the itk namespace because
+  # the namespace is hard-coded. This should be fixed.
   #
   # Global vars used: none 
   # Global vars modified: WRAPPER_WRAP_METHOD
@@ -402,7 +410,8 @@ MACRO(WRAP_NON_TEMPLATE_CLASS class)
     SMART_POINTER_TYPEMAP("itk::${class}")
   ENDIF(wrap_pointer)
 
-  LANGUAGE_SUPPORT_ADD_NON_TEMPLATE_CLASS("${class}" ${wrap_pointer})
+  LANGUAGE_SUPPORT_ADD_NON_TEMPLATE_CLASS("${class}" "itk::${class}" "itk${class}"
+    ${wrap_pointer})
 ENDMACRO(WRAP_NON_TEMPLATE_CLASS)
 
 

@@ -21,23 +21,22 @@ def LoadModule(name, namespace):
     for template in data.templates:
       if len(template) == 4: 
         # this is a template description      
-        pyClassName, swigClassName, templateParams, templateMangledSuffix = template
-        mangledClassName = swigClassName + templateMangledSuffix
-        templateContainer = namespace.setdefault(pyClassName, itkPyTemplate.itkPyTemplate(swigClassName))
+        pyClassName, cppClassName, swigClassName, templateParams = template
+        templateContainer = namespace.setdefault(pyClassName, itkPyTemplate.itkPyTemplate(cppClassName))
         if isinstance(templateContainer, itkPyTemplate.itkPyTemplate):
-          try: templateContainer.__set__(templateParams, getattr(module, mangledClassName))
-          except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(mangledClassName, name, e))
+          try: templateContainer.__set__(templateParams, getattr(module, swigClassName))
+          except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(swigClassName, name, e))
         else:
           DebugPrintError("Cannot update template information for %s because there is a non itkPyTemplate instance with that name." %pyClassName)
       else:
         # this is a description of a non-templated class
-        pyClassName, swigClassName, fullyQualifiedName = template
+        pyClassName, cppClassName, swigClassName = template
         try: swigClass = getattr(module, swigClassName)
         except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(swigClassName, name, e))
         currentClass = namespace.get(pyClassName)
         if currentClass == None
           namespace[pyClassName] = swigClass
-          itkPyTemplate.registerNoTpl(fullyQualifiedName, swigClass)
+          itkPyTemplate.registerNoTpl(cppClassName, swigClass)
         elif currentClass != swigClass: 
           DebugPrintError("Class named %s found in module %s is different than an already-defined class of that same name." %(swigClassName, name))
 

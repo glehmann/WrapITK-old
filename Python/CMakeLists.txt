@@ -4,7 +4,7 @@
 SET(CONFIG_WRAP_ITK_DATA_ROOT "${WrapITK_BINARY_DIR}/Data")
 SET(CONFIG_WRAP_ITK_TEST_ROOT "${WrapITK_BINARY_DIR}/Testing")
 # SWIG interface files aren't config-dependent
-SET(CONFIG_PYTHON_CONFIGPY_DIR "${CMAKE_CURRENT_BINARY_DIR}/Configuration")
+SET(CONFIG_PYTHON_CONFIGPY_DIR "${WrapITK_BINARY_DIR}/Python/Configuration")
 
 IF(CMAKE_CONFIGURATION_TYPES)
   FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
@@ -12,14 +12,14 @@ IF(CMAKE_CONFIGURATION_TYPES)
     SET(CONFIG_PYTHON_SWIGPY_DIR "${LIBRARY_OUTPUT_PATH}/${config}")
     SET(CONFIG_PYTHON_SWIGLIB_DIR "${LIBRARY_OUTPUT_PATH}/${config}")
     CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
-                   "${CMAKE_CURRENT_BINARY_DIR}/${config}/itkConfig.py"
+                   "${WrapITK_BINARY_DIR}/Python/${config}/itkConfig.py"
                    @ONLY IMMEDIATE)
   ENDFOREACH(config)
 ELSE(CMAKE_CONFIGURATION_TYPES)
   SET(CONFIG_PYTHON_SWIGPY_DIR "${LIBRARY_OUTPUT_PATH}")
   SET(CONFIG_PYTHON_SWIGLIB_DIR "${LIBRARY_OUTPUT_PATH}")
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
-                 "${CMAKE_CURRENT_BINARY_DIR}/itkConfig.py"
+                 "${WrapITK_BINARY_DIR}/Python/itkConfig.py"
                  @ONLY IMMEDIATE)
 ENDIF(CMAKE_CONFIGURATION_TYPES)
 
@@ -30,11 +30,11 @@ SET(CONFIG_PYTHON_SWIGPY_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION
 SET(CONFIG_PYTHON_CONFIGPY_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Python/Configuration")
 
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/itkConfig.py"
+               "${WrapITK_BINARY_DIR}/Python/InstallOnly/itkConfig.py"
               @ONLY IMMEDIATE)
 
 INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python" FILES 
-              "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/itkConfig.py")
+              "${WrapITK_BINARY_DIR}/Python/InstallOnly/itkConfig.py")
 
 
 ###############################################################################

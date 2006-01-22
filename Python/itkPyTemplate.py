@@ -41,7 +41,7 @@ def normalizeName(name):
   # while searching them
   try:
       name=name.replace(" ","")
-      name=name.replace("::","")
+      #name=name.replace("::","") -- keep around the namespace prefix
       name=name.replace("*","")
   except:
       return("")

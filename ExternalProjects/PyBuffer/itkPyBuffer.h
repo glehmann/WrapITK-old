@@ -78,7 +78,7 @@ public:
   /** 
    * Get an Array with the content of the image buffer
    */
-  PyObject * GetArrayFromImage(const ImageType * image);
+  static PyObject * GetArrayFromImage(const ImageType * image);
 
   /** 
    * Get an ITK image from a Python array
@@ -91,7 +91,7 @@ protected:
   ~PyBuffer();
   
   typedef enum PyArray_TYPES PyArrayType;
-  PyArrayType GetPyType(void);
+  static PyArrayType GetPyType(void);
   
   PyBuffer(const Self&);     // Not implemented.
   void operator=(const Self&); // Not implemented.

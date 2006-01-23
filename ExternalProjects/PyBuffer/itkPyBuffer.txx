@@ -62,9 +62,11 @@ PyBuffer<TImage>
 {
   if( !image )
     {
-    itkExceptionMacro("Input image is null");
+/*    itkExceptionMacro("Input image is null");*/
     }
   
+  import_array();
+
   PixelType * buffer = const_cast < PixelType * > ( image->GetBufferPointer() );
  
   char * data = (char *)( buffer );
@@ -81,9 +83,9 @@ PyBuffer<TImage>
   int item_type = GetPyType();  // TODO find a way of doing this through pixel traits
   // figure out an appropriate type
 
-  this->obj = PyArray_FromDimsAndData( ImageDimension, dimensions, item_type, data );
+  PyObject * obj = PyArray_FromDimsAndData( ImageDimension, dimensions, item_type, data );
 
-  return this->obj;
+  return obj;
 }
 
 
@@ -194,7 +196,7 @@ PyBuffer<TImage>
 #ifdef NDARRAY_VERSION
     item_type = PyArray_ULONG;
 #else
-    itkExceptionMacro(<<"Type currently not supported");
+/*    itkExceptionMacro(<<"Type currently not supported");*/
 #endif
     }
   else if(typeid(ScalarType) == typeid(int))
@@ -224,7 +226,7 @@ PyBuffer<TImage>
   else
     {
     item_type = PyArray_NOTYPE;
-    itkExceptionMacro(<<"Type currently not supported");
+/*    itkExceptionMacro(<<"Type currently not supported");*/
     }
   return item_type;
 }

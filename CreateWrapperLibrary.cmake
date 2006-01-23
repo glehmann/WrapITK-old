@@ -11,9 +11,9 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
   # Add the generated module wrappers. These files are not included in the general
   # WRAPPER_LIBRARY_CABLESWIG_INPUTS list because they are specific for each language.
   SET(wrap_perl_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlPerl.cxx")
-  SET(wrap_tcl_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlTcl.cxx")
-  SET(wrap_python_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlPython.cxx")
-  SET(wrap_java_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlJava.cxx")
+  SET(wrap_tcl_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}TclTcl.cxx")
+  SET(wrap_python_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PythonPython.cxx")
+  SET(wrap_java_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}JavaJava.cxx")
   
   # Loop over cable config files creating three lists:
   # wrap_xxx_sources: list of generated files for each language
@@ -37,7 +37,9 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     SET(install_index_file_content "${install_index_file_content}${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/ClassIndex/${base_name}.idx\n")
   ENDFOREACH(source)
   
-  # Loop over the extra swig input files and add them to the generated files lists.
+  # Loop over the extra swig input files and add them to the generated files 
+  # lists. Guess that the generated cxx output will have the same name as 
+  # the .i input file.
   FOREACH(source ${WRAPPER_LIBRARY_SWIG_INPUTS})
     GET_FILENAME_COMPONENT(base_name ${source} NAME_WE)
     SET(wrap_perl_sources ${wrap_perl_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Perl.cxx")

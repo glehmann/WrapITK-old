@@ -169,7 +169,7 @@ MACRO(CREATE_WRAPPER_FILES_AND_LIBRARY language extension library_sources
 ENDMACRO(CREATE_WRAPPER_FILES_AND_LIBRARY)
 
 
-MACRO(CREATE_WRAPPER_FILES language extension mdx_files library_idx_files cable_input_files gccxml_inc_file)
+MACRO(CREATE_WRAPPER_FILES library_name language extension mdx_files library_idx_files cable_input_files gccxml_inc_file)
   FOREACH(cable_file ${cable_input_files})
     GET_FILENAME_COMPONENT(base_name "${cable_file}" NAME_WE)
     SET(xml_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}.xml")

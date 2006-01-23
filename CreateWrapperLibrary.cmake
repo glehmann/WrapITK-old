@@ -10,10 +10,10 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
   
   # Add the generated module wrappers. These files are not included in the general
   # WRAPPER_LIBRARY_CABLESWIG_INPUTS list because they are specific for each language.
-  SET(wrap_perl_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlPerl.cxx)
-  SET(wrap_tcl_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlTcl.cxx)
-  SET(wrap_python_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlPython.cxx)
-  SET(wrap_java_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlJava.cxx)
+  SET(wrap_perl_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlPerl.cxx")
+  SET(wrap_tcl_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlTcl.cxx")
+  SET(wrap_python_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlPython.cxx")
+  SET(wrap_java_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlJava.cxx")
   
   # Loop over cable config files creating three lists:
   # wrap_xxx_sources: list of generated files for each language
@@ -25,10 +25,10 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
   SET(library_idx_files)
   FOREACH(source ${WRAPPER_LIBRARY_CABLESWIG_INPUTS})
     GET_FILENAME_COMPONENT(base_name ${source} NAME_WE)
-    SET(wrap_perl_sources ${wrap_perl_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Perl.cxx)
-    SET(wrap_tcl_sources ${wrap_tcl_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Tcl.cxx)
-    SET(wrap_python_sources ${wrap_python_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Python.cxx)
-    SET(wrap_java_sources ${wrap_java_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Java.cxx)
+    SET(wrap_perl_sources ${wrap_perl_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Perl.cxx")
+    SET(wrap_tcl_sources ${wrap_tcl_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Tcl.cxx")
+    SET(wrap_python_sources ${wrap_python_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Python.cxx")
+    SET(wrap_java_sources ${wrap_java_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Java.cxx")
     # add each source's name to a java dependencies list for later use
     STRING(REGEX REPLACE wrap_ "" JAVA_DEP ${base_name})
     SET(${WRAPPER_LIBRARY_NAME}_java_Depends_init ${${WRAPPER_LIBRARY_NAME}_java_Depends_init} ${JAVA_DEP}.java)
@@ -40,10 +40,10 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
   # Loop over the extra swig input files and add them to the generated files lists.
   FOREACH(source ${WRAPPER_LIBRARY_SWIG_INPUTS})
     GET_FILENAME_COMPONENT(base_name ${source} NAME_WE)
-    SET(wrap_perl_sources ${wrap_perl_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Perl.cxx)
-    SET(wrap_tcl_sources ${wrap_tcl_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Tcl.cxx)
-    SET(wrap_python_sources ${wrap_python_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Python.cxx)
-    SET(wrap_java_sources ${wrap_java_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Java.cxx)
+    SET(wrap_perl_sources ${wrap_perl_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Perl.cxx")
+    SET(wrap_tcl_sources ${wrap_tcl_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Tcl.cxx")
+    SET(wrap_python_sources ${wrap_python_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Python.cxx")
+    SET(wrap_java_sources ${wrap_java_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Java.cxx")
   ENDFOREACH(source)
 
   SET(${WRAPPER_LIBRARY_NAME}_JAVA_DEPENDS  "${${WRAPPER_LIBRARY_NAME}_java_Depends_init}" CACHE INTERNAL "" FORCE)

@@ -95,7 +95,7 @@ MACRO(LANGUAGE_SUPPORT_ADD_NON_TEMPLATE_CLASS simple_name cpp_name swig_name wra
       "SmartPointer # itk::SmartPointer # ${swig_name}_Pointer # ${cpp_name}")
   ENDIF(wrap_pointer)
   
-ENDMACRO(LANGUAGE_SUPPORT_ADD_CLASS)
+ENDMACRO(LANGUAGE_SUPPORT_ADD_NON_TEMPLATE_CLASS)
 
 
 ################################################################################
@@ -132,7 +132,7 @@ MACRO(CONFIGURE_PYTHON_CONFIG_FILES outdir)
       " # "
       "', '"
       py_template_def
-      "${wrapped_class})
+      "${wrapped_class}")
     # now put the outside parens and quotes, etc. in place
     SET(py_template_def "  ('${py_template_def}'),\n")
     # now strip out the NO_TEMPLATE if there is none
@@ -140,15 +140,15 @@ MACRO(CONFIGURE_PYTHON_CONFIG_FILES outdir)
       ", 'NO_TEMPLATE'"
       ""
       py_template_def
-      "${py_template_def})
-    SET(CONFIG_TEMPLATES "${CONFIG_TEMPLATES}${py_template_def}"
+      "${py_template_def}")
+    SET(CONFIG_TEMPLATES "${CONFIG_TEMPLATES}${py_template_def}")
   ENDFOREACH(wrapped_class)
   
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ModuleConfig.py.in"
-    "${outdir}/${WRAPPER_MODULE_NAME}Config.py"
+    "${outdir}/${WRAPPER_LIBRARY_NAME}Config.py"
     @ONLY IMMEDIATE)
   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python/Configuration"
-    FILES "${outdir}/${WRAPPER_MODULE_NAME}Config.py")
+    FILES "${outdir}/${WRAPPER_LIBRARY_NAME}Config.py")
 ENDMACRO(CONFIGURE_PYTHON_CONFIG_FILES)
 
 
@@ -156,9 +156,9 @@ MACRO(CONFIGURE_PYTHON_LOADER_FILE outdir)
   # Create the loader file for importing just the current wrapper library. Uses
   # the global WRAPPER_LIBRARY_NAME variable.
   
-  SET(CONFIG_MODULE_NAME "${WRAPPER_MODULE_NAME}")
+  SET(CONFIG_LIBRARY_NAME "${WRAPPER_LIBRARY_NAME}")
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ModuleLoader.py.in"
-    "${outdir}/${WRAPPER_MODULE_NAME}.py"
+    "${outdir}/${WRAPPER_LIBRARY_NAME}.py"
     @ONLY IMMEDIATE)
 ENDMACRO(CONFIGURE_PYTHON_LOADER_FILE)
 
@@ -167,5 +167,5 @@ MACRO(INSTALL_PYTHON_LOADER_FILE outdir)
   # Install the loader file for importing just the current wrapper library.
   
   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python"
-    FILES "${outdir}/${WRAPPER_MODULE_NAME}.py")
+    FILES "${outdir}/${WRAPPER_LIBRARY_NAME}.py")
 ENDMACRO(INSTALL_PYTHON_LOADER_FILE)

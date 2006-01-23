@@ -1,6 +1,7 @@
 BEGIN_WRAPPER_LIBRARY("ITKBasicFiltersC")
 
 SET(WRAPPER_LIBRARY_DEPENDS 
+  VXLNumerics
   ITKNumerics
   ITKCommonA
   ITKCommonB)

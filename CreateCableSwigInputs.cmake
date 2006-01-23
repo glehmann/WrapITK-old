@@ -88,23 +88,28 @@ MACRO(WRITE_WRAP_CXX)
   # Global vars used: WRAPPER_FILE_NAME WRAPPER_INCLUDE_FILES WRAPPER_MODULE_NAME and WRAPPER_TYPEDEFS
   # Global vars modified: none
 
-  # Create the '#include' statements.
-  SET(CONFIG_WRAPPER_INCLUDES)
-  FOREACH(inc ${WRAPPER_INCLUDE_FILES})
-    SET(CONFIG_WRAPPER_INCLUDES "${CONFIG_WRAPPER_INCLUDES}#include \"itk${inc}.h\"\n")
-  ENDFOREACH(inc)
-  SET(CONFIG_WRAPPER_MODULE_NAME "${WRAPPER_MODULE_NAME}")
-  SET(CONFIG_WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}")
+  IF(WRAPPER_TYPEDEFS)
+    # If no types were defined, don't bother with writing the file or adding it
+    # to the list!
+    
+    # Create the '#include' statements.
+    SET(CONFIG_WRAPPER_INCLUDES)
+    FOREACH(inc ${WRAPPER_INCLUDE_FILES})
+      SET(CONFIG_WRAPPER_INCLUDES "${CONFIG_WRAPPER_INCLUDES}#include \"itk${inc}.h\"\n")
+    ENDFOREACH(inc)
+    SET(CONFIG_WRAPPER_MODULE_NAME "${WRAPPER_MODULE_NAME}")
+    SET(CONFIG_WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}")
 
-  # Create the cxx file
-  CONFIGURE_FILE(
-    "${WRAP_ITK_CONFIG_DIR}/wrap_.cxx.in"
-    "${WRAPPER_FILE_NAME}"
-    @ONLY IMMEDIATE)
-  
-  # And add the cxx file to the list of cableswig inputs.
-  SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS 
-    ${WRAPPER_LIBRARY_CABLESWIG_INPUTS} "${WRAPPER_FILE_NAME}")
+    # Create the cxx file
+    CONFIGURE_FILE(
+      "${WRAP_ITK_CONFIG_DIR}/wrap_.cxx.in"
+      "${WRAPPER_FILE_NAME}"
+      @ONLY IMMEDIATE)
+    
+    # And add the cxx file to the list of cableswig inputs.
+    SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS 
+      ${WRAPPER_LIBRARY_CABLESWIG_INPUTS} "${WRAPPER_FILE_NAME}")
+  ENDIF(WRAPPER_TYPEDEFS)
 ENDMACRO(WRITE_WRAP_CXX)
 
 
@@ -125,7 +130,7 @@ MACRO(WRITE_MODULE_FILES)
   SET(CONFIG_GROUP_LIST "${group_list}")
   CONFIGURE_FILE(
     "${WRAP_ITK_CONFIG_DIR}/wrap_ITK.cxx.in"
-    "${path}/wrap_${module_name}.cxx"
+    "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}.cxx"
     @ONLY IMMEDIATE)
 
   IF(WRAP_ITK_TCL)
@@ -140,14 +145,14 @@ MACRO(WRITE_MODULE_FILES)
   IF(WRAP_ITK_PERL)
     WRITE_MODULE_FOR_LANGUAGE("Perl")
   ENDIF(WRAP_ITK_PERL)
-ENDMACRO(WRITE_MODULE)
+ENDMACRO(WRITE_MODULE_FILES)
 
 MACRO(WRITE_MODULE_FOR_LANGUAGE language)
   # Write the language specific CableSwig input which declares which language is
   # to be used and includes the general module cableswig input.
   SET(CONFIG_LANGUAGE "${language}")
   SET(CONFIG_MODULE_NAME ${WRAPPER_LIBRARY_NAME})
-  STRING(TOUPPER ${lang} CONFIG_UPPER_LANG)
+  STRING(TOUPPER ${language} CONFIG_UPPER_LANG)
   CONFIGURE_FILE(
     "${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
     "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx"
@@ -322,7 +327,7 @@ MACRO(END_WRAP_CLASS)
     ENDFOREACH(wrap)
   ENDIF(wrap_pointer)
   
-  LANGUAGE_SUPPORT_ADD_CLASS("${WRAPPER_CLASS}" "itk::${WRAPPER_CLASS}" "itk${WRAPPER_CLASS}"
+  LANGUAGE_SUPPORT_ADD_CLASS("${class_name}" "itk::${WRAPPER_CLASS}" "itk${class_name}"
     "${WRAPPER_TEMPLATES}" ${wrap_pointer})
 ENDMACRO(END_WRAP_CLASS)
 
@@ -402,7 +407,7 @@ MACRO(WRAP_NON_TEMPLATE_CLASS class)
     SMART_POINTER_TYPEMAP("itk::${class}")
   ENDIF(wrap_pointer)
 
-  LANGUAGE_SUPPORT_ADD_NON_TEMPLATE_CLASS("${class}" "itk::${class}" "itk${class}"
+  LANGUAGE_SUPPORT_ADD_NON_TEMPLATE_CLASS("${class_name}" "itk::${class}" "itk${class_name}"
     ${wrap_pointer})
 ENDMACRO(WRAP_NON_TEMPLATE_CLASS)
 
@@ -584,10 +589,10 @@ MACRO(WRAP_TYPES_DIMS size types template_dims)
     # If the parameter is of form '2+', make a list of the user-selected
     # dimensions (WRAP_DIMS) that match this criterion.
     STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" MIN_DIM "${template_dims}")
-    SET(dims "")
-    FOREACH(d "${WRAP_DIMS}")
+    SET(dims )
+    FOREACH(d ${WRAP_DIMS})
       IF("${d}" GREATER "${MIN_DIM}" OR "${d}" EQUAL "${MIN_DIM}")
-        SET(dims "${dims}" "${d}")
+        SET(dims ${dims} "${d}")
       ENDIF("${d}" GREATER "${MIN_DIM}" OR "${d}" EQUAL "${MIN_DIM}")
     ENDFOREACH(d)
     WRAP_TYPES_DIMS_NO_DIM_TEST("${size}" "${types}" "${dims}")
@@ -595,11 +600,11 @@ MACRO(WRAP_TYPES_DIMS size types template_dims)
   ELSE("${template_dims}" MATCHES "^[0-9]+\\+$")
     # Otherwise, jsut make a list of the intersection between the user-selected
     # dimensions and the allowed dimensions provided by the parameter.
-    SET(dims "")
-    FOREACH(d "${WRAP_DIMS}")
-      FOREACH(td "${template_dims}")
+    SET(dims )
+    FOREACH(d ${WRAP_DIMS})
+      FOREACH(td ${template_dims})
         IF(d EQUAL td)
-          SET(dims "${dims}" "${d}")
+          SET(dims ${dims} ${d})
         ENDIF(d EQUAL td)
       ENDFOREACH(td)
     ENDFOREACH(d)

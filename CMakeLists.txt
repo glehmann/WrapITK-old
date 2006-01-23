@@ -58,10 +58,11 @@ SET(WRAP_ITK_GCCXML_INCLUDE_DIRS
   ${WrapITK_SOURCE_DIR}/Algorithms
   )
 
-SET(ITK_KITS VXLNumerics CommonA CommonB Numerics
+# ITK_KITS must be in proper order -- modules that depend on other modules
+# must come later in the list.
+SET(ITK_KITS VXLNumerics Numerics CommonA CommonB 
   BasicFiltersA BasicFiltersB BasicFiltersC IO
-  SpatialObject Algorithms
-  )
+  SpatialObject Algorithms)
 SUBDIRS(SwigRuntime ${ITK_KITS} Tests Testing)
 
 # Output directories.
@@ -100,12 +101,12 @@ SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
 SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}")
-CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/WrapITKConfig.cmake.in"
+CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/WrapITKConfig.cmake"
                @ONLY IMMEDIATE)
 
 SET(CONFIG_WRAP_ITK_DIR "${WrapITK_BINARY_DIR}")
-CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/FindWrapITK.cmake.in"
+CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
                "${WrapITK_BINARY_DIR}/FindWrapITK.cmake"
                @ONLY IMMEDIATE)
 
@@ -116,12 +117,12 @@ SET(CONFIG_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Config
 SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/lib")
 SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/ClassIndex")
 
-CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/WrapITKConfig.cmake.in"
+CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake"
                @ONLY IMMEDIATE)
 
 SET(CONFIG_WRAP_ITK_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}")
-CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/FindWrapITK.cmake.in"
+CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake"
                @ONLY IMMEDIATE)
 

@@ -36,14 +36,17 @@ SET(WRAPPER_LIBRARY_GROUPS
     itkVectorContainer
     itkSimpleDataObjectDecorator
     itkImageBoundaryCondition
-    itkPointSet) 
+    itkPointSet)
+
+SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics)
+
 
 SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS "${CMAKE_SURRENT_SOURCE_DIR}/wrap_SwigExtras.cxx")
 SET(WRAPPER_LIBRARY_SWIG_INPUTS "${CMAKE_SURRENT_SOURCE_DIR}/SwigExtras.i") 
 
 # Need to include the current dir because the compiler needs to find itkStringStream.h
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-SET(WRAPPER_LIBRARY_CXX_SOURCES "${CMAKE_SURRENT_SOURCE_DIR}/itkStringStream.cxx") 
+SET(WRAPPER_LIBRARY_CXX_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/itkStringStream.cxx") 
 
 SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon)
 

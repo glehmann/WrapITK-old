@@ -22,9 +22,9 @@ SET(WRAPPER_LIBRARY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 SET(WRAPPER_LIBRARY_AUTO_LOAD ON) 
 
 # WRAPPER_LIBRARY_DEPENDS: Optional. List of names of other wrapper libraries that
-# define symbols used by this wrapper library. Note that there's always an implied 
-# dependence on VXLNumerics. Defaults to an empty list.
-SET(WRAPPER_LIBRARY_DEPENDS 
+# define symbols used by this wrapper library. Defaults to an empty list.
+SET(WRAPPER_LIBRARY_DEPENDS
+  VXLNumerics 
   ITKNumerics
   ITKCommonB
   ITKCommonA

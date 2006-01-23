@@ -24,7 +24,7 @@ MACRO(WRAP_TYPE class prefix)
 ENDMACRO(WRAP_TYPE)
 
 MACRO(END_WRAP_TYPE)
-   CREATE_WRAP_TYPE("${itk_Wrap_Class}" "${itk_Wrap_Prefix}" "${itk_Wrap}")
+   CREATE_WRAP_TYPE("${itk_Wrap_Class}" "${itk_Wrap_Prefix}" "${WRAPPER_TEMPLATES}")
 ENDMACRO(END_WRAP_TYPE)
 
 WRAP_TYPE("Offset" "O")
@@ -32,7 +32,7 @@ WRAP_TYPE("Offset" "O")
     WRAP("${d}"  "${d}")
   ENDFOREACH(d)
 END_WRAP_TYPE()
-SET(itk_Wrap_Offset ${itk_Wrap})
+SET(itk_Wrap_Offset ${WRAPPER_TEMPLATES})
 
 #------------------------------------------------------------------------------
 WRAP_TYPE("Vector" "V")
@@ -41,7 +41,7 @@ WRAP_TYPE("Vector" "V")
     WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}")
   ENDFOREACH(d)
 END_WRAP_TYPE()
-SET(itk_Wrap_Vector ${itk_Wrap})
+SET(itk_Wrap_Vector ${WRAPPER_TEMPLATES})
 
 #------------------------------------------------------------------------------
 WRAP_TYPE("CovariantVector" "CV")
@@ -50,7 +50,7 @@ WRAP_TYPE("CovariantVector" "CV")
     WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}")
   ENDFOREACH(d)
 END_WRAP_TYPE()
-SET(itk_Wrap_CovariantVector ${itk_Wrap})
+SET(itk_Wrap_CovariantVector ${WRAPPER_TEMPLATES})
 
 #------------------------------------------------------------------------------
 WRAP_TYPE("ContinuousIndex" "CI")
@@ -59,7 +59,7 @@ WRAP_TYPE("ContinuousIndex" "CI")
     WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}")
   ENDFOREACH(d)
 END_WRAP_TYPE()
-SET(itk_Wrap_ContinuousIndex ${itk_Wrap})
+SET(itk_Wrap_ContinuousIndex ${WRAPPER_TEMPLATES})
 
 #------------------------------------------------------------------------------
 SET(WRAP_PREFIX_Array "A")
@@ -109,7 +109,7 @@ WRAP_TYPE("RGBPixel" "RGB")
   COND_WRAP("${ITKM_UC}" "${ITKT_UC}" "RGBUC")
   COND_WRAP("${ITKM_US}" "${ITKT_US}" "RGBUS")
 END_WRAP_TYPE()
-SET(itk_Wrap_RGBPixel ${itk_Wrap})
+SET(itk_Wrap_RGBPixel ${WRAPPER_TEMPLATES})
 
 
 #------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ WRAP_TYPE("Image" "I")
     COND_WRAP("${ITKM_RGBUS}${d}" "${ITKT_RGBUS},${d}" "RGBUS")
   ENDFOREACH(d)
 END_WRAP_TYPE()
-SET(itk_Wrap_Image ${itk_Wrap})
+SET(itk_Wrap_Image ${WRAPPER_TEMPLATES})
 
 
 #------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ WRAP_TYPE("Point" "P")
     WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}")
   ENDFOREACH(d)
 END_WRAP_TYPE()
-SET(itk_Wrap_Point ${itk_Wrap})
+SET(itk_Wrap_Point ${WRAPPER_TEMPLATES})
 
 #------------------------------------------------------------------------------
 WRAP_TYPE("LevelSetNode" "LSN")
@@ -157,7 +157,7 @@ WRAP_TYPE("LevelSetNode" "LSN")
     WRAP("${ITKM_SL}${d}" "${ITKT_SL},${d}")
   ENDFOREACH(d)
 END_WRAP_TYPE()
-SET(itk_Wrap_LevelSetNode ${itk_Wrap})
+SET(itk_Wrap_LevelSetNode ${WRAPPER_TEMPLATES})
 
 
 #------------------------------------------------------------------------------
@@ -173,7 +173,7 @@ WRAP_TYPE("BinaryBallStructuringElement" "SE")
     COND_WRAP("${ITKM_SL}${d}" "${ITKT_SL},${d}" "SL")
   ENDFOREACH(d)
 END_WRAP_TYPE()
-SET(itk_Wrap_StructuringElement ${itk_Wrap})
+SET(itk_Wrap_StructuringElement ${WRAPPER_TEMPLATES})
 
 #------------------------------------------------------------------------------
 WRAP_TYPE("SpatialObject" "SO")
@@ -181,6 +181,6 @@ WRAP_TYPE("SpatialObject" "SO")
     WRAP("${d}"  "${d}")
   ENDFOREACH(d)
 END_WRAP_TYPE()
-SET(itk_Wrap_SpatialObject ${itk_Wrap})
+SET(itk_Wrap_SpatialObject ${WRAPPER_TEMPLATES})
 
 #------------------------------------------------------------------------------

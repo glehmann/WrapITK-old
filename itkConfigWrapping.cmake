@@ -66,8 +66,7 @@ MACRO(BEGIN_WRAPPER_LIBRARY library_name)
   SET(WRAPPER_LIBRARY_AUTO_LOAD ON) 
 
   # WRAPPER_LIBRARY_DEPENDS. List of names of other wrapper libraries that
-  # define symbols used by this wrapper library. Note that there's always an implied 
-  # dependence on VXLNumerics.
+  # define symbols used by this wrapper library.
   SET(WRAPPER_LIBRARY_DEPENDS)
 
   # WRAPPER_LIBRARY_LINK_LIBRARIES. List of other libraries that should
@@ -109,9 +108,6 @@ SET(WRAPPER_MASTER_INDEX_OUTPUT_DIR "${PROJECT_BINARY_DIR}/MasterIndex")
 FIND_PACKAGE(ITK)
 IF(ITK_FOUND)
   INCLUDE(${ITK_USE_FILE})
-ELSE(ITK_FOUND)
-  MESSAGE(FATAL_ERROR
-          "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
 #-----------------------------------------------------------------------------
@@ -121,9 +117,17 @@ ENDIF(ITK_FOUND)
 SET(CableSwig_DIR ${ITK_CableSwig_DIR})
 FIND_PACKAGE(CableSwig)
 
+#-----------------------------------------------------------------------------
+# Complain if ITK or cableswig not found.
+#-----------------------------------------------------------------------------
+#
+IF(NOT ITK_FOUND)
+  MESSAGE(FATAL_ERROR
+          "Cannot build without ITK.  Please set ITK_DIR.")
+ENDIF(NOT ITK_FOUND)
+
 IF(NOT CableSwig_FOUND)
-  # We have not found CableSwig.  Complain.
-  MESSAGE(FATAL_ERROR "CableSwig is required for ITK Wrapping.")
+  MESSAGE(FATAL_ERROR "CableSwig is required for ITK Wrapping. Setting ITK_DIR will find CableSwig if the latter was checked out with the former.")
 ENDIF(NOT CableSwig_FOUND)
 
 # We have found CableSwig.  Use the settings.

@@ -1,6 +1,7 @@
 BEGIN_WRAPPER_LIBRARY("ITKSpatialObject")
 
 SET(WRAPPER_LIBRARY_DEPENDS 
+  VXLNumerics
   ITKNumerics
   ITKCommonA
   ITKCommonB)

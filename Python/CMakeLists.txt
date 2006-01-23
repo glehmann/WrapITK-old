@@ -56,18 +56,17 @@ IF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
   # In source build -- no need to copy Python file. Do need to set up the install.
     FOREACH(file ${ITK_PYTHON_FILES})
     SET(install_tgt "${CMAKE_CURRENT_SOURCE_DIR}/${file}.py")
-    SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} ${install_tgt})
+    SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} "${install_tgt}")
   ENDFOREACH(file)
 ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
   ADD_CUSTOM_TARGET(copy_python_files ALL)
   
   FOREACH(file ${ITK_PYTHON_FILES})
     SET(src "${CMAKE_CURRENT_SOURCE_DIR}/${file}.py")
-    # we can use CMAKE_CFG_INTDIR here because if there are no config types,
-    # it expands to '.', which is inoccuous. If there is a config type set,
-    # it will expand properly during build-time, when the custom command is run.
-    SET(tgt "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${file}.py")
-    SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} ${tgt})
+    # recall that WRAP_ITK_INTDIR expands to nothing if no config types are set,
+    # or to "CMAKE_CONFIG_INTDIR/" if there are such.
+    SET(tgt "${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_INTDIR}/${file}.py")
+    SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} "${tgt}")
     ADD_CUSTOM_COMMAND(SOURCE ${src}
       COMMAND ${CMAKE_COMMAND}
       ARGS -E copy ${src} ${tgt}

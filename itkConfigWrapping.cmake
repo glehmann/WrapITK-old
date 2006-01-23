@@ -228,6 +228,17 @@ ENDIF(WRAP_ITK_JAVA)
 
 #------------------------------------------------------------------------------
 # System dependant wraping stuff
+
+# Make a variable that expands to nothing if there are no configuration types,
+# otherwise it expands to the active type plus a /, so that in either case,
+# the variable can be used in the middle of a path.
+IF(CMAKE_CONFIGURATION_TYPES)
+  SET(WRAP_ITK_INTDIR "${CMAKE_CFG_INTDIR}/")
+ELSE(CMAKE_CONFIGURATION_TYPES)
+  SET(WRAP_ITK_INTDIR "")
+ENDIF(CMAKE_CONFIGURATION_TYPES)
+
+
 SET(ITK_WRAP_NEEDS_DEPEND 1)
 IF(${CMAKE_MAKE_PROGRAM} MATCHES make)
   SET(ITK_WRAP_NEEDS_DEPEND 0)

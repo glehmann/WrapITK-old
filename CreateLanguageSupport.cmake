@@ -44,8 +44,8 @@ MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
       ENDIF(CMAKE_CONFIGURATION_TYPES)
       # Just install the files once, regardless of how many different places
       # they were configured into. If there are no configuration types, the 
-      # cfg_intdir expands to '.', so no harm done.
-      INSTALL_PYTHON_LOADER_FILE("${PROJECT_BINARY_DIR}/Python/${CMAKE_CFG_INTDIR}")
+      # intdir expands to '', so no harm done.
+      INSTALL_PYTHON_LOADER_FILE("${PROJECT_BINARY_DIR}/Python/${WRAP_ITK_INTDIR}")
    ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
 
@@ -165,7 +165,8 @@ ENDMACRO(CONFIGURE_PYTHON_LOADER_FILE)
 
 MACRO(INSTALL_PYTHON_LOADER_FILE outdir)
   # Install the loader file for importing just the current wrapper library.
+  # Note that outdir will always have a trailing slash.
   
   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python"
-    FILES "${outdir}/${WRAPPER_LIBRARY_NAME}.py")
+    FILES "${outdir}${WRAPPER_LIBRARY_NAME}.py")
 ENDMACRO(INSTALL_PYTHON_LOADER_FILE)

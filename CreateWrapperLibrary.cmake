@@ -185,7 +185,7 @@ MACRO(CREATE_WRAPPER_FILES language extension mdx_files library_idx_files cable_
     CSWIG_CREATE_CXX_FILE("${library_name}" "${language}" "${idx_file}" "${xml_file}" "${cxx_file}"
       "${master_index_files}" "${library_idx_files}")
     STRING(REGEX REPLACE "wrap_" "" simple_base "${base_name}")
-    SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/${simple_base_name}.${extension}")
+    SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INTDIR}${simple_base_name}.${extension}")
     INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/${language}-SWIG" FILES "${swig_language_file}")    
   ENDFOREACH(cable_file)
   
@@ -196,7 +196,7 @@ MACRO(CREATE_WRAPPER_FILES language extension mdx_files library_idx_files cable_
     GET_FILENAME_COMPONENT(base_name ${swig_input} NAME_WE)
     SET(cxx_output "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}${language}.cxx")
     CREATE_EXTRA_SWIG_FILE("${library_name}" "${language}" "${swig_input}" "${cxx_output}")
-    SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/${base_name}.${extension}")
+    SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INTDIR}${base_name}.${extension}")
     INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/${language}-SWIG" FILES "${swig_language_file}")
   ENDFOREACH(swig_input)
   
@@ -344,7 +344,7 @@ MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx
           -noruntime
           ${cindex}
           -depend ${input_xml}.depend
-          -outdir ${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}
+          -outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INTDIR}
           -o ${output_cxx}
           -c++
           ${CSWIG_ARGS_${language}}
@@ -364,7 +364,7 @@ MACRO(CREATE_EXTRA_SWIG_FILE library_name language swig_input cxx_output)
     ARGS  -nocable 
           -noruntime 
           ${CSWIG_IGNORE_WARNINGS}
-          -outdir ${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}
+          -outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INTDIR}
           -o ${cxx_output}
           -c++
           ${CSWIG_ARGS_${language}}

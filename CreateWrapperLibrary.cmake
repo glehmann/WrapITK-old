@@ -57,7 +57,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     ${wrap_tcl_sources} 
     ${wrap_python_sources} 
     ${wrap_java_sources} 
-    GENERATED )
+    PROPERTIES GENERATED )
     
   # STEP 2
   # Configure the master index file and SWIG include file, and provide an install
@@ -161,7 +161,7 @@ MACRO(CREATE_WRAPPER_FILES_AND_LIBRARY language extension library_sources
       library_type custom_library_prefix)
       
   SET(library_name "${custom_library_prefix}${WRAPPER_LIBRARY_NAME}${language}")
-  SET(cable_files "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}{Language}.cxx"
+  SET(cable_files "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}${Language}.cxx"
     ${WRAPPER_LIBRARY_CABLESWIG_INPUTS})
   CREATE_WRAPPER_FILES("${library_name}" "${language}" "${extension}" "${master_index_files}" "${library_idx_files}" 
     "${cable_files}" "${gccxml_inc_file}")

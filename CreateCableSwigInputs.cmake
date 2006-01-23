@@ -212,9 +212,9 @@ MACRO(WRAP_CLASS class)
   # clear the wrap parameters
   SET(WRAPPER_TEMPLATES)
   # and include the class's header
-  IF(${WRAPPER_AUTO_INCLUDE_HEADERS})
+  IF(WRAPPER_AUTO_INCLUDE_HEADERS)
     WRAP_INCLUDE(${class_name})
-  ENDIF(${WRAPPER_AUTO_INCLUDE_HEADERS})
+  ENDIF(WRAPPER_AUTO_INCLUDE_HEADERS)
 ENDMACRO(WRAP_CLASS)
 
 
@@ -224,7 +224,7 @@ MACRO(WRAP_INCLUDE include_file)
   #
   # Global vars used: WRAPPER_INCLUDE_FILES
   # Global vars modified: WRAPPER_INCLUDE_FILES
-  
+MESSAGE("+++ ${include_file}")
   SET(already_included 0)
   FOREACH(included ${WRAPPER_INCLUDE_FILES})
     IF("${include_file}" STREQUAL "${already_included}")
@@ -370,9 +370,9 @@ MACRO(WRAP_NON_TEMPLATE_CLASS class)
 
   STRING(REGEX REPLACE "(.*::)" "" class_name ${class})
 
-  IF(${WRAPPER_AUTO_INCLUDE_HEADERS})
+  IF(WRAPPER_AUTO_INCLUDE_HEADERS)
     WRAP_INCLUDE(${class_name})
-  ENDIF(${WRAPPER_AUTO_INCLUDE_HEADERS})
+  ENDIF(WRAPPER_AUTO_INCLUDE_HEADERS)
 
   # insert a blank line to separate the classes
   SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      \n")

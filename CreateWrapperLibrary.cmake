@@ -187,7 +187,7 @@ MACRO(CREATE_WRAPPER_FILES library_name language extension mdx_files library_idx
     # Create the wrapper CXX file with cswig and an install rule for the generated language file
     CSWIG_CREATE_CXX_FILE("${library_name}" "${language}" "${idx_file}" "${xml_file}" "${cxx_file}"
       "${master_index_files}" "${library_idx_files}")
-    STRING(REGEX REPLACE "wrap_" "" simple_base "${base_name}")
+    STRING(REGEX REPLACE "wrap_" "" simple_base_name "${base_name}")
     SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INTDIR}${simple_base_name}.${extension}")
     INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/${language}-SWIG" FILES "${swig_language_file}")    
   ENDFOREACH(cable_file)

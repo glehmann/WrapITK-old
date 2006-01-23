@@ -58,13 +58,15 @@ PyBuffer<TImage>
 template<class TImage>
 PyObject * 
 PyBuffer<TImage>
-::GetArrayFromImage( const ImageType * image )
+::GetArrayFromImage( ImageType * image )
 {
   if( !image )
     {
     throw std::runtime_error("Input image is null");
     }
   
+  image->Update();
+
   import_array();
 
   PixelType * buffer = const_cast < PixelType * > ( image->GetBufferPointer() );

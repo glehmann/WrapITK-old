@@ -23,7 +23,7 @@ class itkCType :
 
    def GetCType(name):
       try:
-         return(itkCType.__cTypes__[name])
+         return(self.__cTypes__[name])
       except:
          return(None)
    GetCType=staticmethod(GetCType)
@@ -108,7 +108,7 @@ class itkPyTemplate:
       param=[]
       for elt in type:
          eltNorm=normalizeName(elt)
-
+         
          if(itkPyTemplate.__templates__.has_key(eltNorm)):
             # elt is a template class
             elt=itkPyTemplate.__templates__[eltNorm]

@@ -11,7 +11,19 @@ def LoadModule(name, namespace):
   sub-module within the namespace. This sub-module is created if needed."""
   import sys, imp, itkPyTemplate
   
-  module = SatisfyDependenciesAndLoad(name)
+  # Recursively satisfy the dependencies of named module and load that module.
+  # Dependencies are looked up from the auto-generated configuration files.
+  # SWIG-generated modules have Python appended
+  moduleName = "%sPython" %name
+  # bail out if it's already loaded.
+  if moduleName in sys.modules: return
+  
+  data = module_data[name]
+  if data:
+    for dep in data.depends:
+      LoadModule(dep)
+  module = LoadSWIGLibrary(moduleName)
+  
   swig = namespace.setdefault('swig', imp.new_module('swig'))
   for k, v in module.__dict__.items():
     if not k.startswith('__'): setattr(swig, k, v)
@@ -41,20 +53,6 @@ def LoadModule(name, namespace):
           DebugPrintError("Class named %s found in module %s is different than an already-defined class of that same name." %(swigClassName, name))
 
 
-def SatisfyDependenciesAndLoad(name):
-  """Recursively satisfy the dependencies of named module and load that module.
-  Dependencies are looked up from the auto-generated configuration files."""
-  import sys
-  
-  # SWIG-generated modules have Python appended
-  moduleName = "%sPython" %name
-  # bail out if it's already loaded.
-  if moduleName in sys.modules: return sys.modules[moduleName]
-  data = module_data[name]
-  if data:
-    for dep in data.depends:
-      SatisfyDependenciesAndLoad(dep)
-  return LoadSWIGLibrary(moduleName)
 
 def LoadSWIGLibrary(moduleName):
   """Do all the work to set up the environment so that a SWIG-generated library

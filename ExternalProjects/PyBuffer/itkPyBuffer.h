@@ -41,20 +41,11 @@ namespace itk
  */
 
 template <typename TImage>
-class PyBuffer : public Object
+class PyBuffer
 {
 public:
   ///! Standard "Self" typedef.
   typedef PyBuffer         Self;
-
-  ///! Smart pointer typedef support.
-  typedef SmartPointer<Self>  Pointer;
-
-  ///! Run-time type information (and related methods).
-  itkTypeMacro(PyBuffer,Object);
-
-  ///! Method for creation through the object factory.
-  itkNewMacro(Self);
 
   /// Type of the image from where the buffer will be converted
   typedef TImage                              ImageType;
@@ -88,19 +79,12 @@ public:
  
 
 protected:
-  PyBuffer();
-  ~PyBuffer();
-  
   typedef enum PyArray_TYPES PyArrayType;
   static PyArrayType GetPyType(void);
   
   PyBuffer(const Self&);     // Not implemented.
   void operator=(const Self&); // Not implemented.
   
-
-private:
-  PyObject          *obj;
-  ImporterPointer    m_Importer;
 };
 
 

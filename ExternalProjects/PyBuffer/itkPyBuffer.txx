@@ -32,30 +32,6 @@ namespace itk
 {
 
 template<class TImage>
-PyBuffer<TImage>
-::PyBuffer()
-{
-    this->obj = NULL;
-    this->m_Importer = ImporterType::New();
-    
-    //import_libnumarray();
-    //import_libnumeric();
-    import_array();
-}
-
-template<class TImage>
-PyBuffer<TImage>
-::~PyBuffer()
-{
-    if (this->obj)
-    {
-        Py_DECREF(this->obj);
-    }
-    this->obj = NULL;
-}
-
-    
-template<class TImage>
 PyObject * 
 PyBuffer<TImage>
 ::GetArrayFromImage( ImageType * image )
@@ -155,7 +131,6 @@ PyBuffer<TImage>
 
     importer->Update();
     importer->SetReleaseDataFlag( true );
-    std::cout << "tralala" <<std::endl;
 
     return ImagePointer(importer->GetOutput());
 }

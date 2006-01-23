@@ -57,7 +57,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     ${wrap_tcl_sources} 
     ${wrap_python_sources} 
     ${wrap_java_sources} 
-    PROPERTIES GENERATED )
+    GENERATED )
     
   # STEP 2
   # Configure the master index file and SWIG include file, and provide an install

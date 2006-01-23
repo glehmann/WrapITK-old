@@ -82,7 +82,10 @@ class itkPyTemplate:
       if cl.__name__.endswith("_Pointer") :
         param=cl.__name__[len("itk"):-len("_Pointer")]
       else :
-        param=cl.__name__[len(self.__name__):]
+        # short name does not contain :: and nested namespace
+        import re
+        shortName = "itk" + re.sub(r'.*::', '', self.__name__)
+        param=cl.__name__[len(shortName):]
       if(param.isdigit()):
          param="_"+param
       self.__dict__[param]=cl

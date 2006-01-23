@@ -60,7 +60,7 @@ SET(WRAP_ITK_GCCXML_INCLUDE_DIRS
 
 # ITK_KITS must be in proper order -- modules that depend on other modules
 # must come later in the list.
-SET(ITK_KITS VXLNumerics Numerics CommonA CommonB 
+SET(ITK_KITS VXLNumerics CommonA CommonB Numerics 
   BasicFiltersA BasicFiltersB BasicFiltersC IO
   SpatialObject Algorithms)
 SUBDIRS(SwigRuntime ${ITK_KITS} Tests Testing)

@@ -36,8 +36,8 @@ SET(WRAP_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (
 SET(WRAP_ITK_INSTALL_LOCATION "/lib/InsightToolkit/WrapITK" CACHE STRING "Path to the top of the WrapITK install tree (will be appended to CMAKE_INSTALL_PREFIX).")
 
 SET(WRAP_ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg")
-SET(WRAP_ITK_CONFIG_DIR ${WrapITK_SOURCE_DIR})
-SET(WRAP_ITK_CMAKE_DIR ${WrapITK_SOURCE_DIR})
+SET(WRAP_ITK_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
+SET(WRAP_ITK_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")
 
 # Now include itkConfigWrapping
@@ -96,7 +96,7 @@ ENDIF(WRAP_ITK_JAVA)
 ###############################################################################
 # First, configure for use directly from the build dir.
 SET(CONFIG_SWIG_DIR "${WrapITK_SOURCE_DIR}")
-SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}")
+SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
 SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}")
@@ -112,7 +112,7 @@ CONFIGURE_FILE("${WrapITK_SOURCE_DIR}/FindWrapITK.cmake.in"
 # Second, configure for installed use.
 SET(CONFIG_SWIG_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration")
 SET(CONFIG_CONFIG_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration")
-SET(CONFIG_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration")
+SET(CONFIG_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration/Inputs")
 SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/lib")
 SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/ClassIndex")
 
@@ -132,14 +132,24 @@ FOREACH(f
  CreateWrapperLibrary.cmake
  WrapTypePrefix.cmake
  WrapTypeBase.cmake
- itk.swg
- wrap_ITKLang.cxx.in
- wrap_ITK.cxx.in
- wrap_.cxx.in
- Master.mdx.in
- gcc_xml.inc.in
- empty.depend.in)
+ itk.swg)
   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration" FILES "${f}")
+ENDFOREACH(f)
+
+FOREACH(f
+ ConfigurationInputs/wrap_ITKLang.cxx.in
+ ConfigurationInputs/wrap_ITK.cxx.in
+ ConfigurationInputs/wrap_.cxx.in
+ ConfigurationInputs/Master.mdx.in
+ ConfigurationInputs/gcc_xml.inc.in
+ ConfigurationInputs/empty.depend.in)
+  INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration/Inputs" FILES "${f}")
+ENDFOREACH(f)
+
+FOREACH(f
+ ConfigurationInputs/LanguageSupport/ModuleLoader.py.in
+ ConfigurationInputs/LanguageSupport/ModuleConfig.py.in)
+  INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration/Inputs/LanguageSupport" FILES "${f}")
 ENDFOREACH(f)
 
 INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}" FILES "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake")

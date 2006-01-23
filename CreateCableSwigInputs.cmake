@@ -224,7 +224,6 @@ MACRO(WRAP_INCLUDE include_file)
   #
   # Global vars used: WRAPPER_INCLUDE_FILES
   # Global vars modified: WRAPPER_INCLUDE_FILES
-MESSAGE("+++ ${include_file}")
   SET(already_included 0)
   FOREACH(included ${WRAPPER_INCLUDE_FILES})
     IF("${include_file}" STREQUAL "${already_included}")

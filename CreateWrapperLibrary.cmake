@@ -10,10 +10,10 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
   
   # Add the generated module wrappers. These files are not included in the general
   # WRAPPER_LIBRARY_CABLESWIG_INPUTS list because they are specific for each language.
-  SET(wrap_perl_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PerlPerl.cxx")
-  SET(wrap_tcl_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}TclTcl.cxx")
-  SET(wrap_python_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}PythonPython.cxx")
-  SET(wrap_java_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}JavaJava.cxx")
+  SET(wrap_perl_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}PerlPerl.cxx")
+  SET(wrap_tcl_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}TclTcl.cxx")
+  SET(wrap_python_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}PythonPython.cxx")
+  SET(wrap_java_sources "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}JavaJava.cxx")
   
   # Loop over cable config files creating three lists:
   # wrap_xxx_sources: list of generated files for each language
@@ -161,11 +161,12 @@ MACRO(CREATE_WRAPPER_FILES_AND_LIBRARY language extension library_sources
       library_type custom_library_prefix)
       
   SET(library_name "${custom_library_prefix}${WRAPPER_LIBRARY_NAME}${language}")
-  SET(cable_files "${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}${language}.cxx"
+  SET(cable_files "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx"
     ${WRAPPER_LIBRARY_CABLESWIG_INPUTS})
+  # We add the library first so that there is a target to hang the file-creation dependencies on.
+  CREATE_WRAPPER_LIBRARY("${library_name}" "${library_sources}" "${language}" ${library_type} ${custom_library_prefix})
   CREATE_WRAPPER_FILES("${library_name}" "${language}" "${extension}" "${master_index_files}" "${library_idx_files}" 
     "${cable_files}" "${gccxml_inc_file}")
-  CREATE_WRAPPER_LIBRARY("${library_name}" "${library_sources}" "${language}" ${library_type} ${custom_library_prefix})
 ENDMACRO(CREATE_WRAPPER_FILES_AND_LIBRARY)
 
 

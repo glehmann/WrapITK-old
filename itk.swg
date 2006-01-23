@@ -3,7 +3,49 @@
  *   -- Charl P. Botha <cpbotha AT ieee.org>
  */
  
+ 
+// Exception support. May be conditionally turned off by defining
+// NO_EXCEPTIONS.
+#ifndef NO_EXCEPTIONS
+
 %include exception.i
+
+#ifdef SWIGPYTHON
+
+// check if exception is an 'index out of range' exception. If so, throw a python IndexError.
+// It allow to use itk objects with __getitem__ method like standard python list
+// for example, to format a size object of dim=3 in [1, 2, 3] we can use
+// s = "[%s]" % ", ".join(map(str, sizeObject))
+// or to get a real python list object
+// l = list(sizeObject)
+%typemap(throws) std::exception {
+   if ( strstr(const_cast<char*>(_e.what()), ": index out of range") == NULL ) {
+       SWIG_exception(SWIG_RuntimeError, const_cast<char*>(_e.what()));
+   }
+   else {
+       PyErr_SetString(PyExc_IndexError, const_cast<char*>(_e.what()));
+       return NULL;
+   }
+}
+   
+#else  // SWIGPYTHON
+
+/* A "throws" attribute with the "std::exception" type is added synthetically
+ * to each method node by CableSwig.cxx.  When gcc_xml starts passing through
+ * correct throws types, this typemap could be optionally extended to
+ * account for more different types.  For now this is sufficient though.
+ */
+ 
+%typemap(throws) std::exception {
+   SWIG_exception(SWIG_RuntimeError, const_cast<char*>(_e.what()));
+}
+
+#endif // SWIGPYTHON
+
+#endif // NO_EXCEPTIONS
+
+
+
 
 #ifdef SWIGPYTHON
 
@@ -140,30 +182,6 @@ pySequenceTypemap(Size, 4)
 }
 
 
-
-
-
-
-
-
-
-
-// check if exception is an 'index out of range' exception. If so, throw a python IndexError.
-// It allow to use itk objects with __getitem__ method like standard python list
-// for example, to format a size object of dim=3 in [1, 2, 3] we can use
-// s = "[%s]" % ", ".join(map(str, sizeObject))
-// or to get a real python list object
-// l = list(sizeObject)
-%typemap(throws) std::exception {
-   if ( strstr(const_cast<char*>(_e.what()), ": index out of range") == NULL ) {
-       SWIG_exception(SWIG_RuntimeError, const_cast<char*>(_e.what()));
-   }
-   else {
-       PyErr_SetString(PyExc_IndexError, const_cast<char*>(_e.what()));
-       return NULL;
-   }
-}
-
 %typemap(out) unsigned char &, const unsigned char &, \
   signed char &, const signed char &, \
   unsigned short &, const unsigned short &, \
@@ -179,26 +197,16 @@ pySequenceTypemap(Size, 4)
 
 // a implementation of %extend in cableswig would also be great to move back __getitem__ method 
 // added in some files in this one
-   
-#else
-
-/* A "throws" attribute with the "std::exception" type is added synthetically
- * to each method node by CableSwig.cxx.  When gcc_xml starts passing through
- * correct throws types, this typemap could be optionally extended to
- * account for more different types.  For now this is sufficient though.
- */
- 
-%typemap(throws) std::exception {
-   SWIG_exception(SWIG_RuntimeError, const_cast<char*>(_e.what()));
-}
 
 #endif
 
 
-
 %include std_string.i
 
-/* disable this c linkage warning on windows */
+/* disable this c linkage warning on windows 
+TODO: Should this be handled in itkConfigWrapping.cmake? Some errors are already
+      disabled. (see around line 234 of that file.)
+*/
 %{
 #ifdef _WIN32
 #pragma warning ( disable : 4190 )

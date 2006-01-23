@@ -62,7 +62,7 @@ PyBuffer<TImage>
 {
   if( !image )
     {
-/*    itkExceptionMacro("Input image is null");*/
+    throw "Input image is null";
     }
   
   import_array();
@@ -126,7 +126,7 @@ PyBuffer<TImage>
 
     if( parray == NULL )
       {
-      itkExceptionMacro("Contiguous array couldn't be created from input python object");
+      throw "Contiguous array couldn't be created from input python object";
       }
 
     const unsigned int imageDimension = parray->nd;
@@ -196,7 +196,7 @@ PyBuffer<TImage>
 #ifdef NDARRAY_VERSION
     item_type = PyArray_ULONG;
 #else
-/*    itkExceptionMacro(<<"Type currently not supported");*/
+    throw "Type currently not supported";
 #endif
     }
   else if(typeid(ScalarType) == typeid(int))
@@ -226,7 +226,7 @@ PyBuffer<TImage>
   else
     {
     item_type = PyArray_NOTYPE;
-/*    itkExceptionMacro(<<"Type currently not supported");*/
+    throw "Type currently not supported";
     }
   return item_type;
 }

@@ -28,21 +28,24 @@ ENDMACRO(LANGUAGE_SUPPORT_INITIALIZE)
 
 
 MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
-  # Pull the WRAPPED_CLASSES list apart and use it to create language-specific
-  # support files. This also uses the global WRAPPER_LIBRARY_DEPENDS and
-  # WRAPPER_LIBRARY_NAME variables.
-  #
+  # Create the various files to make it easier to use the ITK wrappers, especially
+  # with reference to the multitude of templates.
   # Currently, only Python is supported.
   
    IF(WRAP_ITK_PYTHON)
       CONFIGURE_PYTHON_CONFIG_FILES("${PROJECT_BINARY_DIR}/Python/Configuration")
+      
       IF(CMAKE_CONFIGURATION_TYPES)
         FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-          CONFIGURE_PYTHON_LOADER_FILES("${PROJECT_BINARY_DIR}/Python/${config}")
+          CONFIGURE_PYTHON_LOADER_FILE("${PROJECT_BINARY_DIR}/Python/${config}")
         ENDFOREACH(config)
       ELSE(CMAKE_CONFIGURATION_TYPES)
-        CONFIGURE_PYTHON_LOADER_FILES("${PROJECT_BINARY_DIR}/Python/")
+        CONFIGURE_PYTHON_LOADER_FILE("${PROJECT_BINARY_DIR}/Python/")
       ENDIF(CMAKE_CONFIGURATION_TYPES)
+      # Just install the files once, regardless of how many different places
+      # they were configured into. If there are no configuration types, the 
+      # cfg_intdir expands to '.', so no harm done.
+      INSTALL_PYTHON_LOADER_FILE("${PROJECT_BINARY_DIR}/Python/${CMAKE_CFG_INTDIR}")
    ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
 
@@ -100,18 +103,50 @@ ENDMACRO(LANGUAGE_SUPPORT_ADD_CLASS)
 ################################################################################
 
 MACRO(CONFIGURE_PYTHON_CONFIG_FILES outdir)
-  # Pull the WRAPPED_CLASSES list apart and use it to create language-specific
-  # support files. This also uses the global WRAPPER_LIBRARY_DEPENDS and
-  # WRAPPER_LIBRARY_NAME variables.
+  # Pull the WRAPPED_CLASSES list apart and use it to create Python-specific
+  # support files. This also uses the global WRAPPER_LIBRARY_DEPENDS,
+  # WRAPPER_LIBRARY_NAME, and WRAPPER_LIBRARY_AUTO_LOAD variables.
   
+  IF(WRAPPER_LIBRARY_AUTO_LOAD)
+    SET(CONFIG_AUTO_LOAD "True")
+  ELSE(WRAPPER_LIBRARY_AUTO_LOAD)
+    SET(CONFIG_AUTO_LOAD "False")
+  ENDIF(WRAPPER_LIBRARY_AUTO_LOAD)
+  
+  SET(CONFIG_DEPENDS "")
+  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+    SET(CONFIG_DEPENDS "${CONFIG_DEPENDS} '${dep}',")
+  ENDFOREACH(dep)
+  
+  SET(CONFIG_TEMPLATES "")
+  
+  
+  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ModuleConfig.py.in"
+    "${outdir}/${WRAPPER_MODULE_NAME}Config.py"
+    @ONLY IMMEDIATE)
+  INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python/Configuration"
+    FILES "${outdir}/${WRAPPER_MODULE_NAME}Config.py")
 ENDMACRO(CONFIGURE_PYTHON_CONFIG_FILES)
 
-MACRO(CONFIGURE_PYTHON_LOADER_FILES outdir)
-  # Pull the WRAPPED_CLASSES list apart and use it to create language-specific
-  # support files. This also uses the global WRAPPER_LIBRARY_DEPENDS and
-  # WRAPPER_LIBRARY_NAME variables.
+
+MACRO(CONFIGURE_PYTHON_LOADER_FILE outdir)
+  # Create the loader file for importing just the current wrapper library. Uses
+  # the global WRAPPER_LIBRARY_NAME variable.
   
-ENDMACRO(CONFIGURE_PYTHON_CONFIG_FILES)
+  SET(CONFIG_MODULE_NAME "${WRAPPER_MODULE_NAME}")
+  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ModuleLoader.py.in"
+    "${outdir}/${WRAPPER_MODULE_NAME}.py"
+    @ONLY IMMEDIATE)
+ENDMACRO(CONFIGURE_PYTHON_LOADER_FILE)
+
+
+MACRO(INSTALL_PYTHON_LOADER_FILE outdir)
+  # Install the loader file for importing just the current wrapper library.
+  
+  INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python"
+    FILES "${outdir}/${WRAPPER_MODULE_NAME}.py")
+ENDMACRO(INSTALL_PYTHON_LOADER_FILE)
+
 
 
 #------------------------------------------------------------------------------

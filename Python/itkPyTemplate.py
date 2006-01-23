@@ -1,6 +1,8 @@
 import types
 import inspect
 import sys
+# to be sure that types or defined !
+import itkTypes
 
 #------------------------------------------------------------------------------
 class itkCType :
@@ -24,7 +26,7 @@ class itkCType :
    def GetCType(name):
       try:
          return(itkCType.__cTypes__[name])
-      except:
+      except KeyError:
          return(None)
    GetCType=staticmethod(GetCType)
    

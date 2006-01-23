@@ -46,6 +46,7 @@ SET(ITK_PYTHON_FILES
   itk
   itkBase
   itkPyTemplate
+  itkTypes
   )
 # Done listing files.
 

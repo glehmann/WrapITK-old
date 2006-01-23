@@ -2,6 +2,7 @@
 # Auto-load the modules described in the itkConfig.config_py directory (usually
 # WrapITK/Python/Configuration, and populate the 'itk' namespace with the templates.
 
+from itkTypes import *
 import itkBase, itkConfig, os
 # First, find all the xxxConfig.py files in the config_py dir, and strip off the
 # 'Config.py' part of the filename.

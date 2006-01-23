@@ -13,6 +13,15 @@
 %array_class(int, IArrayClass);
 %array_class(float, FArrayClass);
 %array_class(double, DArrayClass);
+#ifdef SWIGTCL
+Tcl_Interp* GetInterp(Tcl_Interp* interp);
+%{
+Tcl_Interp* GetInterp(Tcl_Interp* interp)
+{
+  return interp;
+}
+%}
+#endif
 
 // Create swig version of std::list with
 // a specialization for std::string.  
@@ -61,3 +70,25 @@ namespace std {
 %include stl.i
 %template(StringVector) std::vector<std::string>;
 %template(StringList) std::list<std::string>;
+#ifdef SWIGJAVA
+%feature("director") itkJavaCommand;
+%{
+#include "itkJavaCommand.h"
+%}
+
+// import fake itk command
+// because itkCommand will be wrapped elsewhere by cableswig
+%import "itkCommand.i"
+
+//  create an itkJavaCommand that has an Execute method that
+// can be overriden in java, and used as an itkCommand
+class itkJavaCommand : public itkCommand
+{
+public: 
+  virtual void Execute();
+};
+
+%pragma(java) jniclasscode=%{
+  static { InsightToolkit.itkbase.LoadLibrary("ITKCommonAJava"); }
+%}
+#endif

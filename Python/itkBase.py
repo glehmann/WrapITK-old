@@ -34,7 +34,7 @@ def LoadModule(name, namespace):
         try: swigClass = getattr(module, swigClassName)
         except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(swigClassName, name, e))
         currentClass = namespace.get(pyClassName)
-        if currentClass == None
+        if currentClass == None :
           namespace[pyClassName] = swigClass
           itkPyTemplate.registerNoTpl(cppClassName, swigClass)
         elif currentClass != swigClass: 

@@ -72,7 +72,7 @@ MACRO(BEGIN_WRAPPER_LIBRARY library_name)
 
   # WRAPPER_LIBRARY_LINK_LIBRARIES. List of other libraries that should
   # be linked to the wrapper library.
-    SET(WRAPPER_LIBRARY_LINK_LIBRARIES )
+  SET(WRAPPER_LIBRARY_LINK_LIBRARIES )
 
   # WRAPPER_LIBRARY_GROUPS. List of wrap_*.cmake groups in the source dir
   # that should be included/wrapped before the rest. Just the group name is needed,
@@ -93,6 +93,8 @@ MACRO(BEGIN_WRAPPER_LIBRARY library_name)
   # A full path to each input is required.
   SET(WRAPPER_LIBRARY_CXX_SOURCES ) 
 
+  # Call the language support initialization function from CreateLanguageSupport.cmake
+  LANGUAGE_SUPPORT_INITIALIZE()
 ENDMACRO(BEGIN_WRAPPER_LIBRARY)
 
 SET(WRAPPER_MASTER_INDEX_OUTPUT_DIR "${PROJECT_BINARY_DIR}/MasterIndex")

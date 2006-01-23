@@ -1,3 +1,5 @@
+// TODO: How much of this is useful anyway?
+
 %module(directors="1") SwigExtras
 %include "typemaps.i"
 %include "carrays.i"

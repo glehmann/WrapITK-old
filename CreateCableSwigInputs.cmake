@@ -23,15 +23,8 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
   # library and each wrapper language to be created.
   # Finally, this macro causes the language support files for the templates and
   # library here defined to be created.
-  
-  # First, initialize the language support file generation. This must be 
-  # initialized before any wrap_*.cmake files are included, because those files
-  # call macros which store information about the templated classes for language
-  # support. This macro and the other LANGUAGE_SUPPORT macros are defined in
-  # CreateLanguageSupport.cmake
-  LANGUAGE_SUPPORT_INITIALIZE()
 
-  # Next, include modules already in WRAPPER_LIBRARY_GROUPS, because those are
+  # First, include modules already in WRAPPER_LIBRARY_GROUPS, because those are
   # guaranteed to be processed first.
   FOREACH(module ${WRAPPER_LIBRARY_GROUPS})
       INCLUDE_WRAP_CMAKE("${module}")
@@ -61,7 +54,6 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
     ENDIF(${will_include})
   ENDFOREACH(file)
   
-  LANGUAGE_SUPPORT_CONFIGURE_FILES()
   WRITE_MODULE_FILES()
 ENDMACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
 

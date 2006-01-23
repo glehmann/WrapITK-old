@@ -93,35 +93,18 @@ PyBuffer<TImage>
 
 
 template<class TImage>
-const typename PyBuffer<TImage>::ImageType * 
+const typename PyBuffer<TImage>::ImagePointer
 PyBuffer<TImage>
 ::GetImageFromArray( PyObject *obj )
 {
-    if (obj != this->obj)
-    {
-        if (this->obj)
-        {
-            // get rid of our reference
-            Py_DECREF(this->obj);
-        }
 
-        // store the new object
-        this->obj = obj;
-
-        if (this->obj)
-        {
-            // take out reference (so that the calling code doesn't
-            // have to keep a binding to the callable around)
-            Py_INCREF(this->obj);
-        }
-    }
-    
+  import_array();
 
     int element_type = GetPyType();  ///PyArray_DOUBLE;  // change this with pixel traits.
 
     PyArrayObject * parray = 
           (PyArrayObject *) PyArray_ContiguousFromObject( 
-                                                    this->obj, 
+                                                    obj, 
                                                     element_type,
                                                     ImageDimension,
                                                     ImageDimension  );
@@ -156,22 +139,25 @@ PyBuffer<TImage>
     SpacingType spacing;
     spacing.Fill( 1.0 );
 
-    this->m_Importer->SetRegion( region );
-    this->m_Importer->SetOrigin( origin );
-    this->m_Importer->SetSpacing( spacing );
+    ImporterPointer importer = ImporterType::New();
+    importer->SetRegion( region );
+    importer->SetOrigin( origin );
+    importer->SetSpacing( spacing );
 
     const bool importImageFilterWillOwnTheBuffer = false;
     
     PixelType * data = (PixelType *)parray->data;
     
-    this->m_Importer->SetImportPointer( 
+    importer->SetImportPointer( 
                         data,
                         numberOfPixels,
                         importImageFilterWillOwnTheBuffer );
 
-    this->m_Importer->Update();
-    
-    return this->m_Importer->GetOutput();
+    importer->Update();
+    importer->SetReleaseDataFlag( true );
+    std::cout << "tralala" <<std::endl;
+
+    return ImagePointer(importer->GetOutput());
 }
 
 template<class TImage>

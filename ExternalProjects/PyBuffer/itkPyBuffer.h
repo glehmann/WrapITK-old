@@ -64,6 +64,7 @@ public:
   typedef typename ImageType::RegionType      RegionType;
   typedef typename ImageType::PointType       PointType;
   typedef typename ImageType::SpacingType     SpacingType;
+  typedef typename ImageType::Pointer         ImagePointer;
 
    /** Image dimension. */
   itkStaticConstMacro(ImageDimension, unsigned int,
@@ -83,7 +84,7 @@ public:
   /** 
    * Get an ITK image from a Python array
    */
-  const ImageType * GetImageFromArray( PyObject *obj );
+  static const ImagePointer GetImageFromArray( PyObject *obj );
  
 
 protected:

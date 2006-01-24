@@ -44,7 +44,7 @@ def LoadModule(name, namespace = None):
   # SWIG-generated modules have 'Python' appended. Only load the SWIG module if
   # we haven't already.
   swigModuleName = name + "Python"
-  if not moduleName in sys.modules: module = LoadSWIGLibrary(moduleName)
+  if not swigModuleName in sys.modules: module = LoadSWIGLibrary(swigModuleName)
   
   # OK, now the modules on which this one depends are loaded and template-instantiated,
   # and the SWIG module for this one is also loaded.

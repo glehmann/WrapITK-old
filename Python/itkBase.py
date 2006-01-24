@@ -13,7 +13,7 @@ def LoadModule(name, namespace = None):
   'swig' sub-module. If the namespace parameter is provided, this information will
   be placed in a sub-module named 'swig' therein as well. This latter submodule
   will be created if it does not already exist."""
-  import sys, imp, itkPyTemplate
+  import sys, imp, itkTemplate
   
   # find the module's name in sys.modules, or create a new module so named
   this_module = sys.modules.setdefault(name, imp.new_module(name))
@@ -69,17 +69,17 @@ def LoadModule(name, namespace = None):
       if len(template) == 4: 
         # this is a template description      
         pyClassName, cppClassName, swigClassName, templateParams = template
-        # It doesn't matter if an itkPyTemplate for this class name already exists
-        # since every instance of itkPyTemplate with the same name shares the same
+        # It doesn't matter if an itkTemplate for this class name already exists
+        # since every instance of itkTemplate with the same name shares the same
         # state. So we just make a new instance and add the new templates.
-        templateContainer = itkPyTemplate.itkPyTemplate(cppClassName)
+        templateContainer = itkTemplate.itkTemplate(cppClassName)
         try: templateContainer.__set__(templateParams, getattr(module, swigClassName))
         except Exception, e: DebugPrintError("%s not loaded from module %s because of exception:\n %s" %(swigClassName, name, e))
         setattr(this_module, pyClassName, templateContainer)
         if namespace:
           current_value = namespace.get(pyClassName)
           if current_value != None and current_value != templateContainer:
-            DebugPrintError("Namespace already has a value for %s, which is not an itkPyTemplate instance for class %s. Overwriting old value." %(pyClassName, cppClassName))
+            DebugPrintError("Namespace already has a value for %s, which is not an itkTemplate instance for class %s. Overwriting old value." %(pyClassName, cppClassName))
           namespace[pyClassName] = templateContainer
         
       else:
@@ -87,7 +87,7 @@ def LoadModule(name, namespace = None):
         pyClassName, cppClassName, swigClassName = template
         try: swigClass = getattr(module, swigClassName)
         except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(swigClassName, name, e))
-        itkPyTemplate.registerNoTpl(cppClassName, swigClass)
+        itkTemplate.registerNoTpl(cppClassName, swigClass)
         setattr(this_module, pyClassName, swigClass)
         if namespace:
           current_value = namespace.get(pyClassName)

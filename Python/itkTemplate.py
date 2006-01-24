@@ -5,7 +5,7 @@ from itkTypes import itkCType
    
 
 def registerNoTpl(name, cl):
-  itkPyTemplate.__templates__[normalizeName(name)] = cl
+  itkTemplate.__templates__[normalizeName(name)] = cl
   
   
 def normalizeName(name):
@@ -22,7 +22,7 @@ def normalizeName(name):
 
 
 #------------------------------------------------------------------------------
-class itkPyTemplate:
+class itkTemplate:
    """
    This class manage access to avaible types of a template C++ class
    """
@@ -31,24 +31,24 @@ class itkPyTemplate:
    __named_templates__ = {}
    
    def __init__(self,name):
-      # all instances of itkPyTemplate with the same name share a single __dict__.
+      # all instances of itkTemplate with the same name share a single __dict__.
       # This is essnetially the "borg" pattern where you can make many instances 
       # that share the same state.
-      instance_dict = itkPyTemplate.__named_templates__.get(name)
+      instance_dict = itkTemplate.__named_templates__.get(name)
       if instance_dict:
         self.__dict__ = instance_dict
       else:
-        itkPyTemplate.__named_templates__[name] = self.__dict__
+        itkTemplate.__named_templates__[name] = self.__dict__
         self.__template__ = {}
         self.__name__ = name
   
-   # define equality and hash methods to reflect the fact that itkPyTemplate instances
+   # define equality and hash methods to reflect the fact that itkTemplate instances
    # with the same name should be considered equal.
    # This could all be done better with a singleton pattern implemented in __new__
    # but that would limit support to python 2.2 and above.
    # TODO: determine if anyone really uses 2.1 and below anymore!
    def __eq__(self, other):
-      return isinstance(other, itkPyTemplate) and self.__name__ == other.__name__
+      return isinstance(other, itkTemplate) and self.__name__ == other.__name__
   
    def __ne__(self, other):
       return not (self == other)
@@ -59,9 +59,9 @@ class itkPyTemplate:
    def __set__(self,type,cl):
       fullName=normalizeName(self.__name__+"<"+type+">")
 
-      if(itkPyTemplate.__templates__.has_key(fullName)):
+      if(itkTemplate.__templates__.has_key(fullName)):
          print >>sys.stderr,"Warning: templated class already defined '%s'" % fullName
-      itkPyTemplate.__templates__[fullName]=cl
+      itkTemplate.__templates__[fullName]=cl
 
       # Add in items
       param=tuple(self.__find_param__(type))
@@ -70,7 +70,7 @@ class itkPyTemplate:
       self.__template__[param]=cl
 
       # add in __class_to_template__ dictionary
-      itkPyTemplate.__class_to_template__[cl] = (self, param)
+      itkTemplate.__class_to_template__[cl] = (self, param)
       
       # Add in parameters
       if cl.__name__.endswith("_Pointer") :
@@ -108,9 +108,9 @@ class itkPyTemplate:
       for elt in type:
          eltNorm=normalizeName(elt)
 
-         if(itkPyTemplate.__templates__.has_key(eltNorm)):
+         if(itkTemplate.__templates__.has_key(eltNorm)):
             # elt is a template class
-            elt=itkPyTemplate.__templates__[eltNorm]
+            elt=itkTemplate.__templates__[eltNorm]
          elif(itkCType.GetCType(elt.strip())):
             # elt is a c type
             elt=itkCType.GetCType(elt.strip())

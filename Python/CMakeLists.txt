@@ -51,7 +51,7 @@ INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python" FILES
 SET(ITK_PYTHON_FILES
   itk
   itkBase
-  itkPyTemplate
+  itkTemplate
   itkTypes
   )
 # Done listing files.

@@ -92,8 +92,8 @@ def image(input) :
 
 # return the template of a class and its parameters
 def template(cl) :
-  from itkPyTemplate import itkPyTemplate
-  return itkPyTemplate.__class_to_template__[cl]
+  from itkTemplate import itkTemplate
+  return itkTemplate.__class_to_template__[cl]
   
 # return a class from an instance
 def classFromObject(obj) :

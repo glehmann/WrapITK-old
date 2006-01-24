@@ -116,7 +116,7 @@ except TypeError:
 
 # pass both input and attribute
 recons = itk.ReconstructionByDilationImageFilter[IType, IType].New(reader.GetOutput(), im, FullyConnected=True)
-assert repr(reader.GetOutput().GetPointer()) == repr(sub.GetInput(0).GetPointer())
+assert repr(reader.GetOutput().GetPointer()) == repr(recons.GetInput(0).GetPointer())
 assert repr(im.GetPointer()) == repr(recons.GetInput(1).GetPointer())
 assert recons.GetFullyConnected() == True
 

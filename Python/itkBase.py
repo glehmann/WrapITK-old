@@ -1,59 +1,100 @@
 SILENT = 0; WARN = 1; ERROR = 2
 DebugLevel = WARN
 
-def LoadModule(name, namespace):
+def LoadModule(name, namespace = None):
   """This function causes a SWIG module to be loaded into memory after its dependencies
   are satisfied. Information about the templates defined therein is looked up from 
-  a config file, and PyTemplate instances for each are created, or added to if the
-  instance already exists in the 'namespace' dictionary.
-  The 'namespace' parameter is updated with these PyTemplate instances. The raw
-  classes loaded from the named module's SWIG interface are placed in the 'swig'
-  sub-module within the namespace. This sub-module is created if needed."""
+  a config file, and PyTemplate instances for each are created. These template 
+  instances are placed in a module with the given name that is either looked up 
+  from sys.modules or created and placed there if it does not already exist.
+  Optionally, a 'namespace' parameter can be provided. If it is provided, this
+  namespace will be updated with the new template instantiations.
+  The raw classes loaded from the named module's SWIG interface are placed in a 
+  'swig' sub-module. If the namespace parameter is provided, this information will
+  be placed in a sub-module named 'swig' therein as well. This latter submodule
+  will be created if it does not already exist."""
   import sys, imp, itkPyTemplate
   
-  # Recursively satisfy the dependencies of named module and load that module.
-  # Dependencies are looked up from the auto-generated configuration files.
-  # SWIG-generated modules have Python appended
-  moduleName = "%sPython" %name
-  # bail out if it's already loaded.
-  if moduleName in sys.modules: return
+  # find the module's name in sys.modules, or create a new module so named
+  this_module = sys.modules.setdefault(name, imp.new_module(name))
+ 
+  # if this library and it's template instantiations have already been loaded
+  # into sys.modules, bail out
+  if hasattr(this_module, '__templates_loaded') : return
   
+  # We're definitely going to load the templates. We set templates_loaded here
+  # instead of at the end of the file to protect against cyclical dependencies
+  # that could kill the recursive lookup below.
+  this_module.__templates_loaded = True 
+  
+  # Now, we we definitely need to load the template instantiations from the
+  # named module, and possibly also load the underlying SWIG module. Before we
+  # can load the template instantiations of this module, we need to load those
+  # of the modules on which this one depends. Ditto for the SWIG modules.
+  # So, we recursively satisfy the dependencies of named module and create the
+  # template instantiations.
+  # Dependencies are looked up from the auto-generated configuration files, via 
+  # the module_data instance defined at the bottom of this file, which knows how
+  # to find those configuration files.
   data = module_data[name]
   if data:
     for dep in data.depends:
-      LoadModule(dep, namespace)
-  module = LoadSWIGLibrary(moduleName)
+      LoadModule(dep)
   
-  swig = namespace.setdefault('swig', imp.new_module('swig'))
+  # SWIG-generated modules have 'Python' appended. Only load the SWIG module if
+  # we haven't already.
+  swigModuleName = name + "Python"
+  if not moduleName in sys.modules: module = LoadSWIGLibrary(moduleName)
+  
+  # OK, now the modules on which this one depends are loaded and template-instantiated,
+  # and the SWIG module for this one is also loaded.
+  # We're going to put the things we load and create in two places: the optional 
+  # 'namespace' parameter, and the this_module variable's namespace.
+  
+  # make a new 'swig' sub-module for this_module. Also look up or create a 
+  # different 'swig' module for 'namespace'. Since 'namespace' may be used to 
+  # collect symbols from multiple different ITK modules, we don't want to 
+  # stomp on an existing 'swig' module, nor do we want to share 'swig' modules
+  # between this_module and namespace.
+  
+  this_module.swig = imp.new_module('swig')
+  if namespace: swig = namespace.setdefault('swig', imp.new_module('swig'))
   for k, v in module.__dict__.items():
-    if not k.startswith('__'): setattr(swig, k, v)
-  
+    if not k.startswith('__'): setattr(this_module.swig, k, v)
+    if namespace and not k.startswith('__'): setattr(swig, k, v)
+
   data = module_data[name]
   if data:
     for template in data.templates:
       if len(template) == 4: 
         # this is a template description      
         pyClassName, cppClassName, swigClassName, templateParams = template
-        templateContainer = namespace.setdefault(pyClassName, itkPyTemplate.itkPyTemplate(cppClassName))
-        if isinstance(templateContainer, itkPyTemplate.itkPyTemplate):
-          try: templateContainer.__set__(templateParams, getattr(module, swigClassName))
-          except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(swigClassName, name, e))
-        else:
-          DebugPrintError("Cannot update template information for %s because there is a non itkPyTemplate instance with that name." %pyClassName)
+        # It doesn't matter if an itkPyTemplate for this class name already exists
+        # since every instance of itkPyTemplate with the same name shares the same
+        # state. So we just make a new instance and add the new templates.
+        templateContainer = itkPyTemplate(cppClassName)
+        try: templateContainer.__set__(templateParams, getattr(module, swigClassName))
+        except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(swigClassName, name, e))
+        setattr(this_module, pyClassName, templateContainer)
+        if namespace:
+          current_value = namespace.get(pyClassName)
+          if ( current_value != None and current_value != templateContainer:
+            DebugPrintError("Namespace already has a value for %s, which is not an itkPyTemplate instance for class %s. Overwriting old value." %(pyClassName, cppClassName))
+          namespace[pyClassName] = templateContainer
+        
       else:
         # this is a description of a non-templated class
         pyClassName, cppClassName, swigClassName = template
         try: swigClass = getattr(module, swigClassName)
         except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(swigClassName, name, e))
-        currentClass = namespace.get(pyClassName)
-        if currentClass == None :
+        itkPyTemplate.registerNoTpl(cppClassName, swigClass)
+        setattr(this_module, pyClassName, swigClass)
+        if namespace:
+          current_value = namespace.get(pyClassName)
+          if current_value != None and current_value != swigClass:
+            DebugPrintError("Namespace already has a value for %s, which is not class %s. Overwriting old value." %(pyClassName, cppClassName))
           namespace[pyClassName] = swigClass
-          itkPyTemplate.registerNoTpl(cppClassName, swigClass)
-        elif currentClass != swigClass: 
-          DebugPrintError("Class named %s found in module %s is different than an already-defined class of that same name." %(swigClassName, name))
-
-
-
+  
 def LoadSWIGLibrary(moduleName):
   """Do all the work to set up the environment so that a SWIG-generated library
   can be properly loaded. This invloves setting paths, etc., defined in itkConfig."""

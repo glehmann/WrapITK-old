@@ -57,10 +57,29 @@ class itkPyTemplate:
    This class manage access to avaible types of a template C++ class
    """
    __templates__ = {}
-
+   __class_to_template__ = {}
+   __named_templates__ = {}
+   
    def __init__(self,name):
-      self.__name__=name
-      self.__template__={}
+      # all instances of itkPyTemplate with the same name share a single __dict__
+      # and __template__ dictionary. This is essnetially the "borg" pattern
+      # where you can make many instances that share the same state.
+      self.__template__, self.__dict__ = itkPyTemplate.__named_templates__.setdefault(name, ({},{}))
+      self.__name__ = name
+  
+   # define equality and hash methods to reflect the fact that itkPyTemplate instances
+   # with the same name should be considered equal.
+   # This could all be done better with a singleton pattern implemented in __new__
+   # but that would limit support to python 2.2 and above.
+   # TODO: determine if anyone really uses 2.1 and below anymore!
+   def __eq__(self, other):
+      return isinstance(other, itkPyTemplate) and self.__name__ == other.__name__
+  
+   def __ne__(self, other):
+      return not (self == other)
+
+   def __hash__(self):
+      return self.__name__.__hash__()
 
    def __set__(self,type,cl):
       fullName=normalizeName(self.__name__+"<"+type+">")
@@ -75,8 +94,8 @@ class itkPyTemplate:
          print >>sys.stderr,"Warning: template already defined '%s'" % fullName
       self.__template__[param]=cl
 
-      # add in classToTemplateDict
-      classToTemplateDict[cl] = (self, param)
+      # add in __class_to_template__ dictionary
+      itkPyTemplate.__class_to_template__[cl] = (self, param)
       
       # Add in parameters
       if cl.__name__.endswith("_Pointer") :

@@ -3,7 +3,7 @@
 # The user should set JAVA_OUTPUT_DIR if they want generated Java classes to go
 # anywhere other than ${PROJECT_BINARY_DIR}/Java.
 # If SWIG needs to include any files in nonstandard locations, the directories 
-# must be added to WRAP_ITK_GCCXML_INCLUDE_DIRS, which is initially populated by 
+# must be added to WRAPPER_GCC_XML_INCLUDE_DIRS, which is initially populated by 
 # this file.
 
 SET(ITK_DIR "@ITK_DIR@" CACHE PATH "Path to ITK build or install.")
@@ -57,8 +57,8 @@ LINK_DIRECTORIES("@CONFIG_WRAP_ITK_SWIG_LIBRARY_DIR@")
 # Now include itkConfigWrapping
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/itkConfigWrapping.cmake")
 
-# WRAP_ITK_GCCXML_INCLUDE_DIRS initially populated by itkConfigWrapping 
-SET(WRAP_ITK_GCCXML_INCLUDE_DIRS ${WRAP_ITK_GCCXML_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR})
+# WRAPPER_GCC_XML_INCLUDE_DIRS initially populated by itkConfigWrapping 
+SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR})
 
 # Some macros require LIBRARY_OUTPUT_PATH to be set. For now, set it to its default.
 # Re-set later if a different library output path is needed.

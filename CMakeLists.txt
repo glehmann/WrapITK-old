@@ -43,9 +43,9 @@ SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")
 # Now include itkConfigWrapping
 INCLUDE(itkConfigWrapping.cmake)
 
-# WRAP_ITK_GCCXML_INCLUDE_DIRS initially populated by itkConfigWrapping 
-SET(WRAP_ITK_GCCXML_INCLUDE_DIRS
-  ${WRAP_ITK_GCCXML_INCLUDE_DIRS}
+# WRAPPER_GCC_XML_INCLUDE_DIRS initially populated by itkConfigWrapping 
+SET(WRAPPER_GCC_XML_INCLUDE_DIRS
+  ${WRAPPER_GCC_XML_INCLUDE_DIRS}
   ${WrapITK_SOURCE_DIR}
   ${WrapITK_SOURCE_DIR}/CommonA
   ${WrapITK_SOURCE_DIR}/CommonB

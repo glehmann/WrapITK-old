@@ -37,7 +37,7 @@ ENDFOREACH(file)
 # We have a header in this directory that is called by these cableswig inputs. 
 # Thus, we need to include this directory in the include directories passed to
 # gcc_xml.
-SET(WRAP_ITK_GCCXML_INCLUDE_DIRS ${WRAP_ITK_GCCXML_INCLUDE_DIRS} "${CMAKE_CURRENT_SOURCE_DIR}")
+SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS} "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Finally we can create the library.
 WRAPPER_LIBRARY_CREATE_LIBRARY()

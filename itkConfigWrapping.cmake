@@ -32,7 +32,7 @@
 # Additionally, LINK_DIRECTORIES must include the path to libSwigRuntimeXXX.dylib
 # (This is automatic for WrapITK, but not for external projects.)
 #
-# This file sets, among others, WRAP_ITK_GCCXML_INCLUDE_DIRS.
+# This file sets, among others, WRAPPER_GCC_XML_INCLUDE_DIRS.
 # Modify this variable to add more include directories for gcc_xml.
 # This file also sets a default value for WRAPPER_MASTER_INDEX_OUTPUT_DIR.
 # Change it after including this file if needed.
@@ -56,6 +56,14 @@ MACRO(BEGIN_WRAPPER_LIBRARY library_name)
   
   # WRAPPER_LIBRARY_SOURCE_DIR. Directory to be scanned for wrap_*.cmake files. 
   SET(WRAPPER_LIBRARY_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+  
+  # WRAPPER_GCC_XML_INCLUDE_DIRS. List of directories that GCC_XML should look in
+  # for include files. This variable typically has some values already set from
+  # elsewhere that we should not discard.
+  # Mark the current source dir for inclusion, both for GCC_XML and for the
+  # regular compiler, because it may contain header files.
+  SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS} "${CMAKE_CURRENT_SOURCE_DIR}")
+  INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}")
 
   # WRAPPER_LIBRARY_OUTPUT_DIR. Directory in which generated cxx, xml, and idx
   # files will be placed. 
@@ -198,19 +206,19 @@ SET(WRAPPER_DEFAULT_INCLUDE
 )
 
 # make sure required stuff is set
-SET(WRAP_ITK_GCCXML_INCLUDE_DIRS ${ITK_INCLUDE_DIRS})
+SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${ITK_INCLUDE_DIRS})
 
 # TODO: Not sure if it's necessary to add all the language-specific include dirs
 # to the GCCXML_INCLUDE_DIRS...
 
 IF(WRAP_ITK_TCL)
-  SET(WRAP_ITK_GCCXML_INCLUDE_DIRS ${WRAP_ITK_GCCXML_INCLUDE_DIRS} ${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
+  SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS} ${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
   INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 ENDIF(WRAP_ITK_TCL)
 
 IF(WRAP_ITK_PYTHON)
   # Python include directory.
-  SET(WRAP_ITK_GCCXML_INCLUDE_DIRS ${WRAP_ITK_GCCXML_INCLUDE_DIRS}
+  SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS}
     ${PYTHON_INCLUDE_PATH})
   INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH} )
 ENDIF(WRAP_ITK_PYTHON)
@@ -221,7 +229,7 @@ ENDIF(WRAP_ITK_PERL)
 
 IF(WRAP_ITK_JAVA)
   # Java include directories.
-  SET(WRAP_ITK_GCCXML_INCLUDE_DIRS ${WRAP_ITK_GCCXML_INCLUDE_DIRS}
+  SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS}
       ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
   INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
 ENDIF(WRAP_ITK_JAVA)

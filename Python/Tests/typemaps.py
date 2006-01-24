@@ -43,3 +43,19 @@ size4 = median.GetRadius()
 assert size1.GetElement(0) == size2.GetElement(0) == size3.GetElement(0) == size4.GetElement(0) == i
 assert size1.GetElement(1) == size2.GetElement(1) == size3.GetElement(1) == size4.GetElement(1) == i
 
+
+# smart pointers
+im = itk.Image.UC2.New()
+assert im.GetPointer() != None
+assert im.GetPointer().__class__ != im.__class__
+
+median.SetInput( im )
+assert repr(median.GetInput().GetPointer()) == repr(im.GetPointer())
+
+median.SetInput( im.GetPointer() )
+assert repr(median.GetInput().GetPointer()) == repr(im.GetPointer())
+
+
+
+
+

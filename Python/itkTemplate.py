@@ -188,7 +188,7 @@ class itkTemplate:
       - a list of element (Ex: itk.Image[itk.UC, 2])
     """
     
-    if type(key) != types.TupleType and type(key) != types.ListType :
+    if type(parameters) != types.TupleType and type(parameters) != types.ListType :
       # parameters is a single element.
       # include it in a list to manage the 2 cases in the same way
       parameters = [parameters]

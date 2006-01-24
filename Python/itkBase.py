@@ -39,7 +39,7 @@ def LoadModule(name, namespace = None):
   data = module_data[name]
   if data:
     for dep in data.depends:
-      LoadModule(dep)
+      LoadModule(dep, namespace)
   
   # SWIG-generated modules have 'Python' appended. Only load the SWIG module if
   # we haven't already.

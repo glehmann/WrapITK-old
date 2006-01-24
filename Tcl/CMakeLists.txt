@@ -1,3 +1,18 @@
+###############################################################################
+# Add the ITKTclSupport library which contains the itkTclCommand class.
+
+BEGIN_WRAPPER_LIBRARY("ITKTclSupport")
+
+SET(WRAPPER_LIBRARY_DEPENDS ITKCommonA)
+SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon)
+# Need to include the current dir because the compiler needs to find itkTclCommand.h
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+SET(WRAPPER_LIBRARY_CXX_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/itkTclCommand.cxx") 
+
+WRAPPER_LIBRARY_CREATE_WRAP_FILES()
+WRAPPER_LIBRARY_CREATE_LIBRARY()
+
+###############################################################################
 # Configure pkgIndex.tcl for the build tree.
 SET(WRAP_ITK_DATA_ROOT "${WrapITK_BINARY_DIR}/Data")
 SET(WRAP_ITK_TEST_ROOT "${WrapITK_BINARY_DIR}/Testing")

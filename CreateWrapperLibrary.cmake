@@ -130,12 +130,21 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     SET(custom_library_prefix "")
     CREATE_WRAPPER_FILES_AND_LIBRARY("Tcl" "tcl" "${wrap_tcl_sources}"
       "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
-      ${library_type} ${custom_library_prefix})
+      "${library_type}" "${custom_library_prefix}")
   ENDIF(WRAP_ITK_TCL)
 
   IF(WRAP_ITK_PYTHON)
     SET(library_type "MODULE")
     SET(custom_library_prefix "_")
+MESSAGE("+++ Python")
+MESSAGE("+++ py")
+MESSAGE("+++ ${wrap_python_sources}")
+MESSAGE("+++ ${master_index_files}")
+MESSAGE("+++ ${library_idx_files}")
+MESSAGE("+++ ${gccxml_inc_file}" )
+MESSAGE("+++ ${library_type}")
+MESSAGE("+++ ${custom_library_prefix}")
+MESSAGE("---------------------------")
     CREATE_WRAPPER_FILES_AND_LIBRARY("Python" "py" "${wrap_python_sources}"
       "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
       ${library_type} ${custom_library_prefix})
@@ -164,7 +173,7 @@ MACRO(CREATE_WRAPPER_FILES_AND_LIBRARY language extension library_sources
   SET(cable_files "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx"
     ${WRAPPER_LIBRARY_CABLESWIG_INPUTS})
   # We add the library first so that there is a target to hang the file-creation dependencies on.
-  CREATE_WRAPPER_LIBRARY("${library_name}" "${library_sources}" "${language}" ${library_type} ${custom_library_prefix})
+  CREATE_WRAPPER_LIBRARY("${library_name}" "${library_sources}" "${language}" "${library_type}" "${custom_library_prefix}")
   CREATE_WRAPPER_FILES("${library_name}" "${language}" "${extension}" "${master_index_files}" "${library_idx_files}" 
     "${cable_files}" "${gccxml_inc_file}")
 ENDMACRO(CREATE_WRAPPER_FILES_AND_LIBRARY)
@@ -189,7 +198,7 @@ MACRO(CREATE_WRAPPER_FILES library_name language extension mdx_files library_idx
       "${master_index_files}" "${library_idx_files}")
     STRING(REGEX REPLACE "wrap_" "" simple_base_name "${base_name}")
     SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INTDIR}${simple_base_name}.${extension}")
-    INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/${language}-SWIG" FILES "${swig_language_file}")    
+#    INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/${language}-SWIG" FILES "${swig_language_file}")    
   ENDFOREACH(cable_file)
   
   # Create any extra CXX files from raw swig .i input files specified, and provide

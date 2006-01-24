@@ -67,7 +67,15 @@ MACRO(INCLUDE_WRAP_CMAKE module)
   # Global vars modified: WRAPPER_MODULE_NAME WRAPPER_FILE_NAME WRAPPER_TYPEDEFS
   #                       WRAPPER_INCLUDE_FILES WRAPPER_AUTO_INCLUDE_HEADERS
 
-  # preset the vars before include the file 
+  # We run into some trouble if there's a module with the same name as the
+  # wrapper library. Fix this.
+  STRING(TOUPPER "${module}" upper_module)
+  STRING(TOUPPER "${WRAPPER_LIBRARY_NAME}" upper_lib)
+  IF("${upper_module}" STREQUAL "${upper_lib}")
+    SET(module "${module}_module")
+  ENDIF("${upper_module}" STREQUAL "${upper_lib}")
+ 
+  # preset the vars before include the file
   SET(WRAPPER_MODULE_NAME "${module}")
   SET(WRAPPER_FILE_NAME "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${module}.cxx")
   SET(WRAPPER_TYPEDEFS)

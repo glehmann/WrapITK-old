@@ -3,6 +3,8 @@
 # WrapITK/Python/Configuration, and populate the 'itk' namespace with the templates.
 
 from itkTypes import *
+del itkCType # we don't need that from itkTypes!
+
 import itkBase, itkConfig, os
 # First, find all the xxxConfig.py files in the config_py dir, and strip off the
 # 'Config.py' part of the filename.

@@ -78,7 +78,7 @@ def LoadModule(name, namespace = None):
         setattr(this_module, pyClassName, templateContainer)
         if namespace:
           current_value = namespace.get(pyClassName)
-          if ( current_value != None and current_value != templateContainer:
+          if current_value != None and current_value != templateContainer:
             DebugPrintError("Namespace already has a value for %s, which is not an itkPyTemplate instance for class %s. Overwriting old value." %(pyClassName, cppClassName))
           namespace[pyClassName] = templateContainer
         

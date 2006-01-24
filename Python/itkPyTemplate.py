@@ -3,8 +3,6 @@ import inspect
 import sys
 from itkTypes import itkCType
    
-classToTemplateDict = {}
-
 
 def registerNoTpl(name, cl):
   itkPyTemplate.__templates__[normalizeName(name)] = cl

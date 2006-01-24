@@ -72,9 +72,9 @@ def LoadModule(name, namespace = None):
         # It doesn't matter if an itkPyTemplate for this class name already exists
         # since every instance of itkPyTemplate with the same name shares the same
         # state. So we just make a new instance and add the new templates.
-        templateContainer = itkPyTemplate(cppClassName)
+        templateContainer = itkPyTemplate.itkPyTemplate(cppClassName)
         try: templateContainer.__set__(templateParams, getattr(module, swigClassName))
-        except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(swigClassName, name, e))
+        except Exception, e: DebugPrintError("%s not loaded from module %s because of exception:\n %s" %(swigClassName, name, e))
         setattr(this_module, pyClassName, templateContainer)
         if namespace:
           current_value = namespace.get(pyClassName)

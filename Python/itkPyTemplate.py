@@ -33,11 +33,16 @@ class itkPyTemplate:
    __named_templates__ = {}
    
    def __init__(self,name):
-      # all instances of itkPyTemplate with the same name share a single __dict__
-      # and __template__ dictionary. This is essnetially the "borg" pattern
-      # where you can make many instances that share the same state.
-      self.__template__, self.__dict__ = itkPyTemplate.__named_templates__.setdefault(name, ({},{}))
-      self.__name__ = name
+      # all instances of itkPyTemplate with the same name share a single __dict__.
+      # This is essnetially the "borg" pattern where you can make many instances 
+      # that share the same state.
+      instance_dict = itkPyTemplate.__named_templates__.get(name)
+      if instance_dict:
+        self.__dict__ = instance_dict
+      else:
+        itkPyTemplate.__named_templates__[name] = self.__dict__
+        self.__template__ = {}
+        self.__name__ = name
   
    # define equality and hash methods to reflect the fact that itkPyTemplate instances
    # with the same name should be considered equal.

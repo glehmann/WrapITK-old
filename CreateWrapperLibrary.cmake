@@ -146,7 +146,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     SET(custom_library_prefix "")
     CREATE_WRAPPER_FILES_AND_LIBRARY("Java" "java" "${wrap_java_sources}"
       "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
-      ${library_type} ${custom_library_prefix})
+      "${library_type}" "${custom_library_prefix}")
   ENDIF(WRAP_ITK_JAVA)
   
   # STEP 5

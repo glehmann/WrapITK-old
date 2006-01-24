@@ -21,7 +21,7 @@ def LoadModule(name, namespace):
   data = module_data[name]
   if data:
     for dep in data.depends:
-      LoadModule(dep)
+      LoadModule(dep, namespace)
   module = LoadSWIGLibrary(moduleName)
   
   swig = namespace.setdefault('swig', imp.new_module('swig'))

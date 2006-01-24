@@ -327,7 +327,7 @@ MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx
   # identified by regular expressions. If we find one, we set a CSWIG flag
   # to define the NO_EXCEPTIONS symbol, which we use in itk.swg for conditional
   # compilation of the exception handling.
-  # TODO: Is any of this really necessary?
+  # TODO: Is any of this NO_EXCEPTIONS stuff really necessary?
   SET(no_exception_regex "${language}\\.xml$")
   SET(extra_args)
   SET(lang_no_exception_regex "${CSWIG_NO_EXCEPTION_REGEX_${language}}")

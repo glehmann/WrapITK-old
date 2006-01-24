@@ -66,7 +66,7 @@ ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
     SET(src "${CMAKE_CURRENT_SOURCE_DIR}/${file}.py")
     # recall that WRAP_ITK_INTDIR expands to nothing if no config types are set,
     # or to "CMAKE_CONFIG_INTDIR/" if there are such.
-    SET(tgt "${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_INTDIR}/${file}.py")
+    SET(tgt "${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_INTDIR}${file}.py")
     SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} "${tgt}")
     ADD_CUSTOM_COMMAND(SOURCE ${src}
       COMMAND ${CMAKE_COMMAND}

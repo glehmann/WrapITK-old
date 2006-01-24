@@ -73,7 +73,7 @@ def LoadModule(name, namespace = None):
         # since every instance of itkTemplate with the same name shares the same
         # state. So we just make a new instance and add the new templates.
         templateContainer = itkTemplate.itkTemplate(cppClassName)
-        try: templateContainer.__set__(templateParams, getattr(module, swigClassName))
+        try: templateContainer.__add__(templateParams, getattr(module, swigClassName))
         except Exception, e: DebugPrintError("%s not loaded from module %s because of exception:\n %s" %(swigClassName, name, e))
         setattr(this_module, pyClassName, templateContainer)
         if namespace:

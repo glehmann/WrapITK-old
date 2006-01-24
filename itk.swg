@@ -164,9 +164,11 @@ pySequenceTypemap(Size, 4)
       SWIG_fail;
     } else {
       // we have a simple pointer
+      PyErr_Clear();
       $1 = ptr;
     }
   } else {
+    PyErr_Clear();
     $1 = sptr->GetPointer();
   }
 }

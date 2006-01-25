@@ -31,7 +31,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     SET(wrap_java_sources ${wrap_java_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Java.cxx")
     # add each source's name to a java dependencies list for later use
     STRING(REGEX REPLACE wrap_ "" JAVA_DEP ${base_name})
-    SET(${WRAPPER_LIBRARY_NAME}_java_Depends_init ${${WRAPPER_LIBRARY_NAME}_java_Depends_init} ${JAVA_DEP}.java)
+    SET(${WRAPPER_LIBRARY_NAME}_java_depends_init ${${WRAPPER_LIBRARY_NAME}_java_depends_init} ${JAVA_DEP}.java)
     SET(library_idx_files ${library_idx_files} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}.idx" )
     SET(index_file_content "${index_file_content}${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}.idx\n")
     SET(install_index_file_content "${install_index_file_content}${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/ClassIndex/${base_name}.idx\n")
@@ -48,7 +48,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     SET(wrap_java_sources ${wrap_java_sources} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}Java.cxx")
   ENDFOREACH(source)
 
-  SET(${WRAPPER_LIBRARY_NAME}_JAVA_DEPENDS  "${${WRAPPER_LIBRARY_NAME}_java_Depends_init}" CACHE INTERNAL "" FORCE)
+  SET(${WRAPPER_LIBRARY_NAME}_JAVA_DEPENDS  "${${WRAPPER_LIBRARY_NAME}_java_depends_init}" CACHE INTERNAL "" FORCE)
 
   # Mark each of the generated sources as being generated, so CMake knows not to
   # expect them to already exist.

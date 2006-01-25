@@ -21,10 +21,7 @@ SET(WRAPPER_LIBRARY_GROUPS
     itkFiniteDifferenceImageFilter
     itkFixedArray
     itkFunctionBase
-    itkImageConstIterator
     itkImageFunction
-    itkImageRegionIterator
-    itkImageRegionConstIterator
     itkImageSource
     itkImageToImageFilter
     itkIndex
@@ -36,7 +33,22 @@ SET(WRAPPER_LIBRARY_GROUPS
     itkVectorContainer
     itkSimpleDataObjectDecorator
     itkImageBoundaryCondition
-    itkPointSet)
+    itkPointSet
+    itkImageConstIterator
+    itkImageConstIteratorWithIndex
+    itkImageIterator
+    itkImageIteratorWithIndex
+    itkImageLinearConstIteratorWithIndex
+    itkImageLinearIteratorWithIndex
+    itkImageRandomConstIteratorWithIndex
+    itkImageRandomIteratorWithIndex
+    itkImageRandomNonRepeatingConstIteratorWithIndex
+    itkImageRandomNonRepeatingIteratorWithIndex
+    itkImageRegionConstIterator
+    itkImageRegionConstIteratorWithIndex
+    itkImageRegionIterator
+    itkImageRegionIteratorWithIndex
+)
 
 SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics)
 

@@ -109,6 +109,11 @@ MACRO(CONFIGURE_PYTHON_TYPEMAPS outdir)
   # get the values interesting here
     STRING(REGEX REPLACE "(.*) # (.*) # (.*) # (.*)" "\\1" class_name "${wrapped_class}")
     STRING(REGEX REPLACE "(.*) # (.*) # (.*) # (.*)" "\\4" tpl_parameters "${wrapped_class}")
+    # quite in strange, but there is a syntax error if the >> are not separated by at least
+    # one whitespace
+    STRING(REGEX REPLACE ">" " > " tpl_parameters "${tpl_parameters}")
+    STRING(REGEX REPLACE "<" " < " tpl_parameters "${tpl_parameters}")
+
     IF("${class_name}" STREQUAL "SmartPointer")
       SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}%typemap(out) ${tpl_parameters} * {\n")
       SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  std::string methodName = \"\$symname\";\n")
@@ -116,8 +121,8 @@ MACRO(CONFIGURE_PYTHON_TYPEMAPS outdir)
       SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    // really return a pointer in that case\n")
       SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    \$result = SWIG_NewPointerObj((void *)(\$1), \$1_descriptor, 1);\n")
       SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  } else {\n")
-      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    itk::SmartPointer<${tpl_parameters} > * ptr;\n")
-      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    ptr = new itk::SmartPointer<${tpl_parameters} >(\$1);\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    itk::SmartPointer< ${tpl_parameters} > * ptr;\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    ptr = new itk::SmartPointer< ${tpl_parameters} >(\$1);\n")
       SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    \$result = SWIG_NewPointerObj((void *)(ptr), \$descriptor(itk::SmartPointer<${tpl_parameters} > *), 1);\n")
       SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  }\n")
       SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}}\n")

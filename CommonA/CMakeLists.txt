@@ -48,6 +48,7 @@ SET(WRAPPER_LIBRARY_GROUPS
     itkImageRegionConstIteratorWithIndex
     itkImageRegionIterator
     itkImageRegionIteratorWithIndex
+    itkVersor
 )
 
 SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics)

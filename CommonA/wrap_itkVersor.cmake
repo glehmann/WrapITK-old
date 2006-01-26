@@ -1,0 +1,3 @@
+WRAP_CLASS("Versor" SELF)
+  WRAP(${ITKM_D} ${ITKT_D})
+END_WRAP_CLASS()

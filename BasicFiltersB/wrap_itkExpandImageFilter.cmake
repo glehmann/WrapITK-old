@@ -1,4 +1,4 @@
-WRAP_CLASS("ExpandImageFilter" POINTER)
+WRAP_CLASS("itk::ExpandImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

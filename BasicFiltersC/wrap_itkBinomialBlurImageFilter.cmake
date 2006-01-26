@@ -1,4 +1,4 @@
-WRAP_CLASS("BinomialBlurImageFilter" POINTER)
+WRAP_CLASS("itk::BinomialBlurImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

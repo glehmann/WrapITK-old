@@ -1,4 +1,4 @@
-WRAP_CLASS("STAPLEImageFilter" POINTER)
+WRAP_CLASS("itk::STAPLEImageFilter" POINTER)
 
   # WRAP_INT(2)
   # WRAP_SIGN_INT(2)

@@ -1,4 +1,4 @@
-WRAP_CLASS("HConcaveImageFilter" POINTER)
+WRAP_CLASS("itk::HConcaveImageFilter" POINTER)
   WRAP_INT(2)
   WRAP_SIGN_INT(2)
   WRAP_REAL(2)

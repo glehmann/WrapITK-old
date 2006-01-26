@@ -1,3 +1,3 @@
-WRAP_CLASS("Point" DEREF)
+WRAP_CLASS("itk::Point" DEREF)
   SET(WRAPPER_TEMPLATES "${itk_Wrap_Point}")
 END_WRAP_CLASS()

@@ -1,4 +1,4 @@
-WRAP_CLASS("RecursiveSeparableImageFilter" POINTER)
+WRAP_CLASS("itk::RecursiveSeparableImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

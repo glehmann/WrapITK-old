@@ -1,10 +1,10 @@
-WRAP_CLASS("ScaleTransform" POINTER)
+WRAP_CLASS("itk::ScaleTransform" POINTER)
   FOREACH(d ${WRAP_DIMS})
     WRAP("${ITKM_D}${d}" "${ITKT_D},${d}")
   ENDFOREACH(d)
 END_WRAP_CLASS()
 
-WRAP_CLASS("ScaleLogarithmicTransform" POINTER)
+WRAP_CLASS("itk::ScaleLogarithmicTransform" POINTER)
   FOREACH(d ${WRAP_DIMS})
     WRAP("${ITKM_D}${d}" "${ITKT_D},${d}")
   ENDFOREACH(d)

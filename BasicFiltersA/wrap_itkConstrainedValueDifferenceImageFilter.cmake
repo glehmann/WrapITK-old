@@ -1,4 +1,4 @@
-WRAP_CLASS("ConstrainedValueDifferenceImageFilter" POINTER_WITH_SUPERCLASS)
+WRAP_CLASS("itk::ConstrainedValueDifferenceImageFilter" POINTER_WITH_SUPERCLASS)
   WRAP_INT(3)
   WRAP_SIGN_INT(3)
   WRAP_REAL(3)

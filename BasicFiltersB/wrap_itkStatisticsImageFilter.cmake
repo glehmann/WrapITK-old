@@ -1,4 +1,4 @@
-WRAP_CLASS("StatisticsImageFilter" POINTER)
+WRAP_CLASS("itk::StatisticsImageFilter" POINTER)
 
   WRAP_INT(1)
   WRAP_SIGN_INT(1)

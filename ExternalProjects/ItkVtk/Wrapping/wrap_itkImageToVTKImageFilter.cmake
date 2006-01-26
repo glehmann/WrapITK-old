@@ -1,4 +1,4 @@
-WRAP_CLASS("ImageToVTKImageFilter" POINTER)
+WRAP_CLASS("itk::ImageToVTKImageFilter" POINTER)
   WRAP_INT(1)
   WRAP_SIGN_INT(1)
   WRAP_REAL(1)

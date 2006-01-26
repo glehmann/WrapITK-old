@@ -1,4 +1,4 @@
-WRAP_CLASS("Matrix" DEREF)
+WRAP_CLASS("itk::Matrix" DEREF)
   WRAP("${ITKM_F}22" "${ITKT_F},2,2")
   WRAP("${ITKM_F}33" "${ITKT_F},3,3")
   WRAP("${ITKM_F}44" "${ITKT_F},4,4")

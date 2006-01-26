@@ -1,4 +1,4 @@
-WRAP_CLASS("VotingBinaryImageFilter" POINTER)
+WRAP_CLASS("itk::VotingBinaryImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

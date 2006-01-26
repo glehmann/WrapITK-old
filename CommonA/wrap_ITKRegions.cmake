@@ -1,7 +1,7 @@
-WRAP_NON_TEMPLATE_CLASS("Region")
-WRAP_NON_TEMPLATE_CLASS("MeshRegion")
+WRAP_NON_TEMPLATE_CLASS("itk::Region")
+WRAP_NON_TEMPLATE_CLASS("itk::MeshRegion")
 
-WRAP_CLASS("ImageRegion" DEREF)
+WRAP_CLASS("itk::ImageRegion" DEREF)
   FOREACH(d ${WRAP_DIMS})
     WRAP(${d} ${d})
   ENDFOREACH(d)  

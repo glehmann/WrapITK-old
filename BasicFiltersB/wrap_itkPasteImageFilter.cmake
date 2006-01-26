@@ -1,4 +1,4 @@
-WRAP_CLASS("PasteImageFilter" POINTER)
+WRAP_CLASS("itk::PasteImageFilter" POINTER)
 
   WRAP_INT(1)
   WRAP_SIGN_INT(1)

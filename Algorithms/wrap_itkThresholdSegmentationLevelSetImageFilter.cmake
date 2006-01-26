@@ -1,4 +1,4 @@
-WRAP_CLASS("ThresholdSegmentationLevelSetImageFilter" POINTER)
+WRAP_CLASS("itk::ThresholdSegmentationLevelSetImageFilter" POINTER)
 
   # WRAP_INT(2)
   # WRAP_SIGN_INT(2)

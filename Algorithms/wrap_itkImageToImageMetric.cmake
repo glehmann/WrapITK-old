@@ -1,4 +1,4 @@
-WRAP_CLASS("ImageToImageMetric" POINTER)
+WRAP_CLASS("itk::ImageToImageMetric" POINTER)
 
   WRAP_INT_DIMS(2 2+)
   WRAP_SIGN_INT_DIMS(2 2+)

@@ -1,4 +1,4 @@
-WRAP_CLASS("MeanImageFilter" POINTER)
+WRAP_CLASS("itk::MeanImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

@@ -1,4 +1,4 @@
-WRAP_CLASS("ZeroCrossingImageFilter" POINTER)
+WRAP_CLASS("itk::ZeroCrossingImageFilter" POINTER)
 
   WRAP_SIGN_INT(2)
   WRAP_REAL(2)

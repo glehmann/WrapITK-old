@@ -1,4 +1,4 @@
-WRAP_CLASS("GrayscaleConnectedOpeningImageFilter" POINTER)
+WRAP_CLASS("itk::GrayscaleConnectedOpeningImageFilter" POINTER)
   WRAP_INT(2)
   WRAP_SIGN_INT(2)
   WRAP_REAL(2)

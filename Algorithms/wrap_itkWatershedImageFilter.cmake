@@ -1,4 +1,4 @@
-WRAP_CLASS("WatershedImageFilter" POINTER)
+WRAP_CLASS("itk::WatershedImageFilter" POINTER)
 
   WRAP_INT(1)
   WRAP_SIGN_INT(1)

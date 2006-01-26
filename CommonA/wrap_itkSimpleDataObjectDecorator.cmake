@@ -1,4 +1,4 @@
-WRAP_CLASS("SimpleDataObjectDecorator" POINTER)
+WRAP_CLASS("itk::SimpleDataObjectDecorator" POINTER)
   WRAP("${ITKM_D}"   "${ITKT_D}")
   WRAP("${ITKM_F}"   "${ITKT_F}")
   WRAP("${ITKM_UL}"  "${ITKT_UL}")

@@ -1,4 +1,4 @@
-WRAP_CLASS("IsolatedConnectedImageFilter" POINTER)
+WRAP_CLASS("itk::IsolatedConnectedImageFilter" POINTER)
   WRAP_INT(2)
   WRAP_SIGN_INT(2)
   WRAP_REAL(2)

@@ -1,4 +1,4 @@
-WRAP_CLASS("SimpleFuzzyConnectednessScalarImageFilter")
+WRAP_CLASS("itk::SimpleFuzzyConnectednessScalarImageFilter")
 
 WRAP_INT(2)
 WRAP_SIGN_INT(2)

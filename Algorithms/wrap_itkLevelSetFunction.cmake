@@ -1,4 +1,4 @@
-WRAP_CLASS("LevelSetFunction" POINTER)
+WRAP_CLASS("itk::LevelSetFunction" POINTER)
 
   # WRAP_INT(1)
   # WRAP_SIGN_INT(1)

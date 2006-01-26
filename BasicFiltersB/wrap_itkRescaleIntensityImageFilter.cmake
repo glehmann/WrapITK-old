@@ -1,4 +1,4 @@
-WRAP_CLASS("RescaleIntensityImageFilter" POINTER_WITH_SUPERCLASS)
+WRAP_CLASS("itk::RescaleIntensityImageFilter" POINTER_WITH_SUPERCLASS)
   FOREACH(d ${WRAP_DIMS})
     COND_WRAP("${ITKM_ID${d}}${ITKM_ID${d}}"  "${ITKT_ID${d}},${ITKT_ID${d}}"  "D")
     COND_WRAP("${ITKM_ID${d}}${ITKM_IF${d}}"  "${ITKT_ID${d}},${ITKT_IF${d}}"  "D;F")

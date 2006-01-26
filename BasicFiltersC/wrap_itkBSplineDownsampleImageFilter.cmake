@@ -1,4 +1,4 @@
-WRAP_CLASS("BSplineDownsampleImageFilter" POINTER_WITH_SUPERCLASS)
+WRAP_CLASS("itk::BSplineDownsampleImageFilter" POINTER_WITH_SUPERCLASS)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

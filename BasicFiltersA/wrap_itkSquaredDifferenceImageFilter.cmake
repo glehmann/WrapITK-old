@@ -1,4 +1,4 @@
-WRAP_CLASS("SquaredDifferenceImageFilter" POINTER_WITH_SUPERCLASS)
+WRAP_CLASS("itk::SquaredDifferenceImageFilter" POINTER_WITH_SUPERCLASS)
   WRAP_INT(3)
   WRAP_SIGN_INT(3)
   WRAP_REAL(3)

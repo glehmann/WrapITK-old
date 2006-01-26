@@ -1,4 +1,4 @@
-WRAP_CLASS("NarrowBandLevelSetImageFilter" POINTER)
+WRAP_CLASS("itk::NarrowBandLevelSetImageFilter" POINTER)
 
   # WRAP_INT(2)
   # WRAP_SIGN_INT(2)

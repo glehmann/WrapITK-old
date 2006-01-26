@@ -1,4 +1,4 @@
-WRAP_CLASS("ImageSeriesReader" POINTER)
+WRAP_CLASS("itk::ImageSeriesReader" POINTER)
 
   FOREACH(d ${WRAP_DIMS})
     COND_WRAP("${ITKM_IUC${d}}" "${ITKT_IUC${d}}" "")  # neded to save in 8 bits

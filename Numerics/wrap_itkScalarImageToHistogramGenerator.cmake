@@ -1,4 +1,4 @@
-WRAP_CLASS("Statistics::ScalarImageToHistogramGenerator" POINTER)
+WRAP_CLASS("itk::Statistics::ScalarImageToHistogramGenerator" POINTER)
   WRAP_INT(1)
   WRAP_SIGN_INT(1)
   WRAP_REAL(1)

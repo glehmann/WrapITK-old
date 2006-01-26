@@ -1,4 +1,4 @@
-WRAP_CLASS("OrientImageFilter" POINTER)
+WRAP_CLASS("itk::OrientImageFilter" POINTER)
 
 #   WRAP_INT_DIMS(2 3)
 #   WRAP_SIGN_INT_DIMS(2 3)

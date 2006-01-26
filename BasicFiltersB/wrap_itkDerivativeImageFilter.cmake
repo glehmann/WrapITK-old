@@ -1,4 +1,4 @@
-WRAP_CLASS("DerivativeImageFilter" POINTER)
+WRAP_CLASS("itk::DerivativeImageFilter" POINTER)
 
   #WRAP_INT(2)
   WRAP_SIGN_INT(2)

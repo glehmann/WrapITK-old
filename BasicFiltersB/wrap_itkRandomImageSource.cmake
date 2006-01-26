@@ -1,4 +1,4 @@
-WRAP_CLASS("RandomImageSource" POINTER)
+WRAP_CLASS("itk::RandomImageSource" POINTER)
 
   WRAP_INT(1)
   WRAP_SIGN_INT(1)

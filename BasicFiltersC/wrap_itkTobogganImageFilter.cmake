@@ -1,4 +1,4 @@
-WRAP_CLASS("TobogganImageFilter" POINTER)
+WRAP_CLASS("itk::TobogganImageFilter" POINTER)
 
   WRAP_INT(1)
   WRAP_SIGN_INT(1)

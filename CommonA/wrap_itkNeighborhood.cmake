@@ -1,4 +1,4 @@
-WRAP_CLASS("Neighborhood" SELF)
+WRAP_CLASS("itk::Neighborhood" SELF)
   FOREACH(d ${WRAP_DIMS})
     COND_WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}"  "D")
     COND_WRAP("${ITKM_F}${d}"  "${ITKT_F},${d}"  "F")

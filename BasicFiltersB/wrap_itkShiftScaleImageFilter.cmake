@@ -1,4 +1,4 @@
-WRAP_CLASS("ShiftScaleImageFilter" POINTER)
+WRAP_CLASS("itk::ShiftScaleImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

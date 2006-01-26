@@ -1,4 +1,4 @@
-WRAP_CLASS("BinaryMagnitudeImageFilter" POINTER_WITH_SUPERCLASS)
+WRAP_CLASS("itk::BinaryMagnitudeImageFilter" POINTER_WITH_SUPERCLASS)
 
   WRAP_INT(3)
   WRAP_SIGN_INT(3)

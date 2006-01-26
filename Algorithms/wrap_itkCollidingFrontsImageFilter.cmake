@@ -1,4 +1,4 @@
-WRAP_CLASS("CollidingFrontsImageFilter" POINTER)
+WRAP_CLASS("itk::CollidingFrontsImageFilter" POINTER)
 
   # WRAP_INT(2)
   # WRAP_SIGN_INT(2)

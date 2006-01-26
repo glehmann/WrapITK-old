@@ -1,4 +1,4 @@
-WRAP_CLASS("AffineTransform" POINTER)
+WRAP_CLASS("itk::AffineTransform" POINTER)
   FOREACH(d ${WRAP_DIMS})
     WRAP("${ITKM_D}${d}" "${ITKT_D},${d}")
   ENDFOREACH(d)

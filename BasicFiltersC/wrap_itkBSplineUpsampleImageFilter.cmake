@@ -1,4 +1,4 @@
-WRAP_CLASS("BSplineUpsampleImageFilter" POINTER)
+WRAP_CLASS("itk::BSplineUpsampleImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

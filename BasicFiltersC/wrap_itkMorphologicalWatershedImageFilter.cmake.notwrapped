@@ -1,4 +1,4 @@
-WRAP_CLASS("MorphologicalWatershedImageFilter" POINTER)
+WRAP_CLASS("itk::MorphologicalWatershedImageFilter" POINTER)
 
   ##########################################################################
   # TODO: activate real types support once it have been include in the filter

@@ -1,4 +1,4 @@
-WRAP_CLASS("SegmentationLevelSetImageFilter" POINTER)
+WRAP_CLASS("itk::SegmentationLevelSetImageFilter" POINTER)
 
   # WRAP_INT(2)
   # WRAP_SIGN_INT(2)

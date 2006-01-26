@@ -1,4 +1,4 @@
-WRAP_CLASS("BinaryMedianImageFilter" POINTER)
+WRAP_CLASS("itk::BinaryMedianImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

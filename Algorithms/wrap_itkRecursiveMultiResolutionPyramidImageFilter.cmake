@@ -1,4 +1,4 @@
-WRAP_CLASS("RecursiveMultiResolutionPyramidImageFilter" POINTER)
+WRAP_CLASS("itk::RecursiveMultiResolutionPyramidImageFilter" POINTER)
 
   # WRAP_INT(2)
   # WRAP_SIGN_INT(2)

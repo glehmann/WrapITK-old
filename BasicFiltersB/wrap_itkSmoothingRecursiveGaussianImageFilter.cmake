@@ -1,4 +1,4 @@
-WRAP_CLASS("SmoothingRecursiveGaussianImageFilter" POINTER)
+WRAP_CLASS("itk::SmoothingRecursiveGaussianImageFilter" POINTER)
 
   WRAP_INT_DIMS(2 2+)
   WRAP_SIGN_INT_DIMS(2 2+)

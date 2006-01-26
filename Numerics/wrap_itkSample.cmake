@@ -1,4 +1,4 @@
-WRAP_CLASS("Statistics::Sample" POINTER)
+WRAP_CLASS("itk::Statistics::Sample" POINTER)
   WRAP("${ITKM_FAD1}"  "${ITKT_FAD1}")
   WRAP("${ITKM_FAF1}"  "${ITKT_FAF1}")
   WRAP("${ITKM_FAUL1}" "${ITKT_FAUL1}")

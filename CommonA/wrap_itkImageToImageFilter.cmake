@@ -1,4 +1,4 @@
-WRAP_CLASS("ImageToImageFilter" POINTER)
+WRAP_CLASS("itk::ImageToImageFilter" POINTER)
   FOREACH(d ${WRAP_DIMS})
     COND_WRAP("${ITKM_ID${d}}${ITKM_ID${d}}"  "${ITKT_ID${d}},${ITKT_ID${d}}"  "D")
     COND_WRAP("${ITKM_ID${d}}${ITKM_IF${d}}"  "${ITKT_ID${d}},${ITKT_IF${d}}"  "D;F")

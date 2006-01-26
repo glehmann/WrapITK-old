@@ -1,4 +1,4 @@
-WRAP_CLASS("SimilarityIndexImageFilter" POINTER)
+WRAP_CLASS("itk::SimilarityIndexImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

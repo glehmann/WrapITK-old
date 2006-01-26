@@ -1,4 +1,4 @@
-WRAP_CLASS("ImageSeriesWriter" POINTER)
+WRAP_CLASS("itk::ImageSeriesWriter" POINTER)
   FOREACH(d1 ${WRAP_DIMS})
     FOREACH(d2 ${WRAP_DIMS})
       IF("${d1}" GREATER "${d2}")

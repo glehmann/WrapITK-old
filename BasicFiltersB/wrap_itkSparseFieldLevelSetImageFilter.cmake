@@ -1,4 +1,4 @@
-WRAP_CLASS("SparseFieldLevelSetImageFilter" POINTER)
+WRAP_CLASS("itk::SparseFieldLevelSetImageFilter" POINTER)
 
   # WRAP_INT(2)
   # WRAP_SIGN_INT(2)

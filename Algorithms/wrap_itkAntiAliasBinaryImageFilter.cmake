@@ -1,4 +1,4 @@
-WRAP_CLASS("AntiAliasBinaryImageFilter" POINTER)
+WRAP_CLASS("itk::AntiAliasBinaryImageFilter" POINTER)
 
   # WRAP_INT(2)
   # WRAP_SIGN_INT(2)

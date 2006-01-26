@@ -1,4 +1,4 @@
-WRAP_CLASS("HausdorffDistanceImageFilter" POINTER)
+WRAP_CLASS("itk::HausdorffDistanceImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

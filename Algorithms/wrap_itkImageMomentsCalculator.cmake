@@ -1,4 +1,4 @@
-WRAP_CLASS("ImageMomentsCalculator" POINTER)
+WRAP_CLASS("itk::ImageMomentsCalculator" POINTER)
 
   WRAP_INT(1)
   WRAP_SIGN_INT(1)

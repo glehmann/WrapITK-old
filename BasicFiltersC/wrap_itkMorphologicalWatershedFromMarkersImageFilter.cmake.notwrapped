@@ -1,4 +1,4 @@
-WRAP_CLASS("MorphologicalWatershedFromMarkersImageFilter" POINTER)
+WRAP_CLASS("itk::MorphologicalWatershedFromMarkersImageFilter" POINTER)
 
   COND_WRAP("${ITKM_ID2}${ITKM_IUL2}" "${ITKT_ID2},${ITKT_IUL2}" "D") # needed for watershed
   COND_WRAP("${ITKM_ID2}${ITKM_IUS2}" "${ITKT_ID2},${ITKT_IUS2}" "D;US")

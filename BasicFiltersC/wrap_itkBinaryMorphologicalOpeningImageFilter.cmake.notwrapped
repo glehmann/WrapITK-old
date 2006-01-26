@@ -1,4 +1,4 @@
-WRAP_CLASS("BinaryMorphologicalOpeningImageFilter" POINTER)
+WRAP_CLASS("itk::BinaryMorphologicalOpeningImageFilter" POINTER)
 
   COND_WRAP("${ITKM_IF2}${ITKM_IF2}${ITKM_SEF2}"    "${ITKT_IF2},${ITKT_IF2},${ITKT_SEF2}"    "F")
   COND_WRAP("${ITKM_IF3}${ITKM_IF3}${ITKM_SEF3}"    "${ITKT_IF3},${ITKT_IF3},${ITKT_SEF3}"    "F")

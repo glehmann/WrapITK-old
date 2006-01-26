@@ -1,4 +1,4 @@
-WRAP_CLASS("BinaryPruningImageFilter" POINTER)
+WRAP_CLASS("itk::BinaryPruningImageFilter" POINTER)
   WRAP_INT_DIMS(2 2)
   WRAP_REAL_DIMS(2 2)
 END_WRAP_CLASS()

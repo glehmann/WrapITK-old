@@ -1,4 +1,4 @@
-WRAP_CLASS("HMaximaImageFilter" POINTER)
+WRAP_CLASS("itk::HMaximaImageFilter" POINTER)
   WRAP_INT(2)
   WRAP_SIGN_INT(2)
   WRAP_REAL(2)

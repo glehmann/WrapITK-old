@@ -1,4 +1,4 @@
-WRAP_CLASS("TileImageFilter" POINTER)
+WRAP_CLASS("itk::TileImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

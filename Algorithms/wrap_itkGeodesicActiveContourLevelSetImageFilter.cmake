@@ -1,4 +1,4 @@
-WRAP_CLASS("GeodesicActiveContourLevelSetImageFilter" POINTER)
+WRAP_CLASS("itk::GeodesicActiveContourLevelSetImageFilter" POINTER)
 
   # WRAP_INT(2)
   # WRAP_SIGN_INT(2)

@@ -1,4 +1,4 @@
-WRAP_CLASS("CurvatureFlowImageFilter" POINTER)
+WRAP_CLASS("itk::CurvatureFlowImageFilter" POINTER)
 
   # WRAP_INT(2)
   # WRAP_SIGN_INT(2)

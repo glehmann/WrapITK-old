@@ -1,4 +1,4 @@
-WRAP_CLASS("VTKImageImport" POINTER)
+WRAP_CLASS("itk::VTKImageImport" POINTER)
 
   WRAP_INT(1)
   WRAP_SIGN_INT(1)

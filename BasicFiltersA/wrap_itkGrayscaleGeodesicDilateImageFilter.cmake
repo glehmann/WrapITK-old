@@ -1,4 +1,4 @@
-WRAP_CLASS("GrayscaleGeodesicDilateImageFilter" POINTER)
+WRAP_CLASS("itk::GrayscaleGeodesicDilateImageFilter" POINTER)
   WRAP_INT(2)
   WRAP_SIGN_INT(2)
   WRAP_REAL(2)

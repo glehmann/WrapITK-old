@@ -1,4 +1,4 @@
-WRAP_CLASS("PermuteAxesImageFilter" POINTER)
+WRAP_CLASS("itk::PermuteAxesImageFilter" POINTER)
 
   WRAP_INT(1)
   WRAP_SIGN_INT(1)

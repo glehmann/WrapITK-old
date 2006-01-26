@@ -1,4 +1,4 @@
-WRAP_CLASS("ThresholdLabelerImageFilter" POINTER_WITH_SUPERCLASS)
+WRAP_CLASS("itk::ThresholdLabelerImageFilter" POINTER_WITH_SUPERCLASS)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

@@ -1,4 +1,4 @@
-WRAP_CLASS("LaplacianSegmentationLevelSetImageFilter")
+WRAP_CLASS("itk::LaplacianSegmentationLevelSetImageFilter")
 
 # WRAP_INT(3)
 # WRAP_SIGN_INT(3)

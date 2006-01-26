@@ -1,4 +1,4 @@
-WRAP_CLASS("ResampleImageFilter" POINTER)
+WRAP_CLASS("itk::ResampleImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

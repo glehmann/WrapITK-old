@@ -1,4 +1,4 @@
-WRAP_CLASS("JoinSeriesImageFilter" POINTER)
+WRAP_CLASS("itk::JoinSeriesImageFilter" POINTER)
   FOREACH(d1 ${WRAP_DIMS})
     FOREACH(d2 ${WRAP_DIMS})
       IF("${d1}" LESS "${d2}")

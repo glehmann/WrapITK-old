@@ -1,4 +1,4 @@
-WRAP_CLASS("TernaryMagnitudeImageFilter" POINTER_WITH_SUPERCLASS)
+WRAP_CLASS("itk::TernaryMagnitudeImageFilter" POINTER_WITH_SUPERCLASS)
   WRAP_INT(4)
   WRAP_SIGN_INT(4)
   WRAP_REAL(4)

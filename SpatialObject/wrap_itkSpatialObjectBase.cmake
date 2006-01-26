@@ -1,4 +1,4 @@
-WRAP_CLASS("SpatialObject" POINTER)
+WRAP_CLASS("itk::SpatialObject" POINTER)
   FOREACH(d ${WRAP_DIMS})
     WRAP("${d}" "${d}")
   ENDFOREACH(d)

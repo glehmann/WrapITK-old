@@ -1,4 +1,4 @@
-WRAP_CLASS("OtsuThresholdImageFilter" POINTER)
+WRAP_CLASS("itk::OtsuThresholdImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

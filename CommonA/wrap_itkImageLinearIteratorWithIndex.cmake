@@ -1,4 +1,4 @@
-WRAP_CLASS("ImageLinearIteratorWithIndex" SELF)
+WRAP_CLASS("itk::ImageLinearIteratorWithIndex" SELF)
   WRAP_INT(1)
   WRAP_SIGN_INT(1)
   WRAP_REAL(1)

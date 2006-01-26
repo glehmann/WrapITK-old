@@ -1,4 +1,4 @@
-WRAP_CLASS("LaplacianSharpeningImageFilter" POINTER)
+WRAP_CLASS("itk::LaplacianSharpeningImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

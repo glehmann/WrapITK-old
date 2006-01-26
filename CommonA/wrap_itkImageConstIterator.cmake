@@ -1,4 +1,4 @@
-WRAP_CLASS("ImageConstIterator" SELF)
+WRAP_CLASS("itk::ImageConstIterator" SELF)
   WRAP_INT(1)
   WRAP_SIGN_INT(1)
   WRAP_REAL(1)

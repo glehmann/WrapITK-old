@@ -1,4 +1,4 @@
-WRAP_CLASS("ThresholdImageFilter" POINTER)
+WRAP_CLASS("itk::ThresholdImageFilter" POINTER)
 
   WRAP_INT(1)
   WRAP_SIGN_INT(1)

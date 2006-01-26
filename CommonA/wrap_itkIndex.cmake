@@ -1,4 +1,4 @@
-WRAP_CLASS("Index" DEREF)
+WRAP_CLASS("itk::Index" DEREF)
   FOREACH(d ${WRAP_DIMS})
     WRAP(${d} ${d})
   ENDFOREACH(d)  

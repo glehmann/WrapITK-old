@@ -1,4 +1,4 @@
-WRAP_CLASS("ReflectImageFilter" POINTER)
+WRAP_CLASS("itk::ReflectImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

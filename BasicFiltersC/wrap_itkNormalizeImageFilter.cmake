@@ -1,4 +1,4 @@
-WRAP_CLASS("NormalizeImageFilter" POINTER)
+WRAP_CLASS("itk::NormalizeImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

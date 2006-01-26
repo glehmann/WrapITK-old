@@ -1,4 +1,4 @@
-WRAP_CLASS("GrayscaleMorphologicalClosingImageFilter" POINTER)
+WRAP_CLASS("itk::GrayscaleMorphologicalClosingImageFilter" POINTER)
   FOREACH(d ${WRAP_DIMS})
     COND_WRAP("${ITKM_IF${d}}${ITKM_IF${d}}${ITKM_SEF${d}}"    "${ITKT_IF${d}},${ITKT_IF${d}},${ITKT_SEF${d}}"    "F")
     COND_WRAP("${ITKM_ID${d}}${ITKM_ID${d}}${ITKM_SED${d}}"    "${ITKT_ID${d}},${ITKT_ID${d}},${ITKT_SED${d}}"    "D")

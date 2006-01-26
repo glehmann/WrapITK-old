@@ -1,4 +1,4 @@
-WRAP_CLASS("SimpleContourExtractorImageFilter" POINTER)
+WRAP_CLASS("itk::SimpleContourExtractorImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

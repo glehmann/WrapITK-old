@@ -1,4 +1,4 @@
-WRAP_CLASS("FiniteDifferenceFunction" POINTER)
+WRAP_CLASS("itk::FiniteDifferenceFunction" POINTER)
   WRAP_INT(1)
   WRAP_SIGN_INT(1)
   WRAP_REAL(1)

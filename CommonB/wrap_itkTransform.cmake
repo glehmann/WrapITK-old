@@ -1,6 +1,6 @@
-WRAP_NON_TEMPLATE_CLASS("TransformBase" POINTER)
+WRAP_NON_TEMPLATE_CLASS("itk::TransformBase" POINTER)
 
-WRAP_CLASS("Transform" POINTER)
+WRAP_CLASS("itk::Transform" POINTER)
   FOREACH(d1 ${WRAP_DIMS})
     FOREACH(d2 ${WRAP_DIMS})
       IF("${d1}" GREATER "${d2}" OR "${d1}" EQUAL "${d2}")

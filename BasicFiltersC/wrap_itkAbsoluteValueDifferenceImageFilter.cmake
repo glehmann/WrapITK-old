@@ -1,4 +1,4 @@
-WRAP_CLASS("AbsoluteValueDifferenceImageFilter" POINTER_WITH_SUPERCLASS)
+WRAP_CLASS("itk::AbsoluteValueDifferenceImageFilter" POINTER_WITH_SUPERCLASS)
 
   WRAP_INT(3)
   WRAP_SIGN_INT(3)

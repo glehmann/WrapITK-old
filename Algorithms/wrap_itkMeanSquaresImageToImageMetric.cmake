@@ -1,4 +1,4 @@
-WRAP_CLASS("MeanSquaresImageToImageMetric" POINTER)
+WRAP_CLASS("itk::MeanSquaresImageToImageMetric" POINTER)
 
   WRAP_INT_DIMS(2 2+)
   WRAP_SIGN_INT_DIMS(2 2+)

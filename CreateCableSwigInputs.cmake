@@ -214,8 +214,8 @@ MACRO(WRAP_CLASS class)
   # Global vars used: none
   # Global vars modified: WRAPPER_INCLUDE_FILES
   # drop the namespace prefix
-  STRING(REGEX REPLACE "^(.*::)*" "" base_name ${class})
-  STRING(REGEX REPLACE "^([0-9A-Za-z]*)::" "\\1" top_namespace ${class})
+  STRING(REGEX REPLACE "(.*::)" "" base_name "${class}")
+  STRING(REGEX REPLACE "^([0-9A-Za-z]*)::.*" "\\1" top_namespace "${class}")
   
   # Call the WRAP_NAMED_CLASS macro, including any optional arguments
   WRAP_NAMED_CLASS("${class}" "${top_namespace}{base_name}" ${ARGN})
@@ -300,7 +300,7 @@ MACRO(WRAP_NAMED_NON_TEMPLATE_CLASS class swig_name)
   # Lastly, this class takes an optional 'wrap method' parameter. Valid values are:
   # POINTER, POINTER_WITH_SUPERCLASS, DEREF and SELF.
 
-  WRAP_CLASS("${class}" "${swig_name}" ${ARGN})
+  WRAP_NAMED_CLASS("${class}" "${swig_name}" ${ARGN})
   ADD_ONE_TYPEDEF("${WRAPPER_WRAP_METHOD}" "${WRAPPER_CLASS}" "${WRAPPER_SWIG_NAME}")
 ENDMACRO(WRAP_NAMED_NON_TEMPLATE_CLASS class)
 
@@ -427,11 +427,7 @@ MACRO(ADD_ONE_TYPEDEF wrap_method wrap_class swig_name)
   # Global vars modified: WRAPPER_TYPEDEFS
   
   # get the base C++ class name (no namespaces) from wrap_class:
-  STRING(REGEX REPLACE
-    "(.*::)*"
-    ""
-    base_name
-    "${wrap_class}")
+  STRING(REGEX REPLACE "(.*::)" "" base_name "${wrap_class}")
 
   SET(wrap_pointer 0)
   

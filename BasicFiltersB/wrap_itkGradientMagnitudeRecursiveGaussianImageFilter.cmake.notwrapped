@@ -1,4 +1,4 @@
-WRAP_CLASS("GradientMagnitudeRecursiveGaussianImageFilter")
+WRAP_CLASS("itk::GradientMagnitudeRecursiveGaussianImageFilter")
 
 WRAP_INT(2)
 WRAP_SIGN_INT(2)

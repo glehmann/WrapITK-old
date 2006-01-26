@@ -1,4 +1,4 @@
-WRAP_CLASS("MatrixOffsetTransformBase" POINTER)
+WRAP_CLASS("itk::MatrixOffsetTransformBase" POINTER)
   FOREACH(d ${WRAP_DIMS})
     WRAP("${ITKM_D}${d}${d}" "${ITKT_D},${d},${d}")
   ENDFOREACH(d)

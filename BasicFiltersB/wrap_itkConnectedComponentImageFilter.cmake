@@ -1,4 +1,4 @@
-WRAP_CLASS("ConnectedComponentImageFilter" POINTER)
+WRAP_CLASS("itk::ConnectedComponentImageFilter" POINTER)
   FOREACH(d ${WRAP_DIMS})
     COND_WRAP("${ITKM_IUL${d}}${ITKM_IUL${d}}" "${ITKT_IUL${d}},${ITKT_IUL${d}}" "UL")
     

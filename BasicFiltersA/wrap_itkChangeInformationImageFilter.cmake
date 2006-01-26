@@ -1,4 +1,4 @@
-WRAP_CLASS("ChangeInformationImageFilter" POINTER)
+WRAP_CLASS("itk::ChangeInformationImageFilter" POINTER)
   WRAP_INT(1)
   WRAP_SIGN_INT(1)
   WRAP_REAL(1)

@@ -1,4 +1,4 @@
-WRAP_CLASS("TranslationTransform" POINTER)
+WRAP_CLASS("itk::TranslationTransform" POINTER)
   FOREACH(d ${WRAP_DIMS})
     WRAP("${ITKM_D}${d}" "${ITKT_D},${d}")
   ENDFOREACH(d)

@@ -1,4 +1,4 @@
-WRAP_CLASS("MinMaxCurvatureFlowImageFilter" POINTER)
+WRAP_CLASS("itk::MinMaxCurvatureFlowImageFilter" POINTER)
 
   # WRAP_INT(2)
   # WRAP_SIGN_INT(2)

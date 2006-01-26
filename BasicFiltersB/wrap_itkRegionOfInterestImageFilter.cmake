@@ -1,4 +1,4 @@
-WRAP_CLASS("RegionOfInterestImageFilter" POINTER)
+WRAP_CLASS("itk::RegionOfInterestImageFilter" POINTER)
 
   WRAP_INT(2)
   WRAP_SIGN_INT(2)

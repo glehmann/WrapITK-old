@@ -27,7 +27,12 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
   # First, include modules already in WRAPPER_LIBRARY_GROUPS, because those are
   # guaranteed to be processed first.
   FOREACH(module ${WRAPPER_LIBRARY_GROUPS})
+    # if the file doesn't exist, silently ignore it. This could happen if someone
+    # needed to manually add a wrap group that wasn't represented by an actual
+    # cmake file, but instead by a hand-made cxx file or something.
+    IF(EXISTS "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
       INCLUDE_WRAP_CMAKE("${module}")
+    ENDIF(EXISTS "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
   ENDFOREACH(module)
 
   # Now search for other wrap_*.cmake files to include

@@ -1,6 +1,6 @@
 // TODO: How much of this is useful anyway?
 
-%module(directors="1") SwigExtras
+%module SwigExtras
 %include "typemaps.i"
 %include "carrays.i"
 %array_functions(unsigned long, ULArray);

@@ -150,6 +150,8 @@ pySequenceTypemap(Size, 4)
   signed char &, const signed char &, \
   unsigned short &, const unsigned short &, \
   signed short &, const signed short &, \
+  unsigned int &, const unsigned int &, \
+  signed int &, const signed int &, \
   unsigned long &, const unsigned long &, \
   signed long &, const signed long & \
   {$result = PyInt_FromLong( *$1 );}

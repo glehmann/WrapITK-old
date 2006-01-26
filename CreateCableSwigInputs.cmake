@@ -32,6 +32,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
 
   # Now search for other wrap_*.cmake files to include
   FILE(GLOB wrap_cmake_files "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_*.cmake")
+  SORT("wrap_cmake_files")
   FOREACH(file ${wrap_cmake_files})
     # get the module name from wrap_module.cmake
     GET_FILENAME_COMPONENT(module "${file}" NAME_WE)
@@ -56,6 +57,29 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
   
   WRITE_MODULE_FILES()
 ENDMACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
+
+
+MACRO(SORT list_name)
+  SET(tmp1 "")
+  FOREACH(l ${${list_name}})
+    SET(inserted 0)
+    SET(tmp2 "")
+    FOREACH(l1 ${tmp1})
+      IF("${l}" STRLESS "${l1}" AND ${inserted} EQUAL 0)
+        SET(tmp2 ${tmp2} "${l}" "${l1}")
+        SET(inserted 1)
+      ELSE("${l}" STRLESS "${l1}" AND ${inserted} EQUAL 0)
+        SET(tmp2 ${tmp2} "${l1}")
+      ENDIF("${l}" STRLESS "${l1}" AND ${inserted} EQUAL 0)
+    ENDFOREACH(l1)
+    IF(${inserted} EQUAL 0)
+      SET(tmp1 ${tmp1} "${l}")
+    ELSE(${inserted} EQUAL 0)
+      SET(tmp1 ${tmp2})
+    ENDIF(${inserted} EQUAL 0)
+  ENDFOREACH(l)
+  SET(${list_name} ${tmp1})
+ENDMACRO(SORT list)
 
 
 MACRO(INCLUDE_WRAP_CMAKE module)

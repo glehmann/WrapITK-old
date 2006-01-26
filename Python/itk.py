@@ -95,6 +95,14 @@ def template(cl) :
   from itkTemplate import itkTemplate
   return itkTemplate.__class_to_template__[cl]
   
+# return ctype
+def ctype(s) :
+  from itkTypes import itkCType
+  ret = itkCType.GetCType(" ".join(s.split()))
+  if ret == None :
+    raise KeyError("Unrecognized C type ''" % s)
+  return ret
+  
 # return a class from an instance
 def classFromObject(obj) :
   import inspect

@@ -1,0 +1,10 @@
+/*
+ * This file is created by cmake.
+ * Don't modify this file, modify cmake files instead.
+ */
+
+#ifdef SWIGPYTHON
+
+@WRAP_ITK_TYPEMAP_TEXT@
+
+#endif // SWIGPYTHON

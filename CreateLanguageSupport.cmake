@@ -34,6 +34,7 @@ MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
   
    IF(WRAP_ITK_PYTHON)
       CONFIGURE_PYTHON_CONFIG_FILES("${PROJECT_BINARY_DIR}/Python/Configuration")
+      CONFIGURE_PYTHON_TYPEMAPS("${PROJECT_BINARY_DIR}/Python")
       
       IF(CMAKE_CONFIGURATION_TYPES)
         FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
@@ -102,6 +103,66 @@ ENDMACRO(LANGUAGE_SUPPORT_ADD_NON_TEMPLATE_CLASS)
 # Language-specific macros to configure various language support files.
 ################################################################################
 
+MACRO(CONFIGURE_PYTHON_TYPEMAPS outdir)
+  SET(WRAP_ITK_TYPEMAP_TEXT "")
+  FOREACH(wrapped_class ${WRAPPED_CLASSES})
+  # get the values interesting here
+    STRING(REGEX REPLACE "(.*) # (.*) # (.*) # (.*)" "\\1" class_name "${wrapped_class}")
+    STRING(REGEX REPLACE "(.*) # (.*) # (.*) # (.*)" "\\4" tpl_parameters "${wrapped_class}")
+    IF("${class_name}" STREQUAL "SmartPointer")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}%typemap(out) ${tpl_parameters} * {\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  std::string methodName = \"\$symname\";\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  if(methodName.find(\"GetPointer\") != -1) {\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    // really return a pointer in that case\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    \$result = SWIG_NewPointerObj((void *)(\$1), \$1_descriptor, 1);\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  } else {\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    itk::SmartPointer<${tpl_parameters} > * ptr;\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    ptr = new itk::SmartPointer<${tpl_parameters} >(\$1);\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    \$result = SWIG_NewPointerObj((void *)(ptr), \$descriptor(itk::SmartPointer<${tpl_parameters} > *), 1);\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  }\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}}\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}%typemap(in) ${tpl_parameters} * {\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  itk::SmartPointer< ${tpl_parameters} > * sptr;\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  ${tpl_parameters} * ptr;\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  if ((SWIG_ConvertPtr($input,(void **) &sptr, $descriptor(itk::SmartPointer< ${tpl_parameters} > *), SWIG_POINTER_EXCEPTION)) != -1) {\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    // it's a SmartPointer. Get the pointer and return it\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    $1 = sptr->GetPointer();\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  } else if ((SWIG_ConvertPtr($input,(void **) &ptr, $1_descriptor, SWIG_POINTER_EXCEPTION)) != -1) {\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    // we have a simple pointer. Just return it\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    $1 = ptr;\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  } else {\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    // not a pointer nor a SmartPointer... typemap fail !\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    SWIG_fail;\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  }\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  // clean the error before exit\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  PyErr_Clear();\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}}\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}%typemap(typecheck) ${tpl_parameters} * {\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  void *ptr;\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  if (SWIG_ConvertPtr(\$input, &ptr, \$1_descriptor, 0) == -1\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}      && SWIG_ConvertPtr(\$input, &ptr, \$descriptor(itk::SmartPointer<${tpl_parameters} > *), 0) == -1) {\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    _v = 0;\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    PyErr_Clear();\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  } else {\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}    _v = 1;\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}  }\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}}\n")
+      SET(WRAP_ITK_TYPEMAP_TEXT "${WRAP_ITK_TYPEMAP_TEXT}\n")
+    ENDIF("${class_name}" STREQUAL "SmartPointer")
+  ENDFOREACH(wrapped_class)
+
+  FILE(WRITE "${outdir}/${WRAPPER_LIBRARY_NAME}.swg" "${WRAP_ITK_TYPEMAP_TEXT}")
+
+  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/python-typemaps.swg.in"
+    "${outdir}/${WRAPPER_LIBRARY_NAME}.swg"
+    @ONLY IMMEDIATE)
+#   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python/Configuration"
+#     FILES "${outdir}/${WRAPPER_LIBRARY_NAME}Config.py")
+
+ENDMACRO(CONFIGURE_PYTHON_TYPEMAPS)
+
+
+
 MACRO(CONFIGURE_PYTHON_CONFIG_FILES outdir)
   # Pull the WRAPPED_CLASSES list apart and use it to create Python-specific
   # support files. This also uses the global WRAPPER_LIBRARY_DEPENDS,
@@ -149,6 +210,7 @@ MACRO(CONFIGURE_PYTHON_CONFIG_FILES outdir)
     @ONLY IMMEDIATE)
   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python/Configuration"
     FILES "${outdir}/${WRAPPER_LIBRARY_NAME}Config.py")
+
 ENDMACRO(CONFIGURE_PYTHON_CONFIG_FILES)
 
 

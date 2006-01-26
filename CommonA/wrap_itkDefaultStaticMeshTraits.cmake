@@ -1,4 +1,4 @@
-WRAP_CLASS(DefaultStaticMeshTraits DEREF)
+WRAP_CLASS("DefaultStaticMeshTraits" DEREF)
   FOREACH(d ${WRAP_DIMS})
     WRAP("${ITKM_D}${d}${d}${ITKM_D}${ITKM_D}${ITKM_D}" "${ITKT_D},${d},${d},${ITKT_D},${ITKT_D},${ITKT_D}")
   ENDFOREACH(d)  

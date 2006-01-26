@@ -1,6 +1,6 @@
 # auto include feature must be disable because all the following classes are in the same file
 SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
-WRAP_INCLUDE(EventObject)
+WRAP_INCLUDE("itkEventObject.h")
 
 WRAP_NON_TEMPLATE_CLASS("EventObject")
 WRAP_NON_TEMPLATE_CLASS("NoEvent")

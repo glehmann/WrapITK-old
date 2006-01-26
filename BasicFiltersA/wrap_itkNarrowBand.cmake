@@ -1,8 +1,8 @@
 
 SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
-WRAP_INCLUDE(NarrowBand)
+WRAP_INCLUDE("itkNarrowBand.h")
 
-WRAP_CLASS(BandNode DEREF)
+WRAP_CLASS("BandNode" DEREF)
   FOREACH(d ${WRAP_DIMS})
     COND_WRAP("I${d}${ITKM_D}"  "itk::Index < ${d} >, ${ITKT_D}"  "D")
     COND_WRAP("I${d}${ITKM_F}"  "itk::Index < ${d} >, ${ITKT_F}"  "F")
@@ -15,7 +15,7 @@ WRAP_CLASS(BandNode DEREF)
   ENDFOREACH(d)
 END_WRAP_CLASS()
 
-WRAP_CLASS(NarrowBand POINTER)
+WRAP_CLASS("NarrowBand" POINTER)
   FOREACH(d ${WRAP_DIMS})
     COND_WRAP("BNI${d}${ITKM_D}"  "itk::BandNode< itk::Index < ${d} >, ${ITKT_D} >"  "D")
     COND_WRAP("BNI${d}${ITKM_F}"  "itk::BandNode< itk::Index < ${d} >, ${ITKT_F} >"  "F")

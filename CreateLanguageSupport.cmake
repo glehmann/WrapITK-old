@@ -51,52 +51,28 @@ MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
 ENDMACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
 
 
-MACRO(LANGUAGE_SUPPORT_ADD_CLASS simple_name cpp_name swig_name templates wrap_pointer)
-  # Add the template definitions to the WRAPPED_CLASSES list. See above for 
-  # description of the format of this list.
-  
-  SET(sharp_regexp "([0-9A-Za-z]*)[ ]*#[ ]*(.*)")
-  FOREACH(template ${templates})
-    # Recall that 'templates' is a list of strings of the format "name # types"
-    # where 'name' is a mangled suffix to be added to the class name, and
-    # 'types' is a comma-separated list of the template parameters (in C++ form).
-    # 
-    # We use this data to create our string of the form
-    # "simple name # c++ name # swig name # c++ template parameters"
-    
-    STRING(REGEX REPLACE
-      "${sharp_regexp}"
-      "${simple_name} # ${cpp_name} # ${swig_name}\\1 # \\2"
-      wrapped_class 
-      "${template}")
-    SET(WRAPPED_CLASSES ${WRAPPED_CLASSES} "${wrapped_class}")
-    
-    IF(wrap_pointer)
-      STRING(REGEX REPLACE
-        "${sharp_regexp}"
-        "SmartPointer # itk::SmartPointer # ${swig_name}\\1_Pointer # ${cpp_name}<\\2>"
-        wrapped_class 
-        "${template}")
-      SET(WRAPPED_CLASSES ${WRAPPED_CLASSES} "${wrapped_class}")
-    ENDIF(wrap_pointer)
-  ENDFOREACH(template)
-  
+MACRO(LANGUAGE_SUPPORT_ADD_CLASS simple_name cpp_name swig_name wrap_pointer template_params)
+  # Add the template definitions to the WRAPPED_CLASSES list,
+  # where 'simple_name' is the name the class should have in the wrapped code
+  # (e.g. drop the itk), 'cpp_name' is the name of the templated class in c++ 
+  # (not including the template parameters!), 'swig_name' is the name of this
+  # particular template instantiation in the swig wrappers (e.g. itkImageF2)
+  # or just the base name if this isn't a templated class,  and
+  # 'template_params' are the raw text between the template angle brackets
+  # (e.g. the ... in itk::Image<...>) for this template instantiation.
+  # Leave template params empty (e.g. "") for non-template classes.
+  #
+  # We use this data to create our string of the form
+  # "simple name # c++ name # swig name # c++ template parameters"
+  # or "simple name # c++ name # swig name # NO_TEMPLATE"
+  # as required above.
+
+  IF(NOT template_params)
+    SET(template_params "NO_TEMPLATE")
+  ENDIF(NOT template_params)
+
+  SET(WRAPPED_CLASSES ${WRAPPED_CLASSES} "${simple_name} # ${cpp_name} # ${swig_name} # ${template_params}")
 ENDMACRO(LANGUAGE_SUPPORT_ADD_CLASS)
-
-
-MACRO(LANGUAGE_SUPPORT_ADD_NON_TEMPLATE_CLASS simple_name cpp_name swig_name wrap_pointer)
-  # Add the template definitions to the WRAPPED_CLASSES list. See above for 
-  # description of the format of this list.
-  
-  SET(WRAPPED_CLASSES ${WRAPPED_CLASSES}
-    "${simple_name} # ${cpp_name} # ${swig_name} # NO_TEMPLATE")
-    
-  IF(wrap_pointer)
-    SET(WRAPPED_CLASSES ${WRAPPED_CLASSES} 
-      "SmartPointer # itk::SmartPointer # ${swig_name}_Pointer # ${cpp_name}")
-  ENDIF(wrap_pointer)
-  
-ENDMACRO(LANGUAGE_SUPPORT_ADD_NON_TEMPLATE_CLASS)
 
 
 ################################################################################

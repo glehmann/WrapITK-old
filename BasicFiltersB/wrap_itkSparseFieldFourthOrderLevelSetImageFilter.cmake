@@ -1,6 +1,6 @@
 # auto include feature must be disable because all the following classes are in the same file
 SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
-WRAP_INCLUDE(SparseFieldFourthOrderLevelSetImageFilter)
+WRAP_INCLUDE("itkSparseFieldFourthOrderLevelSetImageFilter.h")
 
 WRAP_CLASS("NormalBandNode" DEREF)
   WRAP_REAL(1)

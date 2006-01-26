@@ -1,4 +1,4 @@
-WRAP_CLASS(ImageBase POINTER)
+WRAP_CLASS("ImageBase" POINTER)
   FOREACH(d ${WRAP_DIMS})
     WRAP("${d}"  "${d}")
   ENDFOREACH(d)

@@ -129,7 +129,13 @@ MACRO(WRITE_WRAP_CXX)
   # Create the '#include' statements.
   SET(CONFIG_WRAPPER_INCLUDES)
   FOREACH(inc ${WRAPPER_INCLUDE_FILES})
-    SET(CONFIG_WRAPPER_INCLUDES "${CONFIG_WRAPPER_INCLUDES}#include \"${inc}\"\n")
+    IF("${inc}" MATCHES "<.*>")
+      # if the include file is a <stdlib> include file, don't surround the name with qotes.
+      SET(include "${inc}")
+    ELSE("${inc}" MATCHES "<.*>")
+      SET(include "\"${inc}\"")
+    ENDIF("${inc}" MATCHES "<.*>")
+    SET(CONFIG_WRAPPER_INCLUDES "${CONFIG_WRAPPER_INCLUDES}#include ${include}\n")
   ENDFOREACH(inc)
   SET(CONFIG_WRAPPER_MODULE_NAME "${WRAPPER_MODULE_NAME}")
   SET(CONFIG_WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}")
@@ -441,36 +447,36 @@ MACRO(ADD_ONE_TYPEDEF wrap_method wrap_class swig_name)
   # note: need the backslahses before the semicolons because otherwise
   # cmake tries to interpret the quoted string as a ;-delimited list variable!
   IF("${wrap_method}" STREQUAL "")
-    SET(typedefs "typedef ${full_class_name} ${swig_name}\;")
+    SET(typedefs "typedef ${full_class_name} ${swig_name}")
   ENDIF("${wrap_method}" STREQUAL "")
 
   IF("${wrap_method}" STREQUAL "POINTER")
     SET(wrap_pointer 1)
-    SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}\;")
-    SET(typedefs ${typedefs} "typedef ${full_class_name}::Pointer::SmartPointer ${swig_name}_Pointer\;")
+    SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}")
+    SET(typedefs ${typedefs} "typedef ${full_class_name}::Pointer::SmartPointer ${swig_name}_Pointer")
   ENDIF("${wrap_method}" STREQUAL "POINTER")
  
   IF("${wrap_method}" STREQUAL "POINTER_WITH_SUPERCLASS")
     SET(wrap_pointer 1)
-    SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}\;")
-    SET(typedefs ${typedefs} "typedef ${full_class_name}::Pointer::SmartPointer ${swig_name}_Pointer\;")
-    SET(typedefs ${typedefs} "typedef ${full_class_name}::Superclass::Self ${swig_name}_Superclass\;")
-    SET(typedefs ${typedefs} "typedef ${full_class_name}::Superclass::Pointer::SmartPointer ${swig_name}_Superclass_Pointer\;")
+    SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}")
+    SET(typedefs ${typedefs} "typedef ${full_class_name}::Pointer::SmartPointer ${swig_name}_Pointer")
+    SET(typedefs ${typedefs} "typedef ${full_class_name}::Superclass::Self ${swig_name}_Superclass")
+    SET(typedefs ${typedefs} "typedef ${full_class_name}::Superclass::Pointer::SmartPointer ${swig_name}_Superclass_Pointer")
   ENDIF("${wrap_method}" STREQUAL "POINTER_WITH_SUPERCLASS")
 
   IF("${wrap_method}" STREQUAL "DEREF")
-    SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}\;")
+    SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}")
   ENDIF("${wrap_method}" STREQUAL "DEREF")
 
   IF("${wrap_method}" STREQUAL "SELF")
-    SET(typedefs "typedef ${full_class_name}::Self ${swig_name}\;")
+    SET(typedefs "typedef ${full_class_name}::Self ${swig_name}")
   ENDIF("${wrap_method}" STREQUAL "SELF")
 
 
   # insert a blank line to separate the classes
   SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}\n")
   FOREACH(typedef ${typedefs})
-    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${typedef}\n")
+    SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${typedef};\n")
   ENDFOREACH(typedef)
   
   # Note: if there's no template_parameters set, this will just pass an empty  

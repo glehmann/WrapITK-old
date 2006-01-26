@@ -218,8 +218,8 @@ MACRO(GCCXML_CREATE_XML_FILE library_name input_cxx output_xml gccxml_inc_file)
 # won't know how to generate that file). So, if certain dependencies are gone,
 # then the XML file will need to be regenerated too.
 
-   SET(CABLE_SWIG_DEPEND)
-   SET(regenerate_xml)
+  SET(CABLE_SWIG_DEPEND)
+  SET(regenerate_xml)
 
   IF(${CMAKE_MAKE_PROGRAM} MATCHES "make")
     # If the make program is not an IDE then include the depend file in a way 
@@ -227,7 +227,7 @@ MACRO(GCCXML_CREATE_XML_FILE library_name input_cxx output_xml gccxml_inc_file)
     IF(EXISTS "${output_xml}.depend")
     ELSE(EXISTS "${output_xml}.depend")
       CONFIGURE_FILE(
-        "${WRAP_ITK_CONFIG_DIR}/empty.depend.in"
+       "${WRAP_ITK_CONFIG_DIR}/empty.depend.in"
        "${output_xml}.depend" COPYONLY IMMEDIATE)
     ENDIF(EXISTS "${output_xml}.depend")
     INCLUDE("${output_xml}.depend")
@@ -239,7 +239,7 @@ MACRO(GCCXML_CREATE_XML_FILE library_name input_cxx output_xml gccxml_inc_file)
     # is run once after the build has completed once, and the depend files have
     # been created by cswig.
     INCLUDE("${output_xml}.depend" OPTIONAL)
-    ENDIF(${CMAKE_MAKE_PROGRAM} MATCHES "make")
+  ENDIF(${CMAKE_MAKE_PROGRAM} MATCHES "make")
 
   IF(CABLE_SWIG_DEPEND)
     # There are dependencies.  Make sure all the files are present.

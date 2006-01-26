@@ -35,7 +35,19 @@ OPTION(WRAP_rgb_unsigned_short "Wrap RGB< unsigned short > type" OFF)
 SET(WRAP_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (;)")
 SET(WRAP_ITK_INSTALL_LOCATION "/lib/InsightToolkit/WrapITK" CACHE STRING "Path to the top of the WrapITK install tree (will be appended to CMAKE_INSTALL_PREFIX).")
 
-SET(WRAP_ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg")
+SET(WRAP_ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg"
+${WrapITK_BINARY_DIR}/Python/ITKNumerics.swg
+${WrapITK_BINARY_DIR}/Python/ITKBasicFiltersA.swg
+${WrapITK_BINARY_DIR}/Python/ITKBasicFiltersB.swg
+${WrapITK_BINARY_DIR}/Python/ITKBasicFiltersC.swg
+${WrapITK_BINARY_DIR}/Python/VXLNumerics.swg
+${WrapITK_BINARY_DIR}/Python/ITKSpatialObject.swg
+${WrapITK_BINARY_DIR}/Python/ITKIO.swg
+${WrapITK_BINARY_DIR}/Python/ITKPyUtils.swg
+${WrapITK_BINARY_DIR}/Python/ITKAlgorithms.swg
+${WrapITK_BINARY_DIR}/Python/ITKCommonA.swg
+${WrapITK_BINARY_DIR}/Python/ITKCommonB.swg
+)
 SET(WRAP_ITK_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(WRAP_ITK_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")

@@ -4,7 +4,7 @@ try:
     import itkvtk
 except:
     pass
-from itkPyTemplate import itkPyTemplate
+from itkTemplate import itkTemplate
 
 
 def exploreTpl(tpl):
@@ -99,7 +99,7 @@ attrNameList.remove('PointSet')
 for name in attrNameList:
     attr = itk.__dict__[name]
     print "-----------", name, "-----------"
-    if isinstance(attr, itkPyTemplate) :
+    if isinstance(attr, itkTemplate) :
 	exploreTpl(attr)
     else :
 	exploreMethods(attr)

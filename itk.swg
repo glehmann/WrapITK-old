@@ -144,43 +144,6 @@ pySequenceTypemap(Size, 4)
 
 
 
-%typemap(out) itk::Image< unsigned char, 2 > * {
-  std::string methodName = "$symname";
-  if(methodName.find("GetPointer") != -1) {
-    // really return a pointer in that case
-    $result = SWIG_NewPointerObj((void *)($1), $1_descriptor, 1);
-  } else {
-    itk::SmartPointer<itk::Image< unsigned char, 2 > > * ptr;
-    ptr = new itk::SmartPointer<itk::Image< unsigned char, 2 > >($1);
-    $result = SWIG_NewPointerObj((void *)(ptr), $descriptor(itk::SmartPointer<itk::Image< unsigned char, 2 > > *), 1);
-  }
-}
-%typemap(in) itk::Image< unsigned char, 2 > * {
-  itk::SmartPointer<itk::Image< unsigned char, 2 > > * sptr;
-  itk::Image< unsigned char, 2 > * ptr;
-  if ((SWIG_ConvertPtr($input,(void **) &sptr, $descriptor(itk::SmartPointer<itk::Image< unsigned char, 2 > > *), SWIG_POINTER_EXCEPTION)) != -1) {
-    // it a SamrtPointer. Get the pointer and return it
-    $1 = sptr->GetPointer();
-  } else if ((SWIG_ConvertPtr($input,(void **) &ptr, $1_descriptor, SWIG_POINTER_EXCEPTION)) != -1) {
-    // we have a simple pointer. Just return it
-    $1 = ptr;
-  } else {
-    // not a pointer nor a SmartPointer... typemap fail !
-    SWIG_fail;
-  }
-  // clean the error before exit
-  PyErr_Clear();
-}
-%typemap(typecheck) itk::Image< unsigned char, 2 > * {
-  void *ptr;
-  if (SWIG_ConvertPtr($input, &ptr, $1_descriptor, 0) == -1
-      && SWIG_ConvertPtr($input, &ptr, $descriptor(itk::SmartPointer<itk::Image< unsigned char, 2 > > *), 0) == -1) {
-    _v = 0;
-    PyErr_Clear();
-  } else {
-    _v = 1;
-  }
-}
 
 
 %typemap(out) unsigned char &, const unsigned char &, \

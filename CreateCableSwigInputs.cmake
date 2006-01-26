@@ -27,12 +27,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
   # First, include modules already in WRAPPER_LIBRARY_GROUPS, because those are
   # guaranteed to be processed first.
   FOREACH(module ${WRAPPER_LIBRARY_GROUPS})
-    # if the file doesn't exist, silently ignore it. This could happen if someone
-    # needed to manually add a wrap group that wasn't represented by an actual
-    # cmake file, but instead by a hand-made cxx file or something.
-    IF(EXISTS "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
-      INCLUDE_WRAP_CMAKE("${module}")
-    ENDIF(EXISTS "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
+    INCLUDE_WRAP_CMAKE("${module}")
   ENDFOREACH(module)
 
   # Now search for other wrap_*.cmake files to include
@@ -96,6 +91,8 @@ MACRO(INCLUDE_WRAP_CMAKE module)
   # Global vars modified: WRAPPER_MODULE_NAME WRAPPER_FILE_NAME WRAPPER_TYPEDEFS
   #                       WRAPPER_INCLUDE_FILES WRAPPER_AUTO_INCLUDE_HEADERS
 
+  MESSAGE(STATUS "Creating cableswig input files for ${module}")
+
   # We run into some trouble if there's a module with the same name as the
   # wrapper library. Fix this.
   STRING(TOUPPER "${module}" upper_module)
@@ -125,28 +122,27 @@ MACRO(WRITE_WRAP_CXX)
   # Global vars used: WRAPPER_FILE_NAME WRAPPER_INCLUDE_FILES WRAPPER_MODULE_NAME and WRAPPER_TYPEDEFS
   # Global vars modified: none
 
-  IF(WRAPPER_TYPEDEFS)
-    # If no types were defined, don't bother with writing the file or adding it
-    # to the list!
-    
-    # Create the '#include' statements.
-    SET(CONFIG_WRAPPER_INCLUDES)
-    FOREACH(inc ${WRAPPER_INCLUDE_FILES})
-      SET(CONFIG_WRAPPER_INCLUDES "${CONFIG_WRAPPER_INCLUDES}#include \"${inc}\"\n")
-    ENDFOREACH(inc)
-    SET(CONFIG_WRAPPER_MODULE_NAME "${WRAPPER_MODULE_NAME}")
-    SET(CONFIG_WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}")
+  IF(NOT WRAPPER_TYPEDEFS AND NOT WRAPPER_INCLUDE_FILES)
+    MESSAGE("No content was generated for wrapper file ${WRAPPER_FILE_NAME}. Was this intentional?")
+  ENDIF(NOT WRAPPER_TYPEDEFS AND NOT WRAPPER_INCLUDE_FILES)
+  
+  # Create the '#include' statements.
+  SET(CONFIG_WRAPPER_INCLUDES)
+  FOREACH(inc ${WRAPPER_INCLUDE_FILES})
+    SET(CONFIG_WRAPPER_INCLUDES "${CONFIG_WRAPPER_INCLUDES}#include \"${inc}\"\n")
+  ENDFOREACH(inc)
+  SET(CONFIG_WRAPPER_MODULE_NAME "${WRAPPER_MODULE_NAME}")
+  SET(CONFIG_WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}")
 
-    # Create the cxx file
-    CONFIGURE_FILE(
-      "${WRAP_ITK_CONFIG_DIR}/wrap_.cxx.in"
-      "${WRAPPER_FILE_NAME}"
-      @ONLY IMMEDIATE)
-    
-    # And add the cxx file to the list of cableswig inputs.
-    SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS 
-      ${WRAPPER_LIBRARY_CABLESWIG_INPUTS} "${WRAPPER_FILE_NAME}")
-  ENDIF(WRAPPER_TYPEDEFS)
+  # Create the cxx file
+  CONFIGURE_FILE(
+    "${WRAP_ITK_CONFIG_DIR}/wrap_.cxx.in"
+    "${WRAPPER_FILE_NAME}"
+    @ONLY IMMEDIATE)
+  
+  # And add the cxx file to the list of cableswig inputs.
+  SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS 
+    ${WRAPPER_LIBRARY_CABLESWIG_INPUTS} "${WRAPPER_FILE_NAME}")
 ENDMACRO(WRITE_WRAP_CXX)
 
 
@@ -223,7 +219,7 @@ MACRO(WRAP_CLASS class)
   STRING(REGEX REPLACE "^([0-9A-Za-z]*)::.*" "\\1" top_namespace "${class}")
   
   # Call the WRAP_NAMED_CLASS macro, including any optional arguments
-  WRAP_NAMED_CLASS("${class}" "${top_namespace}{base_name}" ${ARGN})
+  WRAP_NAMED_CLASS("${class}" "${top_namespace}${base_name}" ${ARGN})
 
   # and include the class's header
   IF(WRAPPER_AUTO_INCLUDE_HEADERS)
@@ -258,7 +254,7 @@ MACRO(WRAP_NAMED_CLASS class swig_name)
   ENDIF("${ARGC}" EQUAL 2)
 
   IF("${ARGC}" EQUAL 3)
-    SET(WRAPPER_WRAP_METHOD "${ARGV1}")
+    SET(WRAPPER_WRAP_METHOD "${ARGV2}")
     SET(ok 0)
     FOREACH(opt POINTER POINTER_WITH_SUPERCLASS DEREF SELF)
       IF("${opt}" STREQUAL "${WRAPPER_WRAP_METHOD}")
@@ -435,35 +431,39 @@ MACRO(ADD_ONE_TYPEDEF wrap_method wrap_class swig_name)
   STRING(REGEX REPLACE "(.*::)" "" base_name "${wrap_class}")
 
   SET(wrap_pointer 0)
+  SET(template_parameters "${ARGV3}")
+  IF(template_parameters)
+    SET(full_class_name "${wrap_class}< ${template_parameters} >")
+  ELSE(template_parameters)
+    SET(full_class_name "${wrap_class}")
+  ENDIF(template_parameters)
   
-  IF(ARGV3)
-    SET(wrap_class "${wrap_class}< ${ARGV3} >")
-  ENDIF(ARGV3)
-    
+  # note: need the backslahses before the semicolons because otherwise
+  # cmake tries to interpret the quoted string as a ;-delimited list variable!
   IF("${wrap_method}" STREQUAL "")
-    SET(typedefs "typedef ${wrap_class} ${swig_name};")
+    SET(typedefs "typedef ${full_class_name} ${swig_name}\;")
   ENDIF("${wrap_method}" STREQUAL "")
 
   IF("${wrap_method}" STREQUAL "POINTER")
     SET(wrap_pointer 1)
-    SET(typedefs "typedef ${wrap_class}::${base_name} ${swig_name};")
-    SET(typedefs ${typedefs} "typedef ${wrap_class}::Pointer::SmartPointer ${swig_name}_Pointer;")
+    SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}\;")
+    SET(typedefs ${typedefs} "typedef ${full_class_name}::Pointer::SmartPointer ${swig_name}_Pointer\;")
   ENDIF("${wrap_method}" STREQUAL "POINTER")
  
   IF("${wrap_method}" STREQUAL "POINTER_WITH_SUPERCLASS")
     SET(wrap_pointer 1)
-    SET(typedefs "typedef ${wrap_class}::${base_name} ${swig_name};")
-    SET(typedefs ${typedefs} "typedef ${wrap_class}::Pointer::SmartPointer ${swig_name}_Pointer;")
-    SET(typedefs ${typedefs} "typedef ${wrap_class}::Superclass::Self ${swig_name}_Superclass;")
-    SET(typedefs ${typedefs} "typedef ${wrap_class}::Superclass::Pointer::SmartPointer ${swig_name}_Superclass_Pointer;")
+    SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}\;")
+    SET(typedefs ${typedefs} "typedef ${full_class_name}::Pointer::SmartPointer ${swig_name}_Pointer\;")
+    SET(typedefs ${typedefs} "typedef ${full_class_name}::Superclass::Self ${swig_name}_Superclass\;")
+    SET(typedefs ${typedefs} "typedef ${full_class_name}::Superclass::Pointer::SmartPointer ${swig_name}_Superclass_Pointer\;")
   ENDIF("${wrap_method}" STREQUAL "POINTER_WITH_SUPERCLASS")
 
   IF("${wrap_method}" STREQUAL "DEREF")
-    SET(typedefs "typedef ${wrap_class}::${base_name} ${swig_name};")
+    SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}\;")
   ENDIF("${wrap_method}" STREQUAL "DEREF")
 
   IF("${wrap_method}" STREQUAL "SELF")
-    SET(typedefs "typedef ${wrap_class}::Self ${swig_name};")
+    SET(typedefs "typedef ${full_class_name}::Self ${swig_name}\;")
   ENDIF("${wrap_method}" STREQUAL "SELF")
 
 
@@ -473,10 +473,10 @@ MACRO(ADD_ONE_TYPEDEF wrap_method wrap_class swig_name)
     SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${typedef}\n")
   ENDFOREACH(typedef)
   
-  # Note: if there's no argv3, this will just pass an empty list as the 
-  # template_params parameter of LANGUAGE_SUPPORT_ADD_CLASS, as required
+  # Note: if there's no template_parameters set, this will just pass an empty  
+  # list as the template_params parameter of LANGUAGE_SUPPORT_ADD_CLASS, as required
   # in non-template cases.
-  LANGUAGE_SUPPORT_ADD_CLASS("${base_name}" "${wrap_class}" "${swig_name}" "${ARGV3}")
+  LANGUAGE_SUPPORT_ADD_CLASS("${base_name}" "${full_class_name}" "${swig_name}" "${template_parameters}")
   
   IF(wrap_pointer)
     SMART_POINTER_TYPEMAP("itk::${class}")

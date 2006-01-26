@@ -191,19 +191,18 @@ ENDIF(WRAP_ITK_JAVA)
 ###############################################################################
 # set the default include files for the generated wrapper files
 SET(WRAPPER_DEFAULT_INCLUDE
-  Offset
-  Vector
-  CovariantVector
-  ContinuousIndex
-  Array
-  FixedArray
-  RGBPixel
-  Image
-  Point
-  LevelSet
-  BinaryBallStructuringElement
-  SpatialObject
-)
+  "itkOffset.h"
+  "itkVector.h"
+  "itkCovariantVector.h"
+  "itkContinuousIndex.h"
+  "itkArray.h"
+  "itkFixedArray.h"
+  "itkRGBPixel.h"
+  "itkImage.h"
+  "itkPoint.h"
+  "itkLevelSet.h"
+  "itkBinaryBallStructuringElement.h"
+  "itkSpatialObject.h")
 
 # make sure required stuff is set
 SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${ITK_INCLUDE_DIRS})

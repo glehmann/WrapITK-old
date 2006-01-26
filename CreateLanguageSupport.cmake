@@ -51,7 +51,7 @@ MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
 ENDMACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
 
 
-MACRO(LANGUAGE_SUPPORT_ADD_CLASS simple_name cpp_name swig_name wrap_pointer template_params)
+MACRO(LANGUAGE_SUPPORT_ADD_CLASS simple_name cpp_name swig_name template_params)
   # Add the template definitions to the WRAPPED_CLASSES list,
   # where 'simple_name' is the name the class should have in the wrapped code
   # (e.g. drop the itk), 'cpp_name' is the name of the templated class in c++ 

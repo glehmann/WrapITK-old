@@ -1,0 +1,21 @@
+# auto include feature must be disable because the class is not in the file
+# with the same name
+SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
+WRAP_INCLUDE("vcl_complex.h")
+WRAP_INCLUDE("vnl/vnl_vector.h")
+WRAP_INCLUDE("vnl/vnl_matrix.h")
+
+WRAP_CLASS("vnl_matrix" DEREF)
+  WRAP("_double" "double")
+  WRAP("_double_complex" "vcl_complex<double>")
+  WRAP("_float" "float")
+  WRAP("_float_complex" "vcl_complex<float>")
+  WRAP("_int" "int")
+  WRAP("_long" "long")
+  WRAP("_long_double" "long double")
+  WRAP("_long_double_complex" "vcl_complex<long double>")
+  WRAP("_schar" "signed char")
+  WRAP("_uchar" "unsigned char")
+  WRAP("_uint" "unsigned int")
+  WRAP("_ulong" "unsigned long")
+END_WRAP_CLASS()

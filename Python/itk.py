@@ -52,6 +52,7 @@ def size(imageOrFilter) :
 # return a structuring elt
 def strel(imageClass, radius=1) :
   # be sure to have an image class
+  imageClass = image(imageClass)
   imageClass = classFromObject(imageClass)
   (tpl, param) = template(imageClass)
   if tpl != Image :

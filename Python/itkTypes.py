@@ -26,7 +26,7 @@ class itkCType :
 
 F  = itkCType("float",          "F")
 D  = itkCType("double",         "D")
-LD = itkCType("long double",    "LD")
+LD = itkCType("long double",   "LD")
 UC = itkCType("unsigned char", "UC")
 US = itkCType("unsigned short","US")
 UI = itkCType("unsigned int",  "UI")

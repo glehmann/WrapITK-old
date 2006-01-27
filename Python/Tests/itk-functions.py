@@ -17,11 +17,13 @@ itk.echo(reader, sys.stdout)
 
 # test classFromObject
 assert itk.classFromObject(reader) == ReaderType
+assert itk.classFromObject(reader.GetPointer()) == ReaderType
 assert itk.classFromObject("dummy") == str
 
 # test template
 assert itk.template(ReaderType) == (itk.ImageFileReader, (IType,))
 assert itk.template(reader) == (itk.ImageFileReader, (IType,))
+assert itk.template(reader.GetPointer()) == (itk.ImageFileReader, (IType,))
 try:
   itk.template(str)
   raise Exception("unknown class should send an exception")

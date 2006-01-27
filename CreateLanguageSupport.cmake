@@ -46,7 +46,7 @@ MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
       # Just install the files once, regardless of how many different places
       # they were configured into. If there are no configuration types, the 
       # intdir expands to '', so no harm done.
-      INSTALL_PYTHON_LOADER_FILE("${PROJECT_BINARY_DIR}/Python/${WRAP_ITK_INTDIR}")
+      INSTALL_PYTHON_LOADER_FILE("${PROJECT_BINARY_DIR}/Python/${WRAP_ITK_INSTALL_INTDIR}")
    ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
 

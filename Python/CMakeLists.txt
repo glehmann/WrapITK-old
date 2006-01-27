@@ -70,13 +70,15 @@ ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
   
   FOREACH(file ${ITK_PYTHON_FILES})
     SET(src "${CMAKE_CURRENT_SOURCE_DIR}/${file}.py")
-    # recall that WRAP_ITK_INTDIR expands to nothing if no config types are set,
-    # or to "CMAKE_CONFIG_INTDIR/" if there are such.
-    SET(tgt "${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_INTDIR}${file}.py")
-    SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} "${tgt}")
+    # recall that WRAP_ITK_BUILD_INTDIR expands to nothing if no config types are set,
+    # or to "CMAKE_CONFIG_INTDIR/" if there are such. Likewise, WRAP_ITK_INSTALL_INTDIR
+    # expands to ${BUILD_TYPE}/ or nothing.
+    SET(copy_tgt "${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_BUILD_INTDIR}${file}.py")
+    SET(install_tgt "${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_INSTALL_INTDIR}${file}.py")
+    SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} "${install_tgt}")
     ADD_CUSTOM_COMMAND(SOURCE ${src}
       COMMAND ${CMAKE_COMMAND}
-      ARGS -E copy ${src} ${tgt}
+      ARGS -E copy ${src} ${copy_tgt}
       OUTPUTS ${tgt}
       TARGET copy_python_files
       COMMENT "source copy")

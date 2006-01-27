@@ -103,7 +103,7 @@ class itkTemplate:
       # short name does not contain :: and nested namespace
       # itk::Numerics::Sample -> itkSample
       import re
-      shortNameSize = len("itk" + re.sub(r'.*::', '', self.__name__))
+      shortNameSize = len(re.sub(r':.*:', '', self.__name__))
       attributeName = cl.__name__[shortNameSize:]
       
     if attributeName.isdigit() :

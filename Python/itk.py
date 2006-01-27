@@ -82,7 +82,7 @@ def image(input) :
 # return the template of a class and its parameters
 def template(cl) :
   from itkTemplate import itkTemplate
-  return itkTemplate.__class_to_template__[cl]
+  return itkTemplate.__class_to_template__[classFromObject(cl)]
   
 # return ctype
 def ctype(s) :

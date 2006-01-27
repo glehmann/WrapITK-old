@@ -429,7 +429,7 @@ MACRO(ADD_ONE_TYPEDEF wrap_method wrap_class swig_name)
   # Note: if there's no template_parameters set, this will just pass an empty  
   # list as the template_params parameter of LANGUAGE_SUPPORT_ADD_CLASS, as required
   # in non-template cases.
-  LANGUAGE_SUPPORT_ADD_CLASS("${base_name}" "${full_class_name}" "${swig_name}" "${template_parameters}")
+  LANGUAGE_SUPPORT_ADD_CLASS("${base_name}" "${wrap_class}" "${swig_name}" "${template_parameters}")
   
   IF(wrap_pointer)
     LANGUAGE_SUPPORT_ADD_CLASS("SmartPointer" "itk::SmartPointer" "${swig_name}_Pointer" "${full_class_name}")

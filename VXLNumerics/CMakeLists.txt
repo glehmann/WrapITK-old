@@ -1,5 +1,8 @@
 BEGIN_WRAPPER_LIBRARY("VXLNumerics")
 
+SET(WRAPPER_LIBRARY_GROUPS
+  vcl_complex
+) 
 # Set the required link libraries.
 # TODO: are these all the link libs needed? What about itkvcl?
 SET(WRAPPER_LIBRARY_LINK_LIBRARIES itkvnl itkvnl_algo itknetlib itkvnl_inst)

@@ -57,7 +57,7 @@ MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
 ENDMACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
 
 
-MACRO(LANGUAGE_SUPPORT_ADD_CLASS simple_name cpp_name swig_name template_params)
+MACRO(LANGUAGE_SUPPORT_ADD_CLASS simple_name cpp_name swig_name template_parameters)
   # Add the template definitions to the WRAPPED_CLASSES list,
   # where 'simple_name' is the name the class should have in the wrapped code
   # (e.g. drop the itk), 'cpp_name' is the name of the templated class in c++ 
@@ -73,9 +73,12 @@ MACRO(LANGUAGE_SUPPORT_ADD_CLASS simple_name cpp_name swig_name template_params)
   # or "simple name # c++ name # swig name # NO_TEMPLATE"
   # as required above.
 
-  IF(NOT template_params)
+  # the var passed in parameters of the macro can't be modified, so use a different name
+  IF("${template_parameters}" STREQUAL "")
     SET(template_params "NO_TEMPLATE")
-  ENDIF(NOT template_params)
+  ELSE("${template_parameters}" STREQUAL "")
+    SET(template_params "${template_parameters}")
+  ENDIF("${template_parameters}" STREQUAL "")
 
   SET(WRAPPED_CLASSES ${WRAPPED_CLASSES} "${simple_name} # ${cpp_name} # ${swig_name} # ${template_params}")
   IF("${cpp_name}" STREQUAL "itk::SmartPointer")

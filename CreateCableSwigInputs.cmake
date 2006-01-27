@@ -259,6 +259,7 @@ MACRO(WRITE_MODULE_FOR_LANGUAGE language)
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_if_different ${intermediate_location} ${final_location}
     OUTPUTS "${final_location}"
+    DEPENDS "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}.cxx" # force this one to be copied over too.
     TARGET "${WRAPPER_LIBRARY_NAME}_cxx_copy"
     COMMENT "Copy wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx to proper place for build, if necessary.")
 
@@ -287,11 +288,19 @@ MACRO(WRAP_CLASS class)
   # Global vars used: none
   # Global vars modified: WRAPPER_INCLUDE_FILES
   # drop the namespace prefix
-  STRING(REGEX REPLACE "(.*::)" "" base_name "${class}")
-  STRING(REGEX REPLACE "^([0-9A-Za-z]*)?(::)?.+" "\\1" top_namespace "${class}")
-  
+  IF("${class}" MATCHES "::")
+    # there's at least one namespace in the name
+    STRING(REGEX REPLACE ".*::" "" base_name "${class}")
+    STRING(REGEX REPLACE "^([^:]*::)?.+" "\\1" top_namespace "${class}")
+    STRING(REGEX REPLACE "::" "" top_namespace "${top_namespace}") # drop the :: from the namespace
+    SET(swig_name "${top_namespace}${base_name}")
+  ELSE("${class}" MATCHES "::")
+    # no namespaces
+    SET(swig_name "${class}")
+  ENDIF("${class}" MATCHES "::")
+
   # Call the WRAP_NAMED_CLASS macro, including any optional arguments
-  WRAP_NAMED_CLASS("${class}" "${top_namespace}${base_name}" ${ARGN})
+  WRAP_NAMED_CLASS("${class}" "${swig_name}" ${ARGN})
 
   # and include the class's header
   IF(WRAPPER_AUTO_INCLUDE_HEADERS)
@@ -412,7 +421,7 @@ MACRO(END_WRAP_CLASS)
   # Global vars modified: WRAPPER_TYPEDEFS
   
   # the regexp used to get the values separated by a #
-  SET(sharp_regexp "([0-9A-Za-z]*)[ ]*#[ ]*(.*)")
+  SET(sharp_regexp "([0-9A-Za-z_]*)[ ]*#[ ]*(.*)")
   FOREACH(wrap ${WRAPPER_TEMPLATES})
     STRING(REGEX REPLACE "${sharp_regexp}" "\\1" mangled_suffix "${wrap}")
     STRING(REGEX REPLACE "${sharp_regexp}" "\\2" template_params "${wrap}")

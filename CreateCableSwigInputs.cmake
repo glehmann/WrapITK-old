@@ -98,7 +98,7 @@ MACRO(INCLUDE_WRAP_CMAKE module)
   # Global vars modified: WRAPPER_MODULE_NAME WRAPPER_TYPEDEFS
   #                       WRAPPER_INCLUDE_FILES WRAPPER_AUTO_INCLUDE_HEADERS
 
-  MESSAGE(STATUS "Creating cableswig input files for ${module}")
+  MESSAGE(STATUS "${WRAPPER_LIBRARY_NAME}: Creating wrap_${module}.cxx")
 
   # We run into some trouble if there's a module with the same name as the
   # wrapper library. Fix this.
@@ -184,6 +184,9 @@ ENDMACRO(WRITE_WRAP_CXX)
 
 MACRO(WRITE_MODULE_FILES)
   # Write the wrap_LIBRARY_NAME.cxx file which specifies all the wrapped groups.
+  
+  MESSAGE(STATUS "${WRAPPER_LIBRARY_NAME}: Creating module wrapper files.")
+
   
   SET(group_list "")
   FOREACH(group_name ${WRAPPER_LIBRARY_GROUPS})

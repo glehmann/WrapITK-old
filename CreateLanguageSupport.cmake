@@ -36,6 +36,8 @@ MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
   # with reference to the multitude of templates.
   # Currently, only Python is supported.
   
+  MESSAGE(STATUS "${WRAPPER_LIBRARY_NAME}: Creating language support files.")
+
   CONFIGURE_TYPEMAPS("${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}")
   
   IF(WRAP_ITK_PYTHON)

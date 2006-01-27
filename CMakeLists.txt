@@ -45,7 +45,7 @@ SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")
 # files are sought. Easier to just move itk.swg to the place where the rest of
 # the .swg files will be written during the build.)
 ADD_CUSTOM_TARGET(copy_itk_swg ALL)
-SET(src "${WRAP_ITK_CONFIG_DIR}/itk.swg")
+SET(src "${WrapITK_SOURCE_DIR}/itk.swg")
 SET(tgt "${WRAP_ITK_SWIG_LIBRARY_DIR}/itk.swg")
 ADD_CUSTOM_COMMAND(SOURCE ${src}
   COMMAND ${CMAKE_COMMAND}

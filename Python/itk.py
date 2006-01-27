@@ -61,19 +61,7 @@ def strel(imageClass, radius=1) :
   # create the structuring element
   (pType, dim) = param
   st = BinaryBallStructuringElement[pType, dim]()
-  
-  # and fill the radius
-  if isinstance(radius, tuple) or isinstance(radius, list) :
-    # we must be sure the size of the given radius is the same
-    # than the image dim
-    if dim != len(radius) :
-      raise ValueError, "Radius must have the same size than the image"
-    s = st.GetRadius()
-    for i, elt in enumerate(radius) :
-      s.SetElement(i, elt)
-    st.SetRadius(s)
-  else :
-    st.SetRadius(radius)
+  st.SetRadius(radius)
     
   # finally, call the boring CreateStructuringElement() method
   st.CreateStructuringElement()

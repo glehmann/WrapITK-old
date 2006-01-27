@@ -222,7 +222,7 @@ MACRO(WRAP_CLASS class)
   # Global vars modified: WRAPPER_INCLUDE_FILES
   # drop the namespace prefix
   STRING(REGEX REPLACE "(.*::)" "" base_name "${class}")
-  STRING(REGEX REPLACE "^([0-9A-Za-z]*)::.*" "\\1" top_namespace "${class}")
+  STRING(REGEX REPLACE "^([0-9A-Za-z]*)?(::)?.+" "\\1" top_namespace "${class}")
   
   # Call the WRAP_NAMED_CLASS macro, including any optional arguments
   WRAP_NAMED_CLASS("${class}" "${top_namespace}${base_name}" ${ARGN})

@@ -243,7 +243,7 @@ MACRO(WRAP_CLASS class)
 
   # and include the class's header
   IF(WRAPPER_AUTO_INCLUDE_HEADERS)
-    WRAP_INCLUDE("itk${base_name}.h")
+    WRAP_INCLUDE("${swig_name}.h")
   ENDIF(WRAPPER_AUTO_INCLUDE_HEADERS)
 ENDMACRO(WRAP_CLASS)
 

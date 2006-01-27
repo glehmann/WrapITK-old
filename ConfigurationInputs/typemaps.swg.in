@@ -3,8 +3,4 @@
  * Don't modify this file, modify cmake files instead.
  */
 
-#ifdef SWIGPYTHON
-
 @CONFIG_TYPEMAP_TEXT@
-
-#endif // SWIGPYTHON

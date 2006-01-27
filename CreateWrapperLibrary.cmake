@@ -85,33 +85,57 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     @ONLY IMMEDIATE)
 
   # STEP 3
-  # Create a list of needed master index (mdx) files from the WRAPPER_LIBRARY_DEPENDS
-  # information. Check in both WRAPPER_MASTER_INDEX_OUTPUT_DIR (where the current
+  # Create a list of needed master index (mdx) files and SWIG library files
+  # from the WRAPPER_LIBRARY_DEPENDS information. 
+  # For mdx files, check in both WRAPPER_MASTER_INDEX_OUTPUT_DIR (where the current
   # project is putting new master index files) and WRAP_ITK_MASTER_INDEX_DIRECTORY
   # which, if it exists, is where a previously-built WrapITK has stored its master
   # indices. Also add the current master index.
+  # Similarly, for SWIG library files, check both WRAPPER_SWIG_LIBRARY_OUTPUT_DIR
+  # (where the current project is putting new SWIG typemaps) and 
+  # WRAP_ITK_SWIG_LIBRARY_DIR, which, if extant, is where a previous WrapITK has
+  # built/installed these libraries.
     
   SET(master_index_files "${library_master_index_file}")
-  SET(depends_libs ${WRAPPER_LIBRARY_DEPENDS})
-  FOREACH(dep ${depends_libs})
-    SET(no_dep_found 1)
+  SET(swig_library_files ${WRAPPER_SWIG_LIBRARY_FILES})
+  
+  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+    SET(no_mdx_found 1)
+    SET(no_swg_found 1)
+    
     SET(local_mdx "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${dep}.mdx")
     IF(EXISTS "${local_mdx}")
       SET(master_index_files ${master_index_files} "${local_mdx}")
-      SET(no_dep_found 0)
+      SET(no_mdx_found 0)
     ENDIF(EXISTS "${local_mdx}")
-    
-    IF(no_dep_found AND WRAP_ITK_MASTER_INDEX_DIRECTORY)
+    SET(local_swg "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}/${dep}.swg")
+    IF(EXISTS "${local_swg}")
+      SET(swig_library_files ${swig_library_files} "${local_swg}")
+      SET(no_swg_found 0)
+    ENDIF(EXISTS "${local_swg}")
+
+    IF(no_mdx_found AND WRAP_ITK_MASTER_INDEX_DIRECTORY) # WRAP_ITK_MASTER_INDEX_DIRECTORY may not be set
       SET(wrapitk_mdx "${WRAP_ITK_MASTER_INDEX_DIRECTORY}/${dep}.mdx")
       IF(EXISTS "${wrapitk_mdx}")
         SET(master_index_files ${master_index_files} "${wrapitk_mdx}")
-        SET(no_dep_found 0)
+        SET(no_mdx_found 0)
       ENDIF(EXISTS "${wrapitk_mdx}")
-    ENDIF(no_dep_found AND WRAP_ITK_MASTER_INDEX_DIRECTORY)
+    ENDIF(no_mdx_found AND WRAP_ITK_MASTER_INDEX_DIRECTORY)
+    IF(no_swg_found ) # WRAP_ITK_SWIG_LIBRARY_DIR is always set
+      SET(wrapitk_swg "${WRAP_ITK_SWIG_LIBRARY_DIR}/${dep}.swg")
+      IF(EXISTS "${wrapitk_swg}")
+        SET(swig_library_files ${swig_library_files} "${wrapitk_swg}")
+        SET(no_swg_found 0)
+      ENDIF(EXISTS "${wrapitk_swg}")
+    ENDIF(no_swg_found)
 
-    IF(no_dep_found)
-      MESSAGE(FATAL_ERROR "Could not find master index file ${dep}.mdx")
-    ENDIF(no_dep_found)
+    IF(no_mdx_found)
+      MESSAGE(FATAL_ERROR "Could not find master index file ${dep}.mdx. This file is required.")
+    ENDIF(no_mdx_found)
+    IF(no_swg_found)
+      MESSAGE("Could not find swig library file ${dep}.swg. It won't be used.")
+    ENDIF(no_swg_found)
+    
   ENDFOREACH(dep)
     
   # STEP 4
@@ -122,7 +146,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     SET(custom_library_prefix "")
     CREATE_WRAPPER_FILES_AND_LIBRARY("Perl" "pl" "${wrap_perl_sources}"
       "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
-      ${library_type} ${custom_library_prefix})
+      "${swig_library_files}" "${library_type}" "${custom_library_prefix}")
   ENDIF(WRAP_ITK_PERL)
   
   IF(WRAP_ITK_TCL)
@@ -130,7 +154,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     SET(custom_library_prefix "")
     CREATE_WRAPPER_FILES_AND_LIBRARY("Tcl" "tcl" "${wrap_tcl_sources}"
       "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
-      "${library_type}" "${custom_library_prefix}")
+      "${swig_library_files}" "${library_type}" "${custom_library_prefix}")
   ENDIF(WRAP_ITK_TCL)
 
   IF(WRAP_ITK_PYTHON)
@@ -138,7 +162,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     SET(custom_library_prefix "_")
     CREATE_WRAPPER_FILES_AND_LIBRARY("Python" "py" "${wrap_python_sources}"
       "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
-      ${library_type} ${custom_library_prefix})
+      "${swig_library_files}" "${library_type}" "${custom_library_prefix}")
   ENDIF(WRAP_ITK_PYTHON)
 
   IF(WRAP_ITK_JAVA)
@@ -146,7 +170,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     SET(custom_library_prefix "")
     CREATE_WRAPPER_FILES_AND_LIBRARY("Java" "java" "${wrap_java_sources}"
       "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
-      "${library_type}" "${custom_library_prefix}")
+      "${swig_library_files}" "${library_type}" "${custom_library_prefix}")
   ENDIF(WRAP_ITK_JAVA)
   
   # STEP 5
@@ -158,7 +182,7 @@ ENDMACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
 
 MACRO(CREATE_WRAPPER_FILES_AND_LIBRARY language extension library_sources
       master_index_files library_idx_files gccxml_inc_file 
-      library_type custom_library_prefix)
+      swig_library_files library_type custom_library_prefix)
       
   SET(library_name "${custom_library_prefix}${WRAPPER_LIBRARY_NAME}${language}")
   SET(cable_files "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx"
@@ -166,11 +190,12 @@ MACRO(CREATE_WRAPPER_FILES_AND_LIBRARY language extension library_sources
   # We add the library first so that there is a target to hang the file-creation dependencies on.
   CREATE_WRAPPER_LIBRARY("${library_name}" "${library_sources}" "${language}" "${library_type}" "${custom_library_prefix}")
   CREATE_WRAPPER_FILES("${library_name}" "${language}" "${extension}" "${master_index_files}" "${library_idx_files}" 
-    "${cable_files}" "${gccxml_inc_file}")
+    "${cable_files}" "${gccxml_inc_file}" "${swig_library_files}")
 ENDMACRO(CREATE_WRAPPER_FILES_AND_LIBRARY)
 
 
-MACRO(CREATE_WRAPPER_FILES library_name language extension mdx_files library_idx_files cable_input_files gccxml_inc_file)
+MACRO(CREATE_WRAPPER_FILES library_name language extension mdx_files library_idx_files 
+    cable_input_files gccxml_inc_file swig_library_files)
   FOREACH(cable_file ${cable_input_files})
     GET_FILENAME_COMPONENT(base_name "${cable_file}" NAME_WE)
     SET(xml_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}.xml")
@@ -186,7 +211,7 @@ MACRO(CREATE_WRAPPER_FILES library_name language extension mdx_files library_idx
     
     # Create the wrapper CXX file with cswig and an install rule for the generated language file
     CSWIG_CREATE_CXX_FILE("${library_name}" "${language}" "${idx_file}" "${xml_file}" "${cxx_file}"
-      "${master_index_files}" "${library_idx_files}")
+      "${master_index_files}" "${library_idx_files}" "${swig_library_files}")
     STRING(REGEX REPLACE "wrap_" "" simple_base_name "${base_name}")
     SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INSTALL_INTDIR}${simple_base_name}.${extension}")
     INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/${language}-SWIG" FILES "${swig_language_file}")    
@@ -312,15 +337,16 @@ SET(CSWIG_ARGS_Java
   -package InsightToolkit)
 SET(CSWIG_NO_EXCEPTION_REGEX_Python "ContinuousIndex\\.xml$")
 
-MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx master_index_files library_idx_files)
+MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx 
+  master_index_files library_idx_files swig_library_files)
    SET(cindex)
    FOREACH(mdx ${master_index_files})
      SET(cindex ${cindex} -Cindex "${mdx}")
    ENDFOREACH(mdx)
-   
-   SET(swig_inc_files)
-   FOREACH(file ${WRAP_ITK_SWG_FILES})
-       SET(swig_inc_files "-l${file}" ${swig_inc_files})
+
+   SET(swig_libs)
+   FOREACH(file ${swig_library_files})
+       SET(swig_libs "-l${file}" ${swig_libs})
    ENDFOREACH(file)
   
   # Some files shouldn't have swig-exception handling turned on. Currently they're
@@ -341,7 +367,7 @@ MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx
    ADD_CUSTOM_COMMAND(
      SOURCE ${input_idx}
      COMMAND ${CSWIG}
-     ARGS ${swig_inc_files}
+     ARGS ${swig_libs}
           -I${CSWIG_DEFAULT_LIB}
           ${CSWIG_IGNORE_WARNINGS}
           -noruntime
@@ -355,7 +381,7 @@ MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx
           ${input_xml}
      TARGET ${library_name}
      OUTPUTS ${output_cxx}
-     DEPENDS ${library_idx_files} ${WRAP_ITK_SWG_FILES} ${input_xml} ${CSWIG})
+     DEPENDS ${library_idx_files} ${WRAPPER_SWIG_INCLUDE_FILES} ${input_xml} ${CSWIG})
 ENDMACRO(CSWIG_CREATE_CXX_FILE)
 
 

@@ -145,7 +145,7 @@ pySequenceTypemap(Size, 4)
 
 
 
-
+// TODO: Make these language-neutral
 %typemap(out) unsigned char &, const unsigned char &, \
   signed char &, const signed char &, \
   unsigned short &, const unsigned short &, \
@@ -164,15 +164,14 @@ pySequenceTypemap(Size, 4)
 // a implementation of %extend in cableswig would also be great to move back __getitem__ method 
 // added in some files in this one
 
-#endif
+#endif // SWIGPYTHON
 
 
 %include std_string.i
 
-/* disable this c linkage warning on windows 
-TODO: Should this be handled in itkConfigWrapping.cmake? Some errors are already
-      disabled. (see around line 234 of that file.)
-*/
+/* disabling this c linkage warning on windows is now handled in itkConfigWrapping.cmake
+TODO: If that disablement works, delete this block entirely.
+
 %{
 #ifdef _WIN32
 #pragma warning ( disable : 4190 )
@@ -180,4 +179,4 @@ TODO: Should this be handled in itkConfigWrapping.cmake? Some errors are already
 #endif
 %}
 
-
+*/

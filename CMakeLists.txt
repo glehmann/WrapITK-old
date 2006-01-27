@@ -35,22 +35,29 @@ OPTION(WRAP_rgb_unsigned_short "Wrap RGB< unsigned short > type" OFF)
 SET(WRAP_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (;)")
 SET(WRAP_ITK_INSTALL_LOCATION "/lib/InsightToolkit/WrapITK" CACHE STRING "Path to the top of the WrapITK install tree (will be appended to CMAKE_INSTALL_PREFIX).")
 
-SET(WRAP_ITK_SWG_FILES "${WrapITK_SOURCE_DIR}/itk.swg"
-${WrapITK_BINARY_DIR}/Python/ITKNumerics.swg
-${WrapITK_BINARY_DIR}/Python/ITKBasicFiltersA.swg
-${WrapITK_BINARY_DIR}/Python/ITKBasicFiltersB.swg
-${WrapITK_BINARY_DIR}/Python/ITKBasicFiltersC.swg
-${WrapITK_BINARY_DIR}/Python/VXLNumerics.swg
-${WrapITK_BINARY_DIR}/Python/ITKSpatialObject.swg
-${WrapITK_BINARY_DIR}/Python/ITKIO.swg
-${WrapITK_BINARY_DIR}/Python/ITKPyUtils.swg
-${WrapITK_BINARY_DIR}/Python/ITKAlgorithms.swg
-${WrapITK_BINARY_DIR}/Python/ITKCommonA.swg
-${WrapITK_BINARY_DIR}/Python/ITKCommonB.swg
-)
+SET(WRAP_ITK_SWIG_LIBRARY_DIR "${WrapITK_BINARY_DIR}/SWIG")
 SET(WRAP_ITK_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(WRAP_ITK_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")
+
+# Also make sure that itk.swg is in the SWIG_LIBRARY_DIR
+# (It would be way too much trouble to have more different places where *.swg
+# files are sought. Easier to just move itk.swg to the place where the rest of
+# the .swg files will be written during the build.)
+ADD_CUSTOM_TARGET(copy_itk_swg ALL)
+SET(src "${WRAP_ITK_CONFIG_DIR}/itk.swg")
+SET(tgt "${WRAP_ITK_SWIG_LIBRARY_DIR}/itk.swg")
+ADD_CUSTOM_COMMAND(SOURCE ${src}
+  COMMAND ${CMAKE_COMMAND}
+  ARGS -E copy_if_different ${src} ${tgt}
+  OUTPUTS ${tgt}
+  TARGET copy_itk_swg
+  COMMENT "copy itk.swg file to proper place for build")
+# driver command to make the copy happen.
+ADD_CUSTOM_COMMAND(
+  SOURCE copy_itk_swg
+  DEPENDS ${tgt}
+  TARGET copy_itk_swg)
 
 # Now include itkConfigWrapping
 INCLUDE(itkConfigWrapping.cmake)
@@ -108,7 +115,7 @@ ENDIF(WRAP_ITK_JAVA)
 # Configure WrapITKConfig.cmake and FindWrapITK.cmale for external projects
 ###############################################################################
 # First, configure for use directly from the build dir.
-SET(CONFIG_SWIG_DIR "${WrapITK_SOURCE_DIR}")
+SET(CONFIG_SWIG_DIR "${WRAP_ITK_SWIG_INCLUDE_DIR}")
 SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
@@ -123,7 +130,7 @@ CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
                @ONLY IMMEDIATE)
 
 # Second, configure for installed use.
-SET(CONFIG_SWIG_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration")
+SET(CONFIG_SWIG_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/SWIG")
 SET(CONFIG_CONFIG_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration")
 SET(CONFIG_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration/Inputs")
 SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/lib")
@@ -144,8 +151,7 @@ FOREACH(f
  CreateLanguageSupport.cmake
  CreateWrapperLibrary.cmake
  WrapTypePrefix.cmake
- WrapTypeBase.cmake
- itk.swg)
+ WrapTypeBase.cmake)
   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration" FILES "${f}")
 ENDFOREACH(f)
 
@@ -164,6 +170,8 @@ FOREACH(f
  ConfigurationInputs/LanguageSupport/ModuleConfig.py.in)
   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration/Inputs/LanguageSupport" FILES "${f}")
 ENDFOREACH(f)
+
+INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/SWIG" FILES "ConfigurationInputs/itk.swg")
 
 INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}" FILES "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake")
 

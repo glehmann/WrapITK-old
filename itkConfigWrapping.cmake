@@ -21,7 +21,7 @@
 # WRAP_covariant_vector_float 
 # WRAP_covariant_vector_double 
 # WRAP_DIMS
-# WRAP_ITK_SWG_FILES 
+# WRAP_ITK_SWIG_INCLUDE_DIR 
 # WRAP_ITK_JAVA_DIR -- directory for java classes to be placed
 # WRAP_ITK_CONFIG_DIR -- directory where XXX.in files for CONFIGURE_FILE
 #                        commands are to be found.
@@ -91,6 +91,11 @@ MACRO(BEGIN_WRAPPER_LIBRARY library_name)
   # WRAPPER_LIBRARY_AUTO_INCLUDE_WRAP_FILES. A full path to each input is required.
   SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS )
 
+  # WRAPPER_SWIG_LIBRARY_FILES. List of swig .swg files to pass to cswig to control
+  # type handling and so forth. A full path to each include is required.
+  # The default is itk.swg.
+  SET(WRAPPER_SWIG_LIBRARY_FILES "${WRAP_ITK_SWIG_LIBRARY_DIR}/itk.swg")
+
   # WRAPPER_LIBRARY_SWIG_INPUTS. SWIG input files to be fed to swig (not
   # CableSwig). A full path to each input is required.
   SET(WRAPPER_LIBRARY_SWIG_INPUTS ) 
@@ -105,6 +110,7 @@ MACRO(BEGIN_WRAPPER_LIBRARY library_name)
 ENDMACRO(BEGIN_WRAPPER_LIBRARY)
 
 SET(WRAPPER_MASTER_INDEX_OUTPUT_DIR "${PROJECT_BINARY_DIR}/MasterIndex")
+SET(WRAPPER_SWIG_LIBRARY_OUTPUT_DIR "${PROJECT_BINARY_DIR}/SWIG")
 
 ###############################################################################
 # Find Required Packages
@@ -257,7 +263,7 @@ SET(CSWIG_DEFAULT_LIB ${CableSwig_DIR}/SWIG/Lib )
 
 SET(CSWIG_EXTRA_LINKFLAGS )
 IF(CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake)")
-  SET(CSWIG_EXTRA_LINKFLAGS "/IGNORE:4049")
+  SET(CSWIG_EXTRA_LINKFLAGS "/IGNORE:4049 /IGNORE:4109")
 ENDIF(CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake)")
 
 IF(CMAKE_SYSTEM MATCHES "IRIX.*")
@@ -276,7 +282,8 @@ ELSE(UNIX)
   SET(WRAP_ITK_LIBNAME_PREFIX "")
 ENDIF(UNIX)
 
-SET(CSWIG_IGNORE_WARNINGS -w362 -w389 -w503 -w508 -w509 -w516)
+# 467 is for warnings caused by typemap on overloaded methods
+SET(CSWIG_IGNORE_WARNINGS -w362 -w389 -w467 -w503 -w508 -w509 -w516)
 ADD_DEFINITIONS(-DSWIG_GLOBAL)
 
 

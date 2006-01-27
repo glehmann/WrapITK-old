@@ -48,7 +48,8 @@ SET(WRAPPER_LIBRARY_GROUPS
     itkImageRegionConstIteratorWithIndex
     itkImageRegionIterator
     itkImageRegionIteratorWithIndex
-)
+    itkVersor
+    SwigExtras)
 
 SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics)
 

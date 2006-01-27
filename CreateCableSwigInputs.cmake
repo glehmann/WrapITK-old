@@ -347,78 +347,11 @@ MACRO(END_WRAP_CLASS)
   
   # the regexp used to get the values separated by a #
   SET(sharp_regexp "([0-9A-Za-z]*)[ ]*#[ ]*(.*)")
-  SET(wrap_class)
-  SET(wrap_pointer 0)
-
-  # insert a blank line to separate the classes
-  SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      \n")
-  
-  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "")
-    FOREACH(wrap ${WRAPPER_TEMPLATES})
-      STRING(REGEX REPLACE
-        "${sharp_regexp}"
-        "typedef itk::${WRAPPER_CLASS}< \\2 > itk${class_name}\\1"
-        wrap_class "${wrap}"
-      )
-      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrap_class};\n")
-    ENDFOREACH(wrap)
-  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "")
-
-  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER")
-    SET(wrap_pointer 1)
-    FOREACH(wrap ${WRAPPER_TEMPLATES})
-      STRING(REGEX REPLACE
-        "${sharp_regexp}"
-        "typedef itk::${WRAPPER_CLASS}< \\2 >::${class_name} itk${class_name}\\1;\n      typedef itk::${WRAPPER_CLASS}< \\2 >::Pointer::SmartPointer itk${class_name}\\1_Pointer"
-        wrap_class "${wrap}"
-      )
-      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrap_class};\n")
-    ENDFOREACH(wrap)
-  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER")
-
-  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER_WITH_SUPERCLASS")
-    SET(wrap_pointer 1)
-    FOREACH(wrap ${WRAPPER_TEMPLATES})
-      STRING(REGEX REPLACE
-        "${sharp_regexp}"
-        "typedef itk::${WRAPPER_CLASS}< \\2 >::${class_name} itk${class_name}\\1;\n      typedef itk::${WRAPPER_CLASS}< \\2 >::Pointer::SmartPointer itk${class_name}\\1_Pointer;\n      typedef itk::${WRAPPER_CLASS}< \\2 >::Superclass::Self itk${class_name}\\1_Superclass;\n      typedef itk::${WRAPPER_CLASS}< \\2 >::Superclass::Pointer::SmartPointer itk${class_name}\\1_Superclass_Pointer"
-        wrap_class "${wrap}"
-      )
-      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrap_class};\n")
-    ENDFOREACH(wrap)
-  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "POINTER_WITH_SUPERCLASS")
-
-  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "DEREF")
-    FOREACH(wrap ${WRAPPER_TEMPLATES})
-      STRING(REGEX REPLACE
-        "${sharp_regexp}"
-        "typedef itk::${WRAPPER_CLASS}< \\2 >::${class_name} itk${class_name}\\1"
-        wrap_class "${wrap}"
-      )
-      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrap_class};\n")
-    ENDFOREACH(wrap)
-  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "DEREF")
-
-  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "SELF")
-    FOREACH(wrap ${WRAPPER_TEMPLATES})
-      STRING(REGEX REPLACE
-        "${sharp_regexp}"
-        "typedef itk::${WRAPPER_CLASS}< \\2 >::Self itk${class_name}\\1"
-        wrap_class "${wrap}"
-      )
-      SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}      ${wrap_class};\n")
-    ENDFOREACH(wrap)
-  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "SELF")
-
-  IF(wrap_pointer)
-    FOREACH(wrap ${WRAPPER_TEMPLATES})
-      STRING(REGEX REPLACE "${sharp_regexp}" "itk::${WRAPPER_CLASS}< \\2 >" typemap_type "${wrap}")
-      SMART_POINTER_TYPEMAP(${typemap_type})
-    ENDFOREACH(wrap)
-  ENDIF(wrap_pointer)
-  
-  LANGUAGE_SUPPORT_ADD_CLASS("${class_name}" "itk::${WRAPPER_CLASS}" "itk${class_name}"
-    "${WRAPPER_TEMPLATES}" ${wrap_pointer})
+  FOREACH(wrap ${WRAPPER_TEMPLATES})
+    STRING(REGEX REPLACE "${sharp_regexp}" "\\1" mangled_suffix "${wrap}")
+    STRING(REGEX REPLACE "${sharp_regexp}" "\\2" template_params "${wrap}")
+    ADD_ONE_TYPEDEF("${WRAPPER_WRAP_METHOD}" "${WRAPPER_CLASS}" "${WRAPPER_SWIG_NAME}${mangled_suffix}" "${template_params}")
+  ENDFOREACH(wrap)  
 ENDMACRO(END_WRAP_CLASS)
 
 MACRO(ADD_ONE_TYPEDEF wrap_method wrap_class swig_name)
@@ -485,12 +418,9 @@ MACRO(ADD_ONE_TYPEDEF wrap_method wrap_class swig_name)
   LANGUAGE_SUPPORT_ADD_CLASS("${base_name}" "${full_class_name}" "${swig_name}" "${template_parameters}")
   
   IF(wrap_pointer)
-    SMART_POINTER_TYPEMAP("itk::${class}")
+    LANGUAGE_SUPPORT_ADD_CLASS("SmartPointer" "itk::SmartPointer" "${swig_name}_Pointer" "${full_class_name}")
   ENDIF(wrap_pointer)
-
-  LANGUAGE_SUPPORT_ADD_NON_TEMPLATE_CLASS("${class_name}" "itk::${class}" "itk${class_name}"
-    ${wrap_pointer})
-ENDMACRO(WRAP_NON_TEMPLATE_CLASS)
+ENDMACRO(ADD_ONE_TYPEDEF)
 
 
 

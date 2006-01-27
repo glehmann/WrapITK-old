@@ -11,7 +11,6 @@ SET(ITKM_UI "UI")             # Mangle
 SET(ITKT_UL "unsigned long")  # Type
 SET(ITKM_UL "UL")             # Mangle
 
-
 SET(ITKT_SC "signed char")    # Type
 SET(ITKM_SC "SC")             # Mangle
 
@@ -29,6 +28,9 @@ SET(ITKM_F  "F")              # Mangle
 
 SET(ITKT_D  "double")         # Type
 SET(ITKM_D  "D")              # Mangle
+
+SET(ITKT_LD  "long double")   # Type
+SET(ITKM_LD  "LD")            # Mangle
 
 SET(ITKT_B  "bool")           # Type
 SET(ITKM_B  "B")              # Mangle

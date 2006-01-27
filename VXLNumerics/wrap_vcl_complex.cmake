@@ -1,5 +1,5 @@
 WRAP_CLASS("vcl_complex")
-  WRAP("_double" "double")
-  WRAP("_float" "float")
-  WRAP("_long_double" "long double")
+  WRAP("${ITKM_D}" "${ITKT_D}")
+  WRAP("${ITKM_F}" "${ITKT_F}")
+  WRAP("${ITKM_LD}" "${ITKT_LD}")
 END_WRAP_CLASS()

@@ -4,5 +4,5 @@ SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
 WRAP_INCLUDE("vnl/vnl_file_vector.h")
 
 WRAP_CLASS("vnl_file_vector" DEREF)
-  WRAP("_double" "double")
+  WRAP("${ITKM_D}" "${ITKT_D}")
 END_WRAP_CLASS()

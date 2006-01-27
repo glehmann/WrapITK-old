@@ -100,7 +100,7 @@ def ctype(s) :
   from itkTypes import itkCType
   ret = itkCType.GetCType(" ".join(s.split()))
   if ret == None :
-    raise KeyError("Unrecognized C type ''" % s)
+    raise KeyError("Unrecognized C type '%s'" % s)
   return ret
   
 # return a class from an instance

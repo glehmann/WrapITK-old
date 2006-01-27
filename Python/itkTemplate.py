@@ -1,6 +1,7 @@
 import types
 import inspect
 import sys
+import os
 import itkConfig
 from itkTypes import itkCType
    
@@ -224,7 +225,11 @@ class itkTemplate(object):
       try:
         import commands
         doxyname = self.__name__.replace("::" "_")
-        return commands.getoutput("man %s/man3/%s.3" %(itkTemplate.__doxygen_root__, doxyname))
+        man_path = "%s/man3/%s.3" %(itkTemplate.__doxygen_root__, doxyname)
+        if os.path.exists(man_path):
+          return commands.getoutput("man " + man_path)
+        else:
+          return object.__getattribute__(self, attr)
       except:
         return object.__getattribute__(self, attr)
     else:

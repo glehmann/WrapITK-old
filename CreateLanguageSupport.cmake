@@ -84,12 +84,7 @@ MACRO(LANGUAGE_SUPPORT_ADD_CLASS simple_name cpp_name swig_name template_params)
 ENDMACRO(LANGUAGE_SUPPORT_ADD_CLASS)
 
 
-MACRO(ADD_POINTER_TYPEMAP template_params)    
-  # There is a syntax error if the >> are not separated by at least
-  # one whitespace because then the compiler treats that as an operator>>.
-  STRING(REGEX REPLACE ">" " > " template_params "${template_params}")
-  STRING(REGEX REPLACE "<" " < " template_params "${template_params}")
-
+MACRO(ADD_POINTER_TYPEMAP template_params)
   SET(text "\n\n")
   SET(text "${text} // Typemaps for Smart Pointers to ${template_params} class. \n\n")
   SET(text "${text}%typemap(out) ${template_params} * {\n")

@@ -3,12 +3,29 @@
 
 SUBDIRS(PyUtils)
 
+###############################################################################
+# Add doxygen support : Experimental
+SET(DOXYGEN_MAN_PATH CACHE PATH "Experimental/Python only: Directory in which doxygen-generated man pages for itk classes are or should be placed.")
+IF(DOXYGEN_MAN_PATH)
+  # Configure the make_doxygen_conf.py script.
+  SET(CONFIG_ITK_PATH)
+  FOREACH(dir ${ITK_INCLUDE_DIRS})
+    SET(CONFIG_ITK_PATH "${CONFIG_ITK_PATH}'${dir}',\n")
+  ENDFOREACH(dir)
+  SET(CONFIG_WRAP_ITK_DOXYGEN_ROOT "${DOXYGEN_MAN_PATH}")
+  SET(CONFIG_ITK_SOURCE_DIR "${ITK_SOURCE_DIR}")
+  CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/make_doxygen_config.py.in" 
+    "${CMAKE_CURRENT_BINARY_DIR}/make_doxygen_config.py"
+    @ONLY IMMEDIATE)
+ENDIF(DOXYGEN_MAN_PATH)
+
 
 ###############################################################################
 # Configure the path-dependent itkConfig.py
 
 SET(CONFIG_WRAP_ITK_DATA_ROOT "${WrapITK_BINARY_DIR}/Data")
 SET(CONFIG_WRAP_ITK_TEST_ROOT "${WrapITK_BINARY_DIR}/Testing")
+
 # SWIG interface files aren't config-dependent
 SET(CONFIG_PYTHON_CONFIGPY_DIR "${WrapITK_BINARY_DIR}/Python/Configuration")
 

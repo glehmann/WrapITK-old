@@ -1,6 +1,7 @@
 import types
 import inspect
 import sys
+import itkConfig
 from itkTypes import itkCType
    
 
@@ -27,7 +28,7 @@ def normalizeName(name):
   return name
 
 
-class itkTemplate:
+class itkTemplate(object):
   """This class manage access to avaible template arguments of C++ class
   
   There is 2 ways to access types:
@@ -41,20 +42,17 @@ class itkTemplate:
   __templates__ = {}
   __class_to_template__ = {}
   __named_templates__ = {}
+  __doxygen_root__ = itkConfig.doxygen_root
   
-  
-  def __init__(self, name):
-    # all instances of itkTemplate with the same name share a single __dict__.
-    # This is essnetially the "borg" pattern where you can make many instances 
-    # that share the same state.
-    instance_dict = itkTemplate.__named_templates__.get(name)
-    if instance_dict:
-      self.__dict__ = instance_dict
-    else:
-      itkTemplate.__named_templates__[name] = self.__dict__
-      self.__template__ = {}
-      self.__name__ = name
-  
+  def __new__(cls, name):
+    # Singleton pattern: we only make a single instance of any Template of a
+    # given name. If we have already made the instance, just return it as-is.
+    if not cls.__named_templates__.has_key(name):
+        new_instance = object.__new__(cls)
+        new_instance.__name__ = name
+        new_instance.__template__ = {}
+        cls.__named_templates__[name] = new_instance
+    return cls.__named_templates__[name]
   
   def __add__(self, paramSetString, cl):
     """add a new argument set and the resulting class to the template
@@ -118,8 +116,7 @@ class itkTemplate:
     if hasattr(cl, 'New') :
       # the new method needs to call the old one, so keep it with another (hidden) name
       cl.__New_orig__ = cl.New
-      cl.New = types.MethodType(New, cl)
-
+      cl.New = types.MethodType(New, cl)    
 
   def __find_param__(self, paramSetString):
     """find the parameters of the template
@@ -221,26 +218,20 @@ class itkTemplate:
   def __repr__(self):
     return '<itkTemplate %s>' % self.__name__
 
+  # support for reading doxygen man pages to produce __doc__ strings
+  def __getattribute__(self, attr):
+    if attr == '__doc__' and itkTemplate.__doxygen_root__ != "" and self.__name__.startswith('itk'):
+      try:
+        import commands
+        doxyname = self.__name__.replace("::" "_")
+        return commands.getoutput("man %s/man3/%s.3" %(itkTemplate.__doxygen_root__, doxyname))
+      except:
+        return object.__getattribute__(self, attr)
+    else:
+      return object.__getattribute__(self, attr)
 
   def keys(self):
     return self.__template__.keys()
-  
-  # define equality and hash methods to reflect the fact that itkTemplate instances
-  # with the same name should be considered equal.
-  # This could all be done better with a singleton pattern implemented in __new__
-  # but that would limit support to python 2.2 and above.
-  # TODO: determine if anyone really uses 2.1 and below anymore!
-  def __eq__(self, other):
-    return isinstance(other, itkTemplate) and self.__name__ == other.__name__
-
-
-  def __ne__(self, other):
-    return not (self == other)
-
-
-  def __hash__(self):
-    return self.__name__.__hash__()
-
 
   # everything after this comment is for dict interface
   # and is a copy/paste from DictMixin
@@ -368,4 +359,5 @@ def New(self, *args, **kargs) :
       pass
 
   return newItkObject
+
 

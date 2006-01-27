@@ -23,13 +23,6 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
   # library and each wrapper language to be created.
   # Finally, this macro causes the language support files for the templates and
   # library here defined to be created.
-
-  # First, create a custom command to hang the file copy build phase on.
-  # We need a file copy step at build-time so we can use cmake -E copy_if_different
-  # to only over-write generated cxx files if they changed. Otherwise, every time
-  # cmake runs, every cxx file gets over-written, causing each object file to
-  # (unnecessarily) be rebuilt.
-  ADD_CUSTOM_TARGET("${WRAPPER_LIBRARY_NAME}_cxx_copy")
   
   # Next, include modules already in WRAPPER_LIBRARY_GROUPS, because those are
   # guaranteed to be processed first.
@@ -146,34 +139,15 @@ MACRO(WRITE_WRAP_CXX file_name)
   SET(CONFIG_WRAPPER_MODULE_NAME "${WRAPPER_MODULE_NAME}")
   SET(CONFIG_WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}")
 
-  # Create the cxx file. First, put it in a temporary location, and then
-  # use cmake to copy it to the final location. We do this so that we can use
-  # the copy_if_different cmake copy mode. If we didn't do this, then every
-  # time cmake is re-run, every single wrapper cxx file is regenerated, causing
-  # all of the object files to need to be re-built. However, most of the time
-  # most of the "new" cxx files are identical to the old ones, and so didn't
-  # need to be re-written. I haven't figured out how to have cmake not create
-  # the cxx files if it doesn't need to (this would require advanced dependency
-  # handling), so we do the next best thing. We have cmake create all of the files
-  # but only copy them over when they change, so that only changed files are
-  # rebuilt.
-  SET(intermediate_location "${WRAPPER_LIBRARY_OUTPUT_DIR}/CMakeFiles/WrapperCXXFiles/${file_name}")
-  SET(final_location "${WRAPPER_LIBRARY_OUTPUT_DIR}/${file_name}")
+  # Create the cxx file.
+  SET(cxx_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/${file_name}")
 
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/wrap_.cxx.in"
-    "${intermediate_location}" @ONLY IMMEDIATE)
-  
-  ADD_CUSTOM_COMMAND(SOURCE "${intermediate_location}"
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy_if_different ${intermediate_location} ${final_location}
-    OUTPUTS "${final_location}"
-    TARGET "${WRAPPER_LIBRARY_NAME}_cxx_copy"
-    COMMENT "Copy ${file_name} to proper place for build, if necessary.")
-  
+    "${cxx_file}" @ONLY IMMEDIATE)
   
   # And add the cxx file to the list of cableswig inputs.
   SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS 
-    ${WRAPPER_LIBRARY_CABLESWIG_INPUTS} "${final_location}")
+    ${WRAPPER_LIBRARY_CABLESWIG_INPUTS} "${cxx_file}")
 ENDMACRO(WRITE_WRAP_CXX)
 
 
@@ -196,29 +170,11 @@ MACRO(WRITE_MODULE_FILES)
 
   SET(CONFIG_GROUP_LIST "${group_list}")
   
-  # Create the cxx file. First, put it in a temporary location, and then
-  # use cmake to copy it to the final location. We do this so that we can use
-  # the copy_if_different cmake copy mode. If we didn't do this, then every
-  # time cmake is re-run, every single wrapper cxx file is regenerated, causing
-  # all of the object files to need to be re-built. However, most of the time
-  # most of the "new" cxx files are identical to the old ones, and so didn't
-  # need to be re-written. I haven't figured out how to have cmake not create
-  # the cxx files if it doesn't need to (this would require advanced dependency
-  # handling), so we do the next best thing. We have cmake create all of the files
-  # but only copy them over when they change, so that only changed files are
-  # rebuilt.
-  SET(intermediate_location "${WRAPPER_LIBRARY_OUTPUT_DIR}/CMakeFiles/WrapperCXXFiles/wrap_${WRAPPER_LIBRARY_NAME}.cxx")
-  SET(final_location "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}.cxx")
-  
+  # Create the cxx file.
+  SET(cxx_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}.cxx")
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/wrap_ITK.cxx.in"
-    "${intermediate_location}" @ONLY IMMEDIATE)
+    "${cxx_file}" @ONLY IMMEDIATE)
   
-  ADD_CUSTOM_COMMAND(SOURCE "${intermediate_location}"
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy_if_different ${intermediate_location} ${final_location}
-    OUTPUTS "${final_location}"
-    TARGET "${WRAPPER_LIBRARY_NAME}_cxx_copy"
-    COMMENT "Copy wrap_${WRAPPER_LIBRARY_NAME}.cxx to proper place for build, if necessary.")
 
   IF(WRAP_ITK_TCL)
     WRITE_MODULE_FOR_LANGUAGE("Tcl")
@@ -241,31 +197,11 @@ MACRO(WRITE_MODULE_FOR_LANGUAGE language)
   SET(CONFIG_MODULE_NAME ${WRAPPER_LIBRARY_NAME})
   STRING(TOUPPER ${language} CONFIG_UPPER_LANG)
   
-  # Create the cxx file. First, put it in a temporary location, and then
-  # use cmake to copy it to the final location. We do this so that we can use
-  # the copy_if_different cmake copy mode. If we didn't do this, then every
-  # time cmake is re-run, every single wrapper cxx file is regenerated, causing
-  # all of the object files to need to be re-built. However, most of the time
-  # most of the "new" cxx files are identical to the old ones, and so didn't
-  # need to be re-written. I haven't figured out how to have cmake not create
-  # the cxx files if it doesn't need to (this would require advanced dependency
-  # handling), so we do the next best thing. We have cmake create all of the files
-  # but only copy them over when they change, so that only changed files are
-  # rebuilt.
-  SET(intermediate_location "${WRAPPER_LIBRARY_OUTPUT_DIR}/CMakeFiles/WrapperCXXFiles/wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx")
-  SET(final_location "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx")
-  
+  # Create the cxx file.
+  SET(cxx_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx")  
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
-    "${intermediate_location}" @ONLY IMMEDIATE)
+    "${cxx_file}" @ONLY IMMEDIATE)
   
-  ADD_CUSTOM_COMMAND(SOURCE "${intermediate_location}"
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy_if_different ${intermediate_location} ${final_location}
-    OUTPUTS "${final_location}"
-    DEPENDS "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}.cxx" # force this one to be copied over too.
-    TARGET "${WRAPPER_LIBRARY_NAME}_cxx_copy"
-    COMMENT "Copy wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx to proper place for build, if necessary.")
-
 ENDMACRO(WRITE_MODULE_FOR_LANGUAGE)
 
 

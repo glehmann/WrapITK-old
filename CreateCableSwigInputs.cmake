@@ -98,7 +98,7 @@ MACRO(INCLUDE_WRAP_CMAKE module)
   # Global vars modified: WRAPPER_MODULE_NAME WRAPPER_TYPEDEFS
   #                       WRAPPER_INCLUDE_FILES WRAPPER_AUTO_INCLUDE_HEADERS
 
-  MESSAGE(STATUS "${WRAPPER_LIBRARY_NAME}: Creating wrap_${module}.cxx")
+  MESSAGE(STATUS "${WRAPPER_LIBRARY_NAME}: Creating ${module} wrappers.")
 
   # We run into some trouble if there's a module with the same name as the
   # wrapper library. Fix this.

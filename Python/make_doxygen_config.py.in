@@ -14,7 +14,7 @@ for t in templates:
       header_list.append(header_path)
       break
 
-header_string = '"\\\n           "'.join(header_list)
+header_string = '" \\\n           "'.join(header_list)
 
 doxygen_conf_contents = """
 # This file describes the settings to be used by doxygen for a project
@@ -274,13 +274,12 @@ RECURSIVE             = YES
 # excluded from the INPUT source files. This way you can easily exclude a 
 # subdirectory from a directory tree whose root is specified with the INPUT tag. 
 
-EXCLUDE               = "/Developer/Local/ITK-CVS/Insight/Code/Common/itkPixelTraits.h" \
-                        "/Developer/Local/ITK-CVS/Insight/Code/Common/itkNumericTraits.h" \
-                        "/Developer/Local/ITK-CVS/Insight/Code/Common/itkNumericTraitsRGB.h" \
-                        "/Developer/Local/ITK-CVS/Insight/Code/Common/itkNumericTraitsVectorPixel.h" \
-                        "/Developer/Local/ITK-CVS/Insight/Code/Common/itkNumericTraitsTensorPixel.h" \
+EXCLUDE               = "@CONFIG_ITK_SOURCE_DIR@/Code/Common/itkPixelTraits.h" \
+                        "@CONFIG_ITK_SOURCE_DIR@/Code/Common/itkNumericTraits.h" \
+                        "@CONFIG_ITK_SOURCE_DIR@/Code/Common/itkNumericTraitsRGB.h" \
+                        "@CONFIG_ITK_SOURCE_DIR@/Code/Common/itkNumericTraitsVectorPixel.h" \
+                        "@CONFIG_ITK_SOURCE_DIR@/Code/Common/itkNumericTraitsTensorPixel.h" \
                         
-              
 # If the value of the INPUT tag contains directories, you can use the 
 # EXCLUDE_PATTERNS tag to specify one or more wildcard patterns to exclude 
 # certain files from those directories. 
@@ -291,16 +290,25 @@ EXCLUDE_PATTERNS      = "*/vxl_copyright.h" "*/vcl/*" "*/dll.h" \
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or 
 # directories that contain example code fragments that are included (see 
-# the \include command). 
+# the \include command).
 
-EXAMPLE_PATH     =
+EXAMPLE_PATH           = "@CONFIG_ITK_SOURCE_DIR@/Testing/Code" \
+                         "@CONFIG_ITK_SOURCE_DIR@/Examples" \
+                         "@CONFIG_ITK_SOURCE_DIR@/Examples/DataRepresentation/Image"
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
 # and *.h) to filter out the source-files in the directories. If left 
-# blank all files are included. 
+# blank all files are included.
 
-EXAMPLE_PATTERNS      = 
+EXAMPLE_PATTERNS       = *.cxx
+
+# If the EXAMPLE_RECURSIVE tag is set to YES then subdirectories will be 
+# searched for input files to be used with the \include or \dontinclude 
+# commands irrespective of the value of the RECURSIVE tag. 
+# Possible values are YES and NO. If left blank NO is used.
+
+EXAMPLE_RECURSIVE      = YES
 
 # The IMAGE_PATH tag can be used to specify one or more files or 
 # directories that contain image that are included in the documentation (see 

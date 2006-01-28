@@ -11,13 +11,14 @@
 # -- Charl P. Botha <cpbotha AT ieee.org>
 
 import itk, itkvtk
+import sys
 from vtk import *
 
 itk.auto_progress = True
 
 # VTK will read the PNG image for us
 reader = vtkPNGReader()
-reader.SetFileName("/usr/share/itk-data/Input/cthead1.png")
+reader.SetFileName(sys.argv[1])
 
 # it has to be a single component, itk::VTKImageImport doesn't support more
 lum = vtkImageLuminance()
@@ -40,8 +41,8 @@ itk2vtk = iImageToVTKImageFilter[writerImgType].New(rescaler)
 
 # finally write the image to disk using VTK
 writer = vtkPNGWriter()
-writer.SetFileName('./testout.png')
-writer.SetInput(itk2GetOutput())
+writer.SetFileName(sys.argv[2])
+writer.SetInput(itk2vtk.GetOutput())
 
 # before we call Write() on the writer, it is prudent to give
 # our ITK pipeline an Update() call... this is not necessary
@@ -53,5 +54,3 @@ rescaler.Update()
 
 # write the file to disk...
 writer.Write()
-
-print "\n\nWrote testout.png to current directory."

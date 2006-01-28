@@ -257,65 +257,6 @@ WARN_FORMAT           = "$file:$line: $text"
 
 INPUT    = "%s"
 
-# If the value of the INPUT tag contains directories, you can use the 
-# FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
-# and *.h) to filter out the source-files in the directories. If left 
-# blank all files are included. 
-
-FILE_PATTERNS         = *.h
-
-# The RECURSIVE tag can be used to turn specify whether or not subdirectories 
-# should be searched for input files as well. Possible values are YES and NO. 
-# If left blank NO is used. 
-
-RECURSIVE             = YES
-
-# The EXCLUDE tag can be used to specify files and/or directories that should 
-# excluded from the INPUT source files. This way you can easily exclude a 
-# subdirectory from a directory tree whose root is specified with the INPUT tag. 
-
-EXCLUDE               = "@CONFIG_ITK_SOURCE_DIR@/Code/Common/itkPixelTraits.h" \
-                        "@CONFIG_ITK_SOURCE_DIR@/Code/Common/itkNumericTraits.h" \
-                        "@CONFIG_ITK_SOURCE_DIR@/Code/Common/itkNumericTraitsRGB.h" \
-                        "@CONFIG_ITK_SOURCE_DIR@/Code/Common/itkNumericTraitsVectorPixel.h" \
-                        "@CONFIG_ITK_SOURCE_DIR@/Code/Common/itkNumericTraitsTensorPixel.h" \
-                        
-# If the value of the INPUT tag contains directories, you can use the 
-# EXCLUDE_PATTERNS tag to specify one or more wildcard patterns to exclude 
-# certain files from those directories. 
-
-EXCLUDE_PATTERNS      = "*/vxl_copyright.h" "*/vcl/*" "*/dll.h" \
-                       "*/test*" "*/example*" "*config*" "*/contrib/*" \
-                       "*/Templates/*" "*_mocced.cxx" # "*impl*"
-
-# The EXAMPLE_PATH tag can be used to specify one or more files or 
-# directories that contain example code fragments that are included (see 
-# the \include command).
-
-EXAMPLE_PATH           = "@CONFIG_ITK_SOURCE_DIR@/Testing/Code" \
-                         "@CONFIG_ITK_SOURCE_DIR@/Examples" \
-                         "@CONFIG_ITK_SOURCE_DIR@/Examples/DataRepresentation/Image"
-
-# If the value of the EXAMPLE_PATH tag contains directories, you can use the 
-# EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
-# and *.h) to filter out the source-files in the directories. If left 
-# blank all files are included.
-
-EXAMPLE_PATTERNS       = *.cxx
-
-# If the EXAMPLE_RECURSIVE tag is set to YES then subdirectories will be 
-# searched for input files to be used with the \include or \dontinclude 
-# commands irrespective of the value of the RECURSIVE tag. 
-# Possible values are YES and NO. If left blank NO is used.
-
-EXAMPLE_RECURSIVE      = YES
-
-# The IMAGE_PATH tag can be used to specify one or more files or 
-# directories that contain image that are included in the documentation (see 
-# the \image command). 
-
-IMAGE_PATH            = 
-
 # The INPUT_FILTER tag can be used to specify a program that doxygen should 
 # invoke to filter for each input file. Doxygen will invoke the filter program 
 # by executing (via popen()) the command <filter> <input-file>, where <filter> 
@@ -323,7 +264,7 @@ IMAGE_PATH            =
 # input file. Doxygen will then use the output that the filter program writes 
 # to standard output. 
 
-INPUT_FILTER          = 
+INPUT_FILTER          = "grep -v \\example"
 
 #---------------------------------------------------------------------------
 # configuration options related to the alphabetical class index
@@ -530,63 +471,6 @@ EXPAND_ONLY_PREDEF    = YES
 # will be listed. 
 
 ALLEXTERNALS          = NO
-
-# The PERL_PATH should be the absolute path and name of the perl script 
-# interpreter (i.e. the result of `which perl'). 
-
-PERL_PATH             = /usr/bin/perl
-
-#---------------------------------------------------------------------------
-# Configuration options related to the dot tool   
-#---------------------------------------------------------------------------
-
-# If you set the HAVE_DOT tag to YES then doxygen will assume the dot tool is 
-# available from the path. This tool is part of Graphviz, a graph visualization 
-# toolkit from AT&T and Lucent Bell Labs. The other options in this section 
-# have no effect if this option is set to NO (the default) 
-
-HAVE_DOT              = NO
-
-# If the CLASS_GRAPH and HAVE_DOT tags are set to YES then doxygen 
-# will generate a graph for each documented class showing the direct and 
-# indirect inheritance relations. Setting this tag to YES will force the 
-# the CLASS_DIAGRAMS tag to NO.
-
-CLASS_GRAPH           = NO
-
-# If the COLLABORATION_GRAPH and HAVE_DOT tags are set to YES then doxygen 
-# will generate a graph for each documented class showing the direct and 
-# indirect implementation dependencies (inheritance, containment, and 
-# class references variables) of the class with other documented classes. 
-
-COLLABORATION_GRAPH   = NO
-
-# If the ENABLE_PREPROCESSING, INCLUDE_GRAPH, and HAVE_DOT tags are set to 
-# YES then doxygen will generate a graph for each documented file showing 
-# the direct and indirect include dependencies of the file with other 
-# documented files. 
-
-INCLUDE_GRAPH         = NO
-
-# If the ENABLE_PREPROCESSING, INCLUDED_BY_GRAPH, and HAVE_DOT tags are set to 
-# YES then doxygen will generate a graph for each documented header file showing 
-# the documented files that directly or indirectly include this file 
-
-INCLUDED_BY_GRAPH     = NO
-
-# If the GRAPHICAL_HIERARCHY and HAVE_DOT tags are set to YES then doxygen 
-# will graphical hierarchy of all classes instead of a textual one. 
-
-GRAPHICAL_HIERARCHY   = NO
-
-#---------------------------------------------------------------------------
-# Configuration::addtions related to the search engine   
-#---------------------------------------------------------------------------
-
-# The SEARCHENGINE tag specifies whether or not a search engine should be 
-# used. If set to NO the values of all tags below this one will be ignored. 
-
-SEARCHENGINE          = NO
 """ % header_string
 
 f = open('doxygen.config', 'w')

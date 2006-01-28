@@ -23,7 +23,6 @@ def normalizeName(name):
   remove the pointer declaration "*" (it have no sense in python) """
   
   name = name.replace(" ","")
-  #name = name.replace("::","") -- keep around the namespace prefix
   name = name.replace("*","")
   
   return name
@@ -224,14 +223,16 @@ class itkTemplate(object):
     if attr == '__doc__' and itkTemplate.__doxygen_root__ != "" and self.__name__.startswith('itk'):
       try:
         import commands
-        doxyname = self.__name__.replace("::" "_")
+        doxyname = self.__name__.replace("::", "_")
         man_path = "%s/man3/%s.3" %(itkTemplate.__doxygen_root__, doxyname)
         if os.path.exists(man_path):
-          return commands.getoutput("man " + man_path)
+          # Use groff here instead of man because man dies when it is passed paths with spaces (!)
+          # groff does not.
+          return commands.getoutput("groff -mandoc -Tascii -c '" + man_path +"'")
         else:
-          return object.__getattribute__(self, attr)
-      except:
-        return object.__getattribute__(self, attr)
+          return "Cannot find man page for %s in %s." %(self.__name__, itkTemplate.__doxygen_root__)
+      except Exception, e:
+        return "Cannot display man page for %s due to exception: %s." %(self.__name__, e)
     else:
       return object.__getattribute__(self, attr)
 

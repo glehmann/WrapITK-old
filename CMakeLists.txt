@@ -161,7 +161,9 @@ FOREACH(f
  ConfigurationInputs/wrap_.cxx.in
  ConfigurationInputs/Master.mdx.in
  ConfigurationInputs/gcc_xml.inc.in
- ConfigurationInputs/empty.depend.in)
+ ConfigurationInputs/empty.depend.in
+ ConfigurationInputs/typemaps.swg.in
+ )
   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration/Inputs" FILES "${f}")
 ENDFOREACH(f)
 

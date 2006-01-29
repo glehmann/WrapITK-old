@@ -63,3 +63,6 @@ SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS} ${PROJECT_SOURC
 # Some macros require LIBRARY_OUTPUT_PATH to be set. For now, set it to its default.
 # Re-set later if a different library output path is needed.
 SET(LIBRARY_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}")
+
+# Tell the world that this is an external project using WrapITK:
+SET(EXTERNAL_WRAP_ITK_PROJECT ON)

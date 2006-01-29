@@ -53,6 +53,11 @@ MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
     # they were configured into. If there are no configuration types, the 
     # intdir expands to '', so no harm done.
     INSTALL_PYTHON_LOADER_FILE("${PROJECT_BINARY_DIR}/Python/${WRAP_ITK_INSTALL_INTDIR}")
+    IF(EXTERNAL_WRAP_ITK_PROJECT)
+      # Configure a python file to make it easier to use this external project
+      # without first installing it into WrapITK.
+      CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG("${PROJECT_BINARY_DIR}/Python/")
+    ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
   ENDIF(WRAP_ITK_PYTHON)
 ENDMACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
 
@@ -224,3 +229,31 @@ MACRO(INSTALL_PYTHON_LOADER_FILE outdir)
   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python"
     FILES "${outdir}${WRAPPER_LIBRARY_NAME}.py")
 ENDMACRO(INSTALL_PYTHON_LOADER_FILE)
+
+
+MACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG outdir)
+  # Create a helper file to set some sys.path entries so that external projects
+  # can be easily loaded even when not installed. To use, call 'import ProjectConfig'
+  # or 'import ProjectConfig-[Debug|Release|...]' if multiple build styles were
+  # selected from an IDE. After this module is imported, the external project
+  # can be easily imported by 'import ProjectName'.
+  # If ProjectConfig were not used, the user would have to manually set sys.path
+  # to point to *both* the Python directory in the WrapITK build tree and the
+  # directory where the current project's SWIG libraries have been placed.
+  
+  SET(CONFIG_WRAP_ITK_PYTHON_DIR "${WrapITK_DIR}/Python")
+  IF(CMAKE_CONFIGURATION_TYPES)
+    FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
+      # SWIG-generated libs and *.py files are sent to ${config} subdir
+      SET(CONFIG_PROJECT_OUTPUT_DIR "${LIBRARY_OUTPUT_PATH}/${config}")
+      CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ExternalProjectConfig.py.in"
+        "${outdir}/ProjectConfig-${config}.py"
+      @ONLY IMMEDIATE)
+  ENDFOREACH(config)
+  ELSE(CMAKE_CONFIGURATION_TYPES)
+    SET(CONFIG_PROJECT_OUTPUT_DIR "${LIBRARY_OUTPUT_PATH}")
+    CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ExternalProjectConfig.py.in"
+      "${outdir}/ProjectConfig.py"
+      @ONLY IMMEDIATE)
+  ENDIF(CMAKE_CONFIGURATION_TYPES)
+ENDMACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG)

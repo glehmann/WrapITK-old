@@ -127,7 +127,7 @@ def LoadSWIGLibrary(moduleName):
   # find and load the module
   try:
     fp = None # needed in case next line raises exception, so that finally block works
-    fp, pathname, description = imp.find_module(moduleName, [itkConfig.swig_py,])
+    fp, pathname, description = imp.find_module(moduleName)
     return imp.load_module(moduleName, fp, pathname, description)
   finally:
     # Since we may exit via an exception, close fp explicitly.
@@ -156,8 +156,8 @@ class ModuleData(dict):
       # (2) __file__/Configuration
       # (3) ./Configuration
       # (4) .
-      data = self.__find_file(key, [itkConfig.config_py, 
-        os.path.join(__file__, 'Configuration'), 'Configuration', '.'])
+      data = self.__find_file(key,
+        [itkConfig.config_py, os.path.join(__file__, 'Configuration'), 'Configuration', '.'])
       if data:
         return data
       else:

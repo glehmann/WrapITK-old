@@ -169,7 +169,8 @@ ENDFOREACH(f)
 
 FOREACH(f
  ConfigurationInputs/LanguageSupport/ModuleLoader.py.in
- ConfigurationInputs/LanguageSupport/ModuleConfig.py.in)
+ ConfigurationInputs/LanguageSupport/ModuleConfig.py.in
+ ConfigurationInputs/LanguageSupport/ExternalProjectConfig.py.in)
   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration/Inputs/LanguageSupport" FILES "${f}")
 ENDFOREACH(f)
 

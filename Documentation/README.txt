@@ -136,13 +136,26 @@ SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon)
 WRAPPER_LIBRARY_CREATE_WRAP_FILES()
 WRAPPER_LIBRARY_CREATE_LIBRARY()
 
-BEGIN_WRAPPER_LIBRARY() sets up the environment to wrap a set of classes into a library with a given name.
+BEGIN_WRAPPER_LIBRARY() sets up the environment to wrap a set of classes into a library with a given name. This macro is defined in itkConfigWrapping.cmake.
 WRAPPER_LIBRARY_DEPENDS stores the list of WrapITK libraries on which the current library depends (e.g. which libraries wrap classes like Image or SpatialObject, that are going to be used in the current library). Every project should at least depend on ITKCommonA. 
 WRAPPER_LIBRARY_LINK_LIBRARIES stores a set of other libraries to add at link time. This can be 3rd party libraries that you will use (be sure to properly set LINK_DIRECTORIES in this case), or more commonly, the ITK libraries that need to be linked in, like ITKCommon, ITKIO, or other. 
-WRAPPER_LIBRARY_CREATE_WRAP_FILES() scans all of the wrap_XXX.cmake files in the current directory and uses the directives within to create CableSwig input files for these classes. Information about template instantiations is also recorded for the language support files that are created next.
-Finally, WRAPPER_LIBRARY_CREATE_LIBRARY() creates rules to parse the CalbeSwig inputs and compile a wrapper library. This macro also causes various language support files to be created (python only currently) which make it easy to load that library in python, and which know about the template instances defined.
+WRAPPER_LIBRARY_CREATE_WRAP_FILES() scans all of the wrap_XXX.cmake files in the current directory and uses the directives within to create CableSwig input files for these classes. Information about template instantiations is also recorded for the language support files that are created next. This macro is defined in CreateCableSwigInputs.cmake, and calls language support macros from CreateLanguageSupport.cmake.
+Finally, WRAPPER_LIBRARY_CREATE_LIBRARY() creates rules to parse the CalbeSwig inputs and compile a wrapper library. This macro also causes various language support files to be created (python only currently) which make it easy to load that library in python, and which know about the template instances defined. This macro is defined in CreateWrapperLibrary.cmake, and calls language support macros from CreateLanguageSupport.cmake.
+
 
 (2) Creating wrap_XXX.cmake files to wrap classes
+
+A wrap_XXX.cmake file defines a group of classes and/or template instantiations to be wrapped. Often one such file is defined for each class wrapped, but this is not strictly necessary.
+
+Within such a file, directives are issued to wrap classes and particular template instances. All of the available directives are defined and documented in CreateCableSwigInputs.cmake. The basics are presented here:
+
+WRAP_INCLUDE("header.h") -- causes the named header to be #included in the generated files. 
+WRAP_CLASS("fully_qualified::ClassName" POINTER) -- causes a templated class to be wrapped. All namespaces must be included in the class name, and note that no template instantiation is given. Template instantiations are created with various WRAP directives 
+
+ WRAP_CLASS issues an implicit call to WRAP_INCLUDE("ClassName.h"), so the header for the wrapped class itself does not need to be manually included. To disable this behavior, set WRAPPER_AUTO_INCLUDE_HEADERS to OFF.
+
+WRAP("mangled_suffix" "template parameters") -- 
+
 
 
 

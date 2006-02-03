@@ -1,0 +1,149 @@
+WrapITK README
+--------------
+
+WrapITK is a project designed to allow classes from ITK (and custom, classes that interact with ITK) to be "wrapped" for use with scripting languages like Python, Tcl, and Java.
+
+Currently, WrapITK only supports Python properly; Java and Tcl libraries build correctly but the Java and Tcl support classes for loading these libraries needs some updating.
+
+Note that ITK already has a wrapping infrastructure. This project aims to be address the following deficits of the existing wrappers (and others):
+- The ITK wrapping system is difficult to understand and maintain. WrapITK was written -- and thoroughly documented -- to be as easy as possible to understand, maintain, and extend.
+- It is non-trivial to add wrappers for different ITK classes to the system. In WrapITK, adding a wrapper can be as simple as adding a single file containing a few well-documented cmake macros.
+- It is difficult if not impossible to add original-style ITK wrappers for external C++ classes that interact with ITK. WrapITK provides explicit hooks for external C++ classes to be wrapped and even installed in the WrapITK tree so that they interact seamlessly with the other wrapped classes.
+- Once the ITK wrappers are built, using them from within the target languages is in many cases painful, forcing Python code (for example) to look a lot like C++ code, but nastier. In particular, template types must be hard-coded into every function name. WrapITK attempts to address this in Python by providing run-time lookup of templated types. Additionally, WrapITK ensures that SmartPointers are always returned and acceptable as input, so no bare pointers are ever exposed to Python. This is not the case in the standard ITK wrappers.
+
+An example:
+C++:
+typedef itk::Image<unsigned short, 2> ImageI2;
+ImageI2::Pointer image = ImageUS2::New();
+typedef itk::ImageFileWriter<ImageUS2> Writer;
+Writer::Pointer writer = Writer::New();
+writer->SetInput(image);
+writer->SetFileName("foo.tif");
+
+Python with current ITK wrappers:
+image = itk.ImageUS2_Pointer(itk.ImageUS2_New())
+witer = itk.ImageFileWriterIUS2_Pointer(itk.ImageFileWriterIUS2_New())
+writer.SetInput(image);
+writer.SetFileName("foo.tif");
+
+Python with WrapITK:
+image = itk.Image[itk.US, 2].New()
+writer = itk.ImageFileWriter[image].New(Input=image, FileName="foo.tif")
+
+
+PYTHON USAGE
+------------
+(0) Configuring Python and Importing the Libraries
+If WrapITK has been installed, then using it from within python is trivial: simply issue the command "import itk", and you are ready to go. This is because WrapITK installs a pth file in the python site-packages directory so that python knows where to find the itk scripts.
+
+If WrapITK has not been installed, then you will either need to set the PYTHONPATH environment variable to contain the directory /path-to-WrapITK-build/Python, add  this path to sys.paths within python, or start python from that directory. After this, "import itk" will work properly.
+
+
+(1) Basic Usage
+Most class in the itk python module are "template proxy classes" that encapsulate all of the template instantiations that were created at build time. If three-dimensional unsigned char and unsigned short image types were created, they can be accessed as follows:
+itk.Image[itk.UC, 3]  -or-  itk.Image.UC3 
+itk.Image[itk.US, 3]  -or-  itk.Image.US3
+
+Filters templated on images can be similarly accessed:
+itk.ImageFileReader[itk.Image[itk.UC,3]]
+or
+itk.ImageFileReader[itk.Image.UC3]
+or even
+itk.ImageFileReader[image]
+if 'image' is of type UC3. This makes it easy to write generic routines which can deal with any input image type.
+
+Each class has a New() method which returns a smart pointer to that class. The New() method in python has some additional features:
+- Arguments to the new method are assumed to be filter inputs. So you could write:
+adder = itk.AddImageFilter[...].New()
+adder.SetInput1(inputA)
+adder.SetInput2(inputB)
+or you could write
+adder = itk.AddImageFilter[...].New(inputA, inputB)
+
+- Additionally, keyword arguments are allowed as well. Keyword arguments cause the corresponding "Set..." method to be called, so you could write the following:
+itk.ImageFileWriter[image].New(image, FileName="foo.tif")
+or
+itk.ImageFileWriter[image].New(Input=image, FileName="foo.tif")
+
+(2) Advanced Features
+As an extra bonus, it is possible to view the doxygen documentation for each class as the python docstring. This string is available as:
+print itk.Image.__doc__
+or even better (if you use iPython)
+itk.Image?
+
+Several steps are necessary to obtain this nirvana, however. First, when configuring the build in ccmake, you must set DOXYGEN_MAN_PATH to some directory where man pages for the ITK classes will be created. Then, after the build, you must run 'make_doxygen_config.py' from within the Python directory in the build directory, to collect information about the wrapped classes and create a doxygen configuration file to make these man pages. Finally, run doxygen with that configuration file. After these three simple steps, class docstrings will contain the man page information. Note that this is limited to systems which support the python "commands" module, and which have "groff" in the path. This basically means anything but windows will work. (Cygwin should work too.)
+
+In addition (as mentioned above), WrapITK by default ensures that no bare pointers are ever returned to python: instead reference-counting SmartPointers are used. However, there may be times when extracting a bare pointer or creating a new SmartPointer is necessary. To get a bare pointer from a smart pointer, use the GetPointer() method, as in ITK proper. To create a new smart pointer, the SmartPointer template proxy class can be used just as above:
+smartPtr = itk.SmartPointer[itk.Image[itk.US, 2]](image.GetPointer())
+or just
+smartPtr = itk.SmartPointer[image](image.GetPointer())
+
+BUILDING
+--------
+WrapITK requires ITK and CableSwig to have been previously downloaded and built. (If CableSwig was obtained and built as part of ITK, it will automatically be detected.)
+
+WrapITK will work properly with a CVS checkout of ITK from 2006-1-31 or later, or with the ITK 2.4.1 release. If you are using 2.4.1, there are several required patches to correct bugs in ITK that must be applied. Follow the directions in WrapITK/patches to do so. Additionally, there are some optional patches to the ITK source in WrapITK/patches/optional which can be applied to either a CVS checkout of ITK or to version 2.4.1. These optional patches provide better support for python by providing __str__ methods and the like.
+
+After CableSwig and ITK have been (possibly patched) and built, building WrapITK with cmake is simple. Run ccmake in a new direvtory with the path to the WrapITK source tree as the first argument, and provide the locations of the ITK and CableSwig build trees if ccmake so requests. Build options relatively self-explanatory.
+
+Note that each individual filter that is wrapped can declare which dimensions it should be wrapped for, and what image types it can accept. For example, a filter could declare that it should only be wrapped for 3D images with floating-point typed pixels. In this case, then wrappers will only be created if the user has selected to build 3-dimensional image wrappers and has selected one or more floating point types (e.g. double or float) in ccmake. Thus, the ccmake configuration specifies the maximum possible range of image and filter types to be created, and each filter is wrapped for some subset of that range. 
+
+ADDING OR REMOVING WRAPPED ITK CLASSES
+--------------------------------------
+To minimize build times and library size, it is possible to manually prevent various classes from being wrapped. WrapITK is divided into several sub-libraries, each with a sub-directory: Algorithms, BasicFilters[ABC], Common[AB], IO, Numerics, SpatialObject, and VXLNumerics. Within these directories are sets or wrap_XXX.cmake files, where XXX is the name of the class (or set of classes) to be wrapped. To prevent one of these classes from being wrapped, simply rename the file to anything that does *not* start with wrap_ and end with cmake. (E.g. append ".notwrapped" to the name.) (This is probably unsafe to do in the Common, Numerics, or IO directories.)
+
+To add classes to be wrapped, it is recommended that you create a simple "External Project" described below. If this is out of the question, you could create additional wrap_XXX.cmake files in the appropriate directory. (Read on for instructions as to what to put in these files.)
+
+INSTALLING
+----------
+(0) Philosophy
+WrapITK is both a tool for users and for developers who wish to create wrappers for additional classes from ITK or classes that interact with ITK. The best way to both use WrapITK and extend it is by installing it into a known location. Once installed, using WrapITK is easy because the installation process informs Python where to look for the itk libraries. Installation makes extending WrapITK easy as well because extensions can be subsequently installed to the same place and used seamlessly.
+
+This location is specified in ccmake with the CMAKE_INSTALL_PREFIX and the WRAP_ITK_INSTALL_LOCATION variable: files will be installed to CMAKE_INSTALL_PREFIX/WRAP_ITK_INSTALL_LOCATION/. Simply run 'make install' (if you are using make as the build tool) to install the package.
+
+(1) FindWrapITK.cmake and WrapITK.pth
+In addition to the libraries and script files installed into CMAKE_INSTALL_PREFIX/WRAP_ITK_INSTALL_LOCATION, a cmake script will be placed in the proper directory in the CMake tree so that the command FIND_PACKAGE(WrapITK) will work with no additional configuration, making developing external projects (see below) very easy.
+
+Moreover (as described above), a file called 'WrapITK.pth' will be installed in the python site-packages directory which points python at the WrapITK scripts, so that they can be imported from within python with no additional configuration.
+
+
+EXTERNAL PROJECTS
+-----------------
+In WrapITK/ExternalProjects there are several sample "External Projects" that can be built to provide additional functionality to WrapITK and to serve as a demonstration for how to create your own such projects. One project is an ITK-VTK bridge, and the other is a Python class to allow conversion from Numeric/Numarray/numpy matrices to ITK images (and vice-versa).
+
+(0) Building
+To build an external project, first ensure that WrapITK has been properly built. Then use ccmake to configure a build directory for the external project. If WrapITK has not been installed, you will have to manually enter the path to the WrapITK build directory.
+
+(1) Usage
+Once an external project has been built, it can be tested directly from the build tree. Start python in the external project build directory's Python subdirectory, and run the command 'import ProjectConfig' (or 'import ProjectConfig-[Debug|Release|...]' if you were using an IDE, depending on which build configuration was set from the IDE). This command sets up the search paths properly so that WrapITK and the newly-created library files can be found. Then type 'import ...' (where '...' is replaced with the name of the external project; e.g. 'import BufferConversion'), and use the project.
+
+(2) Installation
+Simply type 'make install' (or run your IDE's install step) to install the external project into the WrapITK tree (provided WrapITK has already been installed). Now the external project can be used just like any of the other WrapITK libraries, and it will be imported into the 'itk' namespace when the 'import itk' command is issued from Python. (This can be disabled by setting WRAPPER_LIBRARY_AUTO_LOAD to off in the external project's CMakeLists.txt.)
+
+
+DEVELOPER GUIDE
+---------------
+What follows is a brief description of how the WrapITK build system works, haw it can be extended, and how to write external projects.
+
+(1) Creating a CMakeLists.txt file for a wrapper library
+Each WrapITK sub-library (e.g. 'ITKCommonA', or 'ITKAlgorithms') lives in a sub-directory of the WrapITK project (e.g. 'CommonA' or 'Algorithms') with a CMakeLists.txt file that describes how that library  and language support files (e.g. python template definitions) is to be created. Moreover, any external project will need a similar file to describe how to create that library.
+
+See "SampleCMakeLists.txt" in this directory for a description of each macro and option that can appear in such a file. What follows is the usual set of commands that will appear:
+
+BEGIN_WRAPPER_LIBRARY("MySpatialObjectExtensions")
+SET(WRAPPER_LIBRARY_DEPENDS ITKSpatialObject ITKCommonA)
+SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon)
+WRAPPER_LIBRARY_CREATE_WRAP_FILES()
+WRAPPER_LIBRARY_CREATE_LIBRARY()
+
+BEGIN_WRAPPER_LIBRARY() sets up the environment to wrap a set of classes into a library with a given name.
+WRAPPER_LIBRARY_DEPENDS stores the list of WrapITK libraries on which the current library depends (e.g. which libraries wrap classes like Image or SpatialObject, that are going to be used in the current library). Every project should at least depend on ITKCommonA. 
+WRAPPER_LIBRARY_LINK_LIBRARIES stores a set of other libraries to add at link time. This can be 3rd party libraries that you will use (be sure to properly set LINK_DIRECTORIES in this case), or more commonly, the ITK libraries that need to be linked in, like ITKCommon, ITKIO, or other. 
+WRAPPER_LIBRARY_CREATE_WRAP_FILES() scans all of the wrap_XXX.cmake files in the current directory and uses the directives within to create CableSwig input files for these classes. Information about template instantiations is also recorded for the language support files that are created next.
+Finally, WRAPPER_LIBRARY_CREATE_LIBRARY() creates rules to parse the CalbeSwig inputs and compile a wrapper library. This macro also causes various language support files to be created (python only currently) which make it easy to load that library in python, and which know about the template instances defined.
+
+(2) Creating wrap_XXX.cmake files to wrap classes
+
+
+
+(3) Top-level CMakeLists for external projects

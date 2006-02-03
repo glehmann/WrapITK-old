@@ -1,4 +1,5 @@
-# Create ITKAlgorithms wrapper library
+# Sample CMakeLists that demonstrates all of the possible options for creating a
+# wrapper library. In this case, the ITKAlgorirhms library is being created.
 
 ################################################################################
 # (1) Set all wrapper library config variables to their default values.
@@ -47,6 +48,13 @@ SET(WRAPPER_LIBRARY_GROUPS )
 # WRAPPER_LIBRARY_CABLESWIG_INPUTS: Optional. List of C++ source files to be used
 # as input for CableSwig. Defaults to an empty list, that is then appended to by
 # WRAPPER_LIBRARY_CREATE_WRAP_FILES. A full path to each input is required.
+# If any of these CableSwig inputs declares a new wrap group, that group's name
+# MUST be added to WRAPPER_LIBRARY_GROUPS above. (It is not an error to declare
+# a group for which no wrap_*.cmake file exists: the build system assumes that
+# this group will be declared elsewhere.)
+# A second option would to append to the WRAPPER_LIBRARY_CABLESWIG_INPUTS variable
+# in a wrap_*.cmake file: then the group gets set automatically. See 
+# wrap_vcl_complex.cmake for an example.
 SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS )
 
 # WRAPPER_LIBRARY_SWIG_INPUTS: Optional. SWIG input files to be fed to swig (not

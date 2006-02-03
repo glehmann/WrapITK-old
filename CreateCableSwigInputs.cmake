@@ -27,7 +27,12 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
   # Next, include modules already in WRAPPER_LIBRARY_GROUPS, because those are
   # guaranteed to be processed first.
   FOREACH(module ${WRAPPER_LIBRARY_GROUPS})
-    INCLUDE_WRAP_CMAKE("${module}")
+    # EXISTS test is to allow groups to be declared in WRAPPER_LIBRARY_GROUPS
+    # which aren't represented by cmake files: e.g. groups that are created in
+    # custom cableswig cxx inputs stored in WRAPPER_LIBRARY_CABLESWIG_INPUTS.
+    IF(EXISTS "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
+        INCLUDE_WRAP_CMAKE("${module}")
+    ENDIF(EXISTS "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
   ENDFOREACH(module)
 
   # Now search for other wrap_*.cmake files to include
@@ -90,6 +95,7 @@ MACRO(INCLUDE_WRAP_CMAKE module)
   # Global vars used: none
   # Global vars modified: WRAPPER_MODULE_NAME WRAPPER_TYPEDEFS
   #                       WRAPPER_INCLUDE_FILES WRAPPER_AUTO_INCLUDE_HEADERS
+  #                       WRAPPER_DO_NOT_CREATE_CXX
 
   MESSAGE(STATUS "${WRAPPER_LIBRARY_NAME}: Creating ${module} wrappers.")
 
@@ -106,12 +112,19 @@ MACRO(INCLUDE_WRAP_CMAKE module)
   SET(WRAPPER_TYPEDEFS)
   SET(WRAPPER_INCLUDE_FILES ${WRAPPER_DEFAULT_INCLUDE})
   SET(WRAPPER_AUTO_INCLUDE_HEADERS ON)
+  SET(WRAPPER_DO_NOT_CREATE_CXX OFF)
 
-  # now include the file
+  # Now include the file.
   INCLUDE("${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
 
-  # and write the file
-  WRITE_WRAP_CXX("wrap_${module}.cxx")
+  # Write the file, inless the included cmake file told us not to.
+  # A file might declare WRAPPER_DO_NOT_CREATE_CXX if that cmake file
+  # provides a custom wrap_*.cxx file and manually appends it to the 
+  # WRAPPER_LIBRARY_CABLESWIG_INPUTS list; thus that file would not
+  # need or want any cxx file generated.
+  IF(NOT WRAPPER_DO_NOT_CREATE_CXX)
+    WRITE_WRAP_CXX("wrap_${module}.cxx")
+  ENDIF(NOT WRAPPER_DO_NOT_CREATE_CXX)
 ENDMACRO(INCLUDE_WRAP_CMAKE)
 
 
@@ -122,7 +135,6 @@ MACRO(WRITE_WRAP_CXX file_name)
   # Global vars modified: none
 
   IF(NOT WRAPPER_TYPEDEFS AND NOT WRAPPER_INCLUDE_FILES)
-    MESSAGE("No content was generated for wrapper file ${WRAPPER_FILE_NAME}. Was this intentional?")
   ENDIF(NOT WRAPPER_TYPEDEFS AND NOT WRAPPER_INCLUDE_FILES)
   
   # Create the '#include' statements.

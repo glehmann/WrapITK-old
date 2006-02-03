@@ -19,9 +19,7 @@ namespace _cable_
    namespace wrappers
    {
       typedef vcl_complex< double > vcl_complexD;
-
       typedef vcl_complex< float > vcl_complexF;
-
       typedef vcl_complex< long double > vcl_complexLD;
    }
 }

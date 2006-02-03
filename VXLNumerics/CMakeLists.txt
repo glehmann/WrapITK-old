@@ -1,11 +1,10 @@
 BEGIN_WRAPPER_LIBRARY("VXLNumerics")
 
-SET(WRAPPER_LIBRARY_GROUPS
-  vcl_complex
+SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS
+  "${CMAKE_CURRENT_SOURCE_DIR}/wrap_vcl_complex.cxx"
 ) 
-# Set the required link libraries.
-# TODO: are these all the link libs needed? What about itkvcl?
-SET(WRAPPER_LIBRARY_LINK_LIBRARIES itkvnl itkvnl_algo itknetlib itkvnl_inst)
+
+SET(WRAPPER_LIBRARY_LINK_LIBRARIES itkvnl)
 
 WRAPPER_LIBRARY_CREATE_WRAP_FILES() 
 WRAPPER_LIBRARY_CREATE_LIBRARY()

@@ -1,4 +1,4 @@
-WRAP_NON_TEMPLATE_CLASS("itk::Command")
+WRAP_NON_TEMPLATE_CLASS("itk::Command"            POINTER)
 WRAP_NON_TEMPLATE_CLASS("itk::DataObject"         POINTER)
 WRAP_NON_TEMPLATE_CLASS("itk::Directory"          POINTER)
 WRAP_NON_TEMPLATE_CLASS("itk::DynamicLoader"      POINTER)

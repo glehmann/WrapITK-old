@@ -259,9 +259,14 @@ MACRO(WRAP_NAMED_CLASS class swig_name)
   # in SWIG (with template definitions providing additional mangled suffixes to this name)
   #
   # Lastly, this class takes an optional 'wrap method' parameter. Valid values are:
-  # POINTER, POINTER_WITH_SUPERCLASS, DEREF and SELF.
-
-  # TODO: document what each of the wrap methods does!
+  # POINTER and POINTER_WITH_SUPERCLASS.
+  # If no parameter is given, the class is simply wrapped as-is. If the parameter
+  # is "POINTER" then the class is wrapped and so is the SmartPointer template type
+  # that is typedef'd as class::Pointer.
+  # If POINTER_WITH_SUPERCLASS is given, class, class::Pointer, class::Superclass,
+  # and class::Superclass::Pointer are wrapped. This requires that the class
+  # has a typedef'd "Superclass" and that that superclass has Pointer and Self
+  # typedefs.
   #
   # Global vars used: none
   # Global vars modified: WRAPPER_CLASS WRAPPER_TEMPLATES WRAPPER_INCLUDE_FILES
@@ -276,13 +281,13 @@ MACRO(WRAP_NAMED_CLASS class swig_name)
   IF("${ARGC}" EQUAL 3)
     SET(WRAPPER_WRAP_METHOD "${ARGV2}")
     SET(ok 0)
-    FOREACH(opt POINTER POINTER_WITH_SUPERCLASS DEREF SELF)
+    FOREACH(opt POINTER POINTER_WITH_SUPERCLASS)
       IF("${opt}" STREQUAL "${WRAPPER_WRAP_METHOD}")
         SET(ok 1)
       ENDIF("${opt}" STREQUAL "${WRAPPER_WRAP_METHOD}")
     ENDFOREACH(opt)
     IF(ok EQUAL 0)
-      MESSAGE(SEND_ERROR "WRAP_CLASS: Invalid option '${WRAPPER_WRAP_METHOD}'. Possible values are POINTER, POINTER_WITH_SUPERCLASS, DEREF and SELF")
+      MESSAGE(SEND_ERROR "WRAP_CLASS: Invalid option '${WRAPPER_WRAP_METHOD}'. Possible values are POINTER and POINTER_WITH_SUPERCLASS")
     ENDIF(ok EQUAL 0)
   ENDIF("${ARGC}" EQUAL 3)
 
@@ -304,7 +309,7 @@ MACRO(WRAP_NON_TEMPLATE_CLASS class)
   # A fully-qualified 'class' parameter is required as above. The swig name for
   # this class is generated as in WRAP_CLASS.
   # Lastly, this class takes an optional 'wrap method' parameter. Valid values are:
-  # POINTER, POINTER_WITH_SUPERCLASS, DEREF and SELF.
+  # POINTER and POINTER_WITH_SUPERCLASS.
 
   WRAP_CLASS("${class}" ${ARGN})
   ADD_ONE_TYPEDEF("${WRAPPER_WRAP_METHOD}" "${WRAPPER_CLASS}" "${WRAPPER_SWIG_NAME}")
@@ -319,7 +324,7 @@ MACRO(WRAP_NAMED_NON_TEMPLATE_CLASS class swig_name)
   # A fully-qualified 'class' parameter is required as above. The swig name for
   # this class is provided by the second parameter.
   # Lastly, this class takes an optional 'wrap method' parameter. Valid values are:
-  # POINTER, POINTER_WITH_SUPERCLASS, DEREF and SELF.
+  # POINTER and POINTER_WITH_SUPERCLASS.
 
   WRAP_NAMED_CLASS("${class}" "${swig_name}" ${ARGN})
   ADD_ONE_TYPEDEF("${WRAPPER_WRAP_METHOD}" "${WRAPPER_CLASS}" "${WRAPPER_SWIG_NAME}")
@@ -391,34 +396,22 @@ MACRO(ADD_ONE_TYPEDEF wrap_method wrap_class swig_name)
     SET(full_class_name "${wrap_class}")
   ENDIF(template_parameters)
   
-  # note: need the backslahses before the semicolons because otherwise
-  # cmake tries to interpret the quoted string as a ;-delimited list variable!
-  IF("${wrap_method}" STREQUAL "")
-    SET(typedefs "typedef ${full_class_name} ${swig_name}")
-  ENDIF("${wrap_method}" STREQUAL "")
+  # Add a typedef for the class. We have this funny looking full_name::base_name
+  # thing (it expands to, for example "typedef itk::Foo<baz, 2>::Foo"), to 
+  # trick gcc_xml into creating code for the class. If we left off the trailing
+  # base_name, then gcc_xml wouldn't see the typedef as a class instantiation,
+  # and thus wouldn't create XML for any of the methods, etc.
+  SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}")
 
-  IF("${wrap_method}" STREQUAL "POINTER")
-    SET(wrap_pointer 1)
-    SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}")
+  IF("${wrap_method}" MATCHES "POINTER")
+    # add a pointer typedef if we are so asked
     SET(typedefs ${typedefs} "typedef ${full_class_name}::Pointer::SmartPointer ${swig_name}_Pointer")
-  ENDIF("${wrap_method}" STREQUAL "POINTER")
+  ENDIF("${wrap_method}" MATCHES "POINTER")
  
-  IF("${wrap_method}" STREQUAL "POINTER_WITH_SUPERCLASS")
-    SET(wrap_pointer 1)
-    SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}")
-    SET(typedefs ${typedefs} "typedef ${full_class_name}::Pointer::SmartPointer ${swig_name}_Pointer")
+  IF("${wrap_method}" MATCHES "SUPERCLASS")
     SET(typedefs ${typedefs} "typedef ${full_class_name}::Superclass::Self ${swig_name}_Superclass")
     SET(typedefs ${typedefs} "typedef ${full_class_name}::Superclass::Pointer::SmartPointer ${swig_name}_Superclass_Pointer")
-  ENDIF("${wrap_method}" STREQUAL "POINTER_WITH_SUPERCLASS")
-
-  IF("${wrap_method}" STREQUAL "DEREF")
-    SET(typedefs "typedef ${full_class_name}::${base_name} ${swig_name}")
-  ENDIF("${wrap_method}" STREQUAL "DEREF")
-
-  IF("${wrap_method}" STREQUAL "SELF")
-    SET(typedefs "typedef ${full_class_name}::Self ${swig_name}")
-  ENDIF("${wrap_method}" STREQUAL "SELF")
-
+  ENDIF("${wrap_method}" MATCHES "SUPERCLASS")
 
   # insert a blank line to separate the classes
   SET(WRAPPER_TYPEDEFS "${WRAPPER_TYPEDEFS}\n")
@@ -431,9 +424,9 @@ MACRO(ADD_ONE_TYPEDEF wrap_method wrap_class swig_name)
   # in non-template cases.
   LANGUAGE_SUPPORT_ADD_CLASS("${base_name}" "${wrap_class}" "${swig_name}" "${template_parameters}")
   
-  IF(wrap_pointer)
+  IF("${wrap_method}" MATCHES "POINTER")
     LANGUAGE_SUPPORT_ADD_CLASS("SmartPointer" "itk::SmartPointer" "${swig_name}_Pointer" "${full_class_name}")
-  ENDIF(wrap_pointer)
+  ENDIF("${wrap_method}" MATCHES "POINTER")
 ENDMACRO(ADD_ONE_TYPEDEF)
 
 

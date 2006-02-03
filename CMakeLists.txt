@@ -62,21 +62,6 @@ ADD_CUSTOM_COMMAND(
 # Now include itkConfigWrapping
 INCLUDE(itkConfigWrapping.cmake)
 
-# WRAPPER_GCC_XML_INCLUDE_DIRS initially populated by itkConfigWrapping 
-SET(WRAPPER_GCC_XML_INCLUDE_DIRS
-  ${WRAPPER_GCC_XML_INCLUDE_DIRS}
-  ${WrapITK_SOURCE_DIR}
-  ${WrapITK_SOURCE_DIR}/CommonA
-  ${WrapITK_SOURCE_DIR}/CommonB
-  ${WrapITK_SOURCE_DIR}/VXLNumerics
-  ${WrapITK_SOURCE_DIR}/Numerics
-  ${WrapITK_SOURCE_DIR}/BasicFiltersA
-  ${WrapITK_SOURCE_DIR}/BasicFiltersB
-  ${WrapITK_SOURCE_DIR}/IO
-  ${WrapITK_SOURCE_DIR}/SpatialObject
-  ${WrapITK_SOURCE_DIR}/Algorithms
-  )
-
 # ITK_KITS must be in proper order -- modules that depend on other modules
 # must come later in the list.
 SET(ITK_KITS VXLNumerics CommonA CommonB Numerics 

@@ -53,18 +53,14 @@
 ###############################################################################
 MACRO(BEGIN_WRAPPER_LIBRARY library_name)
   SET(WRAPPER_LIBRARY_NAME "${library_name}")
+
+  # Mark the current source dir for inclusion, both for GCC_XML and for the
+  # regular compiler, because it may contain header files.
+  WRAP_ITK_INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}")
   
   # WRAPPER_LIBRARY_SOURCE_DIR. Directory to be scanned for wrap_*.cmake files. 
   SET(WRAPPER_LIBRARY_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
   
-  # WRAPPER_GCC_XML_INCLUDE_DIRS. List of directories that GCC_XML should look in
-  # for include files. This variable typically has some values already set from
-  # elsewhere that we should not discard.
-  # Mark the current source dir for inclusion, both for GCC_XML and for the
-  # regular compiler, because it may contain header files.
-  SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS} "${CMAKE_CURRENT_SOURCE_DIR}")
-  INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}")
-
   # WRAPPER_LIBRARY_OUTPUT_DIR. Directory in which generated cxx, xml, and idx
   # files will be placed. 
   SET(WRAPPER_LIBRARY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
@@ -108,6 +104,14 @@ MACRO(BEGIN_WRAPPER_LIBRARY library_name)
   # Call the language support initialization function from CreateLanguageSupport.cmake
   LANGUAGE_SUPPORT_INITIALIZE()
 ENDMACRO(BEGIN_WRAPPER_LIBRARY)
+
+# Define a macro to add some directories both to the INCLUDE_DIRECTORIES list,
+# but also to the WRAPPER_GCC_XML_INCLUDE_DIRECTORIES list. Pretty much any 
+# include directory will need to be added to both.
+MACRO(WRAP_ITK_INCLUDE_DIRECTORIES)
+  SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS} ${ARGV})
+  INCLUDE_DIRECTORIES(${ARGV})
+ENDMACRO(WRAP_ITK_INCLUDE_DIRECTORIES)
 
 SET(WRAPPER_MASTER_INDEX_OUTPUT_DIR "${PROJECT_BINARY_DIR}/MasterIndex")
 SET(WRAPPER_SWIG_LIBRARY_OUTPUT_DIR "${PROJECT_BINARY_DIR}/SWIG")
@@ -208,7 +212,8 @@ SET(WRAPPER_DEFAULT_INCLUDE
   "itkPoint.h"
   "itkLevelSet.h"
   "itkBinaryBallStructuringElement.h"
-  "itkSpatialObject.h")
+  "itkSpatialObject.h"
+  "itkCommand.h")
 
 # make sure required stuff is set
 SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${ITK_INCLUDE_DIRS})
@@ -217,26 +222,21 @@ SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${ITK_INCLUDE_DIRS})
 # to the GCCXML_INCLUDE_DIRS...
 
 IF(WRAP_ITK_TCL)
-  SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS} ${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
-  INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
+  WRAP_ITK_INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 ENDIF(WRAP_ITK_TCL)
 
 IF(WRAP_ITK_PYTHON)
   # Python include directory.
-  SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS}
-    ${PYTHON_INCLUDE_PATH})
-  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH} )
+  WRAP_ITK_INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 ENDIF(WRAP_ITK_PYTHON)
 
 IF(WRAP_ITK_PERL)
-  INCLUDE_DIRECTORIES(${PERL_INCLUDE_PATH})
+  WRAP_ITK_INCLUDE_DIRECTORIES(${PERL_INCLUDE_PATH})
 ENDIF(WRAP_ITK_PERL)
 
 IF(WRAP_ITK_JAVA)
   # Java include directories.
-  SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS}
-      ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
-  INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
+  WRAP_ITK_INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
 ENDIF(WRAP_ITK_JAVA)
 
 #------------------------------------------------------------------------------

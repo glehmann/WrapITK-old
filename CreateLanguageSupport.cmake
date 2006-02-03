@@ -237,7 +237,7 @@ MACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG outdir)
   # or 'import ProjectConfig-[Debug|Release|...]' if multiple build styles were
   # selected from an IDE. After this module is imported, the external project
   # can be easily imported by 'import ProjectName'.
-  # If ProjectConfig were not used, the user would have to manually set sys.path
+  # If ProjectConfig was not used, the user would have to manually set sys.path
   # to point to *both* the Python directory in the WrapITK build tree and the
   # directory where the current project's SWIG libraries have been placed.
   

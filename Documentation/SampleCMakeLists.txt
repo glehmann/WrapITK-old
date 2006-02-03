@@ -65,8 +65,9 @@ SET(WRAPPER_LIBRARY_CXX_SOURCES )
 # WRAPPER_LIBRARY_CABLESWIG_INPUTS list.
 # In addition, this causes the other required wrap_*.cxx files for the entire
 # library and each wrapper language to be created.
-# Finally, this macro causes the language support files for the templates and
-# library here defined to be created.
+# Finally, this macro records information about the template instances that are
+# wrapped. This information is needed for the language support files created 
+# below.
 
 WRAPPER_LIBRARY_CREATE_WRAP_FILES()
 
@@ -77,7 +78,7 @@ WRAPPER_LIBRARY_CREATE_WRAP_FILES()
 # (c) generation of C and language-specific wrapper code from index files via 
 # cswig, and (d) adding a library target with the generated C code.
 # This also creates the language support files for properly loading the library
-# and supportint templated instances. (Currently Python-only.)
+# and supporting templated instances. (Currently Python-only.)
 
 WRAPPER_LIBRARY_CREATE_LIBRARY()
 

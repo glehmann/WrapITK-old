@@ -2,7 +2,7 @@
 SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
 WRAP_INCLUDE("itkSparseFieldFourthOrderLevelSetImageFilter.h")
 
-WRAP_CLASS("itk::NormalBandNode" DEREF)
+WRAP_CLASS("itk::NormalBandNode")
   WRAP_REAL(1)
 END_WRAP_CLASS()
 

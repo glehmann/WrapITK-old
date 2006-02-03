@@ -2,7 +2,7 @@
 SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
 WRAP_INCLUDE("itkNarrowBand.h")
 
-WRAP_CLASS("itk::BandNode" DEREF)
+WRAP_CLASS("itk::BandNode")
   FOREACH(d ${WRAP_DIMS})
     COND_WRAP("I${d}${ITKM_D}"  "itk::Index < ${d} >, ${ITKT_D}"  "D")
     COND_WRAP("I${d}${ITKM_F}"  "itk::Index < ${d} >, ${ITKT_F}"  "F")

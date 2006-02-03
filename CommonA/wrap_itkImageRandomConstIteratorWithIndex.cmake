@@ -1,4 +1,4 @@
-WRAP_CLASS("itk::ImageRandomConstIteratorWithIndex" SELF)
+WRAP_CLASS("itk::ImageRandomConstIteratorWithIndex")
   WRAP_INT(1)
   WRAP_SIGN_INT(1)
   WRAP_REAL(1)

@@ -4,7 +4,7 @@ SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
 WRAP_INCLUDE("vcl_complex.h")
 WRAP_INCLUDE("vnl/vnl_c_vector.h")
 
-WRAP_CLASS("vnl_c_vector" DEREF)
+WRAP_CLASS("vnl_c_vector")
   WRAP("${ITKM_D}" "${ITKT_D}")
   WRAP("_vcl_complex${ITKM_D}" "vcl_complex<${ITKT_D}>")
   WRAP("${ITKM_F}" "${ITKT_F}")

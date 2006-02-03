@@ -5,7 +5,7 @@ WRAP_INCLUDE("vcl_complex.h")
 WRAP_INCLUDE("vnl/vnl_matrix.h")
 WRAP_INCLUDE("vnl/vnl_vector.h")
 
-WRAP_CLASS("vnl_vector" DEREF)
+WRAP_CLASS("vnl_vector")
   WRAP("${ITKM_D}" "${ITKT_D}")
   WRAP("_vcl_complex${ITKM_D}" "vcl_complex<${ITKT_D}>")
   WRAP("${ITKM_F}" "${ITKT_F}")

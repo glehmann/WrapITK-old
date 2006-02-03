@@ -1,3 +1,3 @@
-WRAP_CLASS("itk::Versor" SELF)
+WRAP_CLASS("itk::Versor")
   WRAP(${ITKM_D} ${ITKT_D})
 END_WRAP_CLASS()

@@ -1,4 +1,4 @@
-WRAP_CLASS("itk::ImageRegionConstIteratorWithIndex" SELF)
+WRAP_CLASS("itk::ImageRegionConstIteratorWithIndex")
   WRAP_INT(1)
   WRAP_SIGN_INT(1)
   WRAP_REAL(1)

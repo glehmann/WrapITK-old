@@ -1,4 +1,4 @@
-WRAP_CLASS("itk::Size" DEREF)
+WRAP_CLASS("itk::Size")
   FOREACH(d ${WRAP_DIMS})
     WRAP(${d} ${d})
   ENDFOREACH(d)  

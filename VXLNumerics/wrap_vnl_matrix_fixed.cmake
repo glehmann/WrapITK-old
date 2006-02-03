@@ -3,7 +3,7 @@
 SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
 WRAP_INCLUDE("vnl/vnl_matrix_fixed.h")
 
-WRAP_CLASS("vnl_matrix_fixed" DEREF)
+WRAP_CLASS("vnl_matrix_fixed")
   WRAP("${ITKM_D}_2_2" "${ITKT_D},2,2")
   WRAP("${ITKM_D}_2_3" "${ITKT_D},2,3")
   WRAP("${ITKM_D}_2_6" "${ITKT_D},2,6")

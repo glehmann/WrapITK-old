@@ -172,6 +172,3 @@ The final optional parameter to WRAP_CLASS is POINTER or POINTER_WITH_SUPERCLASS
 In addition to having a set of wrap_XXX.cmake files and the proper commands to read in these files and create a library (all described above), an external project's CMakeLists file needs at least one additional command to start it out:
 FIND_PACKAGE(WrapITK REQUIRED)
 This command will cause cmake to try to find the WrapITK build/install directory. If WrapITK has been installed, this will work on the first try. Otherwise, you will have to set (within ccmake, or in the CMakeLists if you prefer) the variable WrapITK_DIR to contain the path to the WrapITK build directory.
-
-Additionally, if you add any custom include directories for the compiler to find headers in, you must call WRAP_ITK_INCLUDE_DIRECTORIES instead of INCLUDE_DIRECTORIES. This is because we need to keep track of any custom include directories so they can be passed to gcc_xml.
-

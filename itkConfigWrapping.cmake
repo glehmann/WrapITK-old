@@ -32,10 +32,9 @@
 # Additionally, LINK_DIRECTORIES must include the path to libSwigRuntimeXXX.dylib
 # (This is automatic for WrapITK, but not for external projects.)
 #
-# This file sets, among others, WRAPPER_GCC_XML_INCLUDE_DIRS.
-# Modify this variable to add more include directories for gcc_xml.
-# This file also sets a default value for WRAPPER_MASTER_INDEX_OUTPUT_DIR.
-# Change it after including this file if needed.
+# This file sets a default value for WRAPPER_MASTER_INDEX_OUTPUT_DIR and
+# WRAPPER_SWIG_LIBRARY_OUTPUT_DIR. Change it after including this file if needed,
+# but this shouldn't really be necessary except for complex external projects.
 #
 # A note on convention: Global variables (those shared between macros) are
 # defined in ALL_CAPS (or partially all-caps, for the WRAP_pixel_type) values
@@ -54,9 +53,8 @@
 MACRO(BEGIN_WRAPPER_LIBRARY library_name)
   SET(WRAPPER_LIBRARY_NAME "${library_name}")
 
-  # Mark the current source dir for inclusion, both for GCC_XML and for the
-  # regular compiler, because it may contain header files.
-  WRAP_ITK_INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}")
+  # Mark the current source dir for inclusion because it may contain header files.
+  INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}")
   
   # WRAPPER_LIBRARY_SOURCE_DIR. Directory to be scanned for wrap_*.cmake files. 
   SET(WRAPPER_LIBRARY_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -104,14 +102,6 @@ MACRO(BEGIN_WRAPPER_LIBRARY library_name)
   # Call the language support initialization function from CreateLanguageSupport.cmake
   LANGUAGE_SUPPORT_INITIALIZE()
 ENDMACRO(BEGIN_WRAPPER_LIBRARY)
-
-# Define a macro to add some directories both to the INCLUDE_DIRECTORIES list,
-# but also to the WRAPPER_GCC_XML_INCLUDE_DIRECTORIES list. Pretty much any 
-# include directory will need to be added to both.
-MACRO(WRAP_ITK_INCLUDE_DIRECTORIES)
-  SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${WRAPPER_GCC_XML_INCLUDE_DIRS} ${ARGV})
-  INCLUDE_DIRECTORIES(${ARGV})
-ENDMACRO(WRAP_ITK_INCLUDE_DIRECTORIES)
 
 SET(WRAPPER_MASTER_INDEX_OUTPUT_DIR "${PROJECT_BINARY_DIR}/MasterIndex")
 SET(WRAPPER_SWIG_LIBRARY_OUTPUT_DIR "${PROJECT_BINARY_DIR}/SWIG")
@@ -215,28 +205,21 @@ SET(WRAPPER_DEFAULT_INCLUDE
   "itkSpatialObject.h"
   "itkCommand.h")
 
-# make sure required stuff is set
-SET(WRAPPER_GCC_XML_INCLUDE_DIRS ${ITK_INCLUDE_DIRS})
-
-# TODO: Not sure if it's necessary to add all the language-specific include dirs
-# to the GCCXML_INCLUDE_DIRS...
-
+# make sure language include directories are added
 IF(WRAP_ITK_TCL)
-  WRAP_ITK_INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
+  INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 ENDIF(WRAP_ITK_TCL)
 
 IF(WRAP_ITK_PYTHON)
-  # Python include directory.
-  WRAP_ITK_INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 ENDIF(WRAP_ITK_PYTHON)
 
 IF(WRAP_ITK_PERL)
-  WRAP_ITK_INCLUDE_DIRECTORIES(${PERL_INCLUDE_PATH})
+  INCLUDE_DIRECTORIES(${PERL_INCLUDE_PATH})
 ENDIF(WRAP_ITK_PERL)
 
 IF(WRAP_ITK_JAVA)
-  # Java include directories.
-  WRAP_ITK_INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
+  INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
 ENDIF(WRAP_ITK_JAVA)
 
 #------------------------------------------------------------------------------

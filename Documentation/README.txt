@@ -149,14 +149,29 @@ A wrap_XXX.cmake file defines a group of classes and/or template instantiations 
 
 Within such a file, directives are issued to wrap classes and particular template instances. All of the available directives are defined and documented in CreateCableSwigInputs.cmake. The basics are presented here:
 
-WRAP_INCLUDE("header.h") -- causes the named header to be #included in the generated files. 
-WRAP_CLASS("fully_qualified::ClassName" POINTER) -- causes a templated class to be wrapped. All namespaces must be included in the class name, and note that no template instantiation is given. Template instantiations are created with various WRAP directives 
+- WRAP_INCLUDE("header.h") -- causes the named header to be #included in the generated files. 
 
- WRAP_CLASS issues an implicit call to WRAP_INCLUDE("ClassName.h"), so the header for the wrapped class itself does not need to be manually included. To disable this behavior, set WRAPPER_AUTO_INCLUDE_HEADERS to OFF.
+- WRAP_CLASS("fully_qualified::ClassName" [POINTER|POINTER_WITH_SUPERCLASS]) -- causes a templated class to be wrapped. All namespaces must be included in the class name, and note that no template instantiation is given. Template instantiations are created with various WRAP directives, described below, between invocations of WRAP_CLASS() and END_WRAP_CLASS().
 
-WRAP("mangled_suffix" "template parameters") -- 
+WRAP_CLASS issues an implicit call to WRAP_INCLUDE("ClassName.h"), so the header for the wrapped class itself does not need to be manually included. To disable this behavior, set WRAPPER_AUTO_INCLUDE_HEADERS to OFF.
 
+The final optional parameter to WRAP_CLASS is POINTER or POINTER_WITH_SUPERCLASS. If no options are passed, then the class is wrapped as-is. If POINTER is passed, then the class and the typedef'd class::Pointer type is wrapped. (Class::Pointer had better be a SmartPointer instantiation, or things won't work. This is always the case for ITK-style code.) If POINTER_WITH_SUPERCLASS is provided, then class::Pointer, class::Superclass and class::Superclass::Pointer are all wrapped. (Again, this only works for ITK-style code where the class has a typedef'd Superclass, and the superclass has Self and Pointer typedefs.)
 
+- WRAP("mangled_suffix" "template parameters") -- When issued between WRAP_CLASS and END_WRAP_CLASS, this command causes a particular template instantiation of the current class to be wrapped. The parameter "mangled_suffix" is a suffix to append to the class's name that uniquely identifies this particular template instantiation, and "template parameters" are whatever should go between the < > template instantiation brackets. (Do not include the brackets.) If you are wrapping a filter, there are simpler macros to use, which are defined at the bottom of CreateCableSwigInputs and described below.
+
+- WRAP_type(size) (where 'type' is INT, SIGN_INT, REAL, VECTOR_REAL, COV_VECTOR_REAL or RGB) -- create a template instantiation with 'size' itk::Image parameters of the given pixel type. So if you are wrapping a filter which should take two images with integral pixel types, write WRAP_INT(2). The specific integral data type(s) (char, long, or short in the WRAP_INT case) will be determined by the user-selected build parameters (e.g. WRAP_long, and WRAP_short). 
+
+- WRAP_type_DIMS(size dims) (with 'type' as above) -- Wrap a filter for certain dimensions only. Dims should be either a semicolon-separated list of valid dimensions, or something of the form '3+' to specify that the filter can be instantiated only for three- and higher-dimensional images. Note that if the user has not selected to wrap a given dimension at build time, a filter wrapped with WRAP_type_DIMS will not be instantiated: the final dimensions wrapped are the *intersection* of the user-selected dimensions and the valid dimensions declared with WRAP_type_DIMS.
+
+- END_WRAP_CLASS() -- end a block of template instantiations for a particular class.
+
+- WRAP_NON_TEMPLATE_CLASS("fully_qualified::ClassName" [POINTER|POINTER_WITH_SUPERCLASS]) -- Same as WRAP_CLASS, but creates a wrapper for a non-templated class. No END_WRAP_CLASS() is necessary after this macro because there is no block of template instantiating commands to close.
 
 
 (3) Top-level CMakeLists for external projects
+In addition to having a set of wrap_XXX.cmake files and the proper commands to read in these files and create a library (all described above), an external project's CMakeLists file needs at least one additional command to start it out:
+FIND_PACKAGE(WrapITK REQUIRED)
+This command will cause cmake to try to find the WrapITK build/install directory. If WrapITK has been installed, this will work on the first try. Otherwise, you will have to set (within ccmake, or in the CMakeLists if you prefer) the variable WrapITK_DIR to contain the path to the WrapITK build directory.
+
+Additionally, if you add any custom include directories for the compiler to find headers in, you must call WRAP_ITK_INCLUDE_DIRECTORIES instead of INCLUDE_DIRECTORIES. This is because we need to keep track of any custom include directories so they can be passed to gcc_xml.
+

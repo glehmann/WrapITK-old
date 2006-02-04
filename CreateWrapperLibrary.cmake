@@ -136,9 +136,14 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     IF(no_swg_found)
       MESSAGE("Could not find swig library file ${dep}.swg. It won't be used.")
     ENDIF(no_swg_found)
-    
   ENDFOREACH(dep)
-    
+  
+  # Now tell each module to also use its own SWIG library file (if it exists):
+  SET(current_lib_swig_file "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.swg")
+  IF(EXISTS "${current_lib_swig_file}")
+            SET(swig_library_files ${swig_library_files} "${current_lib_swig_file}")
+  ENDIF(EXISTS "${current_lib_swig_file}")
+  
   # STEP 4
   # Generate the XML, index, and CXX files from the Cable input files, and add
   # the wrapper library.

@@ -30,6 +30,20 @@ Python with WrapITK:
 image = itk.Image[itk.US, 2].New()
 writer = itk.ImageFileWriter[image].New(Input=image, FileName="foo.tif")
 
+BUILDING
+--------
+WrapITK requires ITK and CableSwig to have been previously downloaded and built. To get CableSwig, simply run:
+cvs -d:pserver:anonymous@public.kitware.com:/cvsroot/CableSwig co CableSwig
+(Note that no cvs login is needed here.)
+
+If you check out CableSwig into the Insight/Utilities directory, then it will be built as a part of ITK, and will be automatically detected by WrapITK when ITK is found.
+
+WrapITK will work properly with a CVS checkout of ITK from 2006-1-31 or later, or with the ITK 2.4.1 release. If you are using 2.4.1, there are several required patches to correct bugs in ITK that must be applied. Follow the directions in WrapITK/patches to do so. Additionally, there are some optional patches to the ITK source in WrapITK/patches/optional which can be applied to either a CVS checkout of ITK or to version 2.4.1. These optional patches provide better support for python by providing __str__ methods and the like.
+
+After CableSwig and ITK have been (possibly patched) and built, building WrapITK with cmake is simple. Run ccmake in a new directory with the path to the WrapITK source tree as the first argument, and provide the locations of the ITK and CableSwig build trees if ccmake so requests. Build options are relatively self-explanatory.
+
+Note that each individual filter that is wrapped can declare which dimensions it should be wrapped for, and what image types it can accept. For example, a filter could declare that it should only be wrapped for 3D images with floating-point typed pixels. In this case, then wrappers will only be created if the user has selected to build 3-dimensional image wrappers and has selected one or more floating point types (e.g. double or float) in ccmake. Thus, the ccmake configuration specifies the maximum possible range of image and filter types to be created, and each filter is wrapped for some subset of that range. 
+
 
 PYTHON USAGE
 ------------
@@ -78,15 +92,6 @@ smartPtr = itk.SmartPointer[itk.Image[itk.US, 2]](image.GetPointer())
 or just
 smartPtr = itk.SmartPointer[image](image.GetPointer())
 
-BUILDING
---------
-WrapITK requires ITK and CableSwig to have been previously downloaded and built. (If CableSwig was obtained and built as part of ITK, it will automatically be detected.)
-
-WrapITK will work properly with a CVS checkout of ITK from 2006-1-31 or later, or with the ITK 2.4.1 release. If you are using 2.4.1, there are several required patches to correct bugs in ITK that must be applied. Follow the directions in WrapITK/patches to do so. Additionally, there are some optional patches to the ITK source in WrapITK/patches/optional which can be applied to either a CVS checkout of ITK or to version 2.4.1. These optional patches provide better support for python by providing __str__ methods and the like.
-
-After CableSwig and ITK have been (possibly patched) and built, building WrapITK with cmake is simple. Run ccmake in a new direvtory with the path to the WrapITK source tree as the first argument, and provide the locations of the ITK and CableSwig build trees if ccmake so requests. Build options relatively self-explanatory.
-
-Note that each individual filter that is wrapped can declare which dimensions it should be wrapped for, and what image types it can accept. For example, a filter could declare that it should only be wrapped for 3D images with floating-point typed pixels. In this case, then wrappers will only be created if the user has selected to build 3-dimensional image wrappers and has selected one or more floating point types (e.g. double or float) in ccmake. Thus, the ccmake configuration specifies the maximum possible range of image and filter types to be created, and each filter is wrapped for some subset of that range. 
 
 ADDING OR REMOVING WRAPPED ITK CLASSES
 --------------------------------------

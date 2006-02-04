@@ -1,9 +1,7 @@
-/* This is an itk-specific typemap used by CableSwig.  Also see comments
- * and "throws" code in CableSwig.cxx.
+/* This is an itk-specific typemap used by CableSwig.  
  *   -- Charl P. Botha <cpbotha AT ieee.org>
  */
- 
- 
+
 // Exception support. May be conditionally turned off by defining
 // NO_EXCEPTIONS.
 #ifndef NO_EXCEPTIONS

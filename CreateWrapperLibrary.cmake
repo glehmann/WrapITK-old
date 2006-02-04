@@ -382,7 +382,7 @@ MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx
           ${input_xml}
      TARGET ${library_name}
      OUTPUTS ${output_cxx}
-     DEPENDS ${library_idx_files} ${WRAPPER_SWIG_INCLUDE_FILES} ${input_xml} ${CSWIG})
+     DEPENDS ${library_idx_files} ${swig_library_files} ${input_xml} ${CSWIG})
 ENDMACRO(CSWIG_CREATE_CXX_FILE)
 
 

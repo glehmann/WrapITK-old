@@ -158,7 +158,10 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
   IF(WRAP_ITK_TCL)
     SET(library_type "SHARED")
     SET(custom_library_prefix "")
-    CREATE_WRAPPER_FILES_AND_LIBRARY("Tcl" "tcl" "${wrap_tcl_sources}"
+    # no .tcl files are created by SWIG, so pass an empty extension for the
+    # "created file type" variable, so we know not to try to install the tcl files
+    # that aren't made.
+    CREATE_WRAPPER_FILES_AND_LIBRARY("Tcl" "" "${wrap_tcl_sources}"
       "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
       "${swig_library_files}" "${library_type}" "${custom_library_prefix}")
   ENDIF(WRAP_ITK_TCL)
@@ -219,8 +222,10 @@ MACRO(CREATE_WRAPPER_FILES library_name language extension mdx_files library_idx
     CSWIG_CREATE_CXX_FILE("${library_name}" "${language}" "${idx_file}" "${xml_file}" "${cxx_file}"
       "${master_index_files}" "${library_idx_files}" "${swig_library_files}")
     STRING(REGEX REPLACE "wrap_" "" simple_base_name "${base_name}")
-    SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INSTALL_INTDIR}${simple_base_name}.${extension}")
-    INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/${language}-SWIG" FILES "${swig_language_file}")    
+    IF(extension)
+      SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INSTALL_INTDIR}${simple_base_name}.${extension}")
+      INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/${language}-SWIG" FILES "${swig_language_file}")    
+    ENDIF(extension)
   ENDFOREACH(cable_file)
   
   # Create any extra CXX files from raw swig .i input files specified, and provide
@@ -230,8 +235,10 @@ MACRO(CREATE_WRAPPER_FILES library_name language extension mdx_files library_idx
     GET_FILENAME_COMPONENT(base_name ${swig_input} NAME_WE)
     SET(cxx_output "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}${language}.cxx")
     CREATE_EXTRA_SWIG_FILE("${library_name}" "${language}" "${swig_input}" "${cxx_output}")
-    SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INSTALL_INTDIR}${base_name}.${extension}")
-    INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/${language}-SWIG" FILES "${swig_language_file}")
+    IF(extension)
+      SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INSTALL_INTDIR}${base_name}.${extension}")
+      INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/${language}-SWIG" FILES "${swig_language_file}")
+    ENDIF(extension)
   ENDFOREACH(swig_input)
   
 ENDMACRO(CREATE_WRAPPER_FILES)

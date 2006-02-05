@@ -37,6 +37,10 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
 
   # Now search for other wrap_*.cmake files to include
   FILE(GLOB wrap_cmake_files "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_*.cmake")
+  # sort the list of files so we are sure to always get the same order on all system
+  # and for all builds. That's important for several reasons:
+  # - the order is important for the order of creation of python template
+  # - the typemaps files are always the same, and the rebuild can be avoided
   SORT("wrap_cmake_files")
   FOREACH(file ${wrap_cmake_files})
     # get the module name from wrap_module.cmake
@@ -65,6 +69,7 @@ ENDMACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
 
 
 MACRO(SORT list_name)
+  # Sort the list of strings with the name given in parameter
   SET(tmp1 "")
   FOREACH(l ${${list_name}})
     SET(inserted 0)

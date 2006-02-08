@@ -56,89 +56,12 @@
 %typemap(in)   p._object "$1 = $input;";
 %typemap(out)  p._object "$result = $1;";
 
-// some nice typemaps to be able to give size and index object as python sequences (list, tuple
-// or anything with a working __getitem__ method)
 
-#define pySequenceTypemap(name, VDimension) \
-%typemap(in) itk::##name##<##VDimension##>& (itk::##name##<##VDimension##> itks) { \
-  if ((SWIG_ConvertPtr($input,(void **)(&$1),$1_descriptor, 0)) == -1) { \
-    PyErr_Clear(); \
-    if (PySequence_Check($input) && PyObject_Length($input) == ##VDimension##) { \
-      for (int i =0; i < ##VDimension##; i++) { \
-          PyObject *o = PySequence_GetItem($input,i); \
-          if (!PyInt_Check(o)) { \
-            PyErr_SetString(PyExc_ValueError,"Expecting a sequence of int"); \
-            return NULL; \
-          } \
-          itks[i] = PyInt_AsLong(o); \
-      } \
-      $1 = &itks; \
-    }else if (PyInt_Check($input)) { \
-      for (int i =0; i < ##VDimension##; i++) { \
-          itks[i] = PyInt_AsLong($input); \
-      } \
-      $1 = &itks; \
-    } else { \
-      SWIG_fail; \
-    } \
-  } \
-} \
-%typemap(typecheck) itk::##name##<##VDimension##>& { \
-  void *ptr; \
-  if (SWIG_ConvertPtr($input, &ptr, $1_descriptor, 0) == -1 \
-      && ( !PySequence_Check($input) || PyObject_Length($input) != ##VDimension## ) \
-      && !PyInt_Check($input) ) { \
-    _v = 0; \
-    PyErr_Clear(); \
-  } else { \
-    _v = 1; \
-  } \
-} \
-%typemap(in) itk::##name##<##VDimension##> { \
-  itk::##name##<##VDimension##> * s; \
-  if ((SWIG_ConvertPtr($input,(void **)(&s),$1_descriptor, 0)) == -1) { \
-    PyErr_Clear(); \
-    if (PySequence_Check($input) && PyObject_Length($input) == ##VDimension##) { \
-      for (int i =0; i < ##VDimension##; i++) { \
-          PyObject *o = PySequence_GetItem($input,i); \
-          if (!PyInt_Check(o)) { \
-            PyErr_SetString(PyExc_ValueError,"Expecting a sequence of int"); \
-            return NULL; \
-          } \
-          $1[i] = PyInt_AsLong(o); \
-      } \
-    }else if (PyInt_Check($input)) { \
-      for (int i =0; i < ##VDimension##; i++) { \
-          $1[i] = PyInt_AsLong($input); \
-      } \
-    } else { \
-      SWIG_fail; \
-    } \
-  } else { \
-    $1 = *s; \
-  } \
-} \
-%typemap(typecheck) itk::##name##<##VDimension##> { \
-  void *ptr; \
-  if (SWIG_ConvertPtr($input, &ptr, $1_descriptor, 0) == -1 \
-       && ( !PySequence_Check($input) || PyObject_Length($input) != ##VDimension## ) \
-       && !PyInt_Check($input) ) { \
-    _v = 0; \
-    PyErr_Clear(); \
-  } else { \
-    _v = 1; \
-  } \
-} \
+// a implementation of %extend in cableswig would also be great to move back __getitem__ method 
+// added in some files in this one
 
-pySequenceTypemap(Index, 1)
-pySequenceTypemap(Index, 2)
-pySequenceTypemap(Index, 3)
-pySequenceTypemap(Index, 4)
+#endif // SWIGPYTHON
 
-pySequenceTypemap(Size, 1)
-pySequenceTypemap(Size, 2)
-pySequenceTypemap(Size, 3)
-pySequenceTypemap(Size, 4)
 
 // basic type pointers typemap
 // should work with all languages
@@ -164,10 +87,7 @@ pySequenceTypemap(Size, 4)
 %typemap(out) float &, const float &, double &, const double &
   {$result = SWIG_FromDouble( *$1 );}
 
-// a implementation of %extend in cableswig would also be great to move back __getitem__ method 
-// added in some files in this one
 
-#endif // SWIGPYTHON
 
 
 %include std_string.i

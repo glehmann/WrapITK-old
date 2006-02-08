@@ -189,22 +189,6 @@ ENDIF(WRAP_ITK_JAVA)
 ###############################################################################
 # Set various variables in order
 ###############################################################################
-# set the default include files for the generated wrapper files
-SET(WRAPPER_DEFAULT_INCLUDE
-  "itkOffset.h"
-  "itkVector.h"
-  "itkCovariantVector.h"
-  "itkContinuousIndex.h"
-  "itkArray.h"
-  "itkFixedArray.h"
-  "itkRGBPixel.h"
-  "itkImage.h"
-  "itkPoint.h"
-  "itkLevelSet.h"
-  "itkBinaryBallStructuringElement.h"
-  "itkSpatialObject.h"
-  "itkCommand.h")
-
 # make sure language include directories are added
 IF(WRAP_ITK_TCL)
   INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})

@@ -167,3 +167,23 @@ WRAP_TYPE("SpatialObject" "SO")
   ENDFOREACH(d)
 END_WRAP_TYPE()
 SET(itk_Wrap_SpatialObject ${WRAPPER_TEMPLATES})
+
+#------------------------------------------------------------------------------
+
+# set the default include files for the generated wrapper files
+SET(WRAPPER_DEFAULT_INCLUDE
+  "itkOffset.h"
+  "itkVector.h"
+  "itkCovariantVector.h"
+  "itkContinuousIndex.h"
+  "itkArray.h"
+  "itkFixedArray.h"
+  "itkRGBPixel.h"
+  "itkImage.h"
+  "itkPoint.h"
+  "itkLevelSet.h"
+  "itkBinaryBallStructuringElement.h"
+  "itkSpatialObject.h"
+  "itkCommand.h"
+)
+

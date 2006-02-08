@@ -140,24 +140,29 @@ pySequenceTypemap(Size, 2)
 pySequenceTypemap(Size, 3)
 pySequenceTypemap(Size, 4)
 
+// basic type pointers typemap
+// should work with all languages
 
+%typemap(out) unsigned char &, const unsigned char &
+  {$result = SWIG_FromUnsignedChar( *$1 );}
 
+%typemap(out)  signed char &, const signed char &
+  {$result = SWIG_FromSignedChar( *$1 );}
 
-// TODO: Make these language-neutral
-%typemap(out) unsigned char &, const unsigned char &, \
-  signed char &, const signed char &, \
-  unsigned short &, const unsigned short &, \
-  signed short &, const signed short &, \
-  unsigned int &, const unsigned int &, \
-  signed int &, const signed int &, \
-  unsigned long &, const unsigned long &, \
-  signed long &, const signed long & \
-  {$result = PyInt_FromLong( *$1 );}
+%typemap(out)  unsigned short &, const unsigned short &
+  {$result = SWIG_FromUnsignedShort( *$1 );}
 
-%typemap(out) float &, const float &, \
-  double &, const double & \
-  {$result = PyFloat_FromDouble( *$1 );}
+%typemap(out)  signed short &, const signed short &
+  {$result = SWIG_FromShort( *$1 );}
 
+%typemap(out)  unsigned int &, const unsigned int &, signed int &, const signed int &
+  {$result = SWIG_FromInt( *$1 );}
+
+%typemap(out)  signed long &, const signed long &, unsigned long &, const unsigned long &
+  {$result = SWIG_FromLong( *$1 );}
+
+%typemap(out) float &, const float &, double &, const double &
+  {$result = SWIG_FromDouble( *$1 );}
 
 // a implementation of %extend in cableswig would also be great to move back __getitem__ method 
 // added in some files in this one

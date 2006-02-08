@@ -136,9 +136,9 @@ MACRO(ADD_PYTHON_TYPEMAP simple_name cpp_name swig_name template_params)
     ADD_PYTHON_VEC_TYPEMAP("${cpp_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::FixedArray")
 
-#   IF("${cpp_name}" STREQUAL "itk::Vector")
-#     ADD_PYTHON_VEC_TYPEMAP("${cpp_name}" "${template_params}")
-#   ENDIF("${cpp_name}" STREQUAL "itk::Vector")
+  IF("${cpp_name}" STREQUAL "itk::Vector")
+    ADD_PYTHON_VEC_TYPEMAP("${cpp_name}" "${template_params}")
+  ENDIF("${cpp_name}" STREQUAL "itk::Vector")
 
   IF("${cpp_name}" STREQUAL "itk::CovariantVector")
     ADD_PYTHON_VEC_TYPEMAP("${cpp_name}" "${template_params}")

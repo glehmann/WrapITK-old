@@ -164,31 +164,38 @@ INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/SWIG" FILES "itk.swg")
 INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}" FILES "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake")
 
 ####################################
-# Hackish macro to install a file at an absolute location, working around a 
+# Hackish macros to install a file at an absolute location, working around a 
 # CMake limitation.
+
+ADD_CUSTOM_TARGET(CustomInstall ALL)
+# add a global target so that if this macro is called from one subdirectory or 
+# another, they each "see" this single top-level target.
+
 MACRO(INSTALL_AT_ABSOLUTE_PATH PATH)
   # USAGE: 
   # INSTALL_AT_ABSOLUTE_PATH("/path/to/install" "/path/to/file1" ... "path/to/fileN")
-  #
-  # Only use this macro once per directory -- otherwise the custom installation
-  # will get overwritten.
   
-  FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CustomInstall.cmake" "")
+  IF(NOT CUSTOM_INSTALL_FILE_WRITTEN)
+    WRITE_CUSTOM_INSTALL_FILES()
+    SET(CUSTOM_INSTALL_FILE_WRITTEN ON)
+  ENDIF(NOT CUSTOM_INSTALL_FILE_WRITTEN)
   
   FOREACH(file ${ARGN})
     GET_FILENAME_COMPONENT(filename "${file}" NAME)
     STRING(REGEX REPLACE "/$" "" stripped_path "${PATH}")
-    FILE(APPEND "${CMAKE_CURRENT_BINARY_DIR}/CustomInstall.cmake" 
+    FILE(APPEND "${PROJECT_BINARY_DIR}/CustomInstall.cmake" 
      "MESSAGE(STATUS \"Installing ${stripped_path}/${filename}\")\n")
-    FILE(APPEND "${CMAKE_CURRENT_BINARY_DIR}/CustomInstall.cmake" 
+    FILE(APPEND "${PROJECT_BINARY_DIR}/CustomInstall.cmake" 
      "FILE(INSTALL DESTINATION \"${PATH}\" TYPE FILE FILES \"${file}\")\n")
   ENDFOREACH(file)
-  
-  ADD_CUSTOM_TARGET("${CMAKE_CURRENT_BINARY_DIR}/CustomInstall" ALL)
-  SET_TARGET_PROPERTIES("${CMAKE_CURRENT_BINARY_DIR}/CustomInstall" PROPERTIES 
-    POST_INSTALL_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/CustomInstall.cmake")
-
 ENDMACRO(INSTALL_AT_ABSOLUTE_PATH)
+
+MACRO(WRITE_CUSTOM_INSTALL_FILES)
+  FILE(WRITE "${PROJECT_BINARY_DIR}/CustomInstall.cmake" "")
+  SET_TARGET_PROPERTIES(CustomInstall PROPERTIES 
+    POST_INSTALL_SCRIPT "${PROJECT_BINARY_DIR}/CustomInstall.cmake")
+ENDMACRO(WRITE_CUSTOM_INSTALL_FILES)
+
 ####################################
 
 INSTALL_AT_ABSOLUTE_PATH("${CMAKE_ROOT}/Modules" "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake")

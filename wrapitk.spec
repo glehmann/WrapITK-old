@@ -2,13 +2,14 @@
 %define itkver 2.4
 
 Summary:	Extended language support for ITK
-Name:		WrapITK
+Name:		wrapitk
 Version:	0.1
-Release:	%mkrel 0.29012006.1
+Release:	%mkrel 0.13022006.1
 License:	BSDish
 Group:		Sciences/Other
 URL:		http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK
-Source0:	http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/WrapITK.tar.gz
+Source0:	http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/WrapITK.tar.bz2
+Patch0:		wrapitk-reconstruction.patch.bz2
 BuildRequires:	cmake >= 2.2
 BuildRequires:	cableswig >= %{itkver}
 BuildRequires:  python-numarray-devel
@@ -51,7 +52,7 @@ project is from the National Library of Medicine at the National Institutes
 of Health. NLM in turn was supported by member institutions of NIH (see 
 sponsors). 
 
-%package -n python-%{name}
+%package -n python-itk
 Summary:	Python bindings for ITK
 Group:		Development/Python
 Requires:	python
@@ -61,7 +62,7 @@ Requires(pre):	itk >= %{itker}
 Obsoletes:	itk-pyhon
 Provides:	itk-pyhon
 
-%description -n python-%{name}
+%description -n python-itk
 ITK is an open-source software system to support the Visible Human Project. 
 Currently under active development, ITK employs leading-edge segmentation 
 and registration algorithms in two, three, and more dimensions.
@@ -77,17 +78,22 @@ sponsors).
 
 %prep
 
-%setup -q -n %{name}
+%setup -q -n WrapITK
+
+%patch0 -p0
 
 %build
 
+mkdir build
+cd build
 cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
       -DCMAKE_BUILD_TYPE:STRING=Release \
       -DCMAKE_SKIP_RPATH:BOOL=ON \
       -DCableSwig_DIR:PATH=%{_prefix}/lib/CableSwig \
       -DWRAP_ITK_PYTHON:BOOL=ON \
       -DWRAP_unsigned_char:BOOL=ON \
-      -DWRAP_ITK_INSTALL_LOCATION:PATH=/%{_lib}/InsightToolkit/WrapITK
+      -DWRAP_ITK_INSTALL_LOCATION:PATH=/%{_lib}/InsightToolkit/WrapITK \
+      ..
 
 %make
 %make
@@ -95,15 +101,15 @@ cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
 
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
-
+cd build
 make install DESTDIR=$RPM_BUILD_ROOT
 
 
-%files -n python-%{name}
+%files -n python-itk
 %defattr(0644,root,root,0755)
 %{_libdir}/InsightToolkit/WrapITK/Python*
 %{_libdir}/InsightToolkit/WrapITK/lib/*Python*
-%{py_platsitedir}/WrapITK.pth
+%{_libdir}/python%{pyver}/site-packages/WrapITK.pth
 
 
 %files devel

@@ -1,57 +1,45 @@
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-IF(WRAP_ITK_TCL)
-  SET_SOURCE_FILES_PROPERTIES(${WrapITK_BINARY_DIR}/SwigRuntime/swigrunTcl.cxx GENERATED)
-  ADD_LIBRARY(SwigRuntimeTcl SHARED ${WrapITK_BINARY_DIR}/SwigRuntime/swigrunTcl.cxx)
-  SET_TARGET_PROPERTIES(SwigRuntimeTcl PROPERTIES LINK_FLAGS "${CSWIG_EXTRA_LINKFLAGS}")
-  TARGET_LINK_LIBRARIES(SwigRuntimeTcl ${TCL_LIBRARY})
-  INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/lib" SwigRuntimeTcl)
-ENDIF(WRAP_ITK_TCL)
+MACRO(CREATE_SWIG_RUNTIME lang_option lang_postfix lang_link_libs)
+  SET(source_file "${CMAKE_CURRENT_BINARY_DIR}/swigrun${lang_postfix}.cxx")
+  SET(lib_name "SwigRuntime${lang_postfix}")
+  
+  #SET_SOURCE_FILES_PROPERTIES("${source_file}" GENERATED)
+  ADD_LIBRARY(${lib_name} SHARED "${source_file}")
+  TARGET_LINK_LIBRARIES(${lib_name} "${lang_link_libs}")
+  INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/${lang_postfix}-SWIG" ${lib_name})
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LINK_FLAGS "${CSWIG_EXTRA_LINKFLAGS}")
 
-IF(WRAP_ITK_PYTHON)
-  SET_SOURCE_FILES_PROPERTIES(${WrapITK_BINARY_DIR}/SwigRuntime/swigrunPython.cxx GENERATED)
-  ADD_LIBRARY(SwigRuntimePython SHARED ${WrapITK_BINARY_DIR}/SwigRuntime/swigrunPython.cxx)
-  TARGET_LINK_LIBRARIES(SwigRuntimePython ${PYTHON_LIBRARY})
-  INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/lib" SwigRuntimePython)
-ENDIF(WRAP_ITK_PYTHON)
+  ADD_CUSTOM_COMMAND(
+   SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/swigrun.h
+   COMMAND ${GCCXML}
+   ARGS -fxml-start=_cable_ -DCABLE_CONFIGURATION ${CMAKE_CURRENT_SOURCE_DIR}/swigrun.h
+      -fxml=${CMAKE_CURRENT_BINARY_DIR}/swigrun.xml 
+   TARGET ${lib_name}
+   OUTPUTS ${CMAKE_CURRENT_BINARY_DIR}/swigrun.xml
+   DEPENDS ${GCCXML})
 
-IF(WRAP_ITK_PERL)
-  SET_SOURCE_FILES_PROPERTIES(${WrapITK_BINARY_DIR}/SwigRuntime/swigrunPerl.cxx GENERATED)
-  ADD_LIBRARY(SwigRuntimePerl SHARED ${WrapITK_BINARY_DIR}/SwigRuntime/swigrunPerl.cxx)
-  TARGET_LINK_LIBRARIES(SwigRuntimePerl "${PERL_LIBRARY}")
-  INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/lib" SwigRuntimePerl)
-ENDIF(WRAP_ITK_PERL)
-
-MACRO(CREATE_SWIG_RUNTIME LangOption LibName LangPostFix)
-     ADD_CUSTOM_COMMAND(
-       SOURCE ${WrapITK_SOURCE_DIR}/SwigRuntime/swigrun.h
-       COMMAND ${GCCXML}
-       ARGS -fxml-start=_cable_ -DCABLE_CONFIGURATION ${WrapITK_SOURCE_DIR}/SwigRuntime/swigrun.h
-          -fxml=${WrapITK_BINARY_DIR}/SwigRuntime/swigrun.xml 
-       TARGET ${LibName}
-       OUTPUTS ${WrapITK_BINARY_DIR}/SwigRuntime/swigrun.xml
-       DEPENDS ${GCCXML})
-     SET(XML_COMMAND_ADDED 1)
-   ADD_CUSTOM_COMMAND(
-    SOURCE ${WrapITK_BINARY_DIR}/SwigRuntime/swigrun.xml
+  ADD_CUSTOM_COMMAND(
+    SOURCE ${CMAKE_CURRENT_BINARY_DIR}/swigrun.xml
     COMMAND ${CSWIG}
-    ARGS -o ${WrapITK_BINARY_DIR}/SwigRuntime/swigrun${LangPostFix}.cxx ${LangOption}
-         -c++ ${WrapITK_BINARY_DIR}/SwigRuntime/swigrun.xml
-    TARGET ${LibName}
-    OUTPUTS ${WrapITK_BINARY_DIR}/SwigRuntime/swigrun${LangPostFix}.cxx
+    ARGS -o "${source_file}"
+         ${lang_option}
+         -c++ ${CMAKE_CURRENT_BINARY_DIR}/swigrun.xml
+    TARGET ${lib_name}
+    OUTPUTS "${source_file}"
     DEPENDS ${CSWIG})
 ENDMACRO(CREATE_SWIG_RUNTIME)
 
 IF(WRAP_ITK_TCL)
-   CREATE_SWIG_RUNTIME(-tcl SwigRuntimeTcl Tcl)
+   CREATE_SWIG_RUNTIME(-tcl Tcl "${TCL_LIBRARY}")
 ENDIF(WRAP_ITK_TCL)
 
 IF(WRAP_ITK_PYTHON)
-   CREATE_SWIG_RUNTIME(-python SwigRuntimePython Python)
+   CREATE_SWIG_RUNTIME(-python Python "${PYTHON_LIBRARY}")
 ENDIF(WRAP_ITK_PYTHON)
 
 IF(WRAP_ITK_PERL)
-   CREATE_SWIG_RUNTIME(-perl5 SwigRuntimePerl Perl)
+   CREATE_SWIG_RUNTIME(-perl5 Perl "${PERL_LIBRARY}")
 ENDIF(WRAP_ITK_PERL)
 
 IF(WRAP_ITK_JAVA)

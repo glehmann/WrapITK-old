@@ -15,6 +15,11 @@ BuildRequires:	cableswig >= %{itkver}
 BuildRequires:  python-numarray-devel
 BuildRequires:  vtk-devel
 BuildRequires:  python-devel
+BuildRequires:  tetex
+BuildRequires:  tetex-latex
+BuildRequires:  tetex-dvips
+BuildRequires:  ghostscript
+BuildRequires:  ImageMagick
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -85,6 +90,7 @@ sponsors).
 %build
 
 mkdir build
+(
 cd build
 cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
       -DCMAKE_BUILD_TYPE:STRING=Release \
@@ -98,22 +104,39 @@ cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
 # workaround a bug which broke typemaps
 cmake .
 
-%make
-%make
+make
+make
+)
 
+
+# build the article
+(
+cd article
+make
+)
 
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 cd build
 make install DESTDIR=$RPM_BUILD_ROOT
 
+# workaround not found library
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/ld.so.conf.d/
+echo %{_libdir}/InsightToolkit/WrapITK/lib >> $RPM_BUILD_ROOT/%{_sysconfdir}/ld.so.conf.d/python-itk.conf
+
+%check
+# TODO: run tests here
+
+%clean
+rm -rf $RPM_BUILD_ROOT
 
 %files -n python-itk
 %defattr(0644,root,root,0755)
 %{_libdir}/InsightToolkit/WrapITK/Python*
 %{_libdir}/InsightToolkit/WrapITK/lib/*Python*
 %{_libdir}/python%{pyver}/site-packages/WrapITK.pth
-
+%{_sysconfdir}/ld.so.conf.d/python-itk.conf
+%doc article/*.pdf
 
 %files devel
 %defattr(0644,root,root,0755)

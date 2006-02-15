@@ -77,39 +77,24 @@ ADD_CUSTOM_COMMAND(
 SET(ITK_KITS VXLNumerics CommonA CommonB Numerics 
   BasicFiltersA BasicFiltersB BasicFiltersC IO
   SpatialObject Algorithms)
-
-# Only process the subdirs (which takes a while, generating the .cxx files)
-# if some language has already been enabled. Otherwise we will
-# process the subdirs at least twice, which is slow!
-IF(NOT some_language_configured)
-  # if there's no cache variable for some_language_configured, make one.
-  SET(some_language_configured OFF CACHE INTERNAL "has some language been enabled?")
-ENDIF(NOT some_language_configured)
-
-IF(some_language_configured)
 SUBDIRS(SwigRuntime ${ITK_KITS} Tests Testing)
-ENDIF(some_language_configured)
 
 ###############################################################################
 # Configure language-specific features
 ###############################################################################
 IF(WRAP_ITK_TCL)
-  SET(some_language_configured ON CACHE INTERNAL "has some language been enabled?")
   SUBDIRS(Tcl)
 ENDIF(WRAP_ITK_TCL)
 
 IF(WRAP_ITK_PERL)
-  SET(some_language_configured ON CACHE INTERNAL "has some language been enabled?")
   # Nothing yet
 ENDIF(WRAP_ITK_PERL)
 
 IF(WRAP_ITK_PYTHON)
-  SET(some_language_configured ON CACHE INTERNAL "has some language been enabled?")
   SUBDIRS(Python)
 ENDIF(WRAP_ITK_PYTHON)
 
 IF(WRAP_ITK_JAVA)
-  SET(some_language_configured ON CACHE INTERNAL "has some language been enabled?")
   SUBDIRS(Java)
 ENDIF(WRAP_ITK_JAVA)
 

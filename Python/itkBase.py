@@ -98,7 +98,7 @@ def LoadModule(name, namespace = None):
 def LoadSWIGLibrary(moduleName):
   """Do all the work to set up the environment so that a SWIG-generated library
   can be properly loaded. This invloves setting paths, etc., defined in itkConfig."""
-  import sys, imp, itkConfig
+  import os, sys, imp, itkConfig
   
   # To share symbols across extension modules, we must set
   #     sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)
@@ -123,6 +123,10 @@ def LoadSWIGLibrary(moduleName):
   # libraries or other swig-generated scripts.
   sys.path.insert(1, itkConfig.swig_lib)
   sys.path.insert(1, itkConfig.swig_py)
+  # also change to the swig_lib directory so that the loader can find non-module
+  # library files like SwigRuntimePython linked into the python module that's loaded.
+  old_cwd = os.getcwd()
+  os.chdir(itkConfig.swig_lib)
   
   # find and load the module
   try:
@@ -135,6 +139,7 @@ def LoadSWIGLibrary(moduleName):
     # and restore environment to normalcy
     sys.path.remove(itkConfig.swig_lib)
     sys.path.remove(itkConfig.swig_py)
+    os.chdir(old_cwd)
     if oldflags and hasattr(sys, 'setdlopenflags'):
       # try to avoid raising an exception, because if we do, the import exception
       # that might have occured above in the try block won't get reported.

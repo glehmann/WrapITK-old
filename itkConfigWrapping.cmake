@@ -69,7 +69,7 @@ MACRO(BEGIN_WRAPPER_LIBRARY library_name)
 
   # WRAPPER_LIBRARY_DEPENDS. List of names of other wrapper libraries that
   # define symbols used by this wrapper library.
-  SET(WRAPPER_LIBRARY_DEPENDS)
+  SET(WRAPPER_LIBRARY_DEPENDS )
 
   # WRAPPER_LIBRARY_LINK_LIBRARIES. List of other libraries that should
   # be linked to the wrapper library.
@@ -87,8 +87,8 @@ MACRO(BEGIN_WRAPPER_LIBRARY library_name)
 
   # WRAPPER_SWIG_LIBRARY_FILES. List of swig .swg files to pass to cswig to control
   # type handling and so forth. A full path to each include is required.
-  # The default is itk.swg.
-  SET(WRAPPER_SWIG_LIBRARY_FILES "${WRAP_ITK_SWIG_LIBRARY_DIR}/itk.swg")
+  # The itk.swg file and the library file for the current library are implicitly added.
+  SET(WRAPPER_SWIG_LIBRARY_FILES )
 
   # WRAPPER_LIBRARY_SWIG_INPUTS. SWIG input files to be fed to swig (not
   # CableSwig). A full path to each input is required.

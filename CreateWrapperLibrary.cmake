@@ -87,63 +87,59 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
 
   # STEP 3
   # Create a list of needed master index (mdx) files and SWIG library files
-  # from the WRAPPER_LIBRARY_DEPENDS information. 
-  # For mdx files, check in both WRAPPER_MASTER_INDEX_OUTPUT_DIR (where the current
-  # project is putting new master index files) and WRAP_ITK_MASTER_INDEX_DIRECTORY
-  # which, if it exists, is where a previously-built WrapITK has stored its master
-  # indices. Also add the current master index.
-  # Similarly, for SWIG library files, check both WRAPPER_SWIG_LIBRARY_OUTPUT_DIR
-  # (where the current project is putting new SWIG typemaps) and 
-  # WRAP_ITK_SWIG_LIBRARY_DIR, which, if extant, is where a previous WrapITK has
-  # built/installed these libraries.
-    
-  SET(master_index_files "${library_master_index_file}")
-  SET(swig_library_files ${WRAPPER_SWIG_LIBRARY_FILES})
+  # from the WRAPPER_LIBRARY_DEPENDS information.
+  # In both cases, check first in WRAP_ITK_MASTER_INDEX_DIRECTORY or
+  # WRAP_ITK_SWIG_LIBRARY_DIRECTORY (respectively), which is where these files are
+  # installed. These directories may not exist if WrapITK hasn't been installed,
+  # so some care is required.
+  # If installed versions aren't found, assume that the files exist
+  # in WRAPPER_MASTER_INDEX_OUTPUT_DIR or WRAPPER_SWIG_LIBRARY_OUTPUT_DIR
+  # (respectively), where they would be put by the current build process.
+  # If the files don't even exist in the output dirs by the time the library
+  # is being built, then we've got a problem.
   
-  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
-    SET(no_mdx_found 1)
-    SET(no_swg_found 1)
-    
-    SET(local_mdx "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${dep}.mdx")
-    IF(EXISTS "${local_mdx}")
-      SET(master_index_files ${master_index_files} "${local_mdx}")
-      SET(no_mdx_found 0)
-    ENDIF(EXISTS "${local_mdx}")
-    SET(local_swg "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}/${dep}.swg")
-    IF(EXISTS "${local_swg}")
-      SET(swig_library_files ${swig_library_files} "${local_swg}")
-      SET(no_swg_found 0)
-    ENDIF(EXISTS "${local_swg}")
+  # First set the index and swig lib file lists to their proper initial state.
+  SET(master_index_files )   
+  SET(swig_library_files ${WRAPPER_SWIG_LIBRARY_FILES})
 
-    IF(no_mdx_found AND WRAP_ITK_MASTER_INDEX_DIRECTORY) # WRAP_ITK_MASTER_INDEX_DIRECTORY may not be set
+  # Now churn through the mdx file requirements. Remember we add the current
+  # library's mdx file to the list of index files.
+  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS} "${WRAPPER_LIBRARY_NAME}")
+    SET(no_mdx_found 1)
+    
+    IF(WRAP_ITK_MASTER_INDEX_DIRECTORY) # WRAP_ITK_MASTER_INDEX_DIRECTORY may not be set
       SET(wrapitk_mdx "${WRAP_ITK_MASTER_INDEX_DIRECTORY}/${dep}.mdx")
       IF(EXISTS "${wrapitk_mdx}")
         SET(master_index_files ${master_index_files} "${wrapitk_mdx}")
         SET(no_mdx_found 0)
       ENDIF(EXISTS "${wrapitk_mdx}")
-    ENDIF(no_mdx_found AND WRAP_ITK_MASTER_INDEX_DIRECTORY)
-    IF(no_swg_found ) # WRAP_ITK_SWIG_LIBRARY_DIR is always set
-      SET(wrapitk_swg "${WRAP_ITK_SWIG_LIBRARY_DIR}/${dep}.swg")
+    ENDIF(WRAP_ITK_MASTER_INDEX_DIRECTORY)
+    
+    IF(no_mdx_found)
+      SET(local_mdx "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${dep}.mdx")
+      SET(master_index_files ${master_index_files} "${local_mdx}")
+    ENDIF(no_mdx_found)
+  ENDFOREACH(dep)
+  
+  # Now the required .swg files. Remember we add itk.swg and the current library's
+  # swg file to the WRAPPER_SWIG_LIBRARY_FILES list.
+  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS} "itk" "${WRAPPER_LIBRARY_NAME}")
+    SET(no_swg_found 1)
+        
+    IF(WRAP_ITK_SWIG_LIBRARY_DIRECTORY) # WRAP_ITK_SWIG_LIBRARY_DIR may not be set
+      SET(wrapitk_swg "${WRAP_ITK_SWIG_LIBRARY_DIRECTORY}/${dep}.swg")
       IF(EXISTS "${wrapitk_swg}")
         SET(swig_library_files ${swig_library_files} "${wrapitk_swg}")
         SET(no_swg_found 0)
       ENDIF(EXISTS "${wrapitk_swg}")
-    ENDIF(no_swg_found)
-
-    IF(no_mdx_found)
-      MESSAGE(FATAL_ERROR "Could not find master index file ${dep}.mdx. This file is required.")
-    ENDIF(no_mdx_found)
+    ENDIF(WRAP_ITK_SWIG_LIBRARY_DIRECTORY)
+    
     IF(no_swg_found)
-      MESSAGE("Could not find swig library file ${dep}.swg. It won't be used.")
+      SET(local_swg "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}/${dep}.swg")
+      SET(swig_library_files ${swig_library_files} "${local_swg}")
     ENDIF(no_swg_found)
   ENDFOREACH(dep)
-  
-  # Now tell each module to also use its own SWIG library file (if it exists):
-  SET(current_lib_swig_file "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.swg")
-  IF(EXISTS "${current_lib_swig_file}")
-            SET(swig_library_files ${swig_library_files} "${current_lib_swig_file}")
-  ENDIF(EXISTS "${current_lib_swig_file}")
-  
+    
   # STEP 4
   # Generate the XML, index, and CXX files from the Cable input files, and add
   # the wrapper library.
@@ -394,7 +390,7 @@ MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx
           ${input_xml}
      TARGET ${library_name}
      OUTPUTS ${output_cxx}
-     DEPENDS ${library_idx_files} ${swig_library_files} ${input_xml} ${CSWIG})
+     DEPENDS ${library_idx_files} ${master_index_files} ${swig_library_files} ${input_xml} ${CSWIG})
 ENDMACRO(CSWIG_CREATE_CXX_FILE)
 
 

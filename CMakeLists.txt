@@ -40,13 +40,18 @@ SET(WRAP_ITK_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(WRAP_ITK_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")
 
-# Also make sure that itk.swg is in the SWIG_LIBRARY_DIR
-# (It would be way too much trouble to have more different places where *.swg
-# files are sought. Easier to just move itk.swg to the place where the rest of
-# the .swg files will be written during the build.)
+# Now include itkConfigWrapping
+INCLUDE(itkConfigWrapping.cmake)
+
+# Now make sure that itk.swg is copied to WRAPPER_SWIG_LIBRARY_OUTPUT_DIR, which
+# is set in itkConfigWrapping. We do this so there is only one place that swig
+# files needed for a WrapITK build are placed: in the binary directory. (For
+# external projects, we look in the WrapITK binary dir and the project's binary
+# dir.)
+
 ADD_CUSTOM_TARGET(copy_itk_swg ALL)
 SET(src "${WrapITK_SOURCE_DIR}/itk.swg")
-SET(tgt "${WRAP_ITK_SWIG_LIBRARY_DIR}/itk.swg")
+SET(tgt "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}/itk.swg")
 ADD_CUSTOM_COMMAND(SOURCE ${src}
   COMMAND ${CMAKE_COMMAND}
   ARGS -E copy_if_different ${src} ${tgt}
@@ -58,9 +63,6 @@ ADD_CUSTOM_COMMAND(
   SOURCE copy_itk_swg
   DEPENDS ${tgt}
   TARGET copy_itk_swg)
-
-# Now include itkConfigWrapping
-INCLUDE(itkConfigWrapping.cmake)
 
 # ITK_KITS must be in proper order -- modules that depend on other modules
 # must come later in the list.
@@ -100,10 +102,10 @@ ENDIF(WRAP_ITK_JAVA)
 # Configure WrapITKConfig.cmake and FindWrapITK.cmale for external projects
 ###############################################################################
 # First, configure for use directly from the build dir.
-SET(CONFIG_SWIG_DIR "${WRAP_ITK_SWIG_LIBRARY_DIR}")
 SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(CONFIG_WRAP_ITK_SWIGRUNTIME_DIR "${LIBRARY_OUTPUT_PATH}")
+SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIRECTORY "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}")
 SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}")
 CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/WrapITKConfig.cmake"
@@ -115,10 +117,10 @@ CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
                @ONLY IMMEDIATE)
 
 # Second, configure for installed use.
-SET(CONFIG_SWIG_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/SWIG")
 SET(CONFIG_CONFIG_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration/Inputs")
 SET(CONFIG_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/Configuration")
 SET(CONFIG_WRAP_ITK_SWIGRUNTIME_DIR "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/lib")
+SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIRECTORY "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/SWIG")
 SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/ClassIndex")
 
 CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"

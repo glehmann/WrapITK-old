@@ -310,7 +310,9 @@ MACRO(GCCXML_CREATE_XML_FILE library_name input_cxx output_xml gccxml_inc_file)
          -fxml=${output_xml}
          --gccxml-gcc-options ${gccxml_inc_file}
          -DCSWIG 
-         -DCABLE_CONFIGURATION 
+         -DCABLE_CONFIGURATION
+         # The following keeps GCC_XML out of the .txx files, which it never needs to see!
+         -DITK_MANUAL_INSTANTIATION
          ${input_cxx}
     TARGET ${library_name}
     OUTPUTS ${output_xml}

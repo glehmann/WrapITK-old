@@ -243,8 +243,9 @@ start python from that directory. After this, \verb$import itk$ will work
 properly.
 
 
-     \subsubsection{Basic Usage}
+TODO: alternatively, the submodules may be imported
 
+     \subsubsection{Template usage}
 Most class in the itk python module are "template proxy classes" that
 encapsulate all of the template instantiations that were created at build time.
 If three-dimensional \verb$unsigned char$ and \verb$unsigned short$ image types were created,
@@ -287,7 +288,7 @@ Filters templated on images can be similarly accessed:
   \item or \verb$itk.ImageFileReader[itk.Image.UC3]$
   \item or \verb$itk.ImageFileReader.IUC3$
   \item or \verb$itk.ImageFileReader[imageType]$
-  \item or even with an instance of class used as template parameter: \verb$itk.ImageFileReader[image]$.
+  \item or even with an instance of the class used as template parameter: \verb$itk.ImageFileReader[image]$.
 \end{itemize}
 This makes it easy to write generic routines which
 can deal with any input image type. For example, an function which take an image
@@ -300,8 +301,9 @@ def write( image, fileName ) :
     writer.Update()
 \end{verbatim}
 
+     \subsubsection{The {\em New()} method}
 
-Each class has a \verb$New()$ method which returns a smart pointer to that class. The
+Losts of classes have a \verb$New()$ method which returns a smart pointer to that class. The
 \verb$New()$ method in python has some additional features:
 \begin{itemize}
   \item Arguments to the new method are assumed to be filter inputs. So you could
@@ -345,7 +347,7 @@ def write( image, fileName ) :
 and, more important, most of classes can be instanciated and parametered in one line,
 which make ITK less verbose, and a lots more easy to use in the interpreter.
 
-     \subsubsection{Python specific functions}
+     \subsubsection{Python specific functions in the {\em itk} module}
 
 Some convenient functions are provided with the itk module. They all begin with a lower
 case character to clearly show they are not part of ITK.
@@ -434,6 +436,7 @@ can be called with a 3D image as parameter to show the image slice by slice.
 \end{itemize}
 
      \subsubsection{Advanced Features}
+
 As an extra bonus, it is possible to view the doxygen documentation for each
 class as the python docstring. This string is available as:
 \small \begin{verbatim}

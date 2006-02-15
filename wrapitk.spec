@@ -95,6 +95,9 @@ cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
       -DWRAP_ITK_INSTALL_LOCATION:PATH=/%{_lib}/InsightToolkit/WrapITK \
       ..
 
+# workaround a bug which broke typemaps
+cmake .
+
 %make
 %make
 

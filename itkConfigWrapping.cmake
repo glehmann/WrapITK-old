@@ -29,9 +29,6 @@
 # WRAP_ITK_INSTALL_LOCATION -- directory where wrapper files should be installed
 #    (Install will be in ${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_LOCATION}/${lang} )
 #
-# Additionally, LINK_DIRECTORIES must include the path to libSwigRuntimeXXX.dylib
-# (This is automatic for WrapITK, but not for external projects.)
-#
 # This file sets a default value for WRAPPER_MASTER_INDEX_OUTPUT_DIR and
 # WRAPPER_SWIG_LIBRARY_OUTPUT_DIR. Change it after including this file if needed,
 # but this shouldn't really be necessary except for complex external projects.

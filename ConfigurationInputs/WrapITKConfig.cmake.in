@@ -51,14 +51,28 @@ ENDIF(JAVA_OUTPUT_DIR)
 SET(WRAP_ITK_SWIG_LIBRARY_DIRECTORY "@CONFIG_WRAP_ITK_SWIG_LIBRARY_DIRECTORY@")
 SET(WRAP_ITK_MASTER_INDEX_DIRECTORY "@CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY@")
 
-LINK_DIRECTORIES("@CONFIG_WRAP_ITK_SWIGRUNTIME_DIR@")
-
 # Now include itkConfigWrapping
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/itkConfigWrapping.cmake")
 
 # Some macros require LIBRARY_OUTPUT_PATH to be set. For now, set it to its default.
 # Re-set later if a different library output path is needed.
 SET(LIBRARY_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}")
+
+# If WrapITK has been installed, we need to point the linker at the various
+# language directories, where libSwigRuntime has been installed.
+# Otherwise, we need to point the linker at the bin directory of the build dir.
+MACRO(LINK_IF_EXISTS dir)
+  IF(EXISTS "${dir}")
+    LINK_DIRECTORIES("${dir}")
+  ENDIF(EXISTS "${dir}")
+ENDMACRO(LINK_IF_EXISTS)
+
+LINK_IF_EXISTS("${WrapITK_DIR}/Tcl-SWIG")
+LINK_IF_EXISTS("${WrapITK_DIR}/Perl-SWIG")
+LINK_IF_EXISTS("${WrapITK_DIR}/Python-SWIG")
+LINK_IF_EXISTS("${WrapITK_DIR}/Java-SWIG")
+
+LINK_IF_EXISTS("${WrapITK_DIR}/bin")
 
 # Tell the world that this is an external project using WrapITK:
 SET(EXTERNAL_WRAP_ITK_PROJECT ON)

@@ -37,10 +37,15 @@ SET(WRAP_ITK_INSTALL_LOCATION "/lib/InsightToolkit/WrapITK" CACHE STRING "Path t
 
 OPTION(INSTALL_WRAP_ITK_COMPATIBILITY "Install FindWrapITK.cmake and WrapITK.pth (so cmake and python can find WrapITK) as part of the standard installation process. This requires admin privileges. These files can be separately installed by making the install_wrapitk_compatibility target. " ON)
 
+# Output directories.
 SET(WRAP_ITK_SWIG_LIBRARY_DIR "${WrapITK_BINARY_DIR}/SWIG")
 SET(WRAP_ITK_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(WRAP_ITK_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")
+SET (LIBRARY_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
+SET (EXECUTABLE_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
+MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
 # Now include itkConfigWrapping
 INCLUDE(itkConfigWrapping.cmake)
@@ -83,14 +88,6 @@ ENDIF(NOT some_language_configured)
 IF(some_language_configured)
 SUBDIRS(SwigRuntime ${ITK_KITS} Tests Testing)
 ENDIF(some_language_configured)
-
-# Output directories.
-SET (LIBRARY_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
-SET (EXECUTABLE_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
-MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
-SET(WRAP_ITK_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
-SET(WRAP_ITK_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
-SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
 ###############################################################################
 # Configure language-specific features

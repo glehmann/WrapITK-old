@@ -5,8 +5,19 @@
 # If SWIG needs to include any files in nonstandard locations, the directories 
 # must be added to with INCLUDE_DIRECTORIES().
 
-SET(ITK_DIR "@ITK_DIR@" CACHE PATH "Path to ITK build or install.")
-SET(CableSwig_DIR "@CableSwig_DIR@"  CACHE PATH "Path to CableSwig build or install")
+# Be careful setting up the paths to the ITK and CableSwig dirs that WrapITK
+# already found -- they might not be valid.
+SET(possible_itk_dir "@ITK_DIR@")
+IF(EXISTS "${possible_itk_dir}")
+SET(ITK_DIR "${possible_itk_dir}" CACHE PATH "Path to ITK build or install.")
+ENDIF(EXISTS "${possible_itk_dir}")
+
+SET(possible_cableswig_dir "@CableSwig_DIR@")
+IF(EXISTS "${possible_cableswig_dir}")
+SET(CableSwig_DIR "${possible_cableswig_dir}"  CACHE PATH "Path to CableSwig build or install")
+ENDIF(EXISTS "${possible_cableswig_dir}")
+
+# Set up the rest of the variables that WrapITK was built with.
 SET(WRAP_ITK_TCL @WRAP_ITK_TCL@ CACHE BOOL "Build cswig Tcl wrapper support (requires CableSwig).")
 SET(WRAP_ITK_PYTHON @WRAP_ITK_PYTHON@ CACHE BOOL "Build cswig Python wrapper support (requires CableSwig).")
 SET(WRAP_ITK_JAVA @WRAP_ITK_JAVA@ CACHE BOOL "Build cswig Java wrapper support (requires CableSwig).")
@@ -35,7 +46,8 @@ FOREACH(var ITK_DIR CableSwig_DIR WRAP_ITK_TCL WRAP_ITK_PYTHON WRAP_ITK_JAVA
   MARK_AS_ADVANCED(${var})
 ENDFOREACH(var)
 
-SET(WRAP_ITK_INSTALL_LOCATION "@WRAP_ITK_INSTALL_LOCATION@" CACHE STRING "Path to the top of the install tree (will be appended to CMAKE_INSTALL_PREFIX).")
+SET(WRAP_ITK_INSTALL_LOCATION "@CONFIG_WRAP_ITK_INSTALL_LOCATION@" CACHE STRING "Path to the top of the install tree. (USED INSTEAD OF CMAKE_INSTALL_PREFIX.)")
+SET(CMAKE_INSTALL_PREFIX "${WRAP_ITK_INSTALL_LOCATION}" CACHE INTERNAL "Always set to WRAP_ITK_INSTALL_LOCATION so WrapITK can provide an intelligent default." FORCE)
 
 SET(WRAP_ITK_CONFIG_DIR "@CONFIG_CONFIG_DIR@")
 SET(WRAP_ITK_CMAKE_DIR "@CONFIG_CMAKE_DIR@")

@@ -34,7 +34,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     SET(${WRAPPER_LIBRARY_NAME}_java_depends_init ${${WRAPPER_LIBRARY_NAME}_java_depends_init} ${JAVA_DEP}.java)
     SET(library_idx_files ${library_idx_files} "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}.idx" )
     SET(index_file_content "${index_file_content}${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}.idx\n")
-    SET(install_index_file_content "${install_index_file_content}${CMAKE_INSTALL_PREFIX}${WRAP_ITK_INSTALL_LOCATION}/ClassIndex/${base_name}.idx\n")
+    SET(install_index_file_content "${install_index_file_content}${WRAP_ITK_INSTALL_LOCATION}/ClassIndex/${base_name}.idx\n")
   ENDFOREACH(source)
   
   # Loop over the extra swig input files and add them to the generated files 

@@ -27,7 +27,6 @@
 #                        commands are to be found.
 # WRAP_ITK_CMAKE_DIR -- directory where XXX.cmake files are to be found
 # WRAP_ITK_INSTALL_LOCATION -- directory where wrapper files should be installed
-#    (Install will be in ${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_LOCATION}/${lang} )
 #
 # This file sets a default value for WRAPPER_MASTER_INDEX_OUTPUT_DIR and
 # WRAPPER_SWIG_LIBRARY_OUTPUT_DIR. Change it after including this file if needed,

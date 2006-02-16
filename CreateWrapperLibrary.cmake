@@ -104,7 +104,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
 
   # Now churn through the mdx file requirements. Remember we add the current
   # library's mdx file to the list of index files.
-  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS} "${WRAPPER_LIBRARY_NAME}")
+  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     SET(no_mdx_found 1)
     
     IF(WRAP_ITK_MASTER_INDEX_DIRECTORY) # WRAP_ITK_MASTER_INDEX_DIRECTORY may not be set
@@ -120,6 +120,10 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
       SET(master_index_files ${master_index_files} "${local_mdx}")
     ENDIF(no_mdx_found)
   ENDFOREACH(dep)
+  
+  # Always use the local version of the mdx file for the current library. The 
+  # installed version is (by definition) out of date. 
+  SET(master_index_files ${master_index_files} "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.mdx")
   
   # Now the required .swg files. Remember we add itk.swg and the current library's
   # swg file to the WRAPPER_SWIG_LIBRARY_FILES list.

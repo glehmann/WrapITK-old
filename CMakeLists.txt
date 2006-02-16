@@ -35,6 +35,8 @@ OPTION(WRAP_rgb_unsigned_short "Wrap RGB< unsigned short > type" OFF)
 SET(WRAP_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (;)")
 SET(WRAP_ITK_INSTALL_LOCATION "/lib/InsightToolkit/WrapITK" CACHE STRING "Path to the top of the WrapITK install tree (will be appended to CMAKE_INSTALL_PREFIX).")
 
+OPTION(INSTALL_WRAP_ITK_COMPATIBILITY "Install FindWrapITK.cmake and WrapITK.pth (so cmake and python can find WrapITK) as part of the standard installation process. This requires admin privileges. These files can be separately installed by making the install_wrapitk_compatibility target. " ON)
+
 SET(WRAP_ITK_SWIG_LIBRARY_DIR "${WrapITK_BINARY_DIR}/SWIG")
 SET(WRAP_ITK_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(WRAP_ITK_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
@@ -184,35 +186,42 @@ INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}" FILES "${WrapITK_BINARY_DIR}/Instal
 # Hackish macros to install a file at an absolute location, working around a 
 # CMake limitation.
 
-ADD_CUSTOM_TARGET(CustomInstall ALL)
-# add a global target so that if this macro is called from one subdirectory or 
-# another, they each "see" this single top-level target.
-
-MACRO(INSTALL_AT_ABSOLUTE_PATH PATH)
+MACRO(INSTALL_AT_ABSOLUTE_PATH target path)
   # USAGE: 
-  # INSTALL_AT_ABSOLUTE_PATH("/path/to/install" "/path/to/file1" ... "path/to/fileN")
+  # INSTALL_AT_ABSOLUTE_PATH(custom-install-target "/path/to/install" "/path/to/file1" ... "path/to/fileN")
   
-  IF(NOT CUSTOM_INSTALL_FILE_WRITTEN)
-    WRITE_CUSTOM_INSTALL_FILES()
-    SET(CUSTOM_INSTALL_FILE_WRITTEN ON)
-  ENDIF(NOT CUSTOM_INSTALL_FILE_WRITTEN)
-  
+  SET(install_file_name "${PROJECT_BINARY_DIR}/${target}.cmake")
+    
   FOREACH(file ${ARGN})
     GET_FILENAME_COMPONENT(filename "${file}" NAME)
-    STRING(REGEX REPLACE "/$" "" stripped_path "${PATH}")
-    FILE(APPEND "${PROJECT_BINARY_DIR}/CustomInstall.cmake" 
+    STRING(REGEX REPLACE "/$" "" stripped_path "${path}")
+    FILE(APPEND "${install_file_name}" 
      "MESSAGE(STATUS \"Installing ${stripped_path}/${filename}\")\n")
-    FILE(APPEND "${PROJECT_BINARY_DIR}/CustomInstall.cmake" 
-     "FILE(INSTALL DESTINATION \"${PATH}\" TYPE FILE FILES \"${file}\")\n")
+    FILE(APPEND "${install_file_name}" 
+     "FILE(INSTALL DESTINATION \"${path}\" TYPE FILE FILES \"${file}\")\n")
   ENDFOREACH(file)
 ENDMACRO(INSTALL_AT_ABSOLUTE_PATH)
-
-MACRO(WRITE_CUSTOM_INSTALL_FILES)
-  FILE(WRITE "${PROJECT_BINARY_DIR}/CustomInstall.cmake" "")
-  SET_TARGET_PROPERTIES(CustomInstall PROPERTIES 
-    POST_INSTALL_SCRIPT "${PROJECT_BINARY_DIR}/CustomInstall.cmake")
-ENDMACRO(WRITE_CUSTOM_INSTALL_FILES)
-
 ####################################
 
-INSTALL_AT_ABSOLUTE_PATH("${CMAKE_ROOT}/Modules" "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake")
+# Add a custom target to drive installation of the WrapITK-compatibility files
+SET(install_file_name "${PROJECT_BINARY_DIR}/install_wrapitk_compatibility.cmake")
+IF(INSTALL_WRAP_ITK_COMPATIBILITY)
+  # if we should by default install the files, make a custom target that will
+  # always be built, and run the install script at install time
+  FILE(WRITE "${install_file_name}" "MESSAGE(STATUS \"Installing WrapITK compatibility files. Requires admin priviliges: turn off INSTALL_WRAP_ITK_COMPATIBILITY in cmake to disable.\")\n")
+  ADD_CUSTOM_TARGET(install_wrapitk_compatibility ALL)
+  SET_TARGET_PROPERTIES(install_wrapitk_compatibility PROPERTIES 
+    POST_INSTALL_SCRIPT "${install_file_name}")
+ELSE(INSTALL_WRAP_ITK_COMPATIBILITY)
+  # otherwise, add a target that will install the files only when that target is
+  # manually built.
+  ADD_CUSTOM_TARGET(install_wrapitk_compatibility)
+  FILE(WRITE "${install_file_name}" "MESSAGE(STATUS \"Installing WrapITK compatibility files. Requires admin priviliges.\")\n")
+  ADD_CUSTOM_COMMAND(TARGET install_wrapitk_compatibility
+    PRE_BUILD
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -P "${install_file_name}"
+    COMMENT "Manual installation of FindWrapITK.cmake and WrapITK.pth")
+ENDIF(INSTALL_WRAP_ITK_COMPATIBILITY)
+
+INSTALL_AT_ABSOLUTE_PATH(install_wrapitk_compatibility "${CMAKE_ROOT}/Modules" "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake")

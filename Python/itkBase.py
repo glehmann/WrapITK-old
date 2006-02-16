@@ -19,8 +19,19 @@ def LoadModule(name, namespace = None):
   this_module = sys.modules.setdefault(name, imp.new_module(name))
  
   # if this library and it's template instantiations have already been loaded
-  # into sys.modules, bail out
-  if hasattr(this_module, '__templates_loaded') : return
+  # into sys.modules, bail out after loading the defined symbols into 'namespace'
+  if hasattr(this_module, '__templates_loaded'):
+    if namespace:
+        swig = namespace.setdefault('swig', imp.new_module('swig'))
+        swig.__dict__.update(this_module.swig.__dict__)
+        symbols = [(k, v) for k, v in this_module.__dict__.items() 
+          if not (k.startswith('_') or k == 'swig')]
+        # don't worry about overwriting the symbols in namespace -- any common
+        # symbols should be of type itkTemplate, which is a singleton type. That
+        # is, they are all identical, so replacing one with the other isn't a
+        # problem.
+        namespace.update(symbols)
+    return
   
   # We're definitely going to load the templates. We set templates_loaded here
   # instead of at the end of the file to protect against cyclical dependencies

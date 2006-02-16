@@ -376,7 +376,7 @@ MACRO(CONFIGURE_TYPEMAPS outdir)
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/typemaps.swg.in"
     "${outdir}/${WRAPPER_LIBRARY_NAME}.swg"
     @ONLY IMMEDIATE)
-   INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/SWIG"
+   INSTALL_FILES("/SWIG"
      FILES "${outdir}/${WRAPPER_LIBRARY_NAME}.swg")
 ENDMACRO(CONFIGURE_TYPEMAPS)
 
@@ -429,7 +429,7 @@ MACRO(CONFIGURE_PYTHON_CONFIG_FILES outdir)
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ModuleConfig.py.in"
     "${outdir}/${WRAPPER_LIBRARY_NAME}Config.py"
     @ONLY IMMEDIATE)
-  INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python/Configuration"
+  INSTALL_FILES("/Python/Configuration"
     FILES "${outdir}/${WRAPPER_LIBRARY_NAME}Config.py")
 
 ENDMACRO(CONFIGURE_PYTHON_CONFIG_FILES)
@@ -450,7 +450,7 @@ MACRO(INSTALL_PYTHON_LOADER_FILE outdir)
   # Install the loader file for importing just the current wrapper library.
   # Note that outdir will always have a trailing slash.
   
-  INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Python"
+  INSTALL_FILES("/Python"
     FILES "${outdir}${WRAPPER_LIBRARY_NAME}.py")
 ENDMACRO(INSTALL_PYTHON_LOADER_FILE)
 

@@ -40,7 +40,7 @@ SET(WRAP_ITK_TEST_ROOT "<NO_DEFAULT>")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in"
                "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/pkgIndex.tcl"
                IMMEDIATE @ONLY)
-INSTALL_FILES( "${WRAP_ITK_INSTALL_LOCATION}/Tcl" FILES
+INSTALL_FILES("/Tcl" FILES
               "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/pkgIndex.tcl")
 
 SET(ITK_TCL_EXE_DIR_BUILD "${ITK_EXECUTABLE_PATH}")
@@ -66,7 +66,7 @@ TARGET_LINK_LIBRARIES(itkwish
 )
 
 # install the driver itkwish script
-INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Tcl" FILES itkwish)
+INSTALL_FILES("/Tcl" FILES itkwish)
 #install the actual executable
-INSTALL_TARGETS("${WRAP_ITK_INSTALL_LOCATION}/Tcl/bin" itkwish)
-INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Tcl" .tcl itkinteraction itktesting itkdata itkutils)
+INSTALL_TARGETS("/Tcl/bin" itkwish)
+INSTALL_FILES("/Tcl" .tcl itkinteraction itktesting itkdata itkutils)

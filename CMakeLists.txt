@@ -154,7 +154,7 @@ FOREACH(f
  CreateWrapperLibrary.cmake
  WrapTypePrefix.cmake
  WrapTypeBase.cmake)
-  INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration" FILES "${f}")
+  INSTALL_FILES("/Configuration" FILES "${f}")
 ENDFOREACH(f)
 
 FOREACH(f
@@ -166,19 +166,19 @@ FOREACH(f
  ConfigurationInputs/empty.depend.in
  ConfigurationInputs/typemaps.swg.in
  )
-  INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration/Inputs" FILES "${f}")
+  INSTALL_FILES("/Configuration/Inputs" FILES "${f}")
 ENDFOREACH(f)
 
 FOREACH(f
  ConfigurationInputs/LanguageSupport/ModuleLoader.py.in
  ConfigurationInputs/LanguageSupport/ModuleConfig.py.in
  ConfigurationInputs/LanguageSupport/ExternalProjectConfig.py.in)
-  INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/Configuration/Inputs/LanguageSupport" FILES "${f}")
+  INSTALL_FILES("/Configuration/Inputs/LanguageSupport" FILES "${f}")
 ENDFOREACH(f)
 
-INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}/SWIG" FILES "itk.swg")
+INSTALL_FILES("/SWIG" FILES "itk.swg")
 
-INSTALL_FILES("${WRAP_ITK_INSTALL_LOCATION}" FILES "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake")
+INSTALL_FILES("/" FILES "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake")
 
 ####################################
 # Hackish macros to install a file at an absolute location, working around a 

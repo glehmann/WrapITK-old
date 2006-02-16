@@ -23,35 +23,40 @@ ENDIF(DOXYGEN_MAN_PATH)
 ###############################################################################
 # Configure the path-dependent itkConfig.py
 
-SET(CONFIG_WRAP_ITK_DATA_ROOT "${WrapITK_BINARY_DIR}/Data")
-SET(CONFIG_WRAP_ITK_TEST_ROOT "${WrapITK_BINARY_DIR}/Testing")
+# we specify these directories as python lists of path elements that make up
+# the relative path from the eventual location of itkConfig.py to the various
+# directories. Relative paths are used so that the file can be bundled up 
+# into an install conventiently. The python lists are used so that we don't
+# need a platform-dependent path separator (e.g. / or \).
+
+SET(CONFIG_WRAP_ITK_DATA_ROOT "('..', 'Data')")
+SET(CONFIG_WRAP_ITK_TEST_ROOT "('..', 'Testing')")
 
 # SWIG interface files aren't config-dependent
-SET(CONFIG_PYTHON_CONFIGPY_DIR "${WrapITK_BINARY_DIR}/Python/Configuration")
+SET(CONFIG_PYTHON_CONFIGPY_DIR "('Configuration',)")
 
 IF(CMAKE_CONFIGURATION_TYPES)
   FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
     # SWIG-generated libs and *.py files are sent to ${config} subdir
-    SET(CONFIG_PYTHON_SWIGPY_DIR "${LIBRARY_OUTPUT_PATH}/${config}")
-    SET(CONFIG_PYTHON_SWIGLIB_DIR "${LIBRARY_OUTPUT_PATH}/${config}")
+    # This assumes that LIBRARY_OUTPUT_PATH is WrapITK_BINARY_DIR/bin (bad!)
+    # We need a better way to do this.
+    SET(CONFIG_PYTHON_SWIGPY_DIR "('..', 'bin', '${config}')")
+    SET(CONFIG_PYTHON_SWIGLIB_DIR "('..', 'bin', '${config}')")
     CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
                    "${WrapITK_BINARY_DIR}/Python/${config}/itkConfig.py"
                    @ONLY IMMEDIATE)
   ENDFOREACH(config)
 ELSE(CMAKE_CONFIGURATION_TYPES)
-  SET(CONFIG_PYTHON_SWIGPY_DIR "${LIBRARY_OUTPUT_PATH}")
-  SET(CONFIG_PYTHON_SWIGLIB_DIR "${LIBRARY_OUTPUT_PATH}")
+  SET(CONFIG_PYTHON_SWIGPY_DIR "('..', 'bin')")
+  SET(CONFIG_PYTHON_SWIGLIB_DIR "('..', 'bin')")
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
                  "${WrapITK_BINARY_DIR}/Python/itkConfig.py"
                  @ONLY IMMEDIATE)
 ENDIF(CMAKE_CONFIGURATION_TYPES)
 
-SET(CONFIG_WRAP_ITK_DATA_ROOT "${WRAP_ITK_INSTALL_LOCATION}/Data")
-SET(CONFIG_WRAP_ITK_TEST_ROOT "<NO DEFAULT>")
-SET(CONFIG_PYTHON_SWIGLIB_DIR "${WRAP_ITK_INSTALL_LOCATION}/Python-SWIG")
-SET(CONFIG_PYTHON_SWIGPY_DIR "${WRAP_ITK_INSTALL_LOCATION}/Python-SWIG")
-SET(CONFIG_PYTHON_CONFIGPY_DIR "${WRAP_ITK_INSTALL_LOCATION}/Python/Configuration")
-
+SET(CONFIG_WRAP_ITK_TEST_ROOT "None")
+SET(CONFIG_PYTHON_SWIGLIB_DIR "('..', 'Python-SWIG')")
+SET(CONFIG_PYTHON_SWIGPY_DIR "('..', 'Python-SWIG')")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
                "${WrapITK_BINARY_DIR}/Python/InstallOnly/itkConfig.py"
               @ONLY IMMEDIATE)

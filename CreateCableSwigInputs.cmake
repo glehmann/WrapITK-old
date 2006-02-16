@@ -271,7 +271,10 @@ MACRO(WRAP_NAMED_CLASS class swig_name)
   # instances to be automatically added to the wrap_*.cxx file. END_WRAP_CLASS 
   # actually parses through the template instaces that have been recorded and 
   # creates the content of that cxx file. WRAP_NON_TEMPLATE_CLASS should be used
-  # to create a definition for a non-templated class.
+  # to create a definition for a non-templated class. (Note that internally, 
+  # WRAP_NON_TEMPLATE_CLASS eventually calls this macro. This macro should never
+  # be called directly for a non-templated class though.)
+  #
   # The second parameter of this macro is the name that the class should be given 
   # in SWIG (with template definitions providing additional mangled suffixes to this name)
   #

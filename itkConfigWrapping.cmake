@@ -185,6 +185,8 @@ ENDIF(WRAP_ITK_JAVA)
 ###############################################################################
 # Set various variables in order
 ###############################################################################
+SET(CMAKE_SKIP_RPATH ON CACHE BOOL "ITK wrappers must not have runtime path information." FORCE)
+
 # make sure language include directories are added
 IF(WRAP_ITK_TCL)
   INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})

@@ -433,8 +433,9 @@ can be called with a 3D image as parameter to show the image slice by slice.
 
   \item \verb$itk.auto_progress( b )$ is used to automatically add a progress report
 to all the newly created filters. \verb$b$ must be \verb$True$ or \verb$False$. If
-\verb$b$ is true, a line like
+\verb$b$ is true, something like
 \begin{verbatim}
+9> median.Update()
 itkMedianImageFilterIF2IF2: 0.109990
 \end{verbatim}
 is displayed on the standard output. 

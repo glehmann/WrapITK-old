@@ -288,12 +288,12 @@ class itkTemplate(object):
 
 # create a new New function which accepts parameters
 def New(self, *args, **kargs) :
-  import itk, sys
+  import sys
   
   newItkObject = self.__New_orig__()
   
   # try to get the images from the filters in args
-  args = [itk.image(arg) for arg in args]
+  args = [image(arg) for arg in args]
   
   # args without name are filter used to set input image
   #
@@ -345,7 +345,8 @@ def New(self, *args, **kargs) :
     attrib(value)
 
   # now, try to add observer to display progress
-  if itk.auto_progress :
+  if auto_progress :
+    import ITKPyUtils, ITKCommonA
     try :
       def progress() :
         clrLine = "\033[2000D\033[K"
@@ -355,9 +356,9 @@ def New(self, *args, **kargs) :
         if p == 1 :
           print >> sys.stderr, clrLine,
 
-      command = itk.PyCommand.New()
+      command = ITKPyUtils.PyCommand.New()
       command.SetCommandCallable(progress)
-      newItkObject.AddObserver(itk.ProgressEvent(), command.GetPointer())
+      newItkObject.AddObserver(ITKCommonA.ProgressEvent(), command.GetPointer())
     except :
       # it seems that something goes wrong...
       # as this feature is designed for prototyping, it's not really a problem
@@ -367,3 +368,18 @@ def New(self, *args, **kargs) :
   return newItkObject
 
 
+# set this variable to True to automatically add an progress display to the newly created
+# filter.
+auto_progress = False
+
+
+def image(input) :
+    try :
+	img = input.GetOutput()
+    except AttributeError :
+	img = input
+    try :
+	img = img.GetPointer()
+    except AttributeError :
+	pass
+    return img

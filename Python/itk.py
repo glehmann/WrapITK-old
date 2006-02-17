@@ -23,9 +23,10 @@ del itkBase, itkConfig, os
 # new features introduced by itk module
 # each new feature use a name in lower case
 
-# set this variable to True to automatically add an progress display to the newly created
-# filter.
-auto_progress = False
+def auto_progress( b ):
+  import itkTemplate
+  itkTemplate.auto_progress = b
+  
 
 # Function to print itk object info
 import sys
@@ -68,16 +69,7 @@ def strel(imageClass, radius=1) :
   return st
   
 # return an image
-def image(input) :
-    try :
-	img = input.GetOutput()
-    except AttributeError :
-	img = input
-    try :
-	img = img.GetPointer()
-    except AttributeError :
-	pass
-    return img
+from itkTemplate import image
 
 # return the template of a class and its parameters
 def template(cl) :

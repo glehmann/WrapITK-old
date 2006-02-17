@@ -442,6 +442,22 @@ While prototyping, it is a convenient way for the user to know if
 the execution time will be short or if he can do something more useful than waiting
 for the filter to complete (like having a cup of tea).
 
+  \item \verb$itk.class_( object )$ return the class of an object. The \verb$__class__$
+attribute is often not what the user want with ITK. \verb$itk.class_$ is a convenient
+function to get the class of an ITK object.
+
+Note that it is called \verb$class_$ and not \verb$class$, because \verb$class$ is a
+reseved word in python.
+
+Example:
+\begin{verbatim}
+10> median.__class__
+10> <class 'itkMedianImageFilter.itkMedianImageFilterIF2IF2_PointerPtr'>
+
+11> itk.class_(median)
+11> <class 'itkMedianImageFilter.itkMedianImageFilterIF2IF2'>
+\end{verbatim}
+
 
 \end{itemize}
 

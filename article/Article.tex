@@ -431,7 +431,17 @@ can be called with a 3D image as parameter to show the image slice by slice.
 
   \item \verb$itk.strel$
 
-  \item \verb$itk.auto_progress$
+  \item \verb$itk.auto_progress( b )$ is used to automatically add a progress report
+to all the newly created filters. \verb$b$ must be \verb$True$ or \verb$False$. If
+\verb$b$ is true, a line like
+\begin{verbatim}
+itkMedianImageFilterIF2IF2: 0.109990
+\end{verbatim}
+is displayed on the standard output. 
+While prototyping, it is a convenient way for the user to know if
+the execution time will be short or if he can do something more useful than waiting
+for the filter to complete (like having a cup of tea).
+
 
 \end{itemize}
 

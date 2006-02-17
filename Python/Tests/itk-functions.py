@@ -15,10 +15,10 @@ reader = ReaderType.New(FileName=fileName)
 itk.echo(reader)
 itk.echo(reader, sys.stdout)
 
-# test classFromObject
-assert itk.classFromObject(reader) == ReaderType
-assert itk.classFromObject(reader.GetPointer()) == ReaderType
-assert itk.classFromObject("dummy") == str
+# test class_
+assert itk.class_(reader) == ReaderType
+assert itk.class_(reader.GetPointer()) == ReaderType
+assert itk.class_("dummy") == str
 
 # test template
 assert itk.template(ReaderType) == (itk.ImageFileReader, (IType,))

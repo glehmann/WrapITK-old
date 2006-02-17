@@ -54,7 +54,7 @@ def size(imageOrFilter) :
 def strel(imageClass, radius=1) :
   # be sure to have an image class
   imageClass = image(imageClass)
-  imageClass = classFromObject(imageClass)
+  imageClass = class_(imageClass)
   (tpl, param) = template(imageClass)
   if tpl != Image :
     raise ValueError, "imageClass must be an Image class or object"
@@ -74,7 +74,7 @@ from itkTemplate import image
 # return the template of a class and its parameters
 def template(cl) :
   from itkTemplate import itkTemplate
-  return itkTemplate.__class_to_template__[classFromObject(cl)]
+  return itkTemplate.__class_to_template__[class_(cl)]
   
 # return ctype
 def ctype(s) :
@@ -85,7 +85,7 @@ def ctype(s) :
   return ret
   
 # return a class from an instance
-def classFromObject(obj) :
+def class_(obj) :
   import inspect
   if inspect.isclass(obj) :
     # obj is already a class !

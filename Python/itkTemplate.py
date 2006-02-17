@@ -348,11 +348,12 @@ def New(self, *args, **kargs) :
   if auto_progress :
     import ITKPyUtils, ITKCommonA
     try :
+      repr_str = repr(self).split("'")[1].split(".")[1]
       def progress() :
         clrLine = "\033[2000D\033[K"
-        # newItkObject is kept referenced with a closure
+        # newItkObject and repr_str are kept referenced with a closure
         p = newItkObject.GetProgress()
-        print >> sys.stderr, clrLine+"%s: %f" % (repr(self), p),
+        print >> sys.stderr, clrLine+"%s: %f" % (repr_str, p),
         if p == 1 :
           print >> sys.stderr, clrLine,
 

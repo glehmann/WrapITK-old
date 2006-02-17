@@ -347,6 +347,53 @@ def write( image, fileName ) :
 and, more important, most of classes can be instanciated and parametered in one line,
 which make ITK less verbose, and a lots more easy to use in the interpreter.
 
+
+     \subsubsection{Use python sequences instead of ITK objects}
+
+To set the radius of a \verb$MedianImageFilter$ object, for example, the user have to
+create a \verb$Size$ object and use it as argument of the \verb$SetRadius()$ method.
+\begin{verbatim}
+12> radius = itk.Size[2]()
+
+13> radius.SetElement(0, 3)
+
+14> radius.SetElement(1, 5)
+
+15> median.SetRadius(radius)
+\end{verbatim}.
+
+Note that the \verb$SetElement()$ method doesn't check the bound of the object, and thus
+is unsafe. The following code is executed, and can lead to a segmentation fault.
+
+\begin{verbatim}
+16> radius.SetElement(1000, 5)
+\end{verbatim}.
+
+A more safe and convenient way to do that, if you have installed the optional patch,
+is to use the standard python list interface.
+
+\begin{verbatim}
+17> radius[0] = 3
+
+18> radius[1] = 5
+\end{verbatim}.
+
+This time, a bound check is performed, and the user is not able to use an invalid index.
+
+\begin{verbatim}
+20> radius[2] = 1
+---------------------------------------------------------------------------
+exceptions.IndexError                                Traceback (most recent call last)
+
+/home/glehmann/src/contrib-itk/regionalExtrema/<ipython console>
+
+/home/glehmann/src/contrib-itk/regionalExtrema/itkSize.py in __setitem__(*args)
+
+IndexError: /usr/include/InsightToolkit/Common/itkSize.h:202:
+itk::ERROR: Size: index out of range
+\end{verbatim}.
+
+
      \subsubsection{Python specific functions in the {\em itk} module}
 
 Some convenient functions are provided with the itk module. They all begin with a lower

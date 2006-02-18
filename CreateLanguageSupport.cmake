@@ -51,8 +51,8 @@ MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
     ENDIF(CMAKE_CONFIGURATION_TYPES)
     # Just install the files once, regardless of how many different places
     # they were configured into. If there are no configuration types, the 
-    # intdir expands to '', so no harm done.
-    INSTALL_PYTHON_LOADER_FILE("${PROJECT_BINARY_DIR}/Python/${WRAP_ITK_INSTALL_INTDIR}")
+    # INTDIR variable expands to '', so no harm done.
+    INSTALL_FILES("/Python" FILES "${PROJECT_BINARY_DIR}/Python/${WRAP_ITK_INSTALL_INTDIR}${WRAPPER_LIBRARY_NAME}.py")
     IF(EXTERNAL_WRAP_ITK_PROJECT)
       # Configure a python file to make it easier to use this external project
       # without first installing it into WrapITK.
@@ -431,9 +431,7 @@ MACRO(CONFIGURE_PYTHON_CONFIG_FILES outdir)
     @ONLY IMMEDIATE)
   INSTALL_FILES("/Python/Configuration"
     FILES "${outdir}/${WRAPPER_LIBRARY_NAME}Config.py")
-
 ENDMACRO(CONFIGURE_PYTHON_CONFIG_FILES)
-
 
 MACRO(CONFIGURE_PYTHON_LOADER_FILE outdir)
   # Create the loader file for importing just the current wrapper library. Uses
@@ -444,16 +442,6 @@ MACRO(CONFIGURE_PYTHON_LOADER_FILE outdir)
     "${outdir}/${WRAPPER_LIBRARY_NAME}.py"
     @ONLY IMMEDIATE)
 ENDMACRO(CONFIGURE_PYTHON_LOADER_FILE)
-
-
-MACRO(INSTALL_PYTHON_LOADER_FILE outdir)
-  # Install the loader file for importing just the current wrapper library.
-  # Note that outdir will always have a trailing slash.
-  
-  INSTALL_FILES("/Python"
-    FILES "${outdir}${WRAPPER_LIBRARY_NAME}.py")
-ENDMACRO(INSTALL_PYTHON_LOADER_FILE)
-
 
 MACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG outdir)
   # Create a helper file to set some sys.path entries so that external projects

@@ -386,7 +386,7 @@ MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx
           -noruntime
           ${cindex}
           -depend ${input_xml}.depend
-          -outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_CONFIG_INTDIR}
+          -outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR}
           -o ${output_cxx}
           -c++
           ${CSWIG_ARGS_${language}}
@@ -406,7 +406,7 @@ MACRO(CREATE_EXTRA_SWIG_FILE library_name language swig_input cxx_output)
     ARGS  -nocable 
           -noruntime 
           ${CSWIG_IGNORE_WARNINGS}
-          -outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_CONFIG_INTDIR}
+          -outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR}
           -o ${cxx_output}
           -c++
           ${CSWIG_ARGS_${language}}

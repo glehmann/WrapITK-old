@@ -132,11 +132,13 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/WrapITK.pth.in"
              @ONLY IMMEDIATE)
 
 IF(PYTHON_EXECUTABLE)
+  FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/det_spp.py "try:\n  import distutils.sysconfig; print distutils.sysconfig.get_python_lib()\nexcept: pass")
   EXEC_PROGRAM("${PYTHON_EXECUTABLE}"
-    ARGS "-c 'try:\n  import distutils.sysconfig; print distutils.sysconfig.get_python_lib()\nexcept: pass\n'"
+    ARGS "${CMAKE_CURRENT_BINARY_DIR}/det_spp.py"
     OUTPUT_VARIABLE py_spp
   )
 ENDIF(PYTHON_EXECUTABLE)
+
 SET(PY_SITE_PACKAGES_PATH "${py_spp}" CACHE PATH "Python site-packages directory to install a .pth file pointing at WrapITK Python modules.")
 MARK_AS_ADVANCED(PY_SITE_PACKAGES_PATH)
 IF(PY_SITE_PACKAGES_PATH)

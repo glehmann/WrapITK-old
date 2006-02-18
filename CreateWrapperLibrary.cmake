@@ -377,6 +377,10 @@ MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx
      SET(extra_args "-DNO_EXCEPTIONS")
   ENDIF("${input_xml}" MATCHES "${no_exception_regex}")
 
+   # we have to get rid of the trailing /, else cswig will append \filename
+   # to the path and thus break the build.
+   GET_FILENAME_COMPONENT(OUTDIR ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR} PATH)
+
    ADD_CUSTOM_COMMAND(
      SOURCE ${input_idx}
      COMMAND ${CSWIG}
@@ -386,7 +390,7 @@ MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx
           -noruntime
           ${cindex}
           -depend ${input_xml}.depend
-          -outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR}
+          -outdir ${OUTDIR}
           -o ${output_cxx}
           -c++
           ${CSWIG_ARGS_${language}}

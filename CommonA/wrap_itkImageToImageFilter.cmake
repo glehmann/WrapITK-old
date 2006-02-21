@@ -1,5 +1,5 @@
 WRAP_CLASS("itk::ImageToImageFilter" POINTER)
-  FOREACH(d ${WRAP_DIMS})
+  FOREACH(d ${WRAP_ITK_DIMS})
     COND_WRAP("${ITKM_ID${d}}${ITKM_ID${d}}"  "${ITKT_ID${d}},${ITKT_ID${d}}"  "D")
     COND_WRAP("${ITKM_ID${d}}${ITKM_IF${d}}"  "${ITKT_ID${d}},${ITKT_IF${d}}"  "D;F")
     COND_WRAP("${ITKM_ID${d}}${ITKM_IUL${d}}" "${ITKT_ID${d}},${ITKT_IUL${d}}" "D") # needed for watershed
@@ -74,7 +74,7 @@ WRAP_CLASS("itk::ImageToImageFilter" POINTER)
     
 
     # dim=3 -> dim=2, dim=3 -> dim=2
-    FOREACH(d2 ${WRAP_DIMS})
+    FOREACH(d2 ${WRAP_ITK_DIMS})
       IF (NOT "${d}" EQUAL "${d2}") # this was already taken care of elsewhere
         COND_WRAP("${ITKM_ID${d}}${ITKM_ID${d2}}"   "${ITKT_ID${d}},${ITKT_ID${d2}}"   "D")
         COND_WRAP("${ITKM_IF${d}}${ITKM_IF${d2}}"   "${ITKT_IF${d}},${ITKT_IF${d2}}"   "F")

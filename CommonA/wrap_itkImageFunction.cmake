@@ -1,5 +1,5 @@
 WRAP_CLASS("itk::ImageFunction" POINTER)
-  FOREACH(d ${WRAP_DIMS})
+  FOREACH(d ${WRAP_ITK_DIMS})
     COND_WRAP("${ITKM_ID${d}}${ITKM_D}${ITKM_F}"  "${ITKT_ID${d}},${ITKT_D},${ITKT_F}" "D")
     COND_WRAP("${ITKM_IF${d}}${ITKM_D}${ITKM_F}"  "${ITKT_IF${d}},${ITKT_D},${ITKT_F}"  "F")
     COND_WRAP("${ITKM_IUL${d}}${ITKM_D}${ITKM_F}" "${ITKT_IUL${d}},${ITKT_D},${ITKT_F}" "UL")

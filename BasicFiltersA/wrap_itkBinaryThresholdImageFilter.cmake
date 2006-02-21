@@ -3,7 +3,7 @@ WRAP_CLASS("itk::BinaryThresholdImageFilter" POINTER_WITH_SUPERCLASS)
   WRAP_SIGN_INT(2)
   WRAP_REAL(2)
   
-  FOREACH(d ${WRAP_DIMS})
+  FOREACH(d ${WRAP_ITK_DIMS})
     COND_WRAP("${ITKM_ID${d}}${ITKM_IF${d}}"  "${ITKT_ID${d}},${ITKT_IF${d}}"  "D;F")
     COND_WRAP("${ITKM_ID${d}}${ITKM_IUL${d}}" "${ITKT_ID${d}},${ITKT_IUL${d}}" "D;UL")
     COND_WRAP("${ITKM_ID${d}}${ITKM_IUS${d}}" "${ITKT_ID${d}},${ITKT_IUS${d}}" "D;US")

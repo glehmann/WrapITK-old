@@ -1,5 +1,5 @@
 WRAP_CLASS("itk::RawImageIO" POINTER)
-  FOREACH(d ${WRAP_DIMS})
+  FOREACH(d ${WRAP_ITK_DIMS})
     WRAP("${ITKM_F}${d}" "${ITKT_F},${d}")
   ENDFOREACH(d)
 END_WRAP_CLASS()

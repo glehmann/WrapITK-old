@@ -1,6 +1,6 @@
 WRAP_CLASS("itk::ImportImageFilter" POINTER)
 
-  FOREACH(d ${WRAP_DIMS})
+  FOREACH(d ${WRAP_ITK_DIMS})
     COND_WRAP("${ITKM_D}${d}"  "${ITKT_D},${d}"  "D" )
     COND_WRAP("${ITKM_F}${d}"  "${ITKT_F},${d}"  "F" )
     COND_WRAP("${ITKM_UL}${d}" "${ITKT_UL},${d}" "UL")

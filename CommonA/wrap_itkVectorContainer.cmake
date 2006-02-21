@@ -1,5 +1,5 @@
 WRAP_CLASS("itk::VectorContainer" POINTER)
-  FOREACH(d ${WRAP_DIMS})
+  FOREACH(d ${WRAP_ITK_DIMS})
     WRAP("${ITKM_UI}${ITKM_LSNF${d}}"  "${ITKT_UI},${ITKT_LSNF${d}}")
     WRAP("${ITKM_UI}${ITKM_LSND${d}}"  "${ITKT_UI},${ITKT_LSND${d}}")
     WRAP("${ITKM_UI}${ITKM_LSNUC${d}}" "${ITKT_UI},${ITKT_LSNUC${d}}")

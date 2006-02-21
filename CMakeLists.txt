@@ -32,7 +32,7 @@ OPTION(WRAP_covariant_vector_double "Wrap covariant vector double type" OFF)
 OPTION(WRAP_rgb_unsigned_char "Wrap RGB< unsigned char > type" ON)
 OPTION(WRAP_rgb_unsigned_short "Wrap RGB< unsigned short > type" OFF)
 
-SET(WRAP_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (;)")
+SET(WRAP_ITK_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (;)")
 SET(WRAP_ITK_INSTALL_LOCATION "/usr/local/lib/InsightToolkit/WrapITK" CACHE PATH "Path to the top of the install tree. (USED INSTEAD OF CMAKE_INSTALL_PREFIX.)")
 SET(CMAKE_INSTALL_PREFIX "${WRAP_ITK_INSTALL_LOCATION}" CACHE INTERNAL "Always set to WRAP_ITK_INSTALL_LOCATION so WrapITK can provide an intelligent default." FORCE)
 

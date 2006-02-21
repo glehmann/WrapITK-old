@@ -1,6 +1,6 @@
 WRAP_CLASS("itk::JoinSeriesImageFilter" POINTER)
-  FOREACH(d1 ${WRAP_DIMS})
-    FOREACH(d2 ${WRAP_DIMS})
+  FOREACH(d1 ${WRAP_ITK_DIMS})
+    FOREACH(d2 ${WRAP_ITK_DIMS})
       IF("${d1}" LESS "${d2}")
         COND_WRAP("${ITKM_ID${d1}}${ITKM_ID${d2}}"   "${ITKT_ID${d1}},${ITKT_ID${d2}}"   "D")
         COND_WRAP("${ITKM_IF${d1}}${ITKM_IF${d2}}"   "${ITKT_IF${d1}},${ITKT_IF${d2}}"   "F")

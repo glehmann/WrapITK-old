@@ -1,5 +1,5 @@
 WRAP_CLASS("itk::BlackTopHatImageFilter" POINTER)
-  FOREACH(d ${WRAP_DIMS})
+  FOREACH(d ${WRAP_ITK_DIMS})
     COND_WRAP("${ITKM_IF${d}}${ITKM_IF${d}}${ITKM_SEF${d}}"    "${ITKT_IF${d}},${ITKT_IF${d}},${ITKT_SEF${d}}"    "F")
     COND_WRAP("${ITKM_ID${d}}${ITKM_ID${d}}${ITKM_SED${d}}"    "${ITKT_ID${d}},${ITKT_ID${d}},${ITKT_SED${d}}"    "D")
     COND_WRAP("${ITKM_IUL${d}}${ITKM_IUL${d}}${ITKM_SEUL${d}}" "${ITKT_IUL${d}},${ITKT_IUL${d}},${ITKT_SEUL${d}}" "UL")

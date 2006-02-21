@@ -1,5 +1,5 @@
 WRAP_CLASS("itk::FunctionBase" POINTER)
-  FOREACH(d ${WRAP_DIMS})
+  FOREACH(d ${WRAP_ITK_DIMS})
     COND_WRAP("${ITKM_IF${d}}${ITKM_D}"   "${ITKT_IF${d}},${ITKT_D}"  "F")
     COND_WRAP("${ITKM_IUS${d}}${ITKM_D}"  "${ITKT_IUS${d}},${ITKT_D}" "US")
     WRAP("${ITKM_PF${d}}${ITKM_D}"   "${ITKT_PF${d}} ,${ITKT_D}")

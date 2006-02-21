@@ -584,10 +584,10 @@ MACRO(WRAP_TYPES_DIMS size types template_dims)
 
   IF("${template_dims}" MATCHES "^[0-9]+\\+$")
     # If the parameter is of form '2+', make a list of the user-selected
-    # dimensions (WRAP_DIMS) that match this criterion.
+    # dimensions (WRAP_ITK_DIMS) that match this criterion.
     STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" MIN_DIM "${template_dims}")
     SET(dims )
-    FOREACH(d ${WRAP_DIMS})
+    FOREACH(d ${WRAP_ITK_DIMS})
       IF("${d}" GREATER "${MIN_DIM}" OR "${d}" EQUAL "${MIN_DIM}")
         SET(dims ${dims} "${d}")
       ENDIF("${d}" GREATER "${MIN_DIM}" OR "${d}" EQUAL "${MIN_DIM}")
@@ -598,7 +598,7 @@ MACRO(WRAP_TYPES_DIMS size types template_dims)
     # Otherwise, jsut make a list of the intersection between the user-selected
     # dimensions and the allowed dimensions provided by the parameter.
     SET(dims )
-    FOREACH(d ${WRAP_DIMS})
+    FOREACH(d ${WRAP_ITK_DIMS})
       FOREACH(td ${template_dims})
         IF(d EQUAL td)
           SET(dims ${dims} ${d})
@@ -651,7 +651,7 @@ MACRO(WRAP_INT_DIMS size dims)
 ENDMACRO(WRAP_INT_DIMS)
 
 MACRO(WRAP_INT size)
-  WRAP_INT_DIMS(${size} "${WRAP_DIMS}")
+  WRAP_INT_DIMS(${size} "${WRAP_ITK_DIMS}")
 ENDMACRO(WRAP_INT)
 
 MACRO(WRAP_SIGN_INT_DIMS size dims)
@@ -659,7 +659,7 @@ MACRO(WRAP_SIGN_INT_DIMS size dims)
 ENDMACRO(WRAP_SIGN_INT_DIMS)
 
 MACRO(WRAP_SIGN_INT size)
-  WRAP_SIGN_INT_DIMS(${size} "${WRAP_DIMS}")
+  WRAP_SIGN_INT_DIMS(${size} "${WRAP_ITK_DIMS}")
 ENDMACRO(WRAP_SIGN_INT)
 
 
@@ -668,7 +668,7 @@ MACRO(WRAP_REAL_DIMS size dims)
 ENDMACRO(WRAP_REAL_DIMS size)
 
 MACRO(WRAP_REAL size)
-  WRAP_REAL_DIMS(${size} "${WRAP_DIMS}")
+  WRAP_REAL_DIMS(${size} "${WRAP_ITK_DIMS}")
 ENDMACRO(WRAP_REAL size)
 
 
@@ -681,7 +681,7 @@ MACRO(WRAP_VECTOR_REAL_DIMS size dims)
 ENDMACRO(WRAP_VECTOR_REAL_DIMS size)
 
 MACRO(WRAP_VECTOR_REAL size)
-  WRAP_VECTOR_REAL_DIMS(${size} "${WRAP_DIMS}")
+  WRAP_VECTOR_REAL_DIMS(${size} "${WRAP_ITK_DIMS}")
 ENDMACRO(WRAP_VECTOR_REAL size)
 
 
@@ -694,7 +694,7 @@ MACRO(WRAP_COV_VECTOR_REAL_DIMS size dims)
 ENDMACRO(WRAP_COV_VECTOR_REAL_DIMS size)
 
 MACRO(WRAP_COV_VECTOR_REAL size)
-  WRAP_COV_VECTOR_REAL_DIMS(${size} "${WRAP_DIMS}")
+  WRAP_COV_VECTOR_REAL_DIMS(${size} "${WRAP_ITK_DIMS}")
 ENDMACRO(WRAP_COV_VECTOR_REAL size)
 
 
@@ -703,6 +703,6 @@ MACRO(WRAP_RGB_DIMS size dims)
 ENDMACRO(WRAP_RGB_DIMS)
 
 MACRO(WRAP_RGB size)
-  WRAP_RGB_DIMS(${size} "${WRAP_DIMS}")
+  WRAP_RGB_DIMS(${size} "${WRAP_ITK_DIMS}")
 ENDMACRO(WRAP_RGB)
 

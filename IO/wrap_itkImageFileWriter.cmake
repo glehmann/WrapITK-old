@@ -1,9 +1,9 @@
 WRAP_CLASS("itk::ImageFileWriter" POINTER)
 
   FOREACH(d ${WRAP_ITK_DIMS})
-    COND_WRAP("${ITKM_IUC${d}}" "${ITKT_IUC${d}}" "")  # neded to save in 8 bits
-    COND_WRAP("${ITKM_IUS${d}}" "${ITKT_IUS${d}}" "US")
-    COND_WRAP("${ITKM_IUL${d}}" "${ITKT_IUL${d}}" "UL")
+    WRAP_TYPES("${ITKM_IUC${d}}" "${ITKT_IUC${d}}" "")  # neded to save in 8 bits
+    WRAP_TYPES("${ITKM_IUS${d}}" "${ITKT_IUS${d}}" "US")
+    WRAP_TYPES("${ITKM_IUL${d}}" "${ITKT_IUL${d}}" "UL")
   ENDFOREACH(d)
 
   WRAP_SIGN_INT(1)

@@ -475,8 +475,8 @@ MACRO(WRAP name types)
 ENDMACRO(WRAP)
 
 
-MACRO(COND_WRAP name types conditions)
-  # COND_WRAP will call WRAP(name types) only if the wrapping types selected
+MACRO(WRAP_TYPES name types conditions)
+  # WRAP_TYPES will call WRAP(name types) only if the wrapping types selected
   # in cmake (e.g. WRAP_unsigned_char) match one of the conditions listed in
   # the 'conditions' parameter.
   
@@ -570,7 +570,7 @@ MACRO(COND_WRAP name types conditions)
   IF(${will_wrap})
     WRAP("${name}" "${types}")
   ENDIF(${will_wrap})
-ENDMACRO(COND_WRAP)
+ENDMACRO(WRAP_TYPES)
 
 
 MACRO(WRAP_TYPES_DIMS size types template_dims)
@@ -629,7 +629,7 @@ MACRO(WRAP_TYPES_DIMS_NO_DIM_TEST size types dims)
           SET(params "${params}, ")
         ENDIF(NOT ${i} EQUAL ${size})
       ENDFOREACH(i)
-      COND_WRAP("${name}" "${params}" "${type}")
+      WRAP_TYPES("${name}" "${params}" "${type}")
     ENDFOREACH(type)
   ENDFOREACH(dim)
 ENDMACRO(WRAP_TYPES_DIMS_NO_DIM_TEST)

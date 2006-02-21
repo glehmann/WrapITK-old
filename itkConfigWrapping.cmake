@@ -253,6 +253,63 @@ ADD_DEFINITIONS(-DSWIG_GLOBAL)
 
 
 ###############################################################################
+# Create some variable which can be used later
+###############################################################################
+SET(WRAP_ITK_INT "")
+IF(WRAP_unsigned_char)
+  SET(WRAP_ITK_INT ${WRAP_ITK_INT} "UC")
+IF(WRAP_unsigned_char)
+IF(WRAP_unsigned_long)
+  SET(WRAP_ITK_INT ${WRAP_ITK_INT} "UL")
+IF(WRAP_unsigned_long)
+IF(WRAP_unsigned_short)
+  SET(WRAP_ITK_INT ${WRAP_ITK_INT} "US")
+IF(WRAP_unsigned_short)
+
+SET(WRAP_ITK_SIGN_INT "")
+IF(WRAP_signed_char)
+  SET(WRAP_ITK_SIGN_INT ${WRAP_ITK_SIGN_INT} "SC")
+IF(WRAP_signed_char)
+IF(WRAP_signed_long)
+  SET(WRAP_ITK_SIGN_INT ${WRAP_ITK_SIGN_INT} "SL")
+IF(WRAP_signed_long)
+IF(WRAP_signed_short)
+  SET(WRAP_ITK_SIGN_INT ${WRAP_ITK_SIGN_INT} "SS")
+IF(WRAP_signed_short)
+
+SET(WRAP_ITK_REAL "")
+IF(WRAP_float)
+  SET(WRAP_ITK_REAL ${WRAP_ITK_REAL} "F")
+IF(WRAP_signed_char)
+IF(WRAP_double)
+  SET(WRAP_ITK_REAL ${WRAP_ITK_REAL} "D")
+IF(WRAP_signed_long)
+
+SET(WRAP_ITK_RGB "")
+IF(WRAP_rgb_unsigned_char)
+  SET(WRAP_ITK_RGB ${WRAP_ITK_RGB} "RGBUC")
+IF(WRAP_rgb_unsigned_char)
+IF(WRAP_rgb_unsigned_short)
+  SET(WRAP_ITK_RGB ${WRAP_ITK_RGB} "RGBUS")
+IF(WRAP_rgb_unsigned_short)
+
+SET(WRAP_ITK_VECTOR "")
+IF(WRAP_vector_double)
+  SET(WRAP_ITK_VECTOR ${WRAP_ITK_VECTOR} "VD")
+IF(WRAP_vector_double)
+IF(WRAP_vector_float)
+  SET(WRAP_ITK_VECTOR ${WRAP_ITK_VECTOR} "VF")
+IF(WRAP_vector_float)
+
+SET(WRAP_ITK_COV_VECTOR "")
+IF(WRAP_covariant_vector_double)
+  SET(WRAP_ITK_COV_VECTOR ${WRAP_ITK_COV_VECTOR} "CVD")
+IF(WRAP_covariant_vector_double)
+IF(WRAP_covariant_vector_float)
+  SET(WRAP_ITK_COV_VECTOR ${WRAP_ITK_COV_VECTOR} "CVF")
+IF(WRAP_covariant_vector_float)
+
+###############################################################################
 # Include other needed macros -- WRAP_ITK_CMAKE_DIR must be set correctly
 ###############################################################################
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/CreateCableSwigInputs.cmake")

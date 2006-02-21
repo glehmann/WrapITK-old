@@ -348,7 +348,7 @@ and, more important, most of classes can be instanciated and parametered in one 
 which make ITK less verbose, and a lots more easy to use in the interpreter.
 
 
-     \subsubsection{Use python sequences instead of ITK objects}
+     \subsubsection{Python sequences and ITK}
 
 To set the radius of a \verb$MedianImageFilter$ object, for example, the user have to
 create a \verb$Size$ object and use it as argument of the \verb$SetRadius()$ method.
@@ -393,6 +393,52 @@ IndexError: /usr/include/InsightToolkit/Common/itkSize.h:202:
 itk::ERROR: Size: index out of range
 \end{verbatim}.
 
+Even if it's a safe method, it is still not really convenient.
+
+Instead of using \verb$Size$ object, it is possible to use python sequences, like lists
+and tuple.
+
+\begin{verbatim}
+21> median.SetRadius([3, 5])
+
+22> median.SetRadius((3, 5))
+\end{verbatim}.
+
+Also, with the optional patches, some itk object can be converted to python sequences.
+
+\begin{verbatim}
+22> median.GetRadius()
+22> <C itk::Size<(2)> instance at _58b40f09_p_itk__SizeT2_t>
+
+23> list(median.GetRadius())
+23> [3, 5]
+
+24> tuple(median.GetRadius())
+24> (3, 5)
+\end{verbatim}.
+
+To set the same radius for all dimensions, it is possible to use the \verb$*$ python
+sequence operator - that way, it is possible to write code independant of dimension.
+
+\begin{verbatim}
+25> median.SetRadius( [3]*2 )
+\end{verbatim}.
+
+Or a simple number can also be used.
+
+\begin{verbatim}
+26> median.SetRadius( 3 )
+\end{verbatim}.
+
+Here is the list of itk classes which can currently be substituted by python sequences:
+\begin{itemize}
+  \item \verb$CovariantVector$
+  \item \verb$FixedArray$
+  \item \verb$Index$
+  \item \verb$Offset$
+  \item \verb$Size$
+  \item \verb$Vector$
+\end{itemize}
 
      \subsubsection{Python specific functions in the {\em itk} module}
 
@@ -473,7 +519,7 @@ can be called with a 3D image as parameter to show the image slice by slice.
 \begin{figure}[htbp]
 \centering
 \includegraphics[scale=0.18]{capture1}
-\caption{A screenshot of WrapITK in action.\label{screenshot}}
+\caption{A screenshot of WrapITK in action with python.\label{screenshot}}
 \end{figure}
 
   \item \verb$itk.strel$

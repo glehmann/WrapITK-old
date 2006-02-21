@@ -41,7 +41,7 @@ colorlinks,linkcolor={blue},citecolor={blue},urlcolor={blue},
 
 % At minimum, give your name and an email address.  You can include a
 % snail-mail address if you like.
-\author{Ga\"etan Lehmann{$^1$} {\small{and}} Zachary Pincus{$^2$} {\small{and}} Benoit Regrain{$^3$}}
+\author{Ga\"etan Lehmann{$^1$}{\small{,}} Zachary Pincus{$^2$} {\small{and}} Benoit Regrain{$^3$}}
 \authoraddress{{$^1$}Unit\'e de Biologie du D\'eveloppement et de la Reproduction, Institut National de la Recherche Agronomique, 78350 Jouy-en-Josas, France\\
 {$^2$}Stanford University, CA 94305, USA\\
 {$^3$}Creatis, CNRS, 69621 Villeurbanne, France}
@@ -657,13 +657,13 @@ macros from \verb$CreateLanguageSupport.cmake$.
 
      \subsubsection{Creating wrapXXX.cmake files to wrap classes}
 
-A \verb$wrap_XXX.cmake file$ defines a group of classes and/or template instantiations
+A \verb$wrap_XXX.cmake$ file defines a group of classes and/or template instantiations
 to be wrapped. Often one such file is defined for each class wrapped, but this
 is not strictly necessary.
 
 Within such a file, directives are issued to wrap classes and particular
 template instances. All of the available directives are defined and documented
-in CreateCableSwigInputs.cmake. The basics are presented here:
+in \verb$CreateCableSwigInputs.cmake$. The basics are presented here:
 
 \begin{itemize}
   \item \verb$WRAP_INCLUDE("header.h")$ -- causes the named header to be \verb$#included$ in the
@@ -687,7 +687,7 @@ things won't work. This is always the case for ITK-style code.) If
 \verb$POINTER_WITH_SUPERCLASS$ is provided, then \verb$class::Pointer$, \verb$class::Superclass$ and
 \verb$class::Superclass::Pointer$ are all wrapped. (Again, this only works for
 ITK-style code where the class has a typedef'd \verb$Superclass$, and the superclass
-has Self and \verb$Pointer$ typedefs.)
+has \verb$Self$ and \verb$Pointer$ typedefs.)
 
   \item \verb$WRAP("mangled_suffix" "template parameters")$ -- When issued between \verb$WRAP_CLASS$
 and \verb$END_WRAP_CLASS$, this command causes a particular template instantiation of
@@ -697,6 +697,8 @@ instantiation, and "template parameters" are whatever should go between the \ver
 template instantiation brackets. (Do not include the brackets.) If you are
 wrapping a filter, there are simpler macros to use, which are defined at the
 bottom of \verb$CreateCableSwigInputs$ and described below.
+
+  \item \verb$COND_WRAP("mangled_suffix" "template parameters" "type list")$
 
   \item \verb$WRAP_type(size)$ (where 'type' is \verb$INT$, \verb$SIGN_INT$, \verb$REAL$, \verb$VECTOR_REAL$,
 \verb$COV_VECTOR_REAL$ or \verb$RGB$) -- create a template instantiation with 'size'

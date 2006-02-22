@@ -1,6 +1,6 @@
 WRAP_CLASS("itk::RelabelComponentImageFilter" POINTER)
-  WRAP_INT(2)
-  WRAP_SIGN_INT(2)
+  WRAP_IMAGE_FILTER_INT(2)
+  WRAP_IMAGE_FILTER_SIGN_INT(2)
   # needed with watershed filter to return to a non UL type
 
   FOREACH(d ${WRAP_ITK_DIMS})

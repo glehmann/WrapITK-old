@@ -1,8 +1,8 @@
 WRAP_CLASS("itk::GeodesicActiveContourLevelSetImageFilter" POINTER)
 
-  # WRAP_INT(2)
-  # WRAP_SIGN_INT(2)
-  # WRAP_REAL(2)
+  # WRAP_IMAGE_FILTER_INT(2)
+  # WRAP_IMAGE_FILTER_SIGN_INT(2)
+  # WRAP_IMAGE_FILTER_REAL(2)
 
   FOREACH(d ${WRAP_ITK_DIMS})
     IF("${d}" GREATER 1)

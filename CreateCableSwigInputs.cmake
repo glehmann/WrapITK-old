@@ -578,12 +578,12 @@ MACRO(TEST_TYPES var_name conditions)
 ENDMACRO(TEST_TYPES)
 
 
-MACRO(FILTER_TYPES var_name types)
-  SET(tmp_list)
-  FOREACH(t ${var_name})
-    FOREACH(t2 ${WRAP_ITK_ALL_TYPES})
+MACRO(FILTER_TYPES list types var_name)
+  SET(${var_name} "")
+  FOREACH(t ${list})
+    FOREACH(t2 ${types})
       IF(t EQUAL t2)
-        SET(tmp_list ${tmp_list} ${t})
+        SET(tmp_list ${${var_name}} ${t})
       ENDIF(t EQUAL t2)
     ENDFOREACH(t2)
   ENDFOREACH(t)
@@ -635,25 +635,24 @@ MACRO(TEST_DIMS var_name dims)
 ENDMACRO(TEST_DIMS)
 
 
-MACRO(FILTER_DIMS var_name dims)
-  SET(tmp_list "")
+MACRO(FILTER_DIMS list dims var_name)
+  SET(${var_name} "")
   IF("${dims}" MATCHES "^[0-9]+\\+$")
     STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" min_dim "${dims}")
-    FOREACH(d ${${var_name}})
+    FOREACH(d ${list})
       IF("${d}" GREATER "${min_dim}" OR "${d}" EQUAL "${min_dim}")
-        SET(tmp_list ${tmp_list} ${d})
+        SET(${var_name} ${${var_name}} ${d})
       ENDIF("${d}" GREATER "${min_dim}" OR "${d}" EQUAL "${min_dim}")
     ENDFOREACH(d)
   ELSE("${dims}" MATCHES "^[0-9]+\\+$")
-    FOREACH(t ${${var_name}})
+    FOREACH(t ${list})
       FOREACH(d ${dims})
         IF(d EQUAL t)
-          SET(tmp_list ${tmp_list} ${t})
+          SET(${var_name} ${${var_name}} ${t})
         ENDIF(d EQUAL t)
       ENDFOREACH(d)
     ENDFOREACH(t)
   ENDIF("${dims}" MATCHES "^[0-9]+\\+$")
-  SET(${var_name} ${tmp_list})
 ENDMACRO(FILTER_DIMS)
 
 
@@ -717,10 +716,10 @@ ENDMACRO(WRAP_ALL_TYPES_AND_DIMS)
 # be further restricted by the user's selection of dimensions at configure time.
 
 MACRO(WRAP_IMAGE_FILTER_INT size)
-  SET(dim_list ${WRAP_ITK_DIMS})
-
   IF("${ARGC}" EQUAL 3)
-    FILTER_DIMS(dim_list "${ARGV2}")
+    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV2}" dim_list)
+  ELSE("${ARGC}" EQUAL 3)
+    SET(dim_list ${WRAP_ITK_DIMS})
   ENDIF("${ARGC}" EQUAL 3)
 
   WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_INT}" "${dim_list}")
@@ -728,10 +727,10 @@ ENDMACRO(WRAP_IMAGE_FILTER_INT)
 
 
 MACRO(WRAP_IMAGE_FILTER_SIGN_INT size)
-  SET(dim_list ${WRAP_ITK_DIMS})
-
   IF("${ARGC}" EQUAL 3)
     FILTER_DIMS(dim_list "${ARGV2}")
+  ELSE("${ARGC}" EQUAL 3)
+    SET(dim_list ${WRAP_ITK_DIMS})
   ENDIF("${ARGC}" EQUAL 3)
 
   WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_SIGN_INT}" "${dim_list}")
@@ -739,10 +738,10 @@ ENDMACRO(WRAP_IMAGE_FILTER_SIGN_INT)
 
 
 MACRO(WRAP_IMAGE_FILTER_REAL size)
-  SET(dim_list ${WRAP_ITK_DIMS})
-
   IF("${ARGC}" EQUAL 3)
     FILTER_DIMS(dim_list "${ARGV2}")
+  ELSE("${ARGC}" EQUAL 3)
+    SET(dim_list ${WRAP_ITK_DIMS})
   ENDIF("${ARGC}" EQUAL 3)
 
   WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_REAL}" "${dim_list}")
@@ -750,10 +749,10 @@ ENDMACRO(WRAP_IMAGE_FILTER_REAL)
 
 
 MACRO(WRAP_IMAGE_FILTER_RGB size)
-  SET(dim_list ${WRAP_ITK_DIMS})
-
   IF("${ARGC}" EQUAL 3)
     FILTER_DIMS(dim_list "${ARGV2}")
+  ELSE("${ARGC}" EQUAL 3)
+    SET(dim_list ${WRAP_ITK_DIMS})
   ENDIF("${ARGC}" EQUAL 3)
 
   WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_RGB}" "${dim_list}")
@@ -761,10 +760,10 @@ ENDMACRO(WRAP_IMAGE_FILTER_RGB)
 
 
 MACRO(WRAP_IMAGE_FILTER_VECTOR_REAL size)
-  SET(dim_list ${WRAP_ITK_DIMS})
-
   IF("${ARGC}" EQUAL 3)
     FILTER_DIMS(dim_list "${ARGV2}")
+  ELSE("${ARGC}" EQUAL 3)
+    SET(dim_list ${WRAP_ITK_DIMS})
   ENDIF("${ARGC}" EQUAL 3)
 
   SET(ddims "")
@@ -777,10 +776,10 @@ ENDMACRO(WRAP_IMAGE_FILTER_VECTOR_REAL)
 
 
 MACRO(WRAP_IMAGE_FILTER_COV_VECTOR_REAL size)
-  SET(dim_list ${WRAP_ITK_DIMS})
-
   IF("${ARGC}" EQUAL 3)
     FILTER_DIMS(dim_list "${ARGV2}")
+  ELSE("${ARGC}" EQUAL 3)
+    SET(dim_list ${WRAP_ITK_DIMS})
   ENDIF("${ARGC}" EQUAL 3)
 
   SET(ddims "")

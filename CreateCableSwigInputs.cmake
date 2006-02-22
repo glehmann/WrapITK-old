@@ -479,101 +479,185 @@ MACRO(WRAP_TYPES name types conditions)
   # WRAP_TYPES will call WRAP(name types) only if the wrapping types selected
   # in cmake (e.g. WRAP_unsigned_char) match one of the conditions listed in
   # the 'conditions' parameter.
+
+  TEST_TYPES(will_wrap "${conditions}")
+
+  IF(will_wrap)
+    WRAP("${name}" "${types}")
+  ENDIF(will_wrap)
+ENDMACRO(WRAP_TYPES)
   
-  SET(will_wrap 1)
+
+MACRO(TEST_TYPES var_name conditions)
+  SET(${var_name} ON)
   FOREACH(t ${conditions})
     IF("${t}" STREQUAL "UC")
       IF(NOT WRAP_unsigned_char)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_unsigned_char)
     ENDIF("${t}" STREQUAL "UC")
 
     IF("${t}" STREQUAL "US")
       IF(NOT WRAP_unsigned_short)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_unsigned_short)
     ENDIF("${t}" STREQUAL "US")
 
     IF("${t}" STREQUAL "UL")
       IF(NOT WRAP_unsigned_long)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_unsigned_long)
     ENDIF("${t}" STREQUAL "UL")
 
     IF("${t}" STREQUAL "SC")
       IF(NOT WRAP_signed_char)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_signed_char)
     ENDIF("${t}" STREQUAL "SC")
 
     IF("${t}" STREQUAL "SS")
       IF(NOT WRAP_signed_short)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_signed_short)
     ENDIF("${t}" STREQUAL "SS")
 
     IF("${t}" STREQUAL "SL")
       IF(NOT WRAP_signed_long)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_signed_long)
     ENDIF("${t}" STREQUAL "SL")
 
     IF("${t}" STREQUAL "F")
       IF(NOT WRAP_float)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_float)
     ENDIF("${t}" STREQUAL "F")
 
     IF("${t}" STREQUAL "D")
       IF(NOT WRAP_double)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_double)
     ENDIF("${t}" STREQUAL "D")
 
     IF("${t}" STREQUAL "VF")
       IF(NOT WRAP_vector_float)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_vector_float)
     ENDIF("${t}" STREQUAL "VF")
 
     IF("${t}" STREQUAL "VD")
       IF(NOT WRAP_vector_double)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_vector_double)
     ENDIF("${t}" STREQUAL "VD")
 
     IF("${t}" STREQUAL "CVF")
       IF(NOT WRAP_covariant_vector_float)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_covariant_vector_float)
     ENDIF("${t}" STREQUAL "CVF")
 
     IF("${t}" STREQUAL "CVD")
       IF(NOT WRAP_covariant_vector_double)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_covariant_vector_double)
     ENDIF("${t}" STREQUAL "CVD")
 
     IF("${t}" STREQUAL "RGBUC")
       IF(NOT WRAP_rgb_unsigned_char)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_rgb_unsigned_char)
     ENDIF("${t}" STREQUAL "RGBUC")
 
     IF("${t}" STREQUAL "RGBUS")
       IF(NOT WRAP_rgb_unsigned_short)
-        SET(will_wrap 0)
+        SET(${var_name} OFF)
       ENDIF(NOT WRAP_rgb_unsigned_short)
     ENDIF("${t}" STREQUAL "RGBUS")
   ENDFOREACH(t)
+ENDMACRO(TEST_TYPES)
 
-  IF(${will_wrap})
+
+MACRO(FILTER_TYPES var_name types)
+  SET(tmp_list)
+  FOREACH(t ${var_name})
+    FOREACH(t2 ${WRAP_ITK_ALL_TYPES})
+      IF(t EQUAL t2)
+        SET(tmp_list ${tmp_list} ${t})
+      ENDIF(t EQUAL t2)
+    ENDFOREACH(t2)
+  ENDFOREACH(t)
+ENDMACRO(FILTER_TYPES)
+
+
+MACRO(WRAP_DIMS name types conditions)
+  # WRAP_TYPES will call WRAP(name types) only if the wrapping types selected
+  # in cmake (e.g. WRAP_unsigned_char) match one of the conditions listed in
+  # the 'conditions' parameter.
+
+  TEST_DIMS(will_wrap "${conditions}")
+
+  IF(will_wrap)
     WRAP("${name}" "${types}")
-  ENDIF(${will_wrap})
-ENDMACRO(WRAP_TYPES)
+  ENDIF(will_wrap)
+ENDMACRO(WRAP_DIMS)
 
 
-MACRO(WRAP_TYPES_DIMS size types template_dims)
+MACRO(TEST_DIMS var_name dims)
+  IF("${dims}" MATCHES "^[0-9]+\\+$")
+    # If the parameter is of form '2+', make a list of the user-selected
+    # dimensions (WRAP_ITK_DIMS) that match this criterion.
+    SET(${var_name} OFF)
+    STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" min_dim "${dims}")
+    FOREACH(d ${WRAP_ITK_DIMS})
+      IF("${d}" GREATER "${min_dim}" OR "${d}" EQUAL "${min_dim}")
+        SET(${var_name} ON)
+      ENDIF("${d}" GREATER "${min_dim}" OR "${d}" EQUAL "${min_dim}")
+    ENDFOREACH(d)
+
+  ELSE("${dims}" MATCHES "^[0-9]+\\+$")
+    # Otherwise, jsut make a list of the intersection between the user-selected
+    # dimensions and the allowed dimensions provided by the parameter.
+    SET(${var_name} ON)
+    FOREACH(d ${WRAP_ITK_DIMS})
+      SET(hop OFF)
+      FOREACH(td ${dims})
+        IF(d EQUAL td)
+          SET(hop ON)
+        ENDIF(d EQUAL td)
+      ENDFOREACH(td)
+      IF(NOT hop)
+        SET(${var_name} OFF)
+      IF(NOT hop)
+    ENDFOREACH(d)
+
+  ENDIF("${dims}" MATCHES "^[0-9]+\\+$")
+ENDMACRO(TEST_DIMS)
+
+
+MACRO(FILTER_DIMS var_name dims)
+  SET(tmp_list "")
+  IF("${dims}" MATCHES "^[0-9]+\\+$")
+    STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" min_dim "${dims}")
+    FOREACH(d ${${var_name}})
+      IF("${d}" GREATER "${min_dim}" OR "${d}" EQUAL "${min_dim}")
+        SET(tmp_list ${tmp_list} ${d})
+      ENDIF("${d}" GREATER "${min_dim}" OR "${d}" EQUAL "${min_dim}")
+    ENDFOREACH(d)
+  ELSE("${dims}" MATCHES "^[0-9]+\\+$")
+    FOREACH(t ${${var_name}})
+      FOREACH(d ${dims})
+        IF(d EQUAL t)
+          SET(tmp_list ${tmp_list} ${t})
+        ENDIF(d EQUAL t)
+      ENDFOREACH(d)
+    ENDFOREACH(t)
+  ENDIF("${dims}" MATCHES "^[0-9]+\\+$")
+  SET(${var_name} ${tmp_list})
+ENDMACRO(FILTER_DIMS)
+
+
+MACRO(WRAP_TYPES_DIMS name types type_cond dims_cond)
   # WRAP_TYPES_DIMS filters input to WRAP_TYPES_DIMS_NO_DIM_TEST.
   # The former macro allows a "template_dims" agrument of the format "2+" to
   # specify that a given image filter is only to be instantiated for all of 
@@ -582,35 +666,21 @@ MACRO(WRAP_TYPES_DIMS size types template_dims)
   # must be in the template definition. (E.g. Filter<Image, Image> has size of
   # 2. The types parameter refers to the image pixel types to be wrapped.
 
-  IF("${template_dims}" MATCHES "^[0-9]+\\+$")
-    # If the parameter is of form '2+', make a list of the user-selected
-    # dimensions (WRAP_ITK_DIMS) that match this criterion.
-    STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" MIN_DIM "${template_dims}")
-    SET(dims )
-    FOREACH(d ${WRAP_ITK_DIMS})
-      IF("${d}" GREATER "${MIN_DIM}" OR "${d}" EQUAL "${MIN_DIM}")
-        SET(dims ${dims} "${d}")
-      ENDIF("${d}" GREATER "${MIN_DIM}" OR "${d}" EQUAL "${MIN_DIM}")
-    ENDFOREACH(d)
-    WRAP_TYPES_DIMS_NO_DIM_TEST("${size}" "${types}" "${dims}")
+  TEST_TYPES(will_wrap "${type_cond}")
 
-  ELSE("${template_dims}" MATCHES "^[0-9]+\\+$")
-    # Otherwise, jsut make a list of the intersection between the user-selected
-    # dimensions and the allowed dimensions provided by the parameter.
-    SET(dims )
-    FOREACH(d ${WRAP_ITK_DIMS})
-      FOREACH(td ${template_dims})
-        IF(d EQUAL td)
-          SET(dims ${dims} ${d})
-        ENDIF(d EQUAL td)
-      ENDFOREACH(td)
-    ENDFOREACH(d)
-    WRAP_TYPES_DIMS_NO_DIM_TEST("${size}" "${types}" "${dims}")
+  IF(will_wrap)
+    TEST_DIMS(will_wrap "${dims_cond}")
+  ENDIF(will_wrap)
 
-  ENDIF("${template_dims}" MATCHES "^[0-9]+\\+$")
+  IF(will_wrap)
+    WRAP("${name}" "${types}")
+  ENDIF(will_wrap)
+
 ENDMACRO(WRAP_TYPES_DIMS)
 
-MACRO(WRAP_TYPES_DIMS_NO_DIM_TEST size types dims)
+
+
+MACRO(WRAP_ALL_TYPES_AND_DIMS size types dims)
   # WRAP_TYPES_DIMS_NO_DIM_TEST wraps a given filter for all of the user-
   # specified wrap dimensions. The size parameter refers to the number of Image 
   # classes that must be in the template definition. (E.g. Filter<Image, Image> 
@@ -629,10 +699,10 @@ MACRO(WRAP_TYPES_DIMS_NO_DIM_TEST size types dims)
           SET(params "${params}, ")
         ENDIF(NOT ${i} EQUAL ${size})
       ENDFOREACH(i)
-      WRAP_TYPES("${name}" "${params}" "${type}")
+      WRAP("${name}" "${params}")
     ENDFOREACH(type)
   ENDFOREACH(dim)
-ENDMACRO(WRAP_TYPES_DIMS_NO_DIM_TEST)
+ENDMACRO(WRAP_ALL_TYPES_AND_DIMS)
 
 
 # The following macros specify that a filter is to be wrapped with 
@@ -647,62 +717,90 @@ ENDMACRO(WRAP_TYPES_DIMS_NO_DIM_TEST)
 # be further restricted by the user's selection of dimensions at configure time.
 
 MACRO(WRAP_INT_DIMS size dims)
-  WRAP_TYPES_DIMS(${size} "UL;US;UC" "${dims}")
+  SET(dim_list ${WRAP_ITK_DIMS})
+  FILTER_DIMS(dim_list "${dims}")
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_INT}" "${dim_list}")
 ENDMACRO(WRAP_INT_DIMS)
 
 MACRO(WRAP_INT size)
-  WRAP_INT_DIMS(${size} "${WRAP_ITK_DIMS}")
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_INT}" "${WRAP_ITK_DIMS}")
 ENDMACRO(WRAP_INT)
 
+
 MACRO(WRAP_SIGN_INT_DIMS size dims)
-  WRAP_TYPES_DIMS(${size} "SL;SS;SC" "${dims}")
+  SET(dim_list ${WRAP_ITK_DIMS})
+  FILTER_DIMS(dim_list "${dims}")
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_SIGN_INT}" "${dim_list}")
 ENDMACRO(WRAP_SIGN_INT_DIMS)
 
 MACRO(WRAP_SIGN_INT size)
-  WRAP_SIGN_INT_DIMS(${size} "${WRAP_ITK_DIMS}")
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_SIGN_INT}" "${WRAP_ITK_DIMS}")
 ENDMACRO(WRAP_SIGN_INT)
 
 
 MACRO(WRAP_REAL_DIMS size dims)
-  WRAP_TYPES_DIMS(${size} "F;D" "${dims}")
-ENDMACRO(WRAP_REAL_DIMS size)
+  SET(dim_list ${WRAP_ITK_DIMS})
+  FILTER_DIMS(dim_list "${dims}")
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_REAL}" "${dim_list}")
+ENDMACRO(WRAP_REAL_DIMS)
 
 MACRO(WRAP_REAL size)
-  WRAP_REAL_DIMS(${size} "${WRAP_ITK_DIMS}")
-ENDMACRO(WRAP_REAL size)
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_REAL}" "${WRAP_ITK_DIMS}")
+ENDMACRO(WRAP_REAL)
 
 
 MACRO(WRAP_VECTOR_REAL_DIMS size dims)
+  SET(dim_list ${WRAP_ITK_DIMS})
+  FILTER_DIMS(dim_list "${dims}")
   SET(ddims "")
-  FOREACH(d ${dims})
+  FOREACH(d ${dim_list})
     SET(ddims ${ddims} "${d}${d}")
   ENDFOREACH(d)
-  WRAP_TYPES_DIMS_NO_DIM_TEST(${size} "VF;VD" "${ddims}")
-ENDMACRO(WRAP_VECTOR_REAL_DIMS size)
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_VECTOR_REAL}" "${ddims}")
+ENDMACRO(WRAP_VECTOR_REAL_DIMS)
 
 MACRO(WRAP_VECTOR_REAL size)
-  WRAP_VECTOR_REAL_DIMS(${size} "${WRAP_ITK_DIMS}")
-ENDMACRO(WRAP_VECTOR_REAL size)
+  SET(ddims "")
+  FOREACH(d ${WRAP_ITK_DIMS})
+    SET(ddims ${ddims} "${d}${d}")
+  ENDFOREACH(d)
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_VECTOR_REAL}" "${ddims}")
+ENDMACRO(WRAP_VECTOR_REAL)
 
 
 MACRO(WRAP_COV_VECTOR_REAL_DIMS size dims)
+  SET(dim_list ${WRAP_ITK_DIMS})
+  FILTER_DIMS(dim_list "${dims}")
   SET(ddims "")
-  FOREACH(d ${dims})
+  FOREACH(d ${dim_list})
     SET(ddims ${ddims} "${d}${d}")
   ENDFOREACH(d)
-  WRAP_TYPES_DIMS_NO_DIM_TEST(${size} "CVF;CVD" "${ddims}")
-ENDMACRO(WRAP_COV_VECTOR_REAL_DIMS size)
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_COV_VECTOR_REAL}" "${ddims}")
+ENDMACRO(WRAP_COV_VECTOR_REAL_DIMS)
 
 MACRO(WRAP_COV_VECTOR_REAL size)
-  WRAP_COV_VECTOR_REAL_DIMS(${size} "${WRAP_ITK_DIMS}")
-ENDMACRO(WRAP_COV_VECTOR_REAL size)
+  SET(ddims "")
+  FOREACH(d ${WRAP_ITK_DIMS})
+    SET(ddims ${ddims} "${d}${d}")
+  ENDFOREACH(d)
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_COV_VECTOR_REAL}" "${ddims}")
+ENDMACRO(WRAP_COV_VECTOR_REAL)
 
 
 MACRO(WRAP_RGB_DIMS size dims)
-  WRAP_TYPES_DIMS(${size} "RGBUS;RGBUC" "${dims}")
+  SET(dim_list ${WRAP_ITK_DIMS})
+  FILTER_DIMS(dim_list "${dims}")
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_RGB}" "${dim_list}")
 ENDMACRO(WRAP_RGB_DIMS)
 
 MACRO(WRAP_RGB size)
-  WRAP_RGB_DIMS(${size} "${WRAP_ITK_DIMS}")
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_RGB}" "${WRAP_ITK_DIMS}")
 ENDMACRO(WRAP_RGB)
+
+
+
+
+
+
+
 

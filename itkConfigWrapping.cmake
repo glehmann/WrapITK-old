@@ -309,6 +309,8 @@ IF(WRAP_covariant_vector_float)
   SET(WRAP_ITK_COV_VECTOR_REAL ${WRAP_ITK_COV_VECTOR_REAL} "CVF")
 ENDIF(WRAP_covariant_vector_float)
 
+SET(WRAP_ITK_ALL_TYPES ${WRAP_ITK_INT} ${WRAP_ITK_SIGN_INT} ${WRAP_ITK_REAL} ${WRAP_ITK_RGB} ${WRAP_ITK_VECTOR_REAL} ${WRAP_ITK_COV_VECTOR_REAL})
+
 ###############################################################################
 # Include other needed macros -- WRAP_ITK_CMAKE_DIR must be set correctly
 ###############################################################################

@@ -475,8 +475,8 @@ MACRO(WRAP_TEMPLATE name types)
 ENDMACRO(WRAP_TEMPLATE)
 
 
-MACRO(WRAP_TYPES name types conditions)
-  # WRAP_TYPES will call WRAP_TEMPLATE(name types) only if the wrapping types selected
+MACRO(WRAP_TEMPLATE_IF_TYPES name types conditions)
+  # WRAP_TEMPLATE_IF_TYPES will call WRAP_TEMPLATE(name types) only if the wrapping types selected
   # in cmake (e.g. WRAP_unsigned_char) match one of the conditions listed in
   # the 'conditions' parameter.
 
@@ -485,7 +485,7 @@ MACRO(WRAP_TYPES name types conditions)
   IF(will_wrap)
     WRAP_TEMPLATE("${name}" "${types}")
   ENDIF(will_wrap)
-ENDMACRO(WRAP_TYPES)
+ENDMACRO(WRAP_TEMPLATE_IF_TYPES)
   
 
 MACRO(TEST_TYPES var_name conditions)
@@ -590,8 +590,8 @@ MACRO(FILTER_TYPES var_name types)
 ENDMACRO(FILTER_TYPES)
 
 
-MACRO(WRAP_DIMS name types conditions)
-  # WRAP_TYPES will call WRAP_TEMPLATE(name types) only if the wrapping types selected
+MACRO(WRAP_TEMPLATE_IF_DIMS name types conditions)
+  # WRAP_TEMPLATE_IF_TYPES will call WRAP_TEMPLATE(name types) only if the wrapping types selected
   # in cmake (e.g. WRAP_unsigned_char) match one of the conditions listed in
   # the 'conditions' parameter.
 
@@ -600,7 +600,7 @@ MACRO(WRAP_DIMS name types conditions)
   IF(will_wrap)
     WRAP_TEMPLATE("${name}" "${types}")
   ENDIF(will_wrap)
-ENDMACRO(WRAP_DIMS)
+ENDMACRO(WRAP_TEMPLATE_IF_DIMS)
 
 
 MACRO(TEST_DIMS var_name dims)
@@ -657,8 +657,8 @@ MACRO(FILTER_DIMS var_name dims)
 ENDMACRO(FILTER_DIMS)
 
 
-MACRO(WRAP_TYPES_DIMS name types type_cond dims_cond)
-  # WRAP_TYPES_DIMS filters input to WRAP_TYPES_DIMS_NO_DIM_TEST.
+MACRO(WRAP_TEMPLATE_IF_TYPES_DIMS name types type_cond dims_cond)
+  # WRAP_TEMPLATE_IF_TYPES_DIMS filters input to WRAP_TEMPLATE_IF_TYPES_DIMS_NO_DIM_TEST.
   # The former macro allows a "template_dims" agrument of the format "2+" to
   # specify that a given image filter is only to be instantiated for all of 
   # the user-selected (via cmake) dimensions, provided the dimension is at 
@@ -676,12 +676,12 @@ MACRO(WRAP_TYPES_DIMS name types type_cond dims_cond)
     WRAP_TEMPLATE("${name}" "${types}")
   ENDIF(will_wrap)
 
-ENDMACRO(WRAP_TYPES_DIMS)
+ENDMACRO(WRAP_TEMPLATE_IF_TYPES_DIMS)
 
 
 
 MACRO(WRAP_ALL_TYPES_AND_DIMS size types dims)
-  # WRAP_TYPES_DIMS_NO_DIM_TEST wraps a given filter for all of the user-
+  # WRAP_TEMPLATE_IF_TYPES_DIMS_NO_DIM_TEST wraps a given filter for all of the user-
   # specified wrap dimensions. The size parameter refers to the number of Image 
   # classes that must be in the template definition. (E.g. Filter<Image, Image> 
   # has size of 2. The types parameter refers to the image pixel types to be wrapped.

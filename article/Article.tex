@@ -178,7 +178,7 @@ self-explanatory.
 The project is provided with defaults build option which should OK for most of
 users. However, for specific needs, you might want to change those options:
 \begin{itemize}
-  \item \verb$WRAP_DIMS$ is the list of dimensions which will be available in the
+  \item \verb$WRAP_TEMPLATE_IF_DIMS$ is the list of dimensions which will be available in the
 target languages. The dimensions must be separated by a semicolon (\verb$;$).
 By default dimensions 2 and 3 are available.
   \item \verb$WRAP_covariant_vector_double$, \verb$OFF$ by default.
@@ -698,7 +698,7 @@ template instantiation brackets. (Do not include the brackets.) If you are
 wrapping a filter, there are simpler macros to use, which are defined at the
 bottom of \verb$CreateCableSwigInputs$ and described below.
 
-  \item \verb$WRAP_TYPES("mangled_suffix" "template parameters" "type list")$
+  \item \verb$WRAP_TEMPLATE_IF_TYPES("mangled_suffix" "template parameters" "type list")$
 
   \item \verb$WRAP_type(size)$ (where 'type' is \verb$INT$, \verb$SIGN_INT$, \verb$REAL$, \verb$VECTOR_REAL$,
 \verb$COV_VECTOR_REAL$ or \verb$RGB$) -- create a template instantiation with 'size'

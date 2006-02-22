@@ -456,7 +456,7 @@ ENDMACRO(ADD_ONE_TYPEDEF)
 ################################################################################
 
 
-MACRO(WRAP name types)
+MACRO(WRAP_TEMPLATE name types)
   # This is the fundamental macro for adding a template to be wrapped.
   # 'name' is a mangled suffix to be added to the class name (defined in WRAP_CLASS)
   # to uniquely identify this instantiation.
@@ -472,18 +472,18 @@ MACRO(WRAP name types)
   # Global vars modified: WRAPPER_TEMPLATES
 
   SET(WRAPPER_TEMPLATES ${WRAPPER_TEMPLATES} "${name} # ${types}")
-ENDMACRO(WRAP)
+ENDMACRO(WRAP_TEMPLATE)
 
 
 MACRO(WRAP_TYPES name types conditions)
-  # WRAP_TYPES will call WRAP(name types) only if the wrapping types selected
+  # WRAP_TYPES will call WRAP_TEMPLATE(name types) only if the wrapping types selected
   # in cmake (e.g. WRAP_unsigned_char) match one of the conditions listed in
   # the 'conditions' parameter.
 
   TEST_TYPES(will_wrap "${conditions}")
 
   IF(will_wrap)
-    WRAP("${name}" "${types}")
+    WRAP_TEMPLATE("${name}" "${types}")
   ENDIF(will_wrap)
 ENDMACRO(WRAP_TYPES)
   
@@ -591,14 +591,14 @@ ENDMACRO(FILTER_TYPES)
 
 
 MACRO(WRAP_DIMS name types conditions)
-  # WRAP_TYPES will call WRAP(name types) only if the wrapping types selected
+  # WRAP_TYPES will call WRAP_TEMPLATE(name types) only if the wrapping types selected
   # in cmake (e.g. WRAP_unsigned_char) match one of the conditions listed in
   # the 'conditions' parameter.
 
   TEST_DIMS(will_wrap "${conditions}")
 
   IF(will_wrap)
-    WRAP("${name}" "${types}")
+    WRAP_TEMPLATE("${name}" "${types}")
   ENDIF(will_wrap)
 ENDMACRO(WRAP_DIMS)
 
@@ -673,7 +673,7 @@ MACRO(WRAP_TYPES_DIMS name types type_cond dims_cond)
   ENDIF(will_wrap)
 
   IF(will_wrap)
-    WRAP("${name}" "${types}")
+    WRAP_TEMPLATE("${name}" "${types}")
   ENDIF(will_wrap)
 
 ENDMACRO(WRAP_TYPES_DIMS)
@@ -699,7 +699,7 @@ MACRO(WRAP_ALL_TYPES_AND_DIMS size types dims)
           SET(params "${params}, ")
         ENDIF(NOT ${i} EQUAL ${size})
       ENDFOREACH(i)
-      WRAP("${name}" "${params}")
+      WRAP_TEMPLATE("${name}" "${params}")
     ENDFOREACH(type)
   ENDFOREACH(dim)
 ENDMACRO(WRAP_ALL_TYPES_AND_DIMS)

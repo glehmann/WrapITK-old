@@ -1,5 +1,5 @@
 WRAP_CLASS("itk::Size")
   FOREACH(d ${WRAP_ITK_DIMS})
-    WRAP(${d} ${d})
+    WRAP_TEMPLATE(${d} ${d})
   ENDFOREACH(d)  
 END_WRAP_CLASS()

@@ -689,7 +689,7 @@ things won't work. This is always the case for ITK-style code.) If
 ITK-style code where the class has a typedef'd \verb$Superclass$, and the superclass
 has \verb$Self$ and \verb$Pointer$ typedefs.)
 
-  \item \verb$WRAP("mangled_suffix" "template parameters")$ -- When issued between \verb$WRAP_CLASS$
+  \item \verb$WRAP_TEMPLATE("mangled_suffix" "template parameters")$ -- When issued between \verb$WRAP_CLASS$
 and \verb$END_WRAP_CLASS$, this command causes a particular template instantiation of
 the current class to be wrapped. The parameter \verb$mangled_suffix$ is a suffix to
 append to the class's name that uniquely identifies this particular template

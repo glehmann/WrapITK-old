@@ -716,86 +716,80 @@ ENDMACRO(WRAP_ALL_TYPES_AND_DIMS)
 # the filter instantiation to specific set of dimensions. Those dimensions will
 # be further restricted by the user's selection of dimensions at configure time.
 
-MACRO(WRAP_IMAGE_FILTER_INT_FOR_DIMS size dims)
-  SET(dim_list ${WRAP_ITK_DIMS})
-  FILTER_DIMS(dim_list "${dims}")
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_INT}" "${dim_list}")
-ENDMACRO(WRAP_IMAGE_FILTER_INT_FOR_DIMS)
-
 MACRO(WRAP_IMAGE_FILTER_INT size)
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_INT}" "${WRAP_ITK_DIMS}")
+  SET(dim_list ${WRAP_ITK_DIMS})
+
+  IF("${ARGC}" EQUAL 3)
+    FILTER_DIMS(dim_list "${ARGV2}")
+  ENDIF("${ARGC}" EQUAL 3)
+
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_INT}" "${dim_list}")
 ENDMACRO(WRAP_IMAGE_FILTER_INT)
 
 
-MACRO(WRAP_IMAGE_FILTER_SIGN_INT_FOR_DIMS size dims)
-  SET(dim_list ${WRAP_ITK_DIMS})
-  FILTER_DIMS(dim_list "${dims}")
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_SIGN_INT}" "${dim_list}")
-ENDMACRO(WRAP_IMAGE_FILTER_SIGN_INT_FOR_DIMS)
-
 MACRO(WRAP_IMAGE_FILTER_SIGN_INT size)
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_SIGN_INT}" "${WRAP_ITK_DIMS}")
+  SET(dim_list ${WRAP_ITK_DIMS})
+
+  IF("${ARGC}" EQUAL 3)
+    FILTER_DIMS(dim_list "${ARGV2}")
+  ENDIF("${ARGC}" EQUAL 3)
+
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_SIGN_INT}" "${dim_list}")
 ENDMACRO(WRAP_IMAGE_FILTER_SIGN_INT)
 
 
-MACRO(WRAP_IMAGE_FILTER_REAL_FOR_DIMS size dims)
-  SET(dim_list ${WRAP_ITK_DIMS})
-  FILTER_DIMS(dim_list "${dims}")
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_REAL}" "${dim_list}")
-ENDMACRO(WRAP_IMAGE_FILTER_REAL_FOR_DIMS)
-
 MACRO(WRAP_IMAGE_FILTER_REAL size)
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_REAL}" "${WRAP_ITK_DIMS}")
+  SET(dim_list ${WRAP_ITK_DIMS})
+
+  IF("${ARGC}" EQUAL 3)
+    FILTER_DIMS(dim_list "${ARGV2}")
+  ENDIF("${ARGC}" EQUAL 3)
+
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_REAL}" "${dim_list}")
 ENDMACRO(WRAP_IMAGE_FILTER_REAL)
 
 
-MACRO(WRAP_IMAGE_FILTER_VECTOR_REAL_FOR_DIMS size dims)
+MACRO(WRAP_IMAGE_FILTER_RGB size)
   SET(dim_list ${WRAP_ITK_DIMS})
-  FILTER_DIMS(dim_list "${dims}")
+
+  IF("${ARGC}" EQUAL 3)
+    FILTER_DIMS(dim_list "${ARGV2}")
+  ENDIF("${ARGC}" EQUAL 3)
+
+  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_RGB}" "${dim_list}")
+ENDMACRO(WRAP_IMAGE_FILTER_RGB)
+
+
+MACRO(WRAP_IMAGE_FILTER_VECTOR_REAL size)
+  SET(dim_list ${WRAP_ITK_DIMS})
+
+  IF("${ARGC}" EQUAL 3)
+    FILTER_DIMS(dim_list "${ARGV2}")
+  ENDIF("${ARGC}" EQUAL 3)
+
   SET(ddims "")
   FOREACH(d ${dim_list})
     SET(ddims ${ddims} "${d}${d}")
   ENDFOREACH(d)
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_VECTOR_REAL}" "${ddims}")
-ENDMACRO(WRAP_IMAGE_FILTER_VECTOR_REAL_FOR_DIMS)
 
-MACRO(WRAP_IMAGE_FILTER_VECTOR_REAL size)
-  SET(ddims "")
-  FOREACH(d ${WRAP_ITK_DIMS})
-    SET(ddims ${ddims} "${d}${d}")
-  ENDFOREACH(d)
   WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_VECTOR_REAL}" "${ddims}")
 ENDMACRO(WRAP_IMAGE_FILTER_VECTOR_REAL)
 
 
-MACRO(WRAP_IMAGE_FILTER_COV_VECTOR_REAL_FOR_DIMS size dims)
+MACRO(WRAP_IMAGE_FILTER_COV_VECTOR_REAL size)
   SET(dim_list ${WRAP_ITK_DIMS})
-  FILTER_DIMS(dim_list "${dims}")
+
+  IF("${ARGC}" EQUAL 3)
+    FILTER_DIMS(dim_list "${ARGV2}")
+  ENDIF("${ARGC}" EQUAL 3)
+
   SET(ddims "")
   FOREACH(d ${dim_list})
     SET(ddims ${ddims} "${d}${d}")
   ENDFOREACH(d)
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_COV_VECTOR_REAL}" "${ddims}")
-ENDMACRO(WRAP_IMAGE_FILTER_COV_VECTOR_REAL_FOR_DIMS)
 
-MACRO(WRAP_IMAGE_FILTER_COV_VECTOR_REAL size)
-  SET(ddims "")
-  FOREACH(d ${WRAP_ITK_DIMS})
-    SET(ddims ${ddims} "${d}${d}")
-  ENDFOREACH(d)
   WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_COV_VECTOR_REAL}" "${ddims}")
 ENDMACRO(WRAP_IMAGE_FILTER_COV_VECTOR_REAL)
-
-
-MACRO(WRAP_IMAGE_FILTER_RGB__FOR_DIMS size dims)
-  SET(dim_list ${WRAP_ITK_DIMS})
-  FILTER_DIMS(dim_list "${dims}")
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_RGB}" "${dim_list}")
-ENDMACRO(WRAP_IMAGE_FILTER_RGB__FOR_DIMS)
-
-MACRO(WRAP_IMAGE_FILTER_RGB size)
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_RGB}" "${WRAP_ITK_DIMS}")
-ENDMACRO(WRAP_IMAGE_FILTER_RGB)
 
 
 

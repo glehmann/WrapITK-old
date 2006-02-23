@@ -456,6 +456,22 @@ ENDMACRO(ADD_ONE_TYPEDEF)
 ################################################################################
 
 
+MACRO(UNIQUE list var_name)
+  SET(${var_name} "")
+  FOREACH(t ${list})
+    SET(must_add ON)
+    FOREACH(t2 ${${var_name}})
+      IF(t STREQUAL t2)
+        SET(must_add OFF)
+      ENDIF(t STREQUAL t2)
+    ENDFOREACH(t2)
+    IF(must_add)
+      SET(${var_name} ${${var_name}} ${t})
+    ENDIF(must_add)
+  ENDFOREACH(t)
+ENDMACRO(UNIQUE)
+
+
 MACRO(WRAP_TEMPLATE name types)
   # This is the fundamental macro for adding a template to be wrapped.
   # 'name' is a mangled suffix to be added to the class name (defined in WRAP_CLASS)

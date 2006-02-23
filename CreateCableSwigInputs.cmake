@@ -807,3 +807,61 @@ MACRO(WRAP_IMAGE_FILTER_COV_VECTOR_REAL size)
 ENDMACRO(WRAP_IMAGE_FILTER_COV_VECTOR_REAL)
 
 
+
+MACRO(WRAP_IMAGE_FILTER_TYPES1 type_list)
+  IF("${ARGC}" EQUAL 3)
+    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV2}" dim_list)
+  ELSE("${ARGC}" EQUAL 3)
+    SET(dim_list ${WRAP_ITK_DIMS})
+  ENDIF("${ARGC}" EQUAL 3)
+
+  FOREACH(dim ${dim_list})
+    FOREACH(type ${type_list})
+      WRAP_TEMPLATE("${ITKM_I${type}${dim}}" "${ITKT_I${type}${dim}}")
+    ENDFOREACH(type)
+  ENDFOREACH(dim)
+
+ENDMACRO(WRAP_IMAGE_FILTER_TYPES1)
+
+
+MACRO(WRAP_IMAGE_FILTER_TYPES2 type_list1 type_list2)
+  IF("${ARGC}" EQUAL 4)
+    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV3}" dim_list)
+  ELSE("${ARGC}" EQUAL 4)
+    SET(dim_list ${WRAP_ITK_DIMS})
+  ENDIF("${ARGC}" EQUAL 4)
+
+  FOREACH(dim ${dim_list})
+    FOREACH(type1 ${type_list1})
+      FOREACH(type2 ${type_list2})
+MESSAGE("${type1}--${type2}")
+        WRAP_TEMPLATE("${ITKM_I${type1}${dim}}${ITKM_I${type2}${dim}}" "${ITKT_I${type1}${dim}}${ITKT_I${type2}${dim}}")
+      ENDFOREACH(type2)
+    ENDFOREACH(type1)
+  ENDFOREACH(dim)
+
+ENDMACRO(WRAP_IMAGE_FILTER_TYPES2)
+
+
+MACRO(WRAP_IMAGE_FILTER_TYPES3 type_list1 type_list2 type_list3)
+  IF("${ARGC}" EQUAL 5)
+    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV4}" dim_list)
+  ELSE("${ARGC}" EQUAL 5)
+    SET(dim_list ${WRAP_ITK_DIMS})
+  ENDIF("${ARGC}" EQUAL 5)
+
+  FOREACH(dim ${dim_list})
+    FOREACH(type1 ${type_list1})
+      FOREACH(type2 ${type_list2})
+        FOREACH(type3 ${type_list3})
+          WRAP_TEMPLATE("${ITKM_I${type1}${dim}}${ITKM_I${type2}${dim}}${ITKM_I${type3}${dim}}" "${ITKT_I${type1}${dim}}${ITKT_I${type2}${dim}}${ITKT_I${type3}${dim}}")
+        ENDFOREACH(type3)
+      ENDFOREACH(type2)
+    ENDFOREACH(type1)
+  ENDFOREACH(dim)
+
+ENDMACRO(WRAP_IMAGE_FILTER_TYPES3)
+
+
+
+

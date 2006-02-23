@@ -863,5 +863,27 @@ MACRO(WRAP_IMAGE_FILTER_TYPES3 type_list1 type_list2 type_list3)
 ENDMACRO(WRAP_IMAGE_FILTER_TYPES3)
 
 
+MACRO(WRAP_IMAGE_FILTER_TYPES4 type_list1 type_list2 type_list3 type_list4)
+  IF("${ARGC}" EQUAL 6)
+    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV5}" dim_list)
+  ELSE("${ARGC}" EQUAL 6)
+    SET(dim_list ${WRAP_ITK_DIMS})
+  ENDIF("${ARGC}" EQUAL 6)
+
+  FOREACH(dim ${dim_list})
+    FOREACH(type1 ${type_list1})
+      FOREACH(type2 ${type_list2})
+        FOREACH(type3 ${type_list3})
+          FOREACH(type4 ${type_list4})
+            WRAP_TEMPLATE("${ITKM_I${type1}${dim}}${ITKM_I${type2}${dim}}${ITKM_I${type3}${dim}}${ITKM_I${type4}${dim}}" "${ITKT_I${type1}${dim}}${ITKT_I${type2}${dim}}${ITKT_I${type3}${dim}}${ITKT_I${type4}${dim}}")
+          ENDFOREACH(type4)
+        ENDFOREACH(type3)
+      ENDFOREACH(type2)
+    ENDFOREACH(type1)
+  ENDFOREACH(dim)
+
+ENDMACRO(WRAP_IMAGE_FILTER_TYPES3)
+
+
 
 

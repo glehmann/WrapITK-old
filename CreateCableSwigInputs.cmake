@@ -41,8 +41,8 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
   # and for all builds. That's important for several reasons:
   # - the order is important for the order of creation of python template
   # - the typemaps files are always the same, and the rebuild can be avoided
-  SORT("wrap_cmake_files")
-  FOREACH(file ${wrap_cmake_files})
+  SORT(sorted_cmake_files "${wrap_cmake_files}")
+  FOREACH(file ${sorted_cmake_files})
     # get the module name from wrap_module.cmake
     GET_FILENAME_COMPONENT(module "${file}" NAME_WE)
     STRING(REGEX REPLACE "^wrap_" "" module "${module}")
@@ -66,31 +66,6 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
   
   WRITE_MODULE_FILES()
 ENDMACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
-
-
-MACRO(SORT list_name)
-  # Sort the list of strings with the name given in parameter
-  SET(tmp1 "")
-  FOREACH(l ${${list_name}})
-    SET(inserted 0)
-    SET(tmp2 "")
-    FOREACH(l1 ${tmp1})
-      IF("${l}" STRLESS "${l1}" AND ${inserted} EQUAL 0)
-        SET(tmp2 ${tmp2} "${l}" "${l1}")
-        SET(inserted 1)
-      ELSE("${l}" STRLESS "${l1}" AND ${inserted} EQUAL 0)
-        SET(tmp2 ${tmp2} "${l1}")
-      ENDIF("${l}" STRLESS "${l1}" AND ${inserted} EQUAL 0)
-    ENDFOREACH(l1)
-    IF(${inserted} EQUAL 0)
-      SET(tmp1 ${tmp1} "${l}")
-    ELSE(${inserted} EQUAL 0)
-      SET(tmp1 ${tmp2})
-    ENDIF(${inserted} EQUAL 0)
-  ENDFOREACH(l)
-  SET(${list_name} ${tmp1})
-ENDMACRO(SORT list)
-
 
 MACRO(INCLUDE_WRAP_CMAKE module)
   # include a cmake module file and generate the associated wrap_*.cxx file.
@@ -452,30 +427,13 @@ ENDMACRO(ADD_ONE_TYPEDEF)
 # the correct templates. These cxx files serve as the CableSwig inputs.
 ################################################################################
 
-
-MACRO(UNIQUE list var_name)
-  SET(${var_name} "")
-  FOREACH(t ${list})
-    SET(must_add ON)
-    FOREACH(t2 ${${var_name}})
-      IF(t STREQUAL t2)
-        SET(must_add OFF)
-      ENDIF(t STREQUAL t2)
-    ENDFOREACH(t2)
-    IF(must_add)
-      SET(${var_name} ${${var_name}} ${t})
-    ENDIF(must_add)
-  ENDFOREACH(t)
-ENDMACRO(UNIQUE)
-
-
 MACRO(WRAP_TEMPLATE name types)
   # This is the fundamental macro for adding a template to be wrapped.
   # 'name' is a mangled suffix to be added to the class name (defined in WRAP_CLASS)
   # to uniquely identify this instantiation.
   # 'types' is a comma-separated list of the template parameters (in C++ form),
   # some common parameters (e.g. for images) are stored in variables by 
-  # WrapTypeBase.cmake and WrapTypePrefix.cmake.
+  # WrapBasicTypes.cmake and WrapITKTypes.cmake.
   # 
   # The format of the WRAPPER_TEMPLATES list is a series of "name # types" strings
   # (because there's no CMake support for nested lists, name and types are 
@@ -487,400 +445,248 @@ MACRO(WRAP_TEMPLATE name types)
   SET(WRAPPER_TEMPLATES ${WRAPPER_TEMPLATES} "${name} # ${types}")
 ENDMACRO(WRAP_TEMPLATE)
 
+###################################
+# Macros for wrapping image filters
+###################################
 
-MACRO(WRAP_TEMPLATE_IF_TYPES name types conditions)
-  # WRAP_TEMPLATE_IF_TYPES will call WRAP_TEMPLATE(name types) only if the wrapping types selected
-  # in cmake (e.g. WRAP_unsigned_char) match one of the conditions listed in
-  # the 'conditions' parameter.
+# First, a set of convenience macros for wrapping an image filter with all
+# user-selected image types of a given class. These macros take a 'param_count' 
+# parameter which indicates how many template parameters the current image filter
+# takes. The parameters are filled with the exact same image type. To wrap image
+# filters which take different image types as different template parameters, use
+# WRAP_IMAGE_FILTER_TYPES or WRAP_IMAGE_FILTER_COMBINATIONS.
+# These macros also take an optional second parameter which is a "dimensionality
+# condition" to restrict the dimensions that theis filter will be instantiated
+# for. The condition can either be a single number indicating the one dimension
+# allowed, a list of dimensions that are allowed (either as a single ;-delimited
+# string or just a set of separate parameters), or something of the form "n+"
+# (where n is a number) indicating that instantiations are allowed for dimension
+# n and above.
+#
+# E.g., if only WRAP_unsigned_char is selected and 2- and 3-dimensional images
+# are selected, then WRAP_IMAGE_FILTER_INT(2)  will create instantiations for 
+# filter<itk::Image<unsigned char, 2>, itk::Image<unsigned char, 2> >
+# and
+# filter<itk::Image<unsigned char, 3>, itk::Image<unsigned char, 3> >
 
-  TEST_TYPES(will_wrap "${conditions}")
+MACRO(WRAP_IMAGE_FILTER_ALL param_count)
+  WRAP_IMAGE_FILTER("${WRAP_ITK_ALL}" ${param_count} "${ARGN}")
+ENDMACRO(WRAP_IMAGE_FILTER_ALL)
 
-  IF(will_wrap)
-    WRAP_TEMPLATE("${name}" "${types}")
-  ENDIF(will_wrap)
-ENDMACRO(WRAP_TEMPLATE_IF_TYPES)
-  
+MACRO(WRAP_IMAGE_FILTER_SCALAR param_count)
+  WRAP_IMAGE_FILTER("${WRAP_ITK_SCALAR}" ${param_count} "${ARGN}")
+ENDMACRO(WRAP_IMAGE_FILTER_SCALAR)
 
-MACRO(TEST_TYPES var_name conditions)
-  SET(${var_name} ON)
-  FOREACH(t ${conditions})
-    IF("${t}" STREQUAL "UC")
-      IF(NOT WRAP_unsigned_char)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_unsigned_char)
-    ENDIF("${t}" STREQUAL "UC")
+MACRO(WRAP_IMAGE_FILTER_VECTOR param_count)
+  WRAP_IMAGE_FILTER("${WRAP_ITK_VECTOR}" ${param_count} "${ARGN}")
+ENDMACRO(WRAP_IMAGE_FILTER_VECTOR)
 
-    IF("${t}" STREQUAL "US")
-      IF(NOT WRAP_unsigned_short)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_unsigned_short)
-    ENDIF("${t}" STREQUAL "US")
-
-    IF("${t}" STREQUAL "UL")
-      IF(NOT WRAP_unsigned_long)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_unsigned_long)
-    ENDIF("${t}" STREQUAL "UL")
-
-    IF("${t}" STREQUAL "SC")
-      IF(NOT WRAP_signed_char)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_signed_char)
-    ENDIF("${t}" STREQUAL "SC")
-
-    IF("${t}" STREQUAL "SS")
-      IF(NOT WRAP_signed_short)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_signed_short)
-    ENDIF("${t}" STREQUAL "SS")
-
-    IF("${t}" STREQUAL "SL")
-      IF(NOT WRAP_signed_long)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_signed_long)
-    ENDIF("${t}" STREQUAL "SL")
-
-    IF("${t}" STREQUAL "F")
-      IF(NOT WRAP_float)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_float)
-    ENDIF("${t}" STREQUAL "F")
-
-    IF("${t}" STREQUAL "D")
-      IF(NOT WRAP_double)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_double)
-    ENDIF("${t}" STREQUAL "D")
-
-    IF("${t}" STREQUAL "VF")
-      IF(NOT WRAP_vector_float)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_vector_float)
-    ENDIF("${t}" STREQUAL "VF")
-
-    IF("${t}" STREQUAL "VD")
-      IF(NOT WRAP_vector_double)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_vector_double)
-    ENDIF("${t}" STREQUAL "VD")
-
-    IF("${t}" STREQUAL "CVF")
-      IF(NOT WRAP_covariant_vector_float)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_covariant_vector_float)
-    ENDIF("${t}" STREQUAL "CVF")
-
-    IF("${t}" STREQUAL "CVD")
-      IF(NOT WRAP_covariant_vector_double)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_covariant_vector_double)
-    ENDIF("${t}" STREQUAL "CVD")
-
-    IF("${t}" STREQUAL "RGBUC")
-      IF(NOT WRAP_rgb_unsigned_char)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_rgb_unsigned_char)
-    ENDIF("${t}" STREQUAL "RGBUC")
-
-    IF("${t}" STREQUAL "RGBUS")
-      IF(NOT WRAP_rgb_unsigned_short)
-        SET(${var_name} OFF)
-      ENDIF(NOT WRAP_rgb_unsigned_short)
-    ENDIF("${t}" STREQUAL "RGBUS")
-  ENDFOREACH(t)
-ENDMACRO(TEST_TYPES)
-
-
-MACRO(FILTER_TYPES list types var_name)
-  SET(${var_name} "")
-  FOREACH(t ${list})
-    FOREACH(t2 ${types})
-      IF(t STREQUAL t2)
-        SET(${var_name} ${${var_name}} ${t})
-      ENDIF(t STREQUAL t2)
-    ENDFOREACH(t2)
-  ENDFOREACH(t)
-ENDMACRO(FILTER_TYPES)
-
-
-MACRO(WRAP_TEMPLATE_IF_DIMS name types conditions)
-  # WRAP_TEMPLATE_IF_TYPES will call WRAP_TEMPLATE(name types) only if the wrapping types selected
-  # in cmake (e.g. WRAP_unsigned_char) match one of the conditions listed in
-  # the 'conditions' parameter.
-
-  TEST_DIMS(will_wrap "${conditions}")
-
-  IF(will_wrap)
-    WRAP_TEMPLATE("${name}" "${types}")
-  ENDIF(will_wrap)
-ENDMACRO(WRAP_TEMPLATE_IF_DIMS)
-
-
-MACRO(TEST_DIMS var_name dims)
-  IF("${dims}" MATCHES "^[0-9]+\\+$")
-    # If the parameter is of form '2+', make a list of the user-selected
-    # dimensions (WRAP_ITK_DIMS) that match this criterion.
-    SET(${var_name} OFF)
-    STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" min_dim "${dims}")
-    FOREACH(d ${WRAP_ITK_DIMS})
-      IF("${d}" GREATER "${min_dim}" OR "${d}" EQUAL "${min_dim}")
-        SET(${var_name} ON)
-      ENDIF("${d}" GREATER "${min_dim}" OR "${d}" EQUAL "${min_dim}")
-    ENDFOREACH(d)
-
-  ELSE("${dims}" MATCHES "^[0-9]+\\+$")
-    # Otherwise, jsut make a list of the intersection between the user-selected
-    # dimensions and the allowed dimensions provided by the parameter.
-    SET(${var_name} ON)
-    FOREACH(d ${WRAP_ITK_DIMS})
-      SET(hop OFF)
-      FOREACH(td ${dims})
-        IF(d EQUAL td)
-          SET(hop ON)
-        ENDIF(d EQUAL td)
-      ENDFOREACH(td)
-      IF(NOT hop)
-        SET(${var_name} OFF)
-      IF(NOT hop)
-    ENDFOREACH(d)
-
-  ENDIF("${dims}" MATCHES "^[0-9]+\\+$")
-ENDMACRO(TEST_DIMS)
-
-
-MACRO(FILTER_DIMS list dims var_name)
-  SET(${var_name} "")
-  IF("${dims}" MATCHES "^[0-9]+\\+$")
-    STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" min_dim "${dims}")
-    FOREACH(d ${list})
-      IF("${d}" GREATER "${min_dim}" OR "${d}" EQUAL "${min_dim}")
-        SET(${var_name} ${${var_name}} ${d})
-      ENDIF("${d}" GREATER "${min_dim}" OR "${d}" EQUAL "${min_dim}")
-    ENDFOREACH(d)
-  ELSE("${dims}" MATCHES "^[0-9]+\\+$")
-    FOREACH(t ${list})
-      FOREACH(d ${dims})
-        IF(d EQUAL t)
-          SET(${var_name} ${${var_name}} ${t})
-        ENDIF(d EQUAL t)
-      ENDFOREACH(d)
-    ENDFOREACH(t)
-  ENDIF("${dims}" MATCHES "^[0-9]+\\+$")
-ENDMACRO(FILTER_DIMS)
-
-
-MACRO(WRAP_TEMPLATE_IF_TYPES_DIMS name types type_cond dims_cond)
-  # WRAP_TEMPLATE_IF_TYPES_DIMS filters input to WRAP_TEMPLATE_IF_TYPES_DIMS_NO_DIM_TEST.
-  # The former macro allows a "template_dims" agrument of the format "2+" to
-  # specify that a given image filter is only to be instantiated for all of 
-  # the user-selected (via cmake) dimensions, provided the dimension is at 
-  # least 2. The size parameter refers to the number of Image classes that
-  # must be in the template definition. (E.g. Filter<Image, Image> has size of
-  # 2. The types parameter refers to the image pixel types to be wrapped.
-
-  TEST_TYPES(will_wrap "${type_cond}")
-
-  IF(will_wrap)
-    TEST_DIMS(will_wrap "${dims_cond}")
-  ENDIF(will_wrap)
-
-  IF(will_wrap)
-    WRAP_TEMPLATE("${name}" "${types}")
-  ENDIF(will_wrap)
-
-ENDMACRO(WRAP_TEMPLATE_IF_TYPES_DIMS)
-
-
-
-MACRO(WRAP_ALL_TYPES_AND_DIMS size types dims)
-  # WRAP_TEMPLATE_IF_TYPES_DIMS_NO_DIM_TEST wraps a given filter for all of the user-
-  # specified wrap dimensions. The size parameter refers to the number of Image 
-  # classes that must be in the template definition. (E.g. Filter<Image, Image> 
-  # has size of 2. The types parameter refers to the image pixel types to be wrapped.
-
-  FOREACH(dim ${dims})
-    FOREACH(type ${types})
-      SET(name "")
-      SET(params "")
-      FOREACH(i RANGE 1 ${size})
-        SET(varname "ITKM_I${type}${dim}")
-        SET(name "${name}${${varname}}")
-        SET(varname "ITKT_I${type}${dim}")
-        SET(params "${params}${${varname}}")
-        IF(NOT ${i} EQUAL ${size})
-          SET(params "${params}, ")
-        ENDIF(NOT ${i} EQUAL ${size})
-      ENDFOREACH(i)
-      WRAP_TEMPLATE("${name}" "${params}")
-    ENDFOREACH(type)
-  ENDFOREACH(dim)
-ENDMACRO(WRAP_ALL_TYPES_AND_DIMS)
-
-
-# The following macros specify that a filter is to be wrapped with 
-# a specific class of pixel types (say, integral or real types).
-# The exact pixel types from the class are selected by the user at 
-# configure time. These macros just say, e.g., "if the user has selected 
-# any or all integer types, wrap a filter with those types selected."
-# As above, the size parameter refers to the number of image types required
-# in the template.
-# There are also variants that take a dims parameter. This parameter restricts
-# the filter instantiation to specific set of dimensions. Those dimensions will
-# be further restricted by the user's selection of dimensions at configure time.
-
-MACRO(WRAP_IMAGE_FILTER_INT size)
-  IF("${ARGC}" EQUAL 3)
-    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV2}" dim_list)
-  ELSE("${ARGC}" EQUAL 3)
-    SET(dim_list ${WRAP_ITK_DIMS})
-  ENDIF("${ARGC}" EQUAL 3)
-
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_INT}" "${dim_list}")
+MACRO(WRAP_IMAGE_FILTER_INT param_count)
+  WRAP_IMAGE_FILTER("${WRAP_ITK_INT}" ${param_count} "${ARGN}")
 ENDMACRO(WRAP_IMAGE_FILTER_INT)
 
-
-MACRO(WRAP_IMAGE_FILTER_SIGN_INT size)
-  IF("${ARGC}" EQUAL 3)
-    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV2}" dim_list)
-  ELSE("${ARGC}" EQUAL 3)
-    SET(dim_list ${WRAP_ITK_DIMS})
-  ENDIF("${ARGC}" EQUAL 3)
-
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_SIGN_INT}" "${dim_list}")
+MACRO(WRAP_IMAGE_FILTER_SIGN_INT param_count)
+  WRAP_IMAGE_FILTER("${WRAP_ITK_SIGN_INT}" ${param_count} "${ARGN}")
 ENDMACRO(WRAP_IMAGE_FILTER_SIGN_INT)
 
-
-MACRO(WRAP_IMAGE_FILTER_REAL size)
-  IF("${ARGC}" EQUAL 3)
-    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV2}" dim_list)
-  ELSE("${ARGC}" EQUAL 3)
-    SET(dim_list ${WRAP_ITK_DIMS})
-  ENDIF("${ARGC}" EQUAL 3)
-
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_REAL}" "${dim_list}")
+MACRO(WRAP_IMAGE_FILTER_REAL param_count)
+  WRAP_IMAGE_FILTER("${WRAP_ITK_REAL}" ${param_count} "${ARGN}")
 ENDMACRO(WRAP_IMAGE_FILTER_REAL)
 
-
-MACRO(WRAP_IMAGE_FILTER_RGB size)
-  IF("${ARGC}" EQUAL 3)
-    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV2}" dim_list)
-  ELSE("${ARGC}" EQUAL 3)
-    SET(dim_list ${WRAP_ITK_DIMS})
-  ENDIF("${ARGC}" EQUAL 3)
-
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_RGB}" "${dim_list}")
+MACRO(WRAP_IMAGE_FILTER_RGB param_count)
+  WRAP_IMAGE_FILTER("${WRAP_ITK_RGB}" ${param_count} "${ARGN}")
 ENDMACRO(WRAP_IMAGE_FILTER_RGB)
 
-
-MACRO(WRAP_IMAGE_FILTER_VECTOR_REAL size)
-  IF("${ARGC}" EQUAL 3)
-    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV2}" dim_list)
-  ELSE("${ARGC}" EQUAL 3)
-    SET(dim_list ${WRAP_ITK_DIMS})
-  ENDIF("${ARGC}" EQUAL 3)
-
-  SET(ddims "")
-  FOREACH(d ${dim_list})
-    SET(ddims ${ddims} "${d}${d}")
-  ENDFOREACH(d)
-
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_VECTOR_REAL}" "${ddims}")
+MACRO(WRAP_IMAGE_FILTER_VECTOR_REAL param_count)
+  WRAP_IMAGE_FILTER("${WRAP_ITK_VECTOR_REAL}" ${param_count} "${ARGN}")
 ENDMACRO(WRAP_IMAGE_FILTER_VECTOR_REAL)
 
-
-MACRO(WRAP_IMAGE_FILTER_COV_VECTOR_REAL size)
-  IF("${ARGC}" EQUAL 3)
-    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV2}" dim_list)
-  ELSE("${ARGC}" EQUAL 3)
-    SET(dim_list ${WRAP_ITK_DIMS})
-  ENDIF("${ARGC}" EQUAL 3)
-
-  SET(ddims "")
-  FOREACH(d ${dim_list})
-    SET(ddims ${ddims} "${d}${d}")
-  ENDFOREACH(d)
-
-  WRAP_ALL_TYPES_AND_DIMS(${size} "${WRAP_ITK_COV_VECTOR_REAL}" "${ddims}")
+MACRO(WRAP_IMAGE_FILTER_COV_VECTOR_REAL param_count)
+  WRAP_IMAGE_FILTER("${WRAP_ITK_COV_VECTOR_REAL}" ${param_count} "${ARGN}")
 ENDMACRO(WRAP_IMAGE_FILTER_COV_VECTOR_REAL)
 
 
+MACRO(WRAP_IMAGE_FILTER param_types param_count)
+  # WRAP_IMAGE_FILTER is a more general macro for wrapping image filters that
+  # need one or more image parameters of the same type. The first parameter to this
+  # macro is a list of image pixel types for which filter instantiations should be
+  # created. The second is a 'param_count' parameter which controls how many image
+  # template parameters are created (see above). The optional third parameter is
+  # a dimensionality condition (see above also).
+  # 
+  # E.g. WRAP_IMAGE_FILTER("${WRAP_ITK_ALL}" 2) will create template instantiations
+  # of the filter for every pixel type that the user has selected.
+  
+  SET(have_dim_cond OFF)
+  IF("${ARGN}")
+    SET(have_dim_cond ON)
+  ENDIF("${ARGN}")
 
-MACRO(WRAP_IMAGE_FILTER_TYPES1 type_list)
-  IF("${ARGC}" EQUAL 3)
-    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV2}" dim_list)
-  ELSE("${ARGC}" EQUAL 3)
+  FOREACH(param_type ${param_types})
+    SET(param_list "")
+    FOREACH(i RANGE 1 ${param_count})
+      SET(param_list ${param_list} param_type)
+    ENDFOREACH(i)
+    IF(have_dim_cond)
+      WRAP_IMAGE_FILTER_TYPES("${ARGN}" ${param_list})  
+    ELSE(have_dim_cond)
+      WRAP_IMAGE_FILTER_TYPES(${param_list})
+    ENDIF(have_dim_cond)
+  ENDFOREACH(param_type)
+ENDMACRO(WRAP_IMAGE_FILTER)
+
+MACRO(WRAP_IMAGE_FILTER_COMBINATIONS)
+  # WRAP_IMAGE_FILTER_COMBINATIONS takes a variable number of parameters. Each
+  # parameter is a list of image pixel types. Filter instantiations are created
+  # for every combination of different pixel types in different parameters.
+  # A dimensionality condition may be optionally specified as the first parameter.
+  #
+  # E.g. WRAP_IMAGE_FILTER_COMBINATIONS("UC;US" "UC;US") will create:
+  # filter<itk::Image<unsigned char, d>, itk::Image<unsigned char, d> > 
+  # filter<itk::Image<unsigned char, d>, itk::Image<unsigned short, d> > 
+  # filter<itk::Image<unsigned short, d>, itk::Image<unsigned char, d> > 
+  # filter<itk::Image<unsigned short, d>, itk::Image<unsigned short, d> > 
+  # where 'd' is the image dimension, for each selected image dimension.
+  
+  # First, store the variable args in real varables, not the macro parameters.
+  # Parameters can't be looked up like this: ${ARGV${num}} because they are 
+  # textually substituted before the macro is evaluated. 
+  SET(arg0 ${ARGV0})
+  SET(arg1 ${ARGV1})
+  SET(arg2 ${ARGV2})
+  SET(arg3 ${ARGV3})
+  SET(arg4 ${ARGV4})
+  SET(arg5 ${ARGV5})
+  SET(arg6 ${ARGV6})
+  SET(arg7 ${ARGV7})
+  SET(arg8 ${ARGV8})
+  SET(arg9 ${ARGV9})
+  DECREMENT(last_arg_number ${ARGC})
+
+  # Now see if we have a dimension condition, and if so, note it and remove it
+  # from the list of args that we will process later
+  SET(have_dim_cond OFF)
+  SET(last_arg "${arg{last_arg_number}}")
+  IF("${last_arg}" MATCHES "^[0-9]")
+    # We have a dimensionality condition
+    SET(have_dim_cond ON)
+    DECREMENT(last_arg_number ${last_arg_number})
+  ENDIF("${last_arg}" MATCHES "^[0-9]")
+  
+  # Build up a list of all of the combinations of all of the elements in each
+  # argument. Each combinarion is stored as a #-delimited list of pixel types.
+  # The #-delimiter is needed because CMake can't store nested lists.
+  # Also note the need to check for empty lists and note invalidity if so.
+  SET(all_args_valid ON)
+  IF(NOT ${arg0})
+    SET(all_args_valid OFF)
+  ELSE(NOT ${arg0})
+    SET(template_combinations ${arg0})
+  ENDIF(NOT ${arg0})
+  
+  FOREACH(num RANGE 1 ${last_arg_number})
+    SET(types "${arg${num}}")
+    IF(NOT ${types})
+      SET(all_args_valid OFF)
+    ELSE(NOT ${types})
+      SET(temp "")
+      FOREACH(type_list ${template_combinations})
+        FOREACH(type ${types})
+          SET(temp ${temp} "${type_list}#${type}")
+        ENDFOREACH(type)
+      ENDFOREACH(type_list)
+      SET(template_combinations ${temp})
+    ENDIF(NOT ${types})
+  ENDFOREACH(num)
+  
+  IF(all_args_valid)
+    FOREACH(param_set ${template_combinations})
+      # Each param_set is a #-delimited list of pixel types. First thing, we unpack
+      # param_set back to a CMake list (;-delimited). Then we instantiate the filter
+      # for that combination of image pixel types.
+      STRING(REPLACE "#" ";" param_list "${param_set}")
+      IF(have_dim_cond)
+        WRAP_IMAGE_FILTER_TYPES(${param_list} "${last_arg}")
+      ELSE(have_dim_cond)
+        WRAP_IMAGE_FILTER_TYPES(${param_list})
+      ENDIF(have_dim_cond)
+    ENDFOREACH(param_set)
+  ENDIF(all_args_valid)
+ENDMACRO(WRAP_IMAGE_FILTER_COMBINATIONS)
+
+
+MACRO(WRAP_IMAGE_FILTER_TYPES)
+  # WRAP_IMAGE_FILTER_TYPES creates template instantiations of the current image
+  # filter, for all the selected dimensions (or dimensions that meet the optional
+  # dimensionality condition). This macro takes a variable number of arguments,
+  # which should correspond to the image pixel types of the images in the filter's
+  # template parameter list. The optional dimensionality condition should be 
+  # placed in the first parameter.
+  
+  # First, store the variable args in real varables, not the macro parameters.
+  # Parameters can't be looked up like this: ${ARGV${num}} because they are 
+  # textually substituted before the macro is evaluated. 
+  SET(arg0 ${ARGV0})
+  SET(arg1 ${ARGV1})
+  SET(arg2 ${ARGV2})
+  SET(arg3 ${ARGV3})
+  SET(arg4 ${ARGV4})
+  SET(arg5 ${ARGV5})
+  SET(arg6 ${ARGV6})
+  SET(arg7 ${ARGV7})
+  SET(arg8 ${ARGV8})
+  SET(arg9 ${ARGV9})
+  DECREMENT(last_arg_number ${ARGC})
+  
+  SET(last_arg "${arg{last_arg_number}}")
+  IF("${last_arg}" MATCHES "^[0-9]")
+    # We have a dimensionality condition
+    FILTER_DIMS(dim_list "${last_arg}")
+    DECREMENT(last_arg_number ${last_arg_number})
+  ELSE("${last_arg}" MATCHES "^[0-9]")
     SET(dim_list ${WRAP_ITK_DIMS})
-  ENDIF("${ARGC}" EQUAL 3)
+  ENDIF("${last_arg}" MATCHES "^[0-9]")
 
-  FOREACH(dim ${dim_list})
-    FOREACH(type ${type_list})
-      WRAP_TEMPLATE("${ITKM_I${type}${dim}}" "${ITKT_I${type}${dim}}")
-    ENDFOREACH(type)
-  ENDFOREACH(dim)
-
-ENDMACRO(WRAP_IMAGE_FILTER_TYPES1)
-
-
-MACRO(WRAP_IMAGE_FILTER_TYPES2 type_list1 type_list2)
-  IF("${ARGC}" EQUAL 4)
-    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV3}" dim_list)
-  ELSE("${ARGC}" EQUAL 4)
-    SET(dim_list ${WRAP_ITK_DIMS})
-  ENDIF("${ARGC}" EQUAL 4)
-
-  FOREACH(dim ${dim_list})
-    FOREACH(type1 ${type_list1})
-      FOREACH(type2 ${type_list2})
-MESSAGE("${type1}--${type2}")
-        WRAP_TEMPLATE("${ITKM_I${type1}${dim}}${ITKM_I${type2}${dim}}" "${ITKT_I${type1}${dim}},${ITKT_I${type2}${dim}}")
-      ENDFOREACH(type2)
-    ENDFOREACH(type1)
-  ENDFOREACH(dim)
-
-ENDMACRO(WRAP_IMAGE_FILTER_TYPES2)
+  SET(template_params "")
+  SET(mangled_name "")
+  
+  FOREACH(d ${dim_list})
+      SET(template_params "")
+      SET(mangled_name "")
+    FOREACH(num RANGE 0 ${last_arg_number})
+      SET(type "${arg${num}}")
+      IF("${WRAP_ITK_VECTOR}" MATCHES "${type}")
+        # if the type is a vector type with no dimension specified, make the 
+        # vector dimension match the image dimension.
+        SET(type "${type}${d}")
+      ENDIF("${WRAP_ITK_VECTOR}" MATCHES "${type}")
+      SET(template_params "${template_params},${ITKT_I${type}}")
+      SET(mangled_name "${mangled_name}${ITKM_I${type}}")
+    ENDFOREACH(num)
+    WRAP_TEMPLATE("${mangled_name}" "${template_params}")
+  ENDFOREACH(d)
+ENDMACRO(WRAP_IMAGE_FILTER_TYPES)
 
 
-MACRO(WRAP_IMAGE_FILTER_TYPES3 type_list1 type_list2 type_list3)
-  IF("${ARGC}" EQUAL 5)
-    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV4}" dim_list)
-  ELSE("${ARGC}" EQUAL 5)
-    SET(dim_list ${WRAP_ITK_DIMS})
-  ENDIF("${ARGC}" EQUAL 5)
-
-  FOREACH(dim ${dim_list})
-    FOREACH(type1 ${type_list1})
-      FOREACH(type2 ${type_list2})
-        FOREACH(type3 ${type_list3})
-          WRAP_TEMPLATE("${ITKM_I${type1}${dim}}${ITKM_I${type2}${dim}}${ITKM_I${type3}${dim}}" "${ITKT_I${type1}${dim}},${ITKT_I${type2}${dim}},${ITKT_I${type3}${dim}}")
-        ENDFOREACH(type3)
-      ENDFOREACH(type2)
-    ENDFOREACH(type1)
-  ENDFOREACH(dim)
-
-ENDMACRO(WRAP_IMAGE_FILTER_TYPES3)
-
-
-MACRO(WRAP_IMAGE_FILTER_TYPES4 type_list1 type_list2 type_list3 type_list4)
-  IF("${ARGC}" EQUAL 6)
-    FILTER_DIMS("${WRAP_ITK_DIMS}" "${ARGV5}" dim_list)
-  ELSE("${ARGC}" EQUAL 6)
-    SET(dim_list ${WRAP_ITK_DIMS})
-  ENDIF("${ARGC}" EQUAL 6)
-
-  FOREACH(dim ${dim_list})
-    FOREACH(type1 ${type_list1})
-      FOREACH(type2 ${type_list2})
-        FOREACH(type3 ${type_list3})
-          FOREACH(type4 ${type_list4})
-            WRAP_TEMPLATE("${ITKM_I${type1}${dim}}${ITKM_I${type2}${dim}}${ITKM_I${type3}${dim}}${ITKM_I${type4}${dim}}" "${ITKT_I${type1}${dim}}$,{ITKT_I${type2}${dim}},${ITKT_I${type3}${dim}},${ITKT_I${type4}${dim}}")
-          ENDFOREACH(type4)
-        ENDFOREACH(type3)
-      ENDFOREACH(type2)
-    ENDFOREACH(type1)
-  ENDFOREACH(dim)
-
-ENDMACRO(WRAP_IMAGE_FILTER_TYPES4)
-
-
-
-
+MACRO(FILTER_DIMS var_name dimension_condition)
+  # FILTER_DIMS processes a dimension_condition and returns a list of the dimensions
+  # that (a) meet the condition, and (b) were selected to be wrapped. Recall 
+  # that the condition is either a CMake list of dimensions, or a string of the
+  # form "n+" where n is a number.
+  
+  IF("${dimension_condition}" MATCHES "^[0-9]+\\+$")
+    # The condition is of the form "n+". Make a list of the
+    # selected wrapping dims that are >= that number.
+    STRING(REGEX REPLACE "^([0-9]+)\\+$" "\\1" min_dim "${dimension_condition}")
+    DECREMENT(max_disallowed ${min_dim})
+    FOREACH(d ${WRAP_ITK_DIMS})
+      IF(${d} GREATER ${max_disallowed})
+        SET(${var_name} ${${var_name}} ${d})
+      ENDIF(${d} GREATER ${max_disallowed})
+    ENDFOREACH(d)
+  ELSE("${dimension_condition}" MATCHES "^[0-9]+\\+$")
+    # The condition is just a list of dims. Return the intersection of these
+    # dims with the selected ones.
+    INTERSECT(${var_name} "${dimension_condition}" "${WRAP_ITK_DIMS}")
+  ENDIF("${dimension_condition}" MATCHES "^[0-9]+\\+$")
+ENDMACRO(FILTER_DIMS)

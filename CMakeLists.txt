@@ -33,8 +33,6 @@ OPTION(WRAP_rgb_unsigned_char "Wrap RGB< unsigned char > type" ON)
 OPTION(WRAP_rgb_unsigned_short "Wrap RGB< unsigned short > type" OFF)
 
 SET(WRAP_ITK_DIMS "2;3" CACHE STRING "dimensions available separated by semicolons (;)")
-SET(WRAP_ITK_INSTALL_LOCATION "/usr/local/lib/InsightToolkit/WrapITK" CACHE PATH "Path to the top of the install tree. (USED INSTEAD OF CMAKE_INSTALL_PREFIX.)")
-SET(CMAKE_INSTALL_PREFIX "${WRAP_ITK_INSTALL_LOCATION}" CACHE INTERNAL "Always set to WRAP_ITK_INSTALL_LOCATION so WrapITK can provide an intelligent default." FORCE)
 
 OPTION(INSTALL_WRAP_ITK_COMPATIBILITY "Install FindWrapITK.cmake and WrapITK.pth (so cmake and python can find WrapITK) as part of the standard installation process. This requires admin privileges. These files can be separately installed by making the install_wrapitk_compatibility target. " ON)
 
@@ -106,7 +104,7 @@ SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIRECTORY "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}")
 SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}")
-SET(CONFIG_WRAP_ITK_INSTALL_LOCATION "${WRAP_ITK_INSTALL_LOCATION}")
+SET(CONFIG_WRAP_ITK_INSTALL_LOCATION "${CMAKE_INSTALL_PREFIX}")
 CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/WrapITKConfig.cmake"
                @ONLY IMMEDIATE)

@@ -251,70 +251,28 @@ ENDIF(UNIX)
 SET(CSWIG_IGNORE_WARNINGS -w362 -w389 -w467 -w503 -w508 -w509 -w516)
 ADD_DEFINITIONS(-DSWIG_GLOBAL)
 
+###############################################################################
+# Define install files macro. If we are building WrapITK, the generated files
+# and libraries will be installed into CMAKE_INSTALL_PREFIX, as usual. However,
+# if we are building an external project, we need to ensure that the wrapper 
+# files will be installed into wherever WrapITK was installed. 
+###############################################################################
+INCLUDE("${WRAP_ITK_CMAKE_DIR}/CMakeUtilityFunctions.cmake")
+
+IF(EXTERNAL_WRAP_ITK_PROJECT)
+  MACRO(WRAP_ITK_INSTALL path)
+    INSTALL_FILES("${path}" FILES ${ARGN})
+  ENDMACRO(WRAP_ITK_INSTALL)
+ELSE(EXTERNAL_WRAP_ITK_PROJECT)
+  CREATE_INSTALL_AT_ABSOLUTE_PATH_TARGET(install_external_wrapitk_project DEFAULT
+    "Installing external project ${PROJECT} into the WrapITK installation directory.")
+  MACRO(WRAP_ITK_INSTALL path)
+    INSTALL_AT_ABSOLUTE_PATH(install_external_wrapitk_project "${WRAP_ITK_INSTALL_LOCATION}/${path}" ${ARGN})
+  ENDMACRO(WRAP_ITK_INSTALL)
+ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
 
 ###############################################################################
-# Create some variable which can be used later
-###############################################################################
-SET(WRAP_ITK_INT "")
-IF(WRAP_unsigned_char)
-  SET(WRAP_ITK_INT ${WRAP_ITK_INT} "UC")
-ENDIF(WRAP_unsigned_char)
-IF(WRAP_unsigned_long)
-  SET(WRAP_ITK_INT ${WRAP_ITK_INT} "UL")
-ENDIF(WRAP_unsigned_long)
-IF(WRAP_unsigned_short)
-  SET(WRAP_ITK_INT ${WRAP_ITK_INT} "US")
-ENDIF(WRAP_unsigned_short)
-
-SET(WRAP_ITK_SIGN_INT "")
-IF(WRAP_signed_char)
-  SET(WRAP_ITK_SIGN_INT ${WRAP_ITK_SIGN_INT} "SC")
-ENDIF(WRAP_signed_char)
-IF(WRAP_signed_long)
-  SET(WRAP_ITK_SIGN_INT ${WRAP_ITK_SIGN_INT} "SL")
-ENDIF(WRAP_signed_long)
-IF(WRAP_signed_short)
-  SET(WRAP_ITK_SIGN_INT ${WRAP_ITK_SIGN_INT} "SS")
-ENDIF(WRAP_signed_short)
-
-SET(WRAP_ITK_REAL "")
-IF(WRAP_float)
-  SET(WRAP_ITK_REAL ${WRAP_ITK_REAL} "F")
-ENDIF(WRAP_float)
-IF(WRAP_double)
-  SET(WRAP_ITK_REAL ${WRAP_ITK_REAL} "D")
-ENDIF(WRAP_double)
-
-SET(WRAP_ITK_RGB "")
-IF(WRAP_rgb_unsigned_char)
-  SET(WRAP_ITK_RGB ${WRAP_ITK_RGB} "RGBUC")
-ENDIF(WRAP_rgb_unsigned_char)
-IF(WRAP_rgb_unsigned_short)
-  SET(WRAP_ITK_RGB ${WRAP_ITK_RGB} "RGBUS")
-ENDIF(WRAP_rgb_unsigned_short)
-
-SET(WRAP_ITK_VECTOR_REAL "")
-IF(WRAP_vector_double)
-  SET(WRAP_ITK_VECTOR_REAL ${WRAP_ITK_VECTOR_REAL} "VD")
-ENDIF(WRAP_vector_double)
-IF(WRAP_vector_float)
-  SET(WRAP_ITK_VECTOR_REAL ${WRAP_ITK_VECTOR_REAL} "VF")
-ENDIF(WRAP_vector_float)
-
-SET(WRAP_ITK_COV_VECTOR_REAL "")
-IF(WRAP_covariant_vector_double)
-  SET(WRAP_ITK_COV_VECTOR_REAL ${WRAP_ITK_COV_VECTOR_REAL} "CVD")
-ENDIF(WRAP_covariant_vector_double)
-IF(WRAP_covariant_vector_float)
-  SET(WRAP_ITK_COV_VECTOR_REAL ${WRAP_ITK_COV_VECTOR_REAL} "CVF")
-ENDIF(WRAP_covariant_vector_float)
-
-SET(WRAP_ITK_ALL_TYPES ${WRAP_ITK_INT} ${WRAP_ITK_SIGN_INT} ${WRAP_ITK_REAL} ${WRAP_ITK_RGB} ${WRAP_ITK_VECTOR_REAL} ${WRAP_ITK_COV_VECTOR_REAL})
-
-SET(WRAP_ITK_SCALAR ${WRAP_ITK_INT} ${WRAP_ITK_SIGN_INT} ${WRAP_ITK_REAL})
-
-###############################################################################
-# Include other needed macros -- WRAP_ITK_CMAKE_DIR must be set correctly
+# Include needed macros -- WRAP_ITK_CMAKE_DIR must be set correctly
 ###############################################################################
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/CreateCableSwigInputs.cmake")
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/CreateWrapperLibrary.cmake")

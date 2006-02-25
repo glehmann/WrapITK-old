@@ -52,7 +52,7 @@ MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
     # Just install the files once, regardless of how many different places
     # they were configured into. If there are no configuration types, the 
     # INTDIR variable expands to '', so no harm done.
-    INSTALL_FILES("/Python" FILES "${PROJECT_BINARY_DIR}/Python/${WRAP_ITK_INSTALL_INTDIR}${WRAPPER_LIBRARY_NAME}.py")
+    WRAP_ITK_INSTALL("/Python" "${PROJECT_BINARY_DIR}/Python/${WRAP_ITK_INSTALL_INTDIR}${WRAPPER_LIBRARY_NAME}.py")
     IF(EXTERNAL_WRAP_ITK_PROJECT)
       # Configure a python file to make it easier to use this external project
       # without first installing it into WrapITK.
@@ -376,8 +376,7 @@ MACRO(CONFIGURE_TYPEMAPS outdir)
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/typemaps.swg.in"
     "${outdir}/${WRAPPER_LIBRARY_NAME}.swg"
     @ONLY IMMEDIATE)
-   INSTALL_FILES("/SWIG"
-     FILES "${outdir}/${WRAPPER_LIBRARY_NAME}.swg")
+   WRAP_ITK_INSTALL("/SWIG" "${outdir}/${WRAPPER_LIBRARY_NAME}.swg")
 ENDMACRO(CONFIGURE_TYPEMAPS)
 
 ################################################################################
@@ -429,8 +428,7 @@ MACRO(CONFIGURE_PYTHON_CONFIG_FILES outdir)
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ModuleConfig.py.in"
     "${outdir}/${WRAPPER_LIBRARY_NAME}Config.py"
     @ONLY IMMEDIATE)
-  INSTALL_FILES("/Python/Configuration"
-    FILES "${outdir}/${WRAPPER_LIBRARY_NAME}Config.py")
+  WRAP_ITK_INSTALL("/Python/Configuration" "${outdir}/${WRAPPER_LIBRARY_NAME}Config.py")
 ENDMACRO(CONFIGURE_PYTHON_CONFIG_FILES)
 
 MACRO(CONFIGURE_PYTHON_LOADER_FILE outdir)

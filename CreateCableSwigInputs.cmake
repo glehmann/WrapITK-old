@@ -375,9 +375,6 @@ MACRO(END_WRAP_CLASS)
   # of this file, turning them into proper C++ type definitions suitable for
   # input to CableSwig. The C++ definitions are stored in WRAPPER_TYPEDEFS.
   #
-  # TODO: Currently this only supports classes in the itk namespace because
-  # the namespace is hard-coded. This should be fixed.
-  #
   # Global vars used: WRAPPER_CLASS WRAPPER_WRAP_METHOD WRAPPER_TEMPLATES WRAPPER_SWIG_NAME
   # Global vars modified: WRAPPER_TYPEDEFS
   

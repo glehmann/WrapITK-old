@@ -1,4 +1,4 @@
-# Set up options needed for itkConfigWrapping
+# Set up options needed for ConfigureWrapping
 # Useful Variables:
 # The user should set JAVA_OUTPUT_DIR if they want generated Java classes to go
 # anywhere other than ${PROJECT_BINARY_DIR}/Java.
@@ -61,8 +61,8 @@ SET(WRAP_ITK_INSTALL_LOCATION "@CONFIG_WRAP_ITK_INSTALL_LOCATION@")
 SET(WRAP_ITK_SWIG_LIBRARY_DIRECTORY "@CONFIG_WRAP_ITK_SWIG_LIBRARY_DIRECTORY@")
 SET(WRAP_ITK_MASTER_INDEX_DIRECTORY "@CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY@")
 
-# Now include itkConfigWrapping
-INCLUDE("${WRAP_ITK_CMAKE_DIR}/itkConfigWrapping.cmake")
+# Now include ConfigureWrapping
+INCLUDE("${WRAP_ITK_CMAKE_DIR}/ConfigureWrapping.cmake")
 
 # Some macros require LIBRARY_OUTPUT_PATH to be set. For now, set it to its default.
 # Re-set later if a different library output path is needed.

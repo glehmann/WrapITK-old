@@ -1,5 +1,5 @@
 ###############################################################################
-# itkConfigWrapping.cmake
+# ConfigureWrapping.cmake
 #
 # This file sets up all needed macros, paths, and so forth for wrapping itk
 # projects.
@@ -281,6 +281,6 @@ INCLUDE("${WRAP_ITK_CMAKE_DIR}/CreateLanguageSupport.cmake")
 ###############################################################################
 # Create wrapper names for simple types to ensure consistent naming
 ###############################################################################
-INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapTypeBase.cmake")
-INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapTypePrefix.cmake")
+INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapBasicTypes.cmake")
+INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapITKTypes.cmake")
 

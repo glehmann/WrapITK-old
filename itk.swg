@@ -92,7 +92,7 @@
 
 %include std_string.i
 
-/* disabling this c linkage warning on windows is now handled in itkConfigWrapping.cmake
+/* disabling this c linkage warning on windows is now handled in ConfigureWrapping.cmake
 TODO: If that disablement works, delete this block entirely.
 
 %{

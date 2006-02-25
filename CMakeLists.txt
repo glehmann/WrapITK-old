@@ -6,7 +6,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.2)
 # Config ITKWrap
 ###############################################################################
 
-# Set up options needed for itkConfigWrapping
+# Set up options needed for ConfigureWrapping
 
 OPTION(WRAP_ITK_TCL "Build cswig Tcl wrapper support." OFF)
 OPTION(WRAP_ITK_PYTHON "Build cswig Python wrapper support." OFF)
@@ -46,11 +46,11 @@ SET (EXECUTABLE_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single out
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
-# Now include itkConfigWrapping
-INCLUDE(itkConfigWrapping.cmake)
+# Now include ConfigureWrapping
+INCLUDE(ConfigureWrapping.cmake)
 
 # Now make sure that itk.swg is copied to WRAPPER_SWIG_LIBRARY_OUTPUT_DIR, which
-# is set in itkConfigWrapping. We do this so there is only one place that swig
+# is set in ConfigureWrapping. We do this so there is only one place that swig
 # files needed for a WrapITK build are placed: in the binary directory. (For
 # external projects, we look in the WrapITK binary dir and the project's binary
 # dir.)
@@ -130,35 +130,29 @@ CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake"
                @ONLY IMMEDIATE)
 
-FOREACH(f
- itkConfigWrapping.cmake
+
+INSTALL_FILES("/Configuration" FILES 
+ ConfigureWrapping.cmake
  CMakeUtilityFunctions.cmake
  CreateCableSwigInputs.cmake
  CreateLanguageSupport.cmake
  CreateWrapperLibrary.cmake
- WrapTypePrefix.cmake
- WrapTypeBase.cmake)
-  INSTALL_FILES("/Configuration" FILES "${f}")
-ENDFOREACH(f)
+ WrapBasicTypes.cmake
+ WrapITKTypes.cmake)
 
-FOREACH(f
+INSTALL_FILES("/Configuration/Inputs" FILES
  ConfigurationInputs/wrap_ITKLang.cxx.in
  ConfigurationInputs/wrap_ITK.cxx.in
  ConfigurationInputs/wrap_.cxx.in
  ConfigurationInputs/Master.mdx.in
  ConfigurationInputs/gcc_xml.inc.in
  ConfigurationInputs/empty.depend.in
- ConfigurationInputs/typemaps.swg.in
- )
-  INSTALL_FILES("/Configuration/Inputs" FILES "${f}")
-ENDFOREACH(f)
+ ConfigurationInputs/typemaps.swg.in)
 
-FOREACH(f
- ConfigurationInputs/LanguageSupport/ModuleLoader.py.in
- ConfigurationInputs/LanguageSupport/ModuleConfig.py.in
- ConfigurationInputs/LanguageSupport/ExternalProjectConfig.py.in)
-  INSTALL_FILES("/Configuration/Inputs/LanguageSupport" FILES "${f}")
-ENDFOREACH(f)
+INSTALL_FILES("/Configuration/Inputs/LanguageSupport" FILES
+  ConfigurationInputs/LanguageSupport/ModuleLoader.py.in
+  ConfigurationInputs/LanguageSupport/ModuleConfig.py.in
+  ConfigurationInputs/LanguageSupport/ExternalProjectConfig.py.in)
 
 INSTALL_FILES("/SWIG" FILES "itk.swg")
 

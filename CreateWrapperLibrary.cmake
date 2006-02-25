@@ -312,8 +312,8 @@ MACRO(GCCXML_CREATE_XML_FILE library_name input_cxx output_xml gccxml_inc_file)
     ARGS -fxml-start=_cable_
          -fxml=${output_xml}
          --gccxml-gcc-options ${gccxml_inc_file}
-         -DCSWIG 
-         -DCABLE_CONFIGURATION 
+         -DCSWIG
+         -DCABLE_CONFIGURATION
          ${input_cxx}
     TARGET ${library_name}
     OUTPUTS ${output_xml}

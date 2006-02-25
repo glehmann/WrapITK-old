@@ -134,6 +134,7 @@ CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
 
 FOREACH(f
  itkConfigWrapping.cmake
+ CMakeUtilityFunctions.cmake
  CreateCableSwigInputs.cmake
  CreateLanguageSupport.cmake
  CreateWrapperLibrary.cmake
@@ -165,46 +166,17 @@ INSTALL_FILES("/SWIG" FILES "itk.swg")
 
 INSTALL_FILES("/" FILES "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake")
 
-####################################
-# Hackish macros to install a file at an absolute location, working around a 
-# CMake limitation.
-
-MACRO(INSTALL_AT_ABSOLUTE_PATH target path)
-  # USAGE: 
-  # INSTALL_AT_ABSOLUTE_PATH(custom-install-target "/path/to/install" "/path/to/file1" ... "path/to/fileN")
-  
-  SET(install_file_name "${PROJECT_BINARY_DIR}/${target}.cmake")
-    
-  FOREACH(file ${ARGN})
-    GET_FILENAME_COMPONENT(filename "${file}" NAME)
-    STRING(REGEX REPLACE "/$" "" stripped_path "${path}")
-    FILE(APPEND "${install_file_name}" 
-     "MESSAGE(STATUS \"Installing ${stripped_path}/${filename}\")\n")
-    FILE(APPEND "${install_file_name}" 
-     "FILE(INSTALL DESTINATION \"${path}\" TYPE FILE FILES \"${file}\")\n")
-  ENDFOREACH(file)
-ENDMACRO(INSTALL_AT_ABSOLUTE_PATH)
-####################################
-
 # Add a custom target to drive installation of the WrapITK-compatibility files
-SET(install_file_name "${PROJECT_BINARY_DIR}/install_wrapitk_compatibility.cmake")
 IF(INSTALL_WRAP_ITK_COMPATIBILITY)
   # if we should by default install the files, make a custom target that will
-  # always be built, and run the install script at install time
-  FILE(WRITE "${install_file_name}" "MESSAGE(STATUS \"Installing WrapITK compatibility files. Requires admin priviliges: turn off INSTALL_WRAP_ITK_COMPATIBILITY in cmake to disable.\")\n")
-  ADD_CUSTOM_TARGET(install_wrapitk_compatibility ALL)
-  SET_TARGET_PROPERTIES(install_wrapitk_compatibility PROPERTIES 
-    POST_INSTALL_SCRIPT "${install_file_name}")
+  # always be built.
+  CREATE_INSTALL_AT_ABSOLUTE_PATH_TARGET(install_wrapitk_compatibility DEFAULT
+    "Installing WrapITK compatibility files. Requires admin priviliges: turn off INSTALL_WRAP_ITK_COMPATIBILITY in cmake to disable.")
 ELSE(INSTALL_WRAP_ITK_COMPATIBILITY)
   # otherwise, add a target that will install the files only when that target is
   # manually built.
-  ADD_CUSTOM_TARGET(install_wrapitk_compatibility)
-  FILE(WRITE "${install_file_name}" "MESSAGE(STATUS \"Installing WrapITK compatibility files. Requires admin priviliges.\")\n")
-  ADD_CUSTOM_COMMAND(TARGET install_wrapitk_compatibility
-    PRE_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -P "${install_file_name}"
-    COMMENT "Manual installation of FindWrapITK.cmake and WrapITK.pth")
+  CREATE_INSTALL_AT_ABSOLUTE_PATH_TARGET(install_wrapitk_compatibility ON_DEMAND
+    "Installing WrapITK compatibility files. Requires admin priviliges.")
 ENDIF(INSTALL_WRAP_ITK_COMPATIBILITY)
 
 INSTALL_AT_ABSOLUTE_PATH(install_wrapitk_compatibility "${CMAKE_ROOT}/Modules" "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake")

@@ -8,8 +8,9 @@ END_WRAP_CLASS()
 
 WRAP_CLASS("itk::Image" POINTER)
   FOREACH(d ${WRAP_ITK_DIMS})
-    WRAP_TEMPLATE_IF_TYPES("NBN${ITKM_IF${d}}${d}" " itk::NormalBandNode< ${ITKT_IF${d}} >*, ${d} " "F")
-    WRAP_TEMPLATE_IF_TYPES("NBN${ITKM_ID${d}}${d}" " itk::NormalBandNode< ${ITKT_ID${d}} >*, ${d} " "D")
+    FOREACH(t ${WRAP_ITK_REAL})
+      WRAP_TEMPLATE("NBN${ITKM_I${t}${d}}${d}" "itk::NormalBandNode< ${ITKT_I${t}${d}} >*, ${d}")    
+    ENDFOREACH(t)
   ENDFOREACH(d)
 END_WRAP_CLASS()
 

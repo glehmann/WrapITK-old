@@ -1,7 +1,13 @@
 WRAP_CLASS("itk::FunctionBase" POINTER)
   FOREACH(d ${WRAP_ITK_DIMS})
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IF${d}}${ITKM_D}"   "${ITKT_IF${d}},${ITKT_D}"  "F")
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUS${d}}${ITKM_D}"  "${ITKT_IUS${d}},${ITKT_D}" "US")
+   
+     IF(WRAP_float)
+      WRAP_TEMPLATE("${ITKM_IF${d}}${ITKM_D}" "${ITKT_IF${d}},${ITKT_D}")    
+    ENDIF(WRAP_float)
+    IF(WRAP_unsigned_short)
+      WRAP_TEMPLATE("${ITKM_IUS${d}}${ITKM_D}" "${ITKT_IUS${d}},${ITKT_D}")    
+    ENDIF(WRAP_unsigned_short)
+
     WRAP_TEMPLATE("${ITKM_PF${d}}${ITKM_D}"   "${ITKT_PF${d}} ,${ITKT_D}")
     WRAP_TEMPLATE("${ITKM_PD${d}}${ITKM_D}"   "${ITKT_PD${d}} ,${ITKT_D}")
     WRAP_TEMPLATE("${ITKM_CIF${d}}${ITKM_AD}" "${ITKT_CIF${d}} ,${ITKT_AD}")

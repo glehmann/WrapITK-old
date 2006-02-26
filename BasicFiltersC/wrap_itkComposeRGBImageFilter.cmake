@@ -1,6 +1,9 @@
 WRAP_CLASS("itk::ComposeRGBImageFilter" POINTER_WITH_SUPERCLASS)
-  FOREACH(d ${WRAP_ITK_DIMS})
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUS${d}}${ITKM_IRGBUS${d}}" "${ITKT_IUS${d}},${ITKT_IRGBUS${d}}" "US;RGBUS")
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUC${d}}${ITKM_IRGBUC${d}}" "${ITKT_IUC${d}},${ITKT_IRGBUC${d}}" "UC;RGBUC")
-  ENDFOREACH(d)
+  IF(WRAP_rgb_unsigned_char AND WRAP_unsigned_char)
+    WRAP_IMAGE_FILTER_TYPES(UC RGBUC)
+  ENDIF(WRAP_rgb_unsigned_char AND WRAP_unsigned_char)
+
+  IF(WRAP_rgb_unsigned_short AND WRAP_unsigned_short)
+    WRAP_IMAGE_FILTER_TYPES(US RGBUS)
+  ENDIF(WRAP_rgb_unsigned_short AND WRAP_unsigned_short)
 END_WRAP_CLASS()

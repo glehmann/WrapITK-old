@@ -1,15 +1,5 @@
 WRAP_CLASS("itk::ImageSeriesReader" POINTER)
-
-  FOREACH(d ${WRAP_ITK_DIMS})
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUC${d}}" "${ITKT_IUC${d}}" "")  # neded to save in 8 bits
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUS${d}}" "${ITKT_IUS${d}}" "US")
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUL${d}}" "${ITKT_IUL${d}}" "UL")
-  ENDFOREACH(d)
-
-  WRAP_IMAGE_FILTER_SIGN_INT(1)
-  WRAP_IMAGE_FILTER_REAL(1)
-  WRAP_IMAGE_FILTER_VECTOR_REAL(1)
-  WRAP_IMAGE_FILTER_COV_VECTOR_REAL(1)
-  WRAP_IMAGE_FILTER_RGB(1)
-
+  # Force uchar image IO 
+  UNIQUE(image_types "UC;${WRAP_ITK_ALL_TYPES}")
+  WRAP_IMAGE_FILTER("${image_types}" 1)
 END_WRAP_CLASS()

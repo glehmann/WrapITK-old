@@ -1,8 +1,7 @@
-
 WRAP_CLASS("itk::CastImageFilter" POINTER_WITH_SUPERCLASS)
-  # Force that cast-to-uchar filters are created for all scalar types. If
-  # 'UC' is already selected, don't worry about double-wrapping. WRAP_IMAGE_FILTER_COMBINATIONS
-  # will uniquify the list.
-  WRAP_IMAGE_FILTER_COMBINATIONS("${WRAP_ITK_SCALAR}" "${WRAP_ITK_SCALAR};UC")
+  # Create cast filters between all scalar types. Also force that cast-to-uchar
+  # filters are created for all scalar types.
+  UNIQUE(to_types "${WRAP_ITK_SCALAR};UC")
+  WRAP_IMAGE_FILTER_COMBINATIONS("${WRAP_ITK_SCALAR}" "${to_types}")
 END_WRAP_CLASS()
 

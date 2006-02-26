@@ -61,7 +61,7 @@ MACRO(FILTER var_name list1 list2)
     ENDIF(NOT "${list2}" MATCHES "(^|;)${l}(;|$)")
   ENDFOREACH(l)
   SET(${var_name} ${filter_tmp})
-ENDMACRO(INTERSECTION)
+ENDMACRO(FILTER)
 
 
 ################################################################################
@@ -71,17 +71,17 @@ ENDMACRO(INTERSECTION)
 MACRO(INCREMENT var_name input)
   # Increment the input variable (must be in [0,8]) and store the result in var_name.
   SET(${var_name} ${increment${input}})
-  IF(NOT ${var_name})
+  IF(NOT DEFINED ${var_name})
     MESSAGE(FATAL_ERROR "Could not increment. Input ${input} out of range 0-8?")
-  ENDIF(NOT ${var_name})
+  ENDIF(NOT DEFINED ${var_name})
 ENDMACRO(INCREMENT)
 
 MACRO(DECREMENT var_name input)
   # Decrement the input variable (must be in [1,9]) and store the result in var_name.
   SET(${var_name} ${decrement${input}})
-  IF(NOT ${var_name})
+  IF(NOT DEFINED ${var_name})
     MESSAGE(FATAL_ERROR "Could not decrement. Input ${input} out of range 1-9?")
-  ENDIF(NOT ${var_name})
+  ENDIF(NOT DEFINED ${var_name})
 ENDMACRO(DECREMENT)
 
 SET(increment0 1)
@@ -152,4 +152,4 @@ MACRO(CREATE_INSTALL_AT_ABSOLUTE_PATH_TARGET target type comment)
       ARGS -P "${install_file_name}"
       COMMENT "Manual installation of files from target ${target}")
   ENDIF("${type}" MATCHES "DEFAULT")
-ENDMACRO(INSTALL_AT_ABSOLUTE_PATH)
+ENDMACRO(CREATE_INSTALL_AT_ABSOLUTE_PATH_TARGET)

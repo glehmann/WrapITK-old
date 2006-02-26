@@ -1,7 +1,7 @@
 WRAP_CLASS("itk::GeodesicActiveContourLevelSetImageFilter" POINTER)
 
   # apply a filter to the dimensions... the code will not compile for dim<=1
-  FILTER_DIMS("${WRAP_ITK_DIMS}" 2+ ds)
+  FILTER_DIMS(ds 2+)
 
   FOREACH(d ${ds})
     FOREACH(t ${WRAP_ITK_REAL})

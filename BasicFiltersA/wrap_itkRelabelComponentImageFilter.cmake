@@ -1,25 +1,14 @@
 WRAP_CLASS("itk::RelabelComponentImageFilter" POINTER)
   WRAP_IMAGE_FILTER_INT(2)
   WRAP_IMAGE_FILTER_SIGN_INT(2)
-  # needed with watershed filter to return to a non UL type
+  
+  # Wrap the filter from long/short integral types to smaller integral types.
+  # We force the ulong type to allow watershed filter to return to a non ulong types.
+  # If a SMALLER_THAN list (defined in WrapBasicTypes.cmake) is empty or nonexistant,
+  # WRAP_IMAGE_FILTER_COMBINATIONS will just ignore that.
 
-  FOREACH(d ${WRAP_ITK_DIMS})
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUL${d}}${ITKM_IUS${d}}" "${ITKT_IUL${d}},${ITKT_IUS${d}}" "US")
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUL${d}}${ITKM_IUC${d}}" "${ITKT_IUL${d}},${ITKT_IUC${d}}" "UC")
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUL${d}}${ITKM_ISL${d}}" "${ITKT_IUL${d}},${ITKT_ISL${d}}" "SL")
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUL${d}}${ITKM_ISS${d}}" "${ITKT_IUL${d}},${ITKT_ISS${d}}" "SS")
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUL${d}}${ITKM_ISC${d}}" "${ITKT_IUL${d}},${ITKT_ISC${d}}" "SC")
-    
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUS${d}}${ITKM_IUC${d}}" "${ITKT_IUS${d}},${ITKT_IUC${d}}" "US;UC")
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_IUS${d}}${ITKM_ISC${d}}" "${ITKT_IUS${d}},${ITKT_ISC${d}}" "US;SC")
-    
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_ISL${d}}${ITKM_IUS${d}}" "${ITKT_ISL${d}},${ITKT_IUS${d}}" "SL;US")
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_ISL${d}}${ITKM_IUC${d}}" "${ITKT_ISL${d}},${ITKT_IUC${d}}" "SL;UC")
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_ISL${d}}${ITKM_ISS${d}}" "${ITKT_ISL${d}},${ITKT_ISS${d}}" "SL;SS")
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_ISL${d}}${ITKM_ISC${d}}" "${ITKT_ISL${d}},${ITKT_ISC${d}}" "SL;SC")
-    
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_ISS${d}}${ITKM_IUC${d}}" "${ITKT_ISS${d}},${ITKT_IUC${d}}" "SS;UC")
-    WRAP_TEMPLATE_IF_TYPES("${ITKM_ISS${d}}${ITKM_ISC${d}}" "${ITKT_ISS${d}},${ITKT_ISC${d}}" "SS;SC")
-  ENDFOREACH(d)
-
+  UNIQUE(from_types "UL;${WRAP_ITK_INTEGRAL}")
+  FOREACH(t ${from_types})
+    WRAP_IMAGE_FILTER_COMBINATIONS("${t}" "${SMALLER_THAN_${t}}")
+  ENDFOREACH(t)
 END_WRAP_CLASS()

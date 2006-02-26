@@ -1,0 +1,17 @@
+- look into having to run cmake twice to get typemaps included?
+- dependency problems
+
+-* configuring PyBuffer yields the following error message during the
+"generate" stage (i.e. in windows configuring goes well, finally
+clicking on "OK" yields this error):
+
+. CMake Error: Unknown Target referenced: _ITKCommonAPython
+(click on OK again, then:)
+. CMake Error: Target: _BufferConversionPython depends on unknown
+target: _ITKCommonAPython
+
+- wrappers for binary threshold, relabel filters don't make a lot of sense
+- rename some of the basic type names
+- better ld path fix for itkbase.py
+- continuousindex should accept float seq
+- update article with new wrappong methods

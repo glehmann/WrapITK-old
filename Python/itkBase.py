@@ -1,5 +1,4 @@
-SILENT = 0; WARN = 1; ERROR = 2
-DebugLevel = WARN
+import os, sys, imp, itkConfig, itkTemplate
 
 def LoadModule(name, namespace = None):
   """This function causes a SWIG module to be loaded into memory after its dependencies
@@ -13,7 +12,6 @@ def LoadModule(name, namespace = None):
   'swig' sub-module. If the namespace parameter is provided, this information will
   be placed in a sub-module named 'swig' therein as well. This latter submodule
   will be created if it does not already exist."""
-  import sys, imp, itkTemplate
   
   # find the module's name in sys.modules, or create a new module so named
   this_module = sys.modules.setdefault(name, imp.new_module(name))
@@ -32,6 +30,8 @@ def LoadModule(name, namespace = None):
         # problem.
         namespace.update(symbols)
     return
+  
+  if itkConfig.ImportCallback: itkConfig.ImportCallback(name)
   
   # We're definitely going to load the templates. We set templates_loaded here
   # instead of at the end of the file to protect against cyclical dependencies
@@ -55,7 +55,8 @@ def LoadModule(name, namespace = None):
   # SWIG-generated modules have 'Python' appended. Only load the SWIG module if
   # we haven't already.
   swigModuleName = name + "Python"
-  if not swigModuleName in sys.modules: module = LoadSWIGLibrary(swigModuleName)
+  loader = LibraryLoader()
+  if not swigModuleName in sys.modules: module = loader.load(swigModuleName)
   
   # OK, now the modules on which this one depends are loaded and template-instantiated,
   # and the SWIG module for this one is also loaded.
@@ -106,56 +107,69 @@ def LoadModule(name, namespace = None):
             DebugPrintError("Namespace already has a value for %s, which is not class %s. Overwriting old value." %(pyClassName, cppClassName))
           namespace[pyClassName] = swigClass
   
-def LoadSWIGLibrary(moduleName):
+def DebugPrintError(error):
+  if itkConfig.DebugLevel == itkConfig.WARN:
+    print >> sys.stderr, error
+  elif itkConfig.DebugLevel == itkConfig.ERROR:
+    raise RuntimeError(error)
+
+class LibraryLoader(object):
   """Do all the work to set up the environment so that a SWIG-generated library
-  can be properly loaded. This invloves setting paths, etc., defined in itkConfig."""
-  import os, sys, imp, itkConfig
+  can be properly loaded. This invloves setting paths, etc., defined in itkConfig."""  
   
   # To share symbols across extension modules, we must set
   #     sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)
   #
   # Since RTLD_NOW==0x002 and RTLD_GLOBAL==0x100 very commonly
   # we will just guess that the proper flags are 0x102 when there
-  # is no dl module.
-
-  # Save the current dlopen flags and set the ones we need.
+  # is no dl module. On darwin (where there is not yet a dl module)
+  # we need different flags because RTLD_GLOBAL = 0x008.
+  darwin_dlopenflags  = 0xA
+  generic_dlopenflags = 0x102
+    
+  if sys.platform.startswith('darwin'):
+    dlopenflags = darwin_dlopenflags
+  elif sys.platform.startswith('win'):
+    dlopenflags = None
+  else:
+    dlopenflags = generic_dlopenflags
+  # now try to refine the dlopenflags if we have a dl module.
   try:
     import dl
-    newflags = dl.RTLD_NOW|dl.RTLD_GLOBAL
+    dlopenflags = dl.RTLD_NOW|dl.RTLD_GLOBAL
   except:
-    newflags = 0x102  # No dl module, so guess (see above).
-  try:
-    oldflags = sys.getdlopenflags()
-    sys.setdlopenflags(newflags)
-  except:
-    oldflags = None
+    pass
+    
   
-  # set the path so that the imported module can load swig-generated shared  
-  # libraries or other swig-generated scripts.
-  sys.path.insert(1, itkConfig.swig_lib)
-  sys.path.insert(1, itkConfig.swig_py)
-  # also change to the swig_lib directory so that the loader can find non-module
-  # library files like SwigRuntimePython linked into the python module that's loaded.
-  old_cwd = os.getcwd()
-  os.chdir(itkConfig.swig_lib)
+  def setup(self):
+    self.old_cwd = os.getcwd()
+    os.chdir(itkConfig.swig_lib)
+    self.old_path = sys.path
+    sys.path = [itkConfig.swig_lib, itkConfig.swig_py] + sys.path
+    try:
+      self.old_dlopenflags = sys.getdlopenflags()
+      sys.setdlopenflags(dlopenflags)
+    except:
+      self.old_dlopenflags = None
   
-  # find and load the module
-  try:
-    fp = None # needed in case next line raises exception, so that finally block works
-    fp, pathname, description = imp.find_module(moduleName)
-    return imp.load_module(moduleName, fp, pathname, description)
-  finally:
-    # Since we may exit via an exception, close fp explicitly.
-    if fp: fp.close()
-    # and restore environment to normalcy
-    sys.path.remove(itkConfig.swig_lib)
-    sys.path.remove(itkConfig.swig_py)
-    os.chdir(old_cwd)
-    if oldflags and hasattr(sys, 'setdlopenflags'):
-      # try to avoid raising an exception, because if we do, the import exception
-      # that might have occured above in the try block won't get reported.
-      try: sys.setdlopenflags(oldflags)
+  def load(self, name):
+    self.setup()
+    try:
+      fp = None # needed in case next line raises exception, so that finally block works
+      fp, pathname, description = imp.find_module(name)
+      return imp.load_module(name, fp, pathname, description)
+    finally:
+      # Since we may exit via an exception, close fp explicitly.
+      if fp: fp.close()
+      self.cleanup()
+  
+  def cleanup(self):
+    os.chdir(self.old_cwd)
+    sys.path = self.old_path
+    if self.old_dlopenflags:
+      try: sys.setdlopenflags(self.old_dlopenflags)
       except: pass
+
 
 class ModuleData(dict):
   """A dictionary that knows how to look up module configuration data from the
@@ -163,7 +177,6 @@ class ModuleData(dict):
   itkConfig."""
   
   def __getitem__(self, key):
-    import os, itkConfig
     try:
       return dict.__getitem__(self, key)
     except KeyError:
@@ -180,7 +193,6 @@ class ModuleData(dict):
         DebugPrintError("Could not find configuration data for module %s." %key)
         
   def __find_file(self, module, paths):
-    import os
     configFile = "%sConfig.py" %module
     for path in paths:
       try: listing = os.listdir(path)
@@ -200,13 +212,5 @@ class ModuleData(dict):
         return self[key]
       except:
         return dict.__getattribute__(self, key)
-
-def DebugPrintError(error):
-  import sys
-  if DebugLevel == WARN:
-    print >> sys.stderr, error
-  elif DebugLevel == ERROR:
-    raise RuntimeError(error)
-
 
 module_data = ModuleData()

@@ -376,32 +376,38 @@ MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx
      SET(extra_args "-DNO_EXCEPTIONS")
   ENDIF("${input_xml}" MATCHES "${no_exception_regex}")
 
-   # we have to get rid of the trailing /, else cswig will append \filename
-   # to the path and thus break the build.
-   GET_FILENAME_COMPONENT(OUTDIR ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR} PATH)
+  # we have to get rid of the trailing /, because on windows, cswig will append
+  # \filename, creating 'path/\filename', which it can't deal with. Without
+  # the trailing /, things work fine for some reason.
+  GET_FILENAME_COMPONENT(outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR} ABSOLUTE)
 
-   ADD_CUSTOM_COMMAND(
-     SOURCE ${input_idx}
-     COMMAND ${CSWIG}
-     ARGS ${swig_libs}
-          -I${CSWIG_DEFAULT_LIB}
-          ${CSWIG_IGNORE_WARNINGS}
-          -noruntime
-          ${cindex}
-          -depend ${input_xml}.depend
-          -outdir ${OUTDIR}
-          -o ${output_cxx}
-          -c++
-          ${CSWIG_ARGS_${language}}
-          ${extra_args}
-          ${input_xml}
-     TARGET ${library_name}
-     OUTPUTS ${output_cxx}
-     DEPENDS ${library_idx_files} ${master_index_files} ${swig_library_files} ${input_xml} ${CSWIG})
+  ADD_CUSTOM_COMMAND(
+   SOURCE ${input_idx}
+   COMMAND ${CSWIG}
+   ARGS ${swig_libs}
+        -I${CSWIG_DEFAULT_LIB}
+        ${CSWIG_IGNORE_WARNINGS}
+        -noruntime
+        ${cindex}
+        -depend ${input_xml}.depend
+        -outdir ${outdir}
+        -o ${output_cxx}
+        -c++
+        ${CSWIG_ARGS_${language}}
+        ${extra_args}
+        ${input_xml}
+   TARGET ${library_name}
+   OUTPUTS ${output_cxx}
+   DEPENDS ${library_idx_files} ${master_index_files} ${swig_library_files} ${input_xml} ${CSWIG})
 ENDMACRO(CSWIG_CREATE_CXX_FILE)
 
 
 MACRO(CREATE_EXTRA_SWIG_FILE library_name language swig_input cxx_output)
+  # we have to get rid of the trailing /, because on windows, cswig will append
+  # \filename, creating 'path/\filename', which it can't deal with. Without
+  # the trailing /, things work fine for some reason.
+  GET_FILENAME_COMPONENT(outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR} ABSOLUTE)
+
   ADD_CUSTOM_COMMAND(
     COMMENT "run native swig on ${swig_input}"
     SOURCE ${swig_input}
@@ -409,7 +415,7 @@ MACRO(CREATE_EXTRA_SWIG_FILE library_name language swig_input cxx_output)
     ARGS  -nocable 
           -noruntime 
           ${CSWIG_IGNORE_WARNINGS}
-          -outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR}
+          -outdir ${outdir}
           -o ${cxx_output}
           -c++
           ${CSWIG_ARGS_${language}}

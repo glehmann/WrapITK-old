@@ -10,45 +10,8 @@ SET(WRAPPER_LIBRARY_GROUPS
     itkImage
     itkLevelSet
     itkDefaultStaticMeshTraits
-
     ITKCommonBase
     ITKRegions
-    itkBinaryBallStructuringElement
-    itkDenseFiniteDifferenceImageFilter
-    itkDifferenceImageFilter
-    itkEventObjects
-    itkFiniteDifferenceFunction
-    itkFiniteDifferenceImageFilter
-    itkFixedArray
-    itkFunctionBase
-    itkImageFunction
-    itkImageSource
-    itkImageToImageFilter
-    itkIndex
-    itkInPlaceImageFilter
-    ITKInterpolators
-    itkNeighborhood
-    itkSize
-    itkMatrix
-    itkVectorContainer
-    itkSimpleDataObjectDecorator
-    itkImageBoundaryCondition
-    itkPointSet
-    itkImageConstIterator
-    itkImageConstIteratorWithIndex
-    itkImageIterator
-    itkImageIteratorWithIndex
-    itkImageLinearConstIteratorWithIndex
-    itkImageLinearIteratorWithIndex
-    itkImageRandomConstIteratorWithIndex
-    itkImageRandomIteratorWithIndex
-    itkImageRandomNonRepeatingConstIteratorWithIndex
-    itkImageRandomNonRepeatingIteratorWithIndex
-    itkImageRegionConstIterator
-    itkImageRegionConstIteratorWithIndex
-    itkImageRegionIterator
-    itkImageRegionIteratorWithIndex
-    itkVersor
     SwigExtras)
 
 SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics)

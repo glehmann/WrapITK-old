@@ -75,6 +75,10 @@ ADD_CUSTOM_COMMAND(
 SET(ITK_KITS VXLNumerics CommonA CommonB Numerics 
   BasicFiltersA BasicFiltersB BasicFiltersC IO
   SpatialObject Algorithms)
+SET(WRAP_ITK_MODULES VXLNumerics ITKCommonA ITKCommonB ITKNumerics 
+  ITKBasicFiltersA ITKBasicFiltersB ITKBasicFiltersC ITKIO
+  ITKSpatialObject ITKAlgorithms)
+
 SUBDIRS(SwigRuntime ${ITK_KITS} Tests Testing)
 
 ###############################################################################
@@ -105,6 +109,7 @@ SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIRECTORY "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}")
 SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}")
 SET(CONFIG_WRAP_ITK_INSTALL_LOCATION "${CMAKE_INSTALL_PREFIX}")
+SET(CONFIG_WRAP_ITK_MODULES "${WRAP_ITK_MODULES}")
 CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/WrapITKConfig.cmake"
                @ONLY IMMEDIATE)

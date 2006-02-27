@@ -5,7 +5,6 @@ WRAP_CLASS("itk::InPlaceImageFilter" POINTER)
   
   # Wrap from ulong to other integral types, even if ulong isn't wrapped. This
   # is needed for the relabel components image filter.
-  # TODO: is it really?
   IF(NOT WRAP_unsigned_long)
     WRAP_IMAGE_FILTER_COMBINATIONS("UL" "${WRAP_ITK_INTEGRAL}")
   ENDIF(NOT WRAP_unsigned_long)

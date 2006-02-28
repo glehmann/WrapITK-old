@@ -43,7 +43,7 @@ ENDMACRO(UNIQUE)
 
 MACRO(INTERSECTION var_name list1 list2)
   # Store the intersection between the two given lists in var_name.
-  SET(${intersect_tmp} "")
+  SET(intersect_tmp "")
   FOREACH(l ${list1})
     IF("${list2}" MATCHES "(^|;)${l}(;|$)")
       SET(intersect_tmp ${intersect_tmp} ${l})
@@ -54,7 +54,7 @@ ENDMACRO(INTERSECTION)
 
 MACRO(FILTER var_name list1 list2)
   # Remove elements in list2 from list1 and store the result in var_name.
-  SET(${filter_tmp} "")
+  SET(filter_tmp "")
   FOREACH(l ${list1})
     IF(NOT "${list2}" MATCHES "(^|;)${l}(;|$)")
       SET(filter_tmp ${filter_tmp} ${l})

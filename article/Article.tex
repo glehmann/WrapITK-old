@@ -678,7 +678,40 @@ to be wrapped. Often one such file is defined for each class wrapped, but this
 is not strictly necessary.
 
 Within such a file, directives are issued to wrap classes and particular
-template instances. All of the available directives are defined and documented
+template instances. 
+
+WrapITK define several macros and variable designed to:
+\begin{itemize}
+  \item make creation of wrappers easy. The syntax is simple enough to get in quickely.
+  \item make wchoice of template arguments explicit. It should be easy to understand
+the idea of the author of a wrapper by reading the file.
+  \item support mostly transparently the dimensions and types chosen by the user.
+\end{itemize}
+
+The most common case should be to create a new wrapper for a simple image filter, like 
+\verb$MedianImageFilter$. Let see that example in detail.
+
+Here is the \verb$BasicFiltersB/wrap_itkMedianImageFilter.cmake$ file:
+
+\small \begin{verbatim}
+WRAP_CLASS("itk::MedianImageFilter" POINTER)
+  WRAP_IMAGE_FILTER_INT(2)
+  WRAP_IMAGE_FILTER_SIGN_INT(2)
+  WRAP_IMAGE_FILTER_REAL(2)
+END_WRAP_CLASS()
+\end{verbatim} \normalsize
+
+The file contains a \verb$WRAP_CLASS$ - \verb$END_WRAP_CLASS$ block, which itself contains
+some \verb$WRAP_IMAGE_FILTER_*$ macros. \verb$WRAP_CLASS("itk::MedianImageFilter" POINTER)$
+begin the wrapping of the \verb$itk::MedianImageFilter$ templated class. The name of the class
+must be fully qualified. The option \verb$POINTER$ indicate that the object of the class can be
+manipulated with a \verb$SmartPointer$, and that the \verb$SmartPointer$ specialization for
+the class \verb$itk::MedianImageFilter$ must be created.
+
+Then, several \verb$WRAP_IMAGE_FILTER_*$ macros are called. They are convenient macro which create
+a set of template argument.
+
+All of the available directives are defined and documented
 in \verb$CreateCableSwigInputs.cmake$. The basics are presented here:
 
 \begin{itemize}

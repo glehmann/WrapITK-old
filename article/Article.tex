@@ -592,6 +592,22 @@ or just
 smartPtr = itk.SmartPointer[image](image.GetPointer())
 \end{verbatim} \normalsize
 
+\verb$itk$ module can be very long to import. The \verb$itkConfig$ module define
+a \verb$ImportCallback$ method which will be called when each sub module is
+imported in the import process. \verb$ImportCallback$ can be customized to report the
+progress status of the import process. It must be a function that can take
+the name of the library being imported as a parameter. Here is an example of a very
+basic callback function which display the name of the submodule being imported on
+the standard error output.
+\small \begin{verbatim}
+import sys, itkConfig
+def stderr_callback(name):
+  print >> sys.stderr, name
+itkConfig.ImportCallback = stderr_callback
+import itk
+\end{verbatim} \normalsize
+
+
     \subsection{TCL usage}
 
 Write me.

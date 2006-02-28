@@ -49,7 +49,7 @@ INSTALLING
 (0) Philosophy
 WrapITK is both a tool for users and for developers who wish to create wrappers for additional classes from ITK or classes that interact with ITK. The best way to both use WrapITK and extend it is by installing it into a known location. Once installed, using WrapITK is easy because the installation process informs Python where to look for the itk libraries. Installation makes extending WrapITK easy as well because extensions can be subsequently installed to the same place and used seamlessly.
 
-The install location is specified in ccmake with the WRAP_ITK_INSTALL_LOCATION variable. Simply run 'make install' (if you are using make as the build tool) to install the package. (CMAKE_INSTALL_PREFIX is not used because it is not possible to provide a sensible default value *and* use CMAKE_INSTALL_PREFIX. This is a problem with cmake.)
+The install location is specified in ccmake with the CMAKE_INSTALL_PREFIX variable. Simply run 'make install' (if you are using make as the build tool) to install the package.
 
 (1) FindWrapITK.cmake and WrapITK.pth
 In addition to the libraries and script files installed into CMAKE_INSTALL_PREFIX/WRAP_ITK_INSTALL_LOCATION, a cmake script will be placed in the proper directory in the CMake tree so that the command FIND_PACKAGE(WrapITK) will work with no additional configuration, making developing external projects (see below) very easy.

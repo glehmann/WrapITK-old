@@ -130,7 +130,7 @@ CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake"
                @ONLY IMMEDIATE)
 
-SET(CONFIG_WRAP_ITK_DIR "${WRAP_ITK_INSTALL_LOCATION}")
+SET(CONFIG_WRAP_ITK_DIR "${CMAKE_INSTALL_PREFIX}")
 CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake"
                @ONLY IMMEDIATE)

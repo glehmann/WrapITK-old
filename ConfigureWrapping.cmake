@@ -262,7 +262,7 @@ IF(EXTERNAL_WRAP_ITK_PROJECT)
   CREATE_INSTALL_AT_ABSOLUTE_PATH_TARGET(install_external_wrapitk_project DEFAULT
     "Installing external project ${PROJECT} into the WrapITK installation directory.")
   MACRO(WRAP_ITK_INSTALL path)
-    INSTALL_AT_ABSOLUTE_PATH(install_external_wrapitk_project "${WRAP_ITK_INSTALL_LOCATION}/${path}" ${ARGN})
+    INSTALL_AT_ABSOLUTE_PATH(install_external_wrapitk_project "${WRAP_ITK_INSTALL_LOCATION}${path}" ${ARGN})
   ENDMACRO(WRAP_ITK_INSTALL)
 ELSE(EXTERNAL_WRAP_ITK_PROJECT)
   MACRO(WRAP_ITK_INSTALL path)

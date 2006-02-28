@@ -62,6 +62,9 @@ SET(WRAP_ITK_SWIG_LIBRARY_DIRECTORY "@CONFIG_WRAP_ITK_SWIG_LIBRARY_DIRECTORY@")
 SET(WRAP_ITK_MASTER_INDEX_DIRECTORY "@CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY@")
 SET(WRAP_ITK_MODULES "@CONFIG_WRAP_ITK_MODULES@")
 
+# Tell the world that this is an external project using WrapITK:
+SET(EXTERNAL_WRAP_ITK_PROJECT ON)
+
 # Now include ConfigureWrapping
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/ConfigureWrapping.cmake")
 
@@ -84,6 +87,3 @@ LINK_IF_EXISTS("${WrapITK_DIR}/Python-SWIG")
 LINK_IF_EXISTS("${WrapITK_DIR}/Java-SWIG")
 
 LINK_IF_EXISTS("${WrapITK_DIR}/bin")
-
-# Tell the world that this is an external project using WrapITK:
-SET(EXTERNAL_WRAP_ITK_PROJECT ON)

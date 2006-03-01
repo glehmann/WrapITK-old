@@ -66,15 +66,22 @@ writer = ITKIO.ImageFileWriter[IType].New(FileName='out.png')
 dests.append(("ITKIO", writer))
 
 
-failure = False
+nb = 0
+failList = []
 for sname, s in sources:
   for dname, d in dests:
+    nb += 1
     d.SetInput( s )
     try:
       d.Update()
       print "%s -> %s pass" % (sname, dname)
     except RuntimeError, e:
-      print "%s -> %s fail (%s)" % (sname, dname, str(e))
-      failure = True
+      print "%s -> %s fail" % (sname, dname)
+      failList.append((sname, dname))
       
-sys.exit(failure)
+      
+print
+print "%i tests succeed" % (nb - len(failList))
+print "%i tests failed" % len(failList)
+
+sys.exit(len(failList))

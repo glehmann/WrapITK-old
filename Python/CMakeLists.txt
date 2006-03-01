@@ -130,7 +130,7 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/WrapITK.pth.in"
 IF(PYTHON_EXECUTABLE)
   FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/det_spp.py "try:\n  import distutils.sysconfig; print distutils.sysconfig.get_python_lib()\nexcept: pass")
   EXEC_PROGRAM("${PYTHON_EXECUTABLE}"
-    ARGS "${CMAKE_CURRENT_BINARY_DIR}/det_spp.py"
+    ARGS "\"${CMAKE_CURRENT_BINARY_DIR}/det_spp.py\""
     OUTPUT_VARIABLE py_spp
   )
 ENDIF(PYTHON_EXECUTABLE)

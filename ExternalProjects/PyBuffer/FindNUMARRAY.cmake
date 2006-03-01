@@ -8,7 +8,7 @@
   IF(PYTHON_EXECUTABLE)
     FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/det_npp.py "try: import numpy; print numpy.get_numpy_include()\nexcept: pass\n")
     EXEC_PROGRAM("${PYTHON_EXECUTABLE}"
-      ARGS "${CMAKE_CURRENT_BINARY_DIR}/det_npp.py"
+      ARGS "\"${CMAKE_CURRENT_BINARY_DIR}/det_npp.py\""
       OUTPUT_VARIABLE NUMPY_PATH
     )
   ENDIF(PYTHON_EXECUTABLE)

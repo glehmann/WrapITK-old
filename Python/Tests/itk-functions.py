@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+# also test the import callback feature
+def custom_callback(name):
+  print "loading %s submodule..." % name
+import itkConfig
+itkConfig.ImportCallback = custom_callback
+
 import itk, sys
 
 fileName = sys.argv[1]

@@ -31,8 +31,6 @@ def LoadModule(name, namespace = None):
         namespace.update(symbols)
     return
   
-  if itkConfig.ImportCallback: itkConfig.ImportCallback(name)
-  
   # We're definitely going to load the templates. We set templates_loaded here
   # instead of at the end of the file to protect against cyclical dependencies
   # that could kill the recursive lookup below.
@@ -51,6 +49,8 @@ def LoadModule(name, namespace = None):
   if data:
     for dep in data.depends:
       LoadModule(dep, namespace)
+  
+  if itkConfig.ImportCallback: itkConfig.ImportCallback(name)
   
   # SWIG-generated modules have 'Python' appended. Only load the SWIG module if
   # we haven't already.

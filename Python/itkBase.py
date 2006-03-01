@@ -47,7 +47,9 @@ def LoadModule(name, namespace = None):
   # to find those configuration files.
   data = module_data[name]
   if data:
-    for dep in data.depends:
+    deps = list(data.depends)
+    deps.sort()
+    for dep in deps:
       LoadModule(dep, namespace)
   
   if itkConfig.ImportCallback: itkConfig.ImportCallback(name)

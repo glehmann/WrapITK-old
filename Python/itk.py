@@ -9,6 +9,7 @@ import itkBase, itkConfig, os
 # First, find all the xxxConfig.py files in the config_py dir, and strip off the
 # 'Config.py' part of the filename.
 configModules = [f[:-9] for f in os.listdir(itkConfig.config_py) if f.endswith('Config.py')]
+configModules.sort()
 
 for module in configModules:
   # If the configuration defines an auto_load attribute and it's set to True

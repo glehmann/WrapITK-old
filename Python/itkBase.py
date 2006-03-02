@@ -22,13 +22,13 @@ def LoadModule(name, namespace = None):
     if namespace:
         swig = namespace.setdefault('swig', imp.new_module('swig'))
         swig.__dict__.update(this_module.swig.__dict__)
-        symbols = [(k, v) for k, v in this_module.__dict__.items() 
-          if not (k.startswith('_') or k == 'swig')]
+
         # don't worry about overwriting the symbols in namespace -- any common
         # symbols should be of type itkTemplate, which is a singleton type. That
         # is, they are all identical, so replacing one with the other isn't a
         # problem.
-        namespace.update(symbols)
+        for k, v in this_module.__dict__.items():
+          if not (k.startswith('_') or k == 'swig'): namespace[k] = v
     return
   
   # We're definitely going to load the templates. We set templates_loaded here

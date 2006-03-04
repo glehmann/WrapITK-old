@@ -150,8 +150,7 @@ class LibraryLoader(object):
     sys.path = [itkConfig.swig_lib, itkConfig.swig_py] + sys.path
     try:
       self.old_dlopenflags = sys.getdlopenflags()
-      print dlopenflags
-      sys.setdlopenflags(dlopenflags)
+      sys.setdlopenflags(self.dlopenflags)
     except:
       self.old_dlopenflags = None
   

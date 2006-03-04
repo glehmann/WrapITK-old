@@ -60,11 +60,8 @@
 // a implementation of %extend in cableswig would also be great to move back __getitem__ method 
 // added in some files in this one
 
-#endif // SWIGPYTHON
-
 
 // basic type pointers typemap
-// should work with all languages
 
 %typemap(out) unsigned char &, const unsigned char &
   {$result = SWIG_FromUnsignedChar( *$1 );}
@@ -86,6 +83,8 @@
 
 %typemap(out) float &, const float &, double &, const double &
   {$result = SWIG_FromDouble( *$1 );}
+
+#endif // SWIGPYTHON
 
 
 

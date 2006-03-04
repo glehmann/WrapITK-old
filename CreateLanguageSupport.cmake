@@ -467,3 +467,16 @@ MACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG outdir)
       @ONLY IMMEDIATE)
   ENDIF(CMAKE_CONFIGURATION_TYPES)
 ENDMACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG)
+
+
+
+###############################################################################
+# Typemap macros for tcl
+
+
+MACRO(ADD_TCL_TYPEMAP simple_name cpp_name swig_name template_params)
+  # write me
+ENDMACRO(ADD_TCL_TYPEMAP)
+
+
+

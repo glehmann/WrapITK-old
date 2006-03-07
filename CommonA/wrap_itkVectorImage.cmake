@@ -1,3 +1,3 @@
 WRAP_CLASS("itk::VectorImage" POINTER_WITH_SUPERCLASS)
-#   SET(WRAPPER_TEMPLATES "${itk_Wrap_VectorImage}")
+  SET(WRAPPER_TEMPLATES "${itk_Wrap_VectorImage}")
 END_WRAP_CLASS()

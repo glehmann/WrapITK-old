@@ -7,7 +7,9 @@ SET(WRAPPER_LIBRARY_GROUPS
     itkVector
     itkPoint
     itkRGBPixel
+    itkVariableLengthVector
     itkImage
+    itkVectorImage
     itkLevelSet
     itkDefaultStaticMeshTraits
     ITKCommonBase

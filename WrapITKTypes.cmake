@@ -121,6 +121,30 @@ WRAP_TYPE("Image" "I")
 END_WRAP_TYPE()
 SET(itk_Wrap_Image ${WRAPPER_TEMPLATES})
 
+WRAP_TYPE("VectorImage" "VI")
+  # Make a list of all of the selected image pixel types and also uchar 
+  # (for 8-bit image output)
+  UNIQUE(wrap_image_types "${WRAP_ITK_SCALAR};UC")
+  
+  FOREACH(d ${WRAP_ITK_DIMS})
+    FOREACH(type ${wrap_image_types})
+      WRAP_TEMPLATE("${ITKM_${type}}${d}"  "${ITKT_${type}},${d}")
+    ENDFOREACH(type)
+  ENDFOREACH(d)
+END_WRAP_TYPE()
+SET(itk_Wrap_VectorImage ${WRAPPER_TEMPLATES})
+
+WRAP_TYPE("VariableLengthVector" "VLV")
+  # Make a list of all of the selected image pixel types and also uchar 
+  # (for 8-bit image output)
+  UNIQUE(wrap_image_types "${WRAP_ITK_SCALAR};UC")
+  
+  FOREACH(type ${wrap_image_types})
+    WRAP_TEMPLATE("${ITKM_${type}}"  "${ITKT_${type}}")
+  ENDFOREACH(type)
+END_WRAP_TYPE()
+SET(itk_Wrap_VariableLengthVector ${WRAPPER_TEMPLATES})
+
 WRAP_TYPE("Point" "P")
   FOREACH(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("${ITKM_F}${d}"  "${ITKT_F},${d}")
@@ -169,6 +193,8 @@ SET(WRAPPER_DEFAULT_INCLUDE
   "itkFixedArray.h"
   "itkRGBPixel.h"
   "itkImage.h"
+  "itkVectorImage.h"
+  "itkVariableLengthVector.h"
   "itkPoint.h"
   "itkLevelSet.h"
   "itkBinaryBallStructuringElement.h"

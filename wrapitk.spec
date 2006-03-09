@@ -4,7 +4,7 @@
 Summary:	Extended language support for ITK
 Name:		wrapitk
 Version:	0.1
-Release:	%mkrel 0.13022006.1
+Release:	%mkrel 0.20060306.1
 License:	BSDish
 Group:		Sciences/Other
 URL:		http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK
@@ -22,6 +22,7 @@ BuildRequires:  ghostscript
 BuildRequires:  ImageMagick
 BuildRequires:	vtk-devel >= 5.0
 BuildRequires:	python-vtk >= 5.0
+BuildRequires:	doxygen
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -127,22 +128,20 @@ mkdir build
 (
 cd build
 
-cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
+cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_libdir}/InsightToolkit/WrapITK \
       -DCMAKE_BUILD_TYPE:STRING=Release \
       -DCMAKE_SKIP_RPATH:BOOL=ON \
       -DCableSwig_DIR:PATH=%{_prefix}/lib/CableSwig \
       -DWRAP_ITK_PYTHON:BOOL=ON \
       -DWRAP_unsigned_char:BOOL=ON \
-      -DWRAP_ITK_INSTALL_LOCATION:PATH=/%{_lib}/InsightToolkit/WrapITK \
+      -DDOXYGEN_MAN_PATH:PATH=%{_mandir}/man3 \
       ..
 
-# workaround a bug which broke typemaps
-cmake .
-
-make
 make
 )
 
+export LD_LIBRARY_PATH=`pwd`/build/bin:$LD_LIBRARY_PATH
+export PYTHONPATH=`pwd`/build/Python:`pwd`/Python:$PYTHONPATH
 
 # build the article
 (
@@ -150,9 +149,15 @@ cd article
 make
 )
 
-# build the external projects
-%define wrapitk_path %(pwd)/build
+# build the doc
+(
+cd build/Python
+mkdir -p doc
+python make_doxygen_config.py doc
+doxygen doxygen.config
+)
 
+# build the external projects
 (
 cd ExternalProjects/PyBuffer/
 mkdir build
@@ -163,12 +168,9 @@ cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
       -DCMAKE_BUILD_TYPE:STRING=Release \
       -DCMAKE_SKIP_RPATH:BOOL=ON \
       -DCableSwig_DIR:PATH=%{_prefix}/lib/CableSwig \
-      -DWrapITK_DIR:PATH=%{wrapitk_path} \
+      -DWrapITK_DIR:PATH=`pwd`/../../../build \
       ..
 
-cmake .
-
-make
 make
 )
 )
@@ -183,13 +185,10 @@ cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
       -DCMAKE_BUILD_TYPE:STRING=Release \
       -DCMAKE_SKIP_RPATH:BOOL=ON \
       -DCableSwig_DIR:PATH=%{_prefix}/lib/CableSwig \
-      -DWrapITK_DIR:PATH=%{wrapitk_path} \
+      -DWrapITK_DIR:PATH=`pwd`/../../../build \
       -DBUILD_WRAPPERS:BOOL=ON \
       ..
 
-cmake .
-
-make
 make
 )
 )
@@ -206,11 +205,23 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 # workaround not found library
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/ld.so.conf.d/
-echo %{_libdir}/InsightToolkit/WrapITK/lib >> $RPM_BUILD_ROOT/%{_sysconfdir}/ld.so.conf.d/python-itk.conf
+echo %{_libdir}/InsightToolkit/WrapITK/Python-SWIG >> $RPM_BUILD_ROOT/%{_sysconfdir}/ld.so.conf.d/python-itk.conf
+
+# install doc
+mkdir -p $RPM_BUILD_ROOT/%{_mandir}
+cp -r build/Python/doc/man3 $RPM_BUILD_ROOT/%{_mandir}
+rm -f $RPM_BUILD_ROOT/%{_mandir}/man3/todo.3
+rm -f $RPM_BUILD_ROOT/%{_mandir}/man3/itkBSplineDecompositionImageFilter.3
+rm -f $RPM_BUILD_ROOT/%{_mandir}/man3/deprecated.3
+rm -f $RPM_BUILD_ROOT/%{_mandir}/man3/BSplineUpsampleImageFilterBase.3
+
+
+export LD_LIBRARY_PATH=`pwd`/build/bin:$LD_LIBRARY_PATH
+export PYTHONPATH=`pwd`/build/Python:`pwd`/Python:$PYTHONPATH
+
 
 # install the external projects
 (
-echo `pwd`
 cd ExternalProjects/PyBuffer/build
 make install DESTDIR=$RPM_BUILD_ROOT
 )
@@ -218,8 +229,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 (
 cd ExternalProjects/ItkVtkGlue/build
 make install DESTDIR=$RPM_BUILD_ROOT
-# copy missing file
-cp ../Wrapping/Python/itkvtk.py $RPM_BUILD_ROOT/%{_libdir}/InsightToolkit/WrapITK/Python
 )
 
 %check
@@ -254,9 +263,9 @@ rm -rf $RPM_BUILD_ROOT
 %files -n python-itk
 %defattr(0644,root,root,0755)
 %{_libdir}/InsightToolkit/WrapITK/Python*
-%{_libdir}/InsightToolkit/WrapITK/lib/*Python*
 %{_libdir}/python%{pyver}/site-packages/WrapITK.pth
 %{_sysconfdir}/ld.so.conf.d/python-itk.conf
+%{_mandir}/man*/*
 # exclude numarray files
 %exclude %{_libdir}/InsightToolkit/WrapITK/ClassIndex/BufferConversion.mdx
 %exclude %{_libdir}/InsightToolkit/WrapITK/ClassIndex/wrap_BufferConversionPython.idx
@@ -303,6 +312,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/InsightToolkit/WrapITK/ClassIndex/wrap_itkImageToVTKImageFilter.idx
 %{_libdir}/InsightToolkit/WrapITK/ClassIndex/wrap_itkVTKImageToImageFilter.idx
 %{_libdir}/InsightToolkit/WrapITK/Python/ItkVtkGlue.py
+%{_libdir}/InsightToolkit/WrapITK/Python/itkvtk.py
 %{_libdir}/InsightToolkit/WrapITK/Python-SWIG/ItkVtkGluePython.py
 %{_libdir}/InsightToolkit/WrapITK/Python-SWIG/itkImageToVTKImageFilter.py
 %{_libdir}/InsightToolkit/WrapITK/Python-SWIG/itkVTKImageToImageFilter.py

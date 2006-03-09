@@ -221,7 +221,8 @@ floating point types (e.g. double or float) in ccmake. Thus, the ccmake
 configuration specifies the maximum possible range of image and filter types to
 be created, and each filter is wrapped for some subset of that range. 
 
-Note that you should always build your project outside the source tree.
+Project should always be built outside the source directory, in a \veb$build$
+directory for example.
 
     \subsubsection{Install WrapITK or use it in the build tree}
 
@@ -241,9 +242,6 @@ If WrapITK has not been installed, then you will either need to set the
 \verb$/path-to-WrapITK-build/Python$, add  this path to \verb$sys.paths$ within python, or
 start python from that directory. After this, \verb$import itk$ will work
 properly.
-
-
-TODO: alternatively, the submodules may be imported
 
      \subsubsection{Template usage}
 Most class in the itk python module are "template proxy classes" that
@@ -275,12 +273,11 @@ A more convenient syntaxe for usage in interpreter is also available:
   \item \verb$itk.Image.US3$
 \end{itemize}
 \verb$itk.Image.UC3$ refere to the same class than \verb$itk.Image[itk.UC, 3]$
-but have the advantage to allow the usage of tab completion in the interpreter,
+but have the advantage to allow to use the tab-completion in the interpreter,
 and so let the user easily know which template arguments he can use.
 However, this notation is more rigid than the one above and won't let the user
-specify the type and the type and the dimension used in a single place, and thus,
+specify the type and the dimension used in a single place, and thus,
 should be use only in interpreter.
-
 
 Filters templated on images can be similarly accessed:
 \begin{itemize}
@@ -291,7 +288,7 @@ Filters templated on images can be similarly accessed:
   \item or even with an instance of the class used as template parameter: \verb$itk.ImageFileReader[image]$.
 \end{itemize}
 This makes it easy to write generic routines which
-can deal with any input image type. For example, an function which take an image
+can deal with any input image type. For example, anfunction which take an image
 as parameter and write it to a file without having to give the image type can be:
 \begin{verbatim}
 def write( image, fileName ) :
@@ -300,6 +297,7 @@ def write( image, fileName ) :
     writer.SetInput( image )
     writer.Update()
 \end{verbatim}
+
 
      \subsubsection{The {\em New()} method}
 
@@ -321,8 +319,8 @@ or even
 \begin{verbatim}
 adder = itk.AddImageFilter[...].New( readerA, readerB )
 \end{verbatim}
-In that case, \verb$New$ will use the \verb$GetOutput()$ of the object if it
-exist to get the image, and the inputs of the new filter.
+In that case, \verb$New$ will use the \verb$GetOutput()$ method of the object, if it
+exist, to get the image and set the inputs of the new filter.
 
   \item Additionally, keyword arguments are allowed as well. Keyword arguments cause
 the corresponding \verb$Set...$ method to be called, so you could write the
@@ -369,7 +367,7 @@ is unsafe. The following code is executed, and can lead to a segmentation fault.
 16> radius.SetElement(1000, 5)
 \end{verbatim}.
 
-A more safe and convenient way to do that, if you have installed the optional patch,
+A more safe and convenient way to do that, if you have installed the optional patches,
 is to use the standard python list interface.
 
 \begin{verbatim}
@@ -396,7 +394,7 @@ itk::ERROR: Size: index out of range
 Even if it's a safe method, it is still not really convenient.
 
 Instead of using \verb$Size$ object, it is possible to use python sequences, like lists
-and tuple.
+and tuples.
 
 \begin{verbatim}
 21> median.SetRadius([3, 5])
@@ -541,7 +539,7 @@ attribute is often not what the user want with ITK. \verb$itk.class_$ is a conve
 function to get the class of an ITK object.
 
 Note that it is called \verb$class_$ and not \verb$class$, because \verb$class$ is a
-reseved word in python.
+reserved word in python.
 
 Example:
 \begin{verbatim}
@@ -683,13 +681,13 @@ template instances.
 WrapITK define several macros and variable designed to:
 \begin{itemize}
   \item make creation of wrappers easy. The syntax is simple enough to get in quickely.
-  \item make wchoice of template arguments explicit. It should be easy to understand
+  \item make choice of template arguments explicit. It should be easy to understand
 the idea of the author of a wrapper by reading the file.
   \item support mostly transparently the dimensions and types chosen by the user.
 \end{itemize}
 
 The most common case should be to create a new wrapper for a simple image filter, like 
-\verb$MedianImageFilter$. Let see that example in detail.
+\verb$MedianImageFilter$. Let see that example in details.
 
 Here is the \verb$BasicFiltersB/wrap_itkMedianImageFilter.cmake$ file:
 
@@ -708,8 +706,10 @@ must be fully qualified. The option \verb$POINTER$ indicate that the object of t
 manipulated with a \verb$SmartPointer$, and that the \verb$SmartPointer$ specialization for
 the class \verb$itk::MedianImageFilter$ must be created.
 
-Then, several \verb$WRAP_IMAGE_FILTER_*$ macros are called. They are convenient macro which create
-a set of template argument.
+Then, several \verb$WRAP_IMAGE_FILTER_*$ macros are called. They are convenient macro to
+create wrapper for classes which take only image types as template arguments. The parameter,
+here \verb$2$, give the number of required template arguments. The two image types used as
+template parameter are the same.
 
 All of the available directives are defined and documented
 in \verb$CreateCableSwigInputs.cmake$. The basics are presented here:

@@ -52,20 +52,10 @@ def size(imageOrFilter) :
   return img.GetLargestPossibleRegion().GetSize()
   
 # return a structuring elt
-def strel(imageClass, radius=1) :
-  # be sure to have an image class
-  imageClass = image(imageClass)
-  imageClass = class_(imageClass)
-  (tpl, param) = template(imageClass)
-  if tpl != Image :
-    raise ValueError, "imageClass must be an Image class or object"
-  
-  # create the structuring element
-  (pType, dim) = param
-  st = BinaryBallStructuringElement[pType, dim]()
+def strel(dim, radius=1) :
+  st = BinaryBallStructuringElement[B, dim]()
   st.SetRadius(radius)
-    
-  # finally, call the boring CreateStructuringElement() method
+  # call the boring CreateStructuringElement() method
   st.CreateStructuringElement()
   return st
   

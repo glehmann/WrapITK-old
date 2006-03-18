@@ -1,15 +1,24 @@
-This dir contains patchs to apply to the ITK sources.
-- patchs in 'required' dir are required to build the wrappers and should be
-integrated in future ITK releases
-- patches in 'optional' are not required but highly recommended because they
-brings new functionnalities to the wrappers
+Patches in the 'old_itk_compatibility' directory are *required* for
+WrapITK to work with versions of ITK lower than 2.6. The 
+'old_itk_compatibility' patches have all been incorporated into ITK
+version 2.6.
 
-To apply the patches, go in the ITK installation dir and do something like
+Patches in the 'python_interface' directory provide optional python
+language abilities, such as the ability to treat Index, Point, (etc.)
+values as python sequences, the ability to see decent representations
+of many common objects with __repr__ (and 'print'), and the ability
+to increment iterators.
 
-  cat /home/gaetan/src/WrapITK/patch/required/* | patch -p3
+To apply these patch files, go to the 'Code' 
+directory in the ITK source or build tree, or to the
+'InsightToolkit' directory in the install tree (depending on
+where you want to install the patches).
 
-for the required patches, and 
+Once you are in that directory, run the following commands,
+depending on which patch sets you wish/need to apply:
 
-  cat /home/gaetan/src/WrapITK/patch/optional/* | patch -p3
-  
-for the optional patches.
+cat path/to/patch/old_itk_compatibility/* > patch -p3
+cat path/to/patch/python_interface/* > patch -p1
+
+(where 'path/to' is replaced with the actual path
+to this 'patch' directory).

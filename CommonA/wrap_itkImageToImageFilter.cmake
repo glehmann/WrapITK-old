@@ -28,6 +28,26 @@ WRAP_CLASS("itk::ImageToImageFilter" POINTER)
     WRAP_IMAGE_FILTER_TYPES(US RGBUS)
   ENDIF(WRAP_rgb_unsigned_short AND WRAP_unsigned_short)
   
+  # VectorImage <-> scalar
+  UNIQUE(to_types "UC;${WRAP_ITK_SCALAR}")
+    FOREACH(d ${WRAP_ITK_DIMS})
+      FOREACH(t ${to_types})
+        WRAP_TEMPLATE("${ITKM_VI${t}${d}}${ITKM_I${t}${d}}" "${ITKT_VI${t}${d}},${ITKT_I${t}${d}}")
+        WRAP_TEMPLATE("${ITKM_I${t}${d}}${ITKM_VI${t}${d}}" "${ITKT_I${t}${d}},${ITKT_VI${t}${d}}")
+      ENDFOREACH(t)
+    ENDFOREACH(d)
+      
+  # Vector <-> scalar
+  IF(WRAP_vector_double AND WRAP_double)
+    WRAP_IMAGE_FILTER_TYPES(VD D)
+    WRAP_IMAGE_FILTER_TYPES(D VD)
+  ENDIF(WRAP_vector_double AND WRAP_double)
+		    
+  IF(WRAP_vector_float AND WRAP_float)
+    WRAP_IMAGE_FILTER_TYPES(VF F)
+    WRAP_IMAGE_FILTER_TYPES(F VF)
+  ENDIF(WRAP_vector_float AND WRAP_float)
+				
   # Wrap dim=3 -> dim=2, dim=3 -> dim=2, etc.
   FOREACH(d ${WRAP_ITK_DIMS})    
     FOREACH(d2 ${WRAP_ITK_DIMS})

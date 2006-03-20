@@ -56,16 +56,14 @@ assert itk.image(1) == 1
 # test strel
 # should work with the image type, an image instance or a filter
 # and should work with a list, a tuple, an int or an itk.Size
-for t in [IType, reader, reader.GetOutput(), reader.GetOutput().GetPointer()] :
-  for s in [2, (2, 2), [2, 2], itk.Size[2](2)] :
-    st = itk.strel(t, s)
-    
-    (tpl, param) = itk.template(st)
-    assert tpl == itk.BinaryBallStructuringElement
-    assert param[0] == PType
-    assert param[1] == dim
-    assert st.GetRadius().GetElement(0) == st.GetRadius().GetElement(1) == 2
-
+for s in [2, (2, 2), [2, 2], itk.Size[2](2)] :
+  st = itk.strel(dim, s)
+  
+  (tpl, param) = itk.template(st)
+  assert tpl == itk.BinaryBallStructuringElement
+  assert param[0] == itk.B
+  assert param[1] == dim
+  assert st.GetRadius().GetElement(0) == st.GetRadius().GetElement(1) == 2
 
 # test size
 s = itk.size(reader)

@@ -1,4 +1,6 @@
-INTERSECTION(interpolator_types "F;US" "${WRAP_ITK_SCALAR}")
+# why keep only float and unsigned short ?
+# INTERSECTION(interpolator_types "F;US" "${WRAP_ITK_SCALAR}")
+SET(interpolator_types "${WRAP_ITK_SCALAR}")
 
 WRAP_CLASS("itk::InterpolateImageFunction" POINTER)
   FOREACH(d ${WRAP_ITK_DIMS})

@@ -225,7 +225,10 @@ class itkTemplate(object):
         import commands
         doxyname = self.__name__.replace("::", "_")
         man_path = "%s/man3/%s.3" %(itkTemplate.__doxygen_root__, doxyname)
-        if os.path.exists(man_path):
+        bzman_path = "%s/man3/%s.3.bz2" %(itkTemplate.__doxygen_root__, doxyname)
+        if os.path.exists(bzman_path):
+	    return commands.getoutput("bunzip2 --stdout '"+bzman_path+"' | groff -mandoc -Tascii -c")
+        elif os.path.exists(man_path):
           # Use groff here instead of man because man dies when it is passed paths with spaces (!)
           # groff does not.
           return commands.getoutput("groff -mandoc -Tascii -c '" + man_path +"'")

@@ -134,7 +134,7 @@ cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_libdir}/InsightToolkit/WrapITK \
       -DCableSwig_DIR:PATH=%{_prefix}/lib/CableSwig \
       -DWRAP_ITK_PYTHON:BOOL=ON \
       -DWRAP_unsigned_char:BOOL=ON \
-      -DDOXYGEN_MAN_PATH:PATH=%{_mandir}/man3 \
+      -DDOXYGEN_MAN_PATH:PATH=%{_mandir} \
       ..
 
 make

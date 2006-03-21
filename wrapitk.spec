@@ -4,7 +4,7 @@
 Summary:	Extended language support for ITK
 Name:		wrapitk
 Version:	0.1
-Release:	%mkrel 0.20060306.1
+Release:	%mkrel 0.20060320.1
 License:	BSDish
 Group:		Sciences/Other
 URL:		http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK
@@ -240,6 +240,7 @@ export LD_LIBRARY_PATH=`pwd`/build/bin:$LD_LIBRARY_PATH
 python Python/Tests/typemaps.py
 python Python/Tests/template.py
 python Python/Tests/itk-functions.py images/cthead1.png out.png
+python Python/Tests/module2module.py images/cthead1.png
 
 # tests the simple pipeline with differents iamge types
 python Python/Tests/simple_pipeline.py "unsigned char" 2 images/cthead1.png out.png
@@ -249,7 +250,6 @@ python Python/Tests/simple_pipeline.py "float" 2 images/cthead1.png out.img
 python Python/Tests/simple_pipeline.py "unsigned char" 3 images/cthead1.png out.png
 python Python/Tests/simple_pipeline.py "unsigned short" 3 images/cthead1.png out.png
 python Python/Tests/simple_pipeline.py "float" 3 images/cthead1.png out.img
-
 
 %clean
 rm -rf $RPM_BUILD_ROOT

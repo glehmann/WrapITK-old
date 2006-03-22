@@ -858,11 +858,28 @@ directory.
 
   \subsection{Contributing to WrapITK}
 
-- test
-- Work on tcl, java, and others
-- add more classes
+WrapITK is an opensource project, and so all contributions are welcome. Here are
+some points which requires special attention:
+\begin{itemize}
+  \item Test it and report problem. That's the more important thing to do:
+we need feedbacks to enhance WrapITK quality !
+  \item Work on tcl, java, and others. We are not tcl or java developers, and so
+are not able to complete the work for those languages. Any help from tcl and
+java expert would be highly appreciated. Also, there is no reason to be limited
+to python, tcl and java, and WrapITK can be extended to other languages supported
+by swig like perl, ruby, ocaml and others.
+  \item Add more classes. WrapITK add lots of new classes compared to the current
+wrapping system, but there is still lots of work to do, especially to support more
+filter dedicated to \verb$Vector$ pixels.
+\end{itemize}
 
-talk about darcs
+\verb$darcs$ allow to easily contribute to WrapITK, by sending patch by email with
+the command \verb$darcs send$, while keeping credits for the work done.
+Feel free to send patches; they will be tested and integrated in the project.
+
+A web interface (\url{http://auriga.wearlab.de/~alb/darcsweb/}) for the WrapITK darcs
+repository is available at \url{http://voxel.jouy.inra.fr/darcsweb/}.
+
 
 \section{Acknowledgments}
 

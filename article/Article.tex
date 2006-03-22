@@ -57,11 +57,11 @@ colorlinks,linkcolor={blue},citecolor={blue},urlcolor={blue},
 
 \begin{abstract}
 \noindent
-ITK is a huge image analysis library, which contains lots of state of the arts
+ITK \cite{ITKWebSite} is a huge image analysis library, which contains lots of state of the arts
 algorithms implementations. However, using it in C++ can be difficult and is
 definitively bad suited for prototyping. WrapITK aims to allow classes from ITK
 (and custom, classes that interact with ITK) to be "wrapped" for use with
-languages like Python, Tcl, and Java.
+languages like Python \cite{PythonWebSite}, Tcl \cite{TclWebSite}, and Java \cite{JavaWebSite}.
 \end{abstract}
 
 \tableofcontents
@@ -70,9 +70,11 @@ languages like Python, Tcl, and Java.
 
 WrapITK is a project designed to allow classes from ITK (and custom, classes
 that interact with ITK) to be "wrapped" for use with languages like
-Python, Tcl, and Java.
+Python \cite{PythonWebSite}, Tcl \cite{TclWebSite}, and Java \cite{JavaWebSite}.
 
-Note that ITK already has a wrapping infrastructure. This project aims to be
+Note that ITK already has a wrapping infrastructure, and that WrapITK is based
+on it, and use the same tools: CMake \cite{CMakeWebSite}, GCC-XML \cite{GccxmlWebsite}
+and CableSwig \cite{CableSwigWebSite}. This project aims to be
 address the following deficits of the existing wrappers (and others):
 \begin{itemize}
   \item  ITK is a huge library, but only a small number of classes are available
@@ -139,7 +141,7 @@ To get the last version from the darcs repository can be obtained
 with the command 
 \verb$darcs get http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/$.
 
-For the user which don't want to use darcs but want the last development version,
+For the user which don't want to use darcs \cite{DarcsWebSite} but want the last development version,
 a nightly updated archive is available at
 \url{http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/WrapITK.tar.gz}.
 
@@ -537,8 +539,8 @@ itkMedianImageFilterIF2IF2: 0.109990
 \end{verbatim}
 is displayed on the standard output. 
 While prototyping, it is a convenient way for the user to know if
-the execution time will be short or if he can do something more useful than waiting
-for the filter to complete (like having a cup of tea).
+the execution time will be short or if he can do something more useful
+\footnote{like having a cup of tea} than waiting for the filter to complete.
 
   \item \verb$itk.class_( object )$ return the class of an object. The \verb$__class__$
 attribute is often not what the user want with ITK. \verb$itk.class_$ is a convenient
@@ -990,17 +992,17 @@ we need feedbacks to enhance WrapITK quality !
 are not able to complete the work for those languages. Any help from tcl and
 java expert would be highly appreciated. Also, there is no reason to be limited
 to python, tcl and java, and WrapITK can be extended to other languages supported
-by swig like perl, ruby, ocaml and others.
+by swig like perl \cite{PerlWebSite}, ruby \cite{RubyWebSite}, ocaml \cite{OcamlWebSite} and others.
   \item Add more classes. WrapITK add lots of new classes compared to the current
 wrapping system, but there is still lots of work to do, especially to support more
 filter dedicated to \verb$Vector$ pixels.
 \end{itemize}
 
-\verb$darcs$ allow to easily contribute to WrapITK, by sending patch by email with
+\verb$darcs$ \cite{DarcsWebSite} allow to easily contribute to WrapITK, by sending patch by email with
 the command \verb$darcs send$, while keeping credits for the work done.
 Feel free to send patches; they will be tested and integrated in the project.
 
-A web interface (\url{http://auriga.wearlab.de/~alb/darcsweb/}) for the WrapITK darcs
+A web interface \cite{DarcswebWebSite} for the WrapITK's darcs
 repository is available at \url{http://voxel.jouy.inra.fr/darcsweb/}.
 
 
@@ -1027,38 +1029,12 @@ will soon be extended to tcl and java.
 
 
 
-% \url{http://www.itk.org}
-% \code{Insight/Documentation/Style.pdf}
-% \section{Principles of Solar Spot Detection}
-% \cite{ITKSoftwareGuide}.
-% \doxygen{ImageToImageFilter}
-
-% \small \begin{verbatim}
-% \end{verbatim} \normalsize
-
-
-% The {itemize} environment uses a bullet for each \item.  If you want the 
-% \item's numbered, use the {enumerate} environment instead.
-% \begin{itemize}
-%   \item  Insight Toolkit 2.4.
-%   \item  CMake 2.2
-% \end{itemize}
-
-% \ref{cthead1}
-
-% \begin{figure}[htbp]
-% \centering
-% \includegraphics{cthead1}
-% \caption{The input image.\label{cthead1}}
-% \end{figure}
-
-
 \appendix
 
 
 
 \bibliographystyle{plain}
-\bibliography{InsightJournal}
+\bibliography{Article,InsightJournal}
 \nocite{ITKSoftwareGuide}
 
 \end{document}

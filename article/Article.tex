@@ -522,7 +522,11 @@ can be called with a 3D image as parameter to show the image slice by slice.
 \caption{A screenshot of WrapITK in action with python.\label{screenshot}}
 \end{figure}
 
-  \item \verb$itk.strel$
+  \item \verb$itk.strel( d, s )$ is used to create a binary ball structuring of dimension
+\verb$d$ and size \verb$s$. Strucutring element support is quite bad currently in WrapITK
+and should change in the future. Using \verb$itk.strel$ rather than creating a
+\verb$BinaryBallStructuringElement$ directly is recommended to have backward compatibility
+when the structuring element type will be changed.
 
   \item \verb$itk.auto_progress( b )$ is used to automatically add a progress report
 to all the newly created filters. \verb$b$ must be \verb$True$ or \verb$False$. If

@@ -721,10 +721,7 @@ All of the available directives are defined and documented
 in \verb$CreateCableSwigInputs.cmake$. The basics are presented here:
 
 \begin{itemize}
-  \item \verb$WRAP_INCLUDE("header.h")$ -- causes the named header to be \verb$#included$ in the
-generated files. 
-
-  \item \verb$WRAP_CLASS("fully_qualified::ClassName" [POINTER|POINTER_WITH_SUPERCLASS])$ --
+  \item \verb$WRAP_CLASS("fully_qualified::ClassName" [POINTER|POINTER_WITH_SUPERCLASS])$
 causes a templated class to be wrapped. All namespaces must be included in the
 class name, and note that no template instantiation is given. Template
 instantiations are created with various \verb$WRAP$ directives, described below,
@@ -744,7 +741,18 @@ things won't work. This is always the case for ITK-style code.) If
 ITK-style code where the class has a typedef'd \verb$Superclass$, and the superclass
 has \verb$Self$ and \verb$Pointer$ typedefs.)
 
-  \item \verb$WRAP_TEMPLATE("mangled_suffix" "template parameters")$ -- When issued between \verb$WRAP_CLASS$
+  \item \verb$END_WRAP_CLASS()$ -- end a block of template instantiations for a particular
+class.
+
+  \item \verb$WRAP_INCLUDE("header.h")$. By default, \verb$itkMedianImageFilter.h$ is included
+when the  causes the \verb$itk::MedianImageFilter$ is wrapped, and this behavior is most of the
+time enough. If it not enough, this macro can be used to include some specific files.
+
+  \item \verb$WRAPPER_AUTO_INCLUDE_HEADERS$. This variable is set to \verb$ON$ by default, but can
+be set to \verb$OFF$ to disable the auto include feature. This feature should be used when several
+classes to wrap come from the same header file.
+
+  \item \verb$WRAP_TEMPLATE("mangled_suffix" "template parameters")$. When issued between \verb$WRAP_CLASS$
 and \verb$END_WRAP_CLASS$, this command causes a particular template instantiation of
 the current class to be wrapped. The parameter \verb$mangled_suffix$ is a suffix to
 append to the class's name that uniquely identifies this particular template
@@ -753,32 +761,147 @@ template instantiation brackets. (Do not include the brackets.) If you are
 wrapping a filter, there are simpler macros to use, which are defined at the
 bottom of \verb$CreateCableSwigInputs$ and described below.
 
-  \item \verb$WRAP_TEMPLATE_IF_TYPES("mangled_suffix" "template parameters" "type list")$
+  \item \verb$WRAP_NON_TEMPLATE_CLASS("fully_qualified::ClassName" [POINTER|POINTER_WITH_SUPERCLASS])$.
+Same as \verb$WRAP_CLASS$, but creates a wrapper
+for a non-templated class. No \verb$END_WRAP_CLASS()$ is necessary after this macro
+because there is no block of template instantiating commands to close.
 
-  \item \verb$WRAP_type(size)$ (where 'type' is \verb$INT$, \verb$SIGN_INT$, \verb$REAL$, \verb$VECTOR_REAL$,
-\verb$COV_VECTOR_REAL$ or \verb$RGB$) -- create a template instantiation with 'size'
+\end{itemize}
+
+WrapITK define some lists which group the types and dimensions. Those list can be used
+by the developer to create a wrappers but must {\em never} be modified.
+
+\begin{itemize}
+  \item \verb$WRAP_ITK_DIMS$ contains all the dimensions selected by the user.
+
+  \item \verb$WRAP_ITK_INT$ contains all unsigned integer types selected by the user.
+
+  \item \verb$WRAP_ITK_SIGN_INT$ contains all signed integer types selected by the user.
+
+  \item \verb$WRAP_ITK_INTEGRAL$ contains all signed and unsigned integral types
+selected by the user.
+
+  \item \verb$WRAP_ITK_REAL$ contains all the real types selected by the user.
+
+  \item \verb$WRAP_ITK_SCALAR$ contains all the scalar types selected by the user.
+
+  \item \verb$WRAP_ITK_RGB$ contains all the \verb$RGB$ types selected by the user.
+
+  \item \verb$WRAP_ITK_VECTOR_REAL$ contains all the \verb$Vector$ types selected
+by the user.
+
+  \item \verb$WRAP_ITK_COV_VECTOR_REAL$ contains all the \verb$CovariantVector$ types selected
+by the user.
+
+  \item \verb$WRAP_ITK_VECTOR$ contains all the \verb$Vector$ and 
+\verb$CovariantVector$ types selected by the user.
+
+  \item \verb$WRAP_ITK_ALL_TYPES$ contains all the types selected byt the user.
+
+  \item \verb$SMALLER_THAN_D$ contains all the types "smaller" than \verb$double$
+selected by the user. This variable is useful when a filter decrease the range
+of pixel value, like \verb$BinaryThresholdImageFilter$.
+
+  \item \verb$SMALLER_THAN_UL$ contains all the types "smaller" than \verb$unsigned long$
+selected by the user.
+
+  \item \verb$SMALLER_THAN_US$ contains all the types "smaller" than \verb$unsigned short$
+selected by the user.
+
+  \item \verb$SMALLER_THAN_SL$ contains all the types "smaller" than \verb$signed long$
+selected by the user.
+
+  \item \verb$SMALLER_THAN_SS$ contains all the types "smaller" than \verb$signed short$
+selected by the user.
+
+\end{itemize}
+
+WrapITK provides some macros to manipulate those list and use them
+to create the wrappers. Most of those macros are there to fill a lack
+of feature to manipulate lists in CMake, and should be replaced by
+some CMake native commands in the future.
+
+\begin{itemize}
+  \item \verb$UNIQUE()$
+
+  \item \verb$SORT()$
+
+  \item \verb$INTERSECTION()$
+
+  \item \verb$FILTER()$
+
+  \item \verb$FILTER_DIMS()$
+
+  \item \verb$INCREMENT()$
+
+  \item \verb$DECREMENT()$
+
+\end{itemize}
+
+
+Some convenient macros are available to wrap image filters.
+
+\begin{itemize}
+
+  \item \verb$WRAP_IMAGE_FILTER_type(size)$ . \verb$type$ can be one of:
+  \begin{itemize}
+    \item \verb$INT$
+    \item \verb$SIGN_INT$
+    \item \verb$REAL$
+    \item \verb$VECTOR_REAL$
+    \item \verb$COV_VECTOR_REAL$
+    \item \verb$RGB$
+    \item \verb$ALL$
+    \item \verb$SCALAR$
+    \item \verb$VECTOR$
+  \end{itemize}
+
+ This macro create a template instantiation with \verb$size$
 \verb$itk::Image$ parameters of the given pixel type. So if you are wrapping a filter
 which should take two images with integral pixel types, write \verb$WRAP_IMAGE_FILTER_INT(2)$. The
 specific integral data type(s) (\verb$char$, \verb$long$, or \verb$short$ in the \verb$WRAP_IMAGE_FILTER_INT$ case) will
 be determined by the user-selected build parameters (e.g. \verb$WRAP_long$, and
-\verb$WRAP_short$). 
+\verb$WRAP_short$).
 
-  \item \verb$WRAP_type_DIMS(size dims)$ (with \verb$type$ as above) -- Wrap a filter for certain
-dimensions only. Dims should be either a semicolon-separated list of valid
-dimensions, or something of the form \verb$'3+'$ to specify that the filter can be
-instantiated only for three- and higher-dimensional images. Note that if the
-user has not selected to wrap a given dimension at build time, a filter wrapped
-with \verb$WRAP_type_DIMS$ will not be instantiated: the final dimensions wrapped are
-the {/em intersection} of the user-selected dimensions and the valid dimensions
-declared with \verb$WRAP_type_DIMS$.
+  \item \verb$WRAP_IMAGE_FILTER(param_types param_count)$ is a more general
+macro for wrapping image filters that need one or more image parameters of the
+same type. The first parameter to this macro is a list of image pixel types for
+which filter instantiations should be created. The second is a \verb$param_count$
+parameter which controls how many image template parameters are created (see
+above). The optional third parameter is a dimensionality condition (see above
+also).
 
-  \item \verb$END_WRAP_CLASS()$ -- end a block of template instantiations for a particular
-class.
+E.g. \verb@WRAP_IMAGE_FILTER("${WRAP_ITK_ALL}" 2)@ will create template instantiations
+of the filter for every pixel type that the user has selected.
 
-  \item \verb$WRAP_NON_TEMPLATE_CLASS("fully_qualified::ClassName" [POINTER|POINTER_WITH_SUPERCLASS])$
- -- Same as \verb$WRAP_CLASS$, but creates a wrapper
-for a non-templated class. No \verb$END_WRAP_CLASS()$ is necessary after this macro
-because there is no block of template instantiating commands to close.
+
+  \item \verb$WRAP_IMAGE_FILTER_TYPES()$. Creates template instantiations of the
+current image filter, for all the dimensions selected by the user (or dimensions
+selected by the user that meet the optional dimensionality condition). This
+macro takes a variable number of arguments, which should correspond to the image
+pixel types of the images in the filter's template parameter list. The optional
+dimensionality condition should be  placed in the last parameter.
+
+  \item \verb$WRAP_IMAGE_FILTER_COMBINATIONS()$ takes a variable number of
+parameters. Each parameter is a list of image pixel types. Filter instantiations
+are created for every combination of different pixel types in different
+parameters. A dimensionality condition may be optionally specified as the first
+parameter. E.g. \verb$WRAP_IMAGE_FILTER_COMBINATIONS("UC;US" "UC;US")$ will
+create: \verb$filter<itk::Image<unsigned char, d>, itk::Image<unsigned char, d> >$,
+\verb$filter<itk::Image<unsigned char, d>, itk::Image<unsigned short, d> >$,
+\verb$filter<itk::Image<unsigned short, d>, itk::Image<unsigned char, d> >$, and
+\verb$filter<itk::Image<unsigned short, d>, itk::Image<unsigned short, d> >$
+where \verb$d $is the image dimension, for each selected image dimension.
+
+%   \item \verb$WRAP_type_DIMS(size dims)$ (with \verb$type$ as above) -- Wrap a filter for certain
+% dimensions only. Dims should be either a semicolon-separated list of valid
+% dimensions, or something of the form \verb$'3+'$ to specify that the filter can be
+% instantiated only for three- and higher-dimensional images. Note that if the
+% user has not selected to wrap a given dimension at build time, a filter wrapped
+% with \verb$WRAP_type_DIMS$ will not be instantiated: the final dimensions wrapped are
+% the {/em intersection} of the user-selected dimensions and the valid dimensions
+% declared with \verb$WRAP_type_DIMS$.
+
 \end{itemize}
 
 

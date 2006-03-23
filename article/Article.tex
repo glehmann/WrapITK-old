@@ -74,7 +74,8 @@ Python \cite{PythonWebSite}, Tcl \cite{TclWebSite}, and Java \cite{JavaWebSite}.
 
 Note that ITK already has a wrapping infrastructure, and that WrapITK is based
 on it, and use the same tools: CMake \cite{CMakeWebSite}, GCC-XML \cite{GccxmlWebsite}
-and CableSwig \cite{CableSwigWebSite}. This project aims to be
+and CableSwig\footnote{CableSwig is based on a now quite old version of SWIG
+\cite{SwigWebSite}.} \cite{CableSwigWebSite}. This project aims to
 address the following deficits of the existing wrappers (and others):
 \begin{itemize}
   \item  ITK is a huge library, but only a small number of classes are available
@@ -141,7 +142,7 @@ To get the last version from the darcs repository can be obtained
 with the command 
 \verb$darcs get http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/$.
 
-For the user which don't want to use darcs \cite{DarcsWebSite} but want the last development version,
+For the user who don't want to use darcs \cite{DarcsWebSite} but want the last development version,
 a nightly updated archive is available at
 \url{http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/WrapITK.tar.gz}.
 
@@ -162,12 +163,11 @@ is found.
 
     \subsubsection{Required and optional patches}
 
-WrapITK will work properly with a CVS checkout of ITK from 2006-1-31 or later,
-or with the ITK 2.4.1 release. If you are using 2.4.1, there are several
-required patches to correct bugs in ITK that must be applied. Follow the
-directions in \verb$WrapITK/patches$ to do so. Additionally, there are some optional
+WrapITK will work properly with the ITK 2.6.0 release. 
+
+There are some optional
 patches to the ITK source in \verb$WrapITK/patches/optional$ which can be applied to
-either a CVS checkout of ITK or to version 2.4.1. These optional patches provide
+version 2.6.0. These optional patches provide
 better support for python by providing some methods like \verb$__str__$, or methods
 for standard python sequence interface (see below).
 
@@ -292,7 +292,7 @@ Filters templated on images can be similarly accessed:
   \item or even with an instance of the class used as template parameter: \verb$itk.ImageFileReader[image]$.
 \end{itemize}
 This makes it easy to write generic routines which
-can deal with any input image type. For example, anfunction which take an image
+can deal with any input image type. For example, a function which take an image
 as parameter and write it to a file without having to give the image type can be:
 \begin{verbatim}
 def write( image, fileName ) :
@@ -447,11 +447,11 @@ Here is the list of itk classes which can currently be substituted by python seq
 Some convenient functions are provided with the itk module. They all begin with a lower
 case character to clearly show they are not part of ITK.
 \begin{itemize}
-  \item \verb$itk.image( object )$ try to return an image from the object given in
+  \item \verb$itk.image(object)$ try to return an image from the object given in
 parameter. This function is used in most of the next functions to allow the user to
 pass an image or a filter.
 
-  \item \verb$itk.range( object )$ return the range of values of an image in a tuple.
+  \item \verb$itk.range(object)$ return the range of values of an image in a tuple.
 \verb$object$ can be an image or a filter. In case of a filter, \verb$itk.image()$ is used
 to get the output image of the filter. The function update the pipeline by calling
 \verb$UpdateOutputInformation()$ and \verb$Update()$.
@@ -467,7 +467,7 @@ Example:
 \end{verbatim}
 
 
-  \item \verb$itk.size( object )$ return the size of an image.
+  \item \verb$itk.size(object)$ return the size of an image.
 \verb$object$ can be an image or a filter. In case of a filter, \verb$itk.image()$ is used
 to get the output image of the filter. The function update only the information of the
 pipeline, by calling \verb$UpdateOutputInformation()$, but don't trigger a full update
@@ -486,7 +486,7 @@ Example:
 \end{verbatim}
 Note that commands 5 and 6 can be used only with the optional patches.
 
-  \item \verb$itk.template( object )$ returns the template class and parameters
+  \item \verb$itk.template(object)$ returns the template class and parameters
 of a class or instance of this class.
 
 Example:
@@ -495,7 +495,7 @@ Example:
 7> (<itkTemplate itk::ImageFileReader>, (<class 'itkImage.itkImageUC2'>,))
 \end{verbatim}
 
-  \item \verb$itk.write( object, fileName )$ write an image in a file, without
+  \item \verb$itk.write(object, fileName)$ write an image in a file, without
 having to pass the image type.
 \verb$object$ can be an image or a filter. In case of a filter, \verb$itk.image()$ is used
 to get the output image of the filter. The function update the pipeline by calling
@@ -508,8 +508,8 @@ Example:
 
   \item \verb$itk.show()$, \verb$itk.show2D()$ and \verb$itk.show3D()$ are used to
 display images. \verb$itk.show2D()$ requires to have imview \cite{ImviewWebSite} installed.
-\verb$itk.show3D()$ requires to have ItkVtkGlue\footnote{ItkVtkGlue can be found in
-the {\em ExternalProject} directory of WrapITK}, PyQt \cite{PyQtWebSite}, and iPython
+\verb$itk.show3D()$ requires to have Vtk for python, ItkVtkGlue\footnote{ItkVtkGlue can be found in
+the {\em ExternalProject} directory of WrapITK} for python, PyQt \cite{PyQtWebSite}, and iPython
 \cite{IPythonWebSite} installed, and to use iPython with the \verb$-qthread$ option.
 
 \verb$itk.show()$ call the best viewer according to the image type.
@@ -525,13 +525,13 @@ can be called with a 3D image as parameter to show the image slice by slice.
 \caption{A screenshot of WrapITK in action with python.\label{screenshot}}
 \end{figure}
 
-  \item \verb$itk.strel( d, s )$ is used to create a binary ball structuring of dimension
+  \item \verb$itk.strel(d, s)$ is used to create a binary ball structuring of dimension
 \verb$d$ and size \verb$s$. Strucutring element support is quite bad currently in WrapITK
 and should change in the future. Using \verb$itk.strel$ rather than creating a
 \verb$BinaryBallStructuringElement$ directly is recommended to have backward compatibility
 when the structuring element type will be changed.
 
-  \item \verb$itk.auto_progress( b )$ is used to automatically add a progress report
+  \item \verb$itk.auto_progress(b)$ is used to automatically add a progress report
 to all the newly created filters. \verb$b$ must be \verb$True$ or \verb$False$. If
 \verb$b$ is true, something like
 \begin{verbatim}
@@ -543,7 +543,7 @@ While prototyping, it is a convenient way for the user to know if
 the execution time will be short or if he can do something more useful
 \footnote{like having a cup of tea} than waiting for the filter to complete.
 
-  \item \verb$itk.class_( object )$ return the class of an object. The \verb$__class__$
+  \item \verb$itk.class_(object)$ return the class of an object. The \verb$__class__$
 attribute is often not what the user want with ITK. \verb$itk.class_$ is a convenient
 function to get the class of an ITK object.
 
@@ -930,11 +930,19 @@ for instructions as to what to put in these files.)
 
     \subsubsection{Why external projects?}
 
-% In WrapITK/ExternalProjects there are several sample "External Projects" that
-% can be built to provide additional functionality to WrapITK and to serve as a
-% demonstration for how to create your own such projects. One project is an
-% ITK-VTK bridge, and the other is a Python class to allow conversion from
-% Numeric/Numarray/numpy matrices to ITK images (and vice-versa).
+External projects let the developer access some custom class with the target languages
+and is a powerful way to extend WrapITK, test new wrapper, wrap more types, etc.
+A nice side effect of wrappers, for contributions\footnote{A nice template for
+contributions to the Insight Journal \cite{InsightJournalWebSite} which include the 
+temlate code to build wrappers is available at
+\url{http://voxel.jouy.inra.fr/darcs/contrib-itk/template/}. Just use the command
+{\em darcs get http://voxel.jouy.inra.fr/darcs/contrib-itk/template/ contribName}
+and edit the project name in the {\em CMakeLists.txt} file to
+begin your new contribution.} for example, is to build {\em all}
+the methods of the wrapped classes, and so to be sure everything builds as it should
+\footnote{We have found and fixed numbers of bug in ITK while adding
+more classes to WrapITK}.
+
 
     \subsubsection{Building}
 To build an external project, first ensure that WrapITK has been properly built.
@@ -971,6 +979,18 @@ directory. If WrapITK has been installed, this will work on the first try.
 Otherwise, you will have to set (within ccmake, or in the CMakeLists if you
 prefer) the variable \verb$WrapITK_DIR$ to contain the path to the WrapITK build
 directory.
+
+    \subsubsection{Examples}
+
+In \verb$WrapITK/ExternalProjects$ there are several sample "External Projects" that
+can be built to provide additional functionality to WrapITK and to serve as a
+demonstration for how to create your own such projects. One project is an
+ITK-VTK \cite{VtkWebSite} bridge, and the other is a Python class to allow conversion from
+Numeric/Numarray/numpy \cite{NumericWebSite,NumarrayWebSite,NumpyWebSite} matrices to
+ITK images (and vice-versa).
+
+More examples can be found in the contributions to the Insight Journal
+\cite{InsightJournalWebSite}, or directly at \url{http://voxel.jouy.inra.fr/darcsweb/}.
 
     \subsubsection{BufferConversion: an example of extension for one language}
 

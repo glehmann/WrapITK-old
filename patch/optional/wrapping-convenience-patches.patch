@@ -4,12 +4,11 @@ RCS file: /cvsroot/Insight/Insight/Code/BasicFilters/itkCropImageFilter.h,v
 retrieving revision 1.7
 diff -u -r1.7 itkCropImageFilter.h
 --- Code/BasicFilters/itkCropImageFilter.h	17 Mar 2006 14:22:26 -0000	1.7
-+++ Code/BasicFilters/itkCropImageFilter.h	18 Mar 2006 03:31:40 -0000
-@@ -77,6 +77,38 @@
++++ Code/BasicFilters/itkCropImageFilter.h	23 Mar 2006 07:44:06 -0000
+@@ -77,6 +77,34 @@
    itkGetMacro(UpperBoundaryCropSize, SizeType); 
    itkSetMacro(LowerBoundaryCropSize, SizeType);
    itkGetMacro(LowerBoundaryCropSize, SizeType);
-+<<<<<<< itkCropImageFilter.h
 +  
 +  void SetUpperBoundaryCropSize(const unsigned long bound)
 +    {
@@ -38,27 +37,16 @@ diff -u -r1.7 itkCropImageFilter.h
 +    this->SetBoundaryCropSize( s );
 +    }
 +
-+  
-+                 
-+=======
  
  #ifdef ITK_USE_CONCEPT_CHECKING
    /** Begin concept checking */
-@@ -87,6 +119,7 @@
-   /** End concept checking */
- #endif
- 
-+>>>>>>> 1.7
- protected:
-   CropImageFilter()
-   {
 Index: Code/BasicFilters/itkPadImageFilter.h
 ===================================================================
 RCS file: /cvsroot/Insight/Insight/Code/BasicFilters/itkPadImageFilter.h,v
 retrieving revision 1.13
 diff -u -r1.13 itkPadImageFilter.h
 --- Code/BasicFilters/itkPadImageFilter.h	27 Apr 2005 12:54:57 -0000	1.13
-+++ Code/BasicFilters/itkPadImageFilter.h	18 Mar 2006 03:31:41 -0000
++++ Code/BasicFilters/itkPadImageFilter.h	23 Mar 2006 07:44:06 -0000
 @@ -18,6 +18,7 @@
  #define __itkPadImageFilter_h
  
@@ -118,7 +106,7 @@ RCS file: /cvsroot/Insight/Insight/Code/BasicFilters/itkRescaleIntensityImageFil
 retrieving revision 1.10
 diff -u -r1.10 itkRescaleIntensityImageFilter.txx
 --- Code/BasicFilters/itkRescaleIntensityImageFilter.txx	15 Jun 2005 16:13:48 -0000	1.10
-+++ Code/BasicFilters/itkRescaleIntensityImageFilter.txx	18 Mar 2006 03:31:41 -0000
++++ Code/BasicFilters/itkRescaleIntensityImageFilter.txx	23 Mar 2006 07:44:06 -0000
 @@ -33,11 +33,11 @@
  RescaleIntensityImageFilter<TInputImage, TOutputImage>
  ::RescaleIntensityImageFilter()
@@ -135,54 +123,29 @@ diff -u -r1.10 itkRescaleIntensityImageFilter.txx
    
    m_Scale = 1.0;
    m_Shift = 0.0;
-Index: Code/Common/itkFixedArray.h
+Index: Code/Common/itkIndex.h
 ===================================================================
-RCS file: /cvsroot/Insight/Insight/Code/Common/itkFixedArray.h,v
-retrieving revision 1.36
-diff -u -r1.36 itkFixedArray.h
---- Code/Common/itkFixedArray.h	8 Aug 2005 21:36:16 -0000	1.36
-+++ Code/Common/itkFixedArray.h	18 Mar 2006 03:31:42 -0000
-@@ -206,6 +206,33 @@
-   SizeType      Size() const;
-   void Fill(const ValueType&);
-     
-+//#ifdef SWIGPYTHON
-+  const ValueType __getitem__(unsigned int dim) const 
-+    {
-+    if (dim >= VLength)
-+      {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: FixedArray: index out of range");}
-+    return GetElement(dim);
-+    }
-+  void __setitem__(unsigned int dim, ValueType value)
-+    {
-+    if (dim >= VLength)
-+      {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: FixedArray: index out of range");}
-+    SetElement(dim, value);
-+    }
-+  
-+  const unsigned int __len__() const
-+    {
-+    return VLength;
-+    }
-+  
-+  const char * __str__() const
-+    {
-+    OStringStream msg;
-+    msg << "<FixedArray " << *this << ">";
-+    return msg.str().c_str();
-+    }  
-+//#endif
-+
- private:
-   /** Internal C array representation. */
-   CArray  m_InternalArray;
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkIndex.h,v
+retrieving revision 1.51
+diff -u -r1.51 itkIndex.h
+--- Code/Common/itkIndex.h	23 Aug 2005 01:25:37 -0000	1.51
++++ Code/Common/itkIndex.h	23 Mar 2006 07:44:08 -0000
+@@ -239,7 +239,7 @@
+    * \warning No bound checking is performed
+    * \sa GetIndex()
+    * \sa SetElement() */
+-  IndexValueType GetElement( unsigned long element )
++  IndexValueType GetElement( unsigned long element ) const
+     { return m_Index[ element ]; }
+ 
+   /** Return a basis vector of the form [0, ..., 0, 1, 0, ... 0] where the "1"
 Index: Code/Common/itkImageRegionConstIterator.h
 ===================================================================
 RCS file: /cvsroot/Insight/Insight/Code/Common/itkImageRegionConstIterator.h,v
 retrieving revision 1.20
 diff -u -r1.20 itkImageRegionConstIterator.h
 --- Code/Common/itkImageRegionConstIterator.h	31 Jan 2006 00:48:40 -0000	1.20
-+++ Code/Common/itkImageRegionConstIterator.h	18 Mar 2006 03:31:42 -0000
++++ Code/Common/itkImageRegionConstIterator.h	23 Mar 2006 07:44:07 -0000
 @@ -281,6 +281,16 @@
      return *this;
    }
@@ -206,7 +169,7 @@ RCS file: /cvsroot/Insight/Insight/Code/Common/itkImageRegionConstIteratorWithIn
 retrieving revision 1.10
 diff -u -r1.10 itkImageRegionConstIteratorWithIndex.h
 --- Code/Common/itkImageRegionConstIteratorWithIndex.h	16 Aug 2005 18:04:33 -0000	1.10
-+++ Code/Common/itkImageRegionConstIteratorWithIndex.h	18 Mar 2006 03:31:42 -0000
++++ Code/Common/itkImageRegionConstIteratorWithIndex.h	23 Mar 2006 07:44:07 -0000
 @@ -186,6 +186,16 @@
     * will be set to be one pixel past the beginning of the region.
     * \sa operator++ */
@@ -224,103 +187,13 @@ diff -u -r1.10 itkImageRegionConstIteratorWithIndex.h
  };
  
  /** \example itkImageIteratorTest.cpp */
-Index: Code/Common/itkIndex.h
-===================================================================
-RCS file: /cvsroot/Insight/Insight/Code/Common/itkIndex.h,v
-retrieving revision 1.51
-diff -u -r1.51 itkIndex.h
---- Code/Common/itkIndex.h	23 Aug 2005 01:25:37 -0000	1.51
-+++ Code/Common/itkIndex.h	18 Mar 2006 03:31:42 -0000
-@@ -239,7 +239,7 @@
-    * \warning No bound checking is performed
-    * \sa GetIndex()
-    * \sa SetElement() */
--  IndexValueType GetElement( unsigned long element )
-+  IndexValueType GetElement( unsigned long element ) const
-     { return m_Index[ element ]; }
- 
-   /** Return a basis vector of the form [0, ..., 0, 1, 0, ... 0] where the "1"
-@@ -259,6 +259,34 @@
-    *    Index<3> index = {5, 2, 7}; */
-   IndexValueType m_Index[VIndexDimension];
-   
-+
-+//#ifdef SWIGPYTHON
-+  const IndexValueType __getitem__(unsigned int dim) const 
-+    {
-+    if (dim >= VIndexDimension)
-+      {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: Index: index out of range");}
-+    return GetElement(dim);
-+    }
-+  void __setitem__(unsigned int dim, IndexValueType value)
-+    {
-+    if (dim >= VIndexDimension)
-+      {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: Index: index out of range");}
-+    SetElement(dim, value);
-+    }
-+  
-+  const unsigned int __len__() const
-+    {
-+    return VIndexDimension;
-+    }
-+  
-+  const char * __str__() const
-+    {
-+    OStringStream msg;
-+    msg << "<Index " << *this << ">";
-+    return msg.str().c_str();
-+    }  
-+//#endif
-+
- };
- 
- namespace Functor
-Index: Code/Common/itkLightObject.cxx
-===================================================================
-RCS file: /cvsroot/Insight/Insight/Code/Common/itkLightObject.cxx,v
-retrieving revision 1.31
-diff -u -r1.31 itkLightObject.cxx
---- Code/Common/itkLightObject.cxx	6 Feb 2006 22:01:56 -0000	1.31
-+++ Code/Common/itkLightObject.cxx	18 Mar 2006 03:31:42 -0000
-@@ -115,7 +115,14 @@
-   this->PrintTrailer(os, indent);
- }
- 
--
-+const char * LightObject::__str__() const
-+{
-+  OStringStream msg;
-+  this->Print(msg);
-+  return msg.str().c_str();
-+}
-+   
-+   
- /**
-  * This method is called when itkExceptionMacro executes. It allows 
-  * the debugger to break on error.
-Index: Code/Common/itkLightObject.h
-===================================================================
-RCS file: /cvsroot/Insight/Insight/Code/Common/itkLightObject.h,v
-retrieving revision 1.33
-diff -u -r1.33 itkLightObject.h
---- Code/Common/itkLightObject.h	6 Feb 2006 22:01:56 -0000	1.33
-+++ Code/Common/itkLightObject.h	18 Mar 2006 03:31:43 -0000
-@@ -101,6 +101,8 @@
-    * method, use it with care. */
-   virtual void SetReferenceCount(int);
- 
-+  const char * __str__() const;
-+  
- protected:
-   LightObject():m_ReferenceCount(1) {}
-   virtual ~LightObject(); 
 Index: Code/Common/itkMatrix.h
 ===================================================================
 RCS file: /cvsroot/Insight/Insight/Code/Common/itkMatrix.h,v
 retrieving revision 1.20
 diff -u -r1.20 itkMatrix.h
 --- Code/Common/itkMatrix.h	18 Jul 2005 15:12:10 -0000	1.20
-+++ Code/Common/itkMatrix.h	18 Mar 2006 03:31:43 -0000
++++ Code/Common/itkMatrix.h	23 Mar 2006 07:44:08 -0000
 @@ -160,6 +160,14 @@
    /** Copy constructor. */
    Matrix(const Self & matrix) : m_Matrix( matrix.m_Matrix ) {};
@@ -336,60 +209,3 @@ diff -u -r1.20 itkMatrix.h
  private:
    InternalMatrixType     m_Matrix;
  
-Index: Code/Common/itkSize.h
-===================================================================
-RCS file: /cvsroot/Insight/Insight/Code/Common/itkSize.h,v
-retrieving revision 1.18
-diff -u -r1.18 itkSize.h
---- Code/Common/itkSize.h	8 Apr 2004 13:56:38 -0000	1.18
-+++ Code/Common/itkSize.h	18 Mar 2006 03:31:43 -0000
-@@ -18,6 +18,7 @@
- #define __itkSize_h
- 
- #include "itkMacro.h"
-+#include "itkExceptionObject.h"
- 
- namespace itk
- {
-@@ -188,6 +189,33 @@
-    * bracketed initializer. */
-   SizeValueType m_Size[VDimension];
- 
-+//#ifdef SWIGPYTHON
-+  const SizeValueType __getitem__(unsigned int dim) const 
-+    {
-+    if (dim >= VDimension)
-+      {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: Size: index out of range");}
-+    return GetElement(dim);
-+    }
-+  void __setitem__(unsigned int dim, SizeValueType value)
-+    {
-+    if (dim >= VDimension)
-+      {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: Size: index out of range");}
-+    SetElement(dim, value);
-+    }
-+  
-+  const unsigned int __len__() const
-+    {
-+    return VDimension;
-+    }
-+  
-+  const char * __str__() const
-+    {
-+    OStringStream msg;
-+    msg << "<Size " << *this << ">";
-+    return msg.str().c_str();
-+    }  
-+//#endif
-+
- };
- 
- 
-@@ -219,6 +247,7 @@
-    extern template std::ostream & operator<<(std::ostream &os, const Size<5> &size);
- #endif
- 
-+
- } // end namespace itk
- 
- #endif 

@@ -3,11 +3,12 @@ WrapITK to work with versions of ITK lower than 2.6. The
 'old_itk_compatibility' patches have all been incorporated into ITK
 version 2.6.
 
-Patches in the 'python_interface' directory provide optional python
-language abilities, such as the ability to treat Index, Point, (etc.)
-values as python sequences, the ability to see decent representations
-of many common objects with __repr__ (and 'print'), and the ability
-to increment iterators.
+Patches in the 'optional' directory provide optional, but useful,
+convenience functionality like renamed operators and easier-to-use
+function signatures. Additionally, there are some specific python
+wrapping patches, which provide the ability to treat Index, Point,
+(etc.) values as python sequences and the ability to see decent
+representations of many common objects with __str__ (and 'print').
 
 To apply these patch files, go to the 'Code' 
 directory in the ITK source or build tree, or to the
@@ -17,8 +18,8 @@ where you want to install the patches).
 Once you are in that directory, run the following commands,
 depending on which patch sets you wish/need to apply:
 
-cat path/to/patch/old_itk_compatibility/* > patch -p3
-cat path/to/patch/python_interface/* > patch -p1
+cat path/to/patch/old_itk_compatibility/* | patch -p3
+cat path/to/patch/optional/* | patch -p1
 
 (where 'path/to' is replaced with the actual path
 to this 'patch' directory).

@@ -1,0 +1,171 @@
+Index: Code/Common/itkFixedArray.h
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkFixedArray.h,v
+retrieving revision 1.36
+diff -u -r1.36 itkFixedArray.h
+--- Code/Common/itkFixedArray.h	8 Aug 2005 21:36:16 -0000	1.36
++++ Code/Common/itkFixedArray.h	23 Mar 2006 07:44:07 -0000
+@@ -206,6 +206,33 @@
+   SizeType      Size() const;
+   void Fill(const ValueType&);
+     
++//#ifdef SWIGPYTHON
++  const ValueType __getitem__(unsigned int dim) const 
++    {
++    if (dim >= VLength)
++      {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: FixedArray: index out of range");}
++    return GetElement(dim);
++    }
++  void __setitem__(unsigned int dim, ValueType value)
++    {
++    if (dim >= VLength)
++      {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: FixedArray: index out of range");}
++    SetElement(dim, value);
++    }
++  
++  const unsigned int __len__() const
++    {
++    return VLength;
++    }
++  
++  const char * __str__() const
++    {
++    OStringStream msg;
++    msg << "<FixedArray " << *this << ">";
++    return msg.str().c_str();
++    }  
++//#endif
++
+ private:
+   /** Internal C array representation. */
+   CArray  m_InternalArray;
+Index: Code/Common/itkIndex.h
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkIndex.h,v
+retrieving revision 1.51
+diff -u -r1.51 itkIndex.h
+--- Code/Common/itkIndex.h	23 Aug 2005 01:25:37 -0000	1.51
++++ Code/Common/itkIndex.h	23 Mar 2006 07:44:08 -0000
+@@ -259,6 +259,34 @@
+    *    Index<3> index = {5, 2, 7}; */
+   IndexValueType m_Index[VIndexDimension];
+   
++
++//#ifdef SWIGPYTHON
++  const IndexValueType __getitem__(unsigned int dim) const 
++    {
++    if (dim >= VIndexDimension)
++      {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: Index: index out of range");}
++    return GetElement(dim);
++    }
++  void __setitem__(unsigned int dim, IndexValueType value)
++    {
++    if (dim >= VIndexDimension)
++      {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: Index: index out of range");}
++    SetElement(dim, value);
++    }
++  
++  const unsigned int __len__() const
++    {
++    return VIndexDimension;
++    }
++  
++  const char * __str__() const
++    {
++    OStringStream msg;
++    msg << "<Index " << *this << ">";
++    return msg.str().c_str();
++    }  
++//#endif
++
+ };
+ 
+ namespace Functor
+Index: Code/Common/itkLightObject.cxx
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkLightObject.cxx,v
+retrieving revision 1.31
+diff -u -r1.31 itkLightObject.cxx
+--- Code/Common/itkLightObject.cxx	6 Feb 2006 22:01:56 -0000	1.31
++++ Code/Common/itkLightObject.cxx	23 Mar 2006 07:44:08 -0000
+@@ -115,7 +115,14 @@
+   this->PrintTrailer(os, indent);
+ }
+ 
+-
++const char * LightObject::__str__() const
++{
++  OStringStream msg;
++  this->Print(msg);
++  return msg.str().c_str();
++}
++   
++   
+ /**
+  * This method is called when itkExceptionMacro executes. It allows 
+  * the debugger to break on error.
+Index: Code/Common/itkLightObject.h
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkLightObject.h,v
+retrieving revision 1.33
+diff -u -r1.33 itkLightObject.h
+--- Code/Common/itkLightObject.h	6 Feb 2006 22:01:56 -0000	1.33
++++ Code/Common/itkLightObject.h	23 Mar 2006 07:44:08 -0000
+@@ -101,6 +101,8 @@
+    * method, use it with care. */
+   virtual void SetReferenceCount(int);
+ 
++  const char * __str__() const;
++  
+ protected:
+   LightObject():m_ReferenceCount(1) {}
+   virtual ~LightObject(); 
+Index: Code/Common/itkSize.h
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkSize.h,v
+retrieving revision 1.18
+diff -u -r1.18 itkSize.h
+--- Code/Common/itkSize.h	8 Apr 2004 13:56:38 -0000	1.18
++++ Code/Common/itkSize.h	23 Mar 2006 07:44:09 -0000
+@@ -18,6 +18,7 @@
+ #define __itkSize_h
+ 
+ #include "itkMacro.h"
++#include "itkExceptionObject.h"
+ 
+ namespace itk
+ {
+@@ -188,6 +189,33 @@
+    * bracketed initializer. */
+   SizeValueType m_Size[VDimension];
+ 
++//#ifdef SWIGPYTHON
++  const SizeValueType __getitem__(unsigned int dim) const 
++    {
++    if (dim >= VDimension)
++      {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: Size: index out of range");}
++    return GetElement(dim);
++    }
++  void __setitem__(unsigned int dim, SizeValueType value)
++    {
++    if (dim >= VDimension)
++      {throw ExceptionObject(__FILE__, __LINE__, "itk::ERROR: Size: index out of range");}
++    SetElement(dim, value);
++    }
++  
++  const unsigned int __len__() const
++    {
++    return VDimension;
++    }
++  
++  const char * __str__() const
++    {
++    OStringStream msg;
++    msg << "<Size " << *this << ">";
++    return msg.str().c_str();
++    }  
++//#endif
++
+ };
+ 
+ 

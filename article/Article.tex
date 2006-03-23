@@ -507,9 +507,10 @@ Example:
 \end{verbatim}
 
   \item \verb$itk.show()$, \verb$itk.show2D()$ and \verb$itk.show3D()$ are used to
-display images. \verb$itk.show2D()$ requires to have \verb$imview$ installed.
-\verb$itk.show3D()$ requires to have ItkVtk, PyQt, and iPython installed, and to use
-iPython with the \verb$-qthread$ option.
+display images. \verb$itk.show2D()$ requires to have imview \cite{ImviewWebSite} installed.
+\verb$itk.show3D()$ requires to have ItkVtkGlue\footnote{ItkVtkGlue can be found in
+the {\em ExternalProject} directory of WrapITK}, PyQt \cite{PyQtWebSite}, and iPython
+\cite{IPythonWebSite} installed, and to use iPython with the \verb$-qthread$ option.
 
 \verb$itk.show()$ call the best viewer according to the image type.
 

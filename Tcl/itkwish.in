@@ -51,9 +51,9 @@ ITKWISH_Usage()
   echo "    loaded with \"package require InsightToolkit\"."
 }
 
-ITKWISH_SELFDIR=`cd \`echo "$0" | sed -n '/\//{s/\/[^\/]*$//;p;}'\`;pwd`
+WRAPITK_DIR=@CMAKE_INSTALL_PREFIX@
 
-if [ -d "${ITKWISH_SELFDIR}/../lib/InsightToolkit" ]; then : ; else
+if [ -d "${WRAPITK_DIR}/Tcl" ]; then : ; else
   ITKWISH_Usage
   echo ""
   echo "Error:"
@@ -62,29 +62,28 @@ if [ -d "${ITKWISH_SELFDIR}/../lib/InsightToolkit" ]; then : ; else
   exit 1
 fi
 
-ITKWISH_LIBDIR=`cd "${ITKWISH_SELFDIR}/../lib/InsightToolkit"; pwd`
 
 # Setup environment.
 case "`uname`" in
 Darwin)
   if [ -z "$DYLD_LIBRARY_PATH" ]; then
-    export DYLD_LIBRARY_PATH="$ITKWISH_LIBDIR"
+    export DYLD_LIBRARY_PATH="$WRAPITK_DIR/Tcl-SWIG"
   else
-    export DYLD_LIBRARY_PATH="$ITKWISH_LIBDIR:$DYLD_LIBRARY_PATH"
+    export DYLD_LIBRARY_PATH="$WRAPITK_DIR/Tcl-SWIG:$DYLD_LIBRARY_PATH"
   fi
   ;;
 *)
   if [ -z "$LD_LIBRARY_PATH" ]; then
-    export LD_LIBRARY_PATH="$ITKWISH_LIBDIR"
+    export LD_LIBRARY_PATH="$WRAPITK_DIR/Tcl-SWIG"
   else
-    export LD_LIBRARY_PATH="$ITKWISH_LIBDIR:$LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH="$WRAPITK_DIR/Tcl-SWIG:$LD_LIBRARY_PATH"
   fi
 esac
 
 if [ -z "$TCLLIBPATH" ]; then
-  export TCLLIBPATH="\"$ITKWISH_LIBDIR\""
+  export TCLLIBPATH="\"$WRAPITK_DIR/Tcl\""
 else
-  export TCLLIBPATH="\"$ITKWISH_LIBDIR\" $TCLLIBPATH"
+  export TCLLIBPATH="\"$WRAPITK_DIR/Tcl-SWIG\" $TCLLIBPATH"
 fi
 
 if [ "$1" = "--help" ]; then
@@ -98,5 +97,5 @@ elif [ "$1" = "--run" ]; then
   exec "$@"
 else
   # Run real itkwish executable in this environment.
-  exec "${ITKWISH_LIBDIR}/itkwish" "$@"
+  exec "$WRAPITK_DIR/Tcl/bin/itkwish" "$@"
 fi

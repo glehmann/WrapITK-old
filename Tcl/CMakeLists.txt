@@ -65,8 +65,13 @@ TARGET_LINK_LIBRARIES(itkwish
   ${TK_LIBRARY}
 )
 
-# install the driver itkwish script
-INSTALL_FILES("/Tcl" FILES itkwish)
+# configure and install the driver itkwish script
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/itkwish.in
+               ${CMAKE_CURRENT_BINARY_DIR}/itkwish
+               @ONLY IMMEDIATE )
+INSTALL_FILES("/Tcl" FILES ${CMAKE_CURRENT_BINARY_DIR}/itkwish)
+
+
 #install the actual executable
 INSTALL_TARGETS("/Tcl/bin" itkwish)
 INSTALL_FILES("/Tcl" .tcl itkinteraction itktesting itkdata itkutils)

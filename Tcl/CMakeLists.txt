@@ -40,7 +40,7 @@ SET(WRAP_ITK_TEST_ROOT "<NO_DEFAULT>")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in"
                "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/pkgIndex.tcl"
                IMMEDIATE @ONLY)
-INSTALL_FILES("/Tcl" FILES
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Tcl" FILES
               "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/pkgIndex.tcl")
 
 SET(ITK_TCL_EXE_DIR_BUILD "${ITK_EXECUTABLE_PATH}")
@@ -69,9 +69,9 @@ TARGET_LINK_LIBRARIES(itkwish
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/itkwish.in
                ${CMAKE_CURRENT_BINARY_DIR}/itkwish
                @ONLY IMMEDIATE )
-INSTALL_FILES("/Tcl" FILES ${CMAKE_CURRENT_BINARY_DIR}/itkwish)
+INSTALL_FILES("/bin" FILES ${CMAKE_CURRENT_BINARY_DIR}/itkwish)
 
 
 #install the actual executable
-INSTALL_TARGETS("/Tcl/bin" itkwish)
-INSTALL_FILES("/Tcl" .tcl itkinteraction itktesting itkdata itkutils)
+INSTALL_TARGETS("${WRAP_ITK_INSTALL_PREFIX}/Tcl/bin" itkwish)
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Tcl" .tcl itkinteraction itktesting itkdata itkutils)

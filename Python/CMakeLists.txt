@@ -57,7 +57,7 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
                "${WrapITK_BINARY_DIR}/Python/InstallOnly/itkConfig.py"
               @ONLY IMMEDIATE)
 
-INSTALL_FILES("/Python" FILES 
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Python" FILES 
               "${WrapITK_BINARY_DIR}/Python/InstallOnly/itkConfig.py")
 
 
@@ -111,7 +111,7 @@ ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
 ENDIF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
 
 # Install the package python files.
-INSTALL_FILES("/Python" FILES ${WRAP_ITK_PYTHON_INSTALL_FILES})
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Python" FILES ${WRAP_ITK_PYTHON_INSTALL_FILES})
 
 
 ###############################################################################

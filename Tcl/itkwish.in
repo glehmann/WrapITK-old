@@ -51,7 +51,7 @@ ITKWISH_Usage()
   echo "    loaded with \"package require InsightToolkit\"."
 }
 
-WRAPITK_DIR=@CMAKE_INSTALL_PREFIX@
+WRAPITK_DIR=@CMAKE_INSTALL_PREFIX@/@WRAP_ITK_INSTALL_PREFIX@
 
 if [ -d "${WRAPITK_DIR}/Tcl" ]; then : ; else
   ITKWISH_Usage

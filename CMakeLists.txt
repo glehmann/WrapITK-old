@@ -36,6 +36,8 @@ SET(WRAP_ITK_DIMS "2;3" CACHE STRING "dimensions available separated by semicolo
 
 OPTION(INSTALL_WRAP_ITK_COMPATIBILITY "Install FindWrapITK.cmake and WrapITK.pth (so cmake and python can find WrapITK) as part of the standard installation process. This requires admin privileges. These files can be separately installed by making the install_wrapitk_compatibility target. " ON)
 
+SET(WRAP_ITK_INSTALL_PREFIX "/lib/InsightToolkit/WrapITK/" CACHE PATH "subpath where where most of WrapITK files will be installed")
+
 # Output directories.
 SET(WRAP_ITK_SWIG_LIBRARY_DIR "${WrapITK_BINARY_DIR}/SWIG")
 SET(WRAP_ITK_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
@@ -43,7 +45,7 @@ SET(WRAP_ITK_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")
 SET (LIBRARY_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
 SET (EXECUTABLE_OUTPUT_PATH ${WrapITK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
-MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH WRAP_ITK_INSTALL_PREFIX)
 SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
 # Now include ConfigureWrapping
@@ -108,7 +110,7 @@ SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIRECTORY "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}")
 SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}")
-SET(CONFIG_WRAP_ITK_INSTALL_LOCATION "${CMAKE_INSTALL_PREFIX}")
+SET(CONFIG_WRAP_ITK_INSTALL_LOCATION "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}")
 SET(CONFIG_WRAP_ITK_MODULES "${WRAP_ITK_MODULES}")
 CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/WrapITKConfig.cmake"
@@ -136,7 +138,7 @@ CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
                @ONLY IMMEDIATE)
 
 
-INSTALL_FILES("/Configuration" FILES 
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration" FILES 
  ConfigureWrapping.cmake
  CMakeUtilityFunctions.cmake
  CreateCableSwigInputs.cmake
@@ -145,7 +147,7 @@ INSTALL_FILES("/Configuration" FILES
  WrapBasicTypes.cmake
  WrapITKTypes.cmake)
 
-INSTALL_FILES("/Configuration/Inputs" FILES
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Inputs" FILES
  ConfigurationInputs/wrap_ITKLang.cxx.in
  ConfigurationInputs/wrap_ITK.cxx.in
  ConfigurationInputs/wrap_.cxx.in
@@ -154,14 +156,14 @@ INSTALL_FILES("/Configuration/Inputs" FILES
  ConfigurationInputs/empty.depend.in
  ConfigurationInputs/typemaps.swg.in)
 
-INSTALL_FILES("/Configuration/Inputs/LanguageSupport" FILES
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Inputs/LanguageSupport" FILES
   ConfigurationInputs/LanguageSupport/ModuleLoader.py.in
   ConfigurationInputs/LanguageSupport/ModuleConfig.py.in
   ConfigurationInputs/LanguageSupport/ExternalProjectConfig.py.in)
 
-INSTALL_FILES("/SWIG" FILES "itk.swg")
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/SWIG" FILES "itk.swg")
 
-INSTALL_FILES("/" FILES "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake")
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/" FILES "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake")
 
 # Add a custom target to drive installation of the WrapITK-compatibility files
 IF(INSTALL_WRAP_ITK_COMPATIBILITY)

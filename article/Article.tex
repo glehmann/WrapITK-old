@@ -456,7 +456,7 @@ case character to clearly show they are not part of ITK.
 \begin{itemize}
   \item \verb$itk.image(object)$ try to return an image from the object given in
 parameter. If the object is an image, it is returned without changes. If the object
-is a filter, the object returned by \verb$GetOutput()$ metyhod is returned.
+is a filter, the object returned by \verb$GetOutput()$ method is returned.
 This function is used in most of the next functions to allow the user to
 pass an image or a filter, and is available here for the same usage in some custom
 fuctions.
@@ -865,7 +865,7 @@ some CMake native commands in the future.
 Some convenient macros are available to wrap image filters.
 
 These macros often take an optional second parameter which is a "dimensionality
-condition" to restrict the dimensions that theis filter will be instantiated
+condition" to restrict the dimensions that the filter will be instantiated
 for. The condition can either be a single number indicating the one dimension
 allowed, a list of dimensions that are allowed (either as a single \verb$-$delimited
 string or just a set of separate parameters), or something of the form \verb$n+$
@@ -1035,7 +1035,7 @@ as simple in python as in C++. It has been tested with VTK 5.0.0.
 
 By default, those classes are not loaded in the \verb$itk$ module to avoid loading
 all the \verb$vtk$ module while importing \verb$itk$. The command \verb$import itkvtk$
-will load the module, and add the classes both in \verb$itkvtk$ and\verb$itk$ module.
+will load the module, and add the classes both in \verb$itkvtk$ and \verb$itk$ module.
 The classes are then usable as the other itk classes.
 
 Example:

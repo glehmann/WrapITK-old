@@ -1,10 +1,10 @@
 
-%define itkver 2.4
+%define itkver 2.6
 
 Summary:	Extended language support for ITK
 Name:		wrapitk
 Version:	0.1
-Release:	%mkrel 0.20060320.1
+Release:	%mkrel 0.20060324.1
 License:	BSDish
 Group:		Sciences/Other
 URL:		http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK
@@ -128,13 +128,14 @@ mkdir build
 (
 cd build
 
-cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_libdir}/InsightToolkit/WrapITK \
+cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
+      -DWRAP_ITK_INSTALL_PREFIX:PATH=/%{_lib}/InsightToolkit/WrapITK/ \
       -DCMAKE_BUILD_TYPE:STRING=Release \
       -DCMAKE_SKIP_RPATH:BOOL=ON \
       -DCableSwig_DIR:PATH=%{_prefix}/lib/CableSwig \
       -DWRAP_ITK_PYTHON:BOOL=ON \
       -DWRAP_unsigned_char:BOOL=ON \
-      -DDOXYGEN_MAN_PATH:PATH=%{_mandir} \
+      -DDOXYGEN_MAN_PATH:PATH=%{_mandir}/ \
       ..
 
 make
@@ -333,4 +334,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0644,root,root,0755)
 %{_includedir}/InsightToolkit/BasicFilters/*
 
+
+%changelog
+* Fri Mar 24 2006 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 0.1-0.20060324.1mdk
+- first package
 

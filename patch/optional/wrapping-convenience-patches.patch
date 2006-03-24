@@ -1,15 +1,14 @@
 Index: Code/BasicFilters/itkCropImageFilter.h
 ===================================================================
 RCS file: /cvsroot/Insight/Insight/Code/BasicFilters/itkCropImageFilter.h,v
-retrieving revision 1.7
-diff -u -r1.7 itkCropImageFilter.h
---- Code/BasicFilters/itkCropImageFilter.h	17 Mar 2006 14:22:26 -0000	1.7
-+++ Code/BasicFilters/itkCropImageFilter.h	23 Mar 2006 07:44:06 -0000
-@@ -77,6 +77,34 @@
+retrieving revision 1.6
+diff -u -r1.6 itkCropImageFilter.h
+--- Code/BasicFilters/itkCropImageFilter.h	10 Sep 2003 14:28:46 -0000	1.6
++++ Code/BasicFilters/itkCropImageFilter.h	24 Mar 2006 00:03:15 -0000
+@@ -77,6 +77,32 @@
    itkGetMacro(UpperBoundaryCropSize, SizeType); 
    itkSetMacro(LowerBoundaryCropSize, SizeType);
    itkGetMacro(LowerBoundaryCropSize, SizeType);
-+  
 +  void SetUpperBoundaryCropSize(const unsigned long bound)
 +    {
 +    SizeType s;
@@ -36,10 +35,9 @@ diff -u -r1.7 itkCropImageFilter.h
 +    s.Fill( bound );
 +    this->SetBoundaryCropSize( s );
 +    }
-+
- 
- #ifdef ITK_USE_CONCEPT_CHECKING
-   /** Begin concept checking */
+   
+                  
+ protected:
 Index: Code/BasicFilters/itkPadImageFilter.h
 ===================================================================
 RCS file: /cvsroot/Insight/Insight/Code/BasicFilters/itkPadImageFilter.h,v

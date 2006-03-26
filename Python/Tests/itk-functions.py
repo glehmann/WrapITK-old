@@ -10,7 +10,7 @@ import itk, sys
 
 fileName = sys.argv[1]
 
-PType = itk.UC
+PType = itk.US
 dim = 2
 IType = itk.Image[PType, dim]
 ReaderType = itk.ImageFileReader[IType]
@@ -37,8 +37,8 @@ except KeyError:
   pass
 
 # test ctype
-assert itk.ctype("unsigned char") == itk.UC
-assert itk.ctype("        unsigned      \n   char \t  ") == itk.UC
+assert itk.ctype("unsigned short") == itk.US
+assert itk.ctype("        unsigned      \n   short \t  ") == itk.US
 try:
   itk.ctype("dummy")
   raise Exception("unknown C type should send an exception")

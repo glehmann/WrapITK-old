@@ -3,7 +3,7 @@
 import itk, sys
 
 # first argument is the pixel type
-PType = itk.ctype(sys.argv[1])
+PType = getattr(itk, sys.argv[1])
 # second arguement the image dimension
 dim = int(sys.argv[2])
 

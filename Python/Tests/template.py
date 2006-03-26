@@ -3,7 +3,7 @@
 import itk
 
 dim = 2
-PType = itk.UC
+PType = itk.US
 
 # check the repr string
 assert "<itkTemplate itk::Image>" == repr(itk.Image)
@@ -21,7 +21,7 @@ im2 = IType.New()
 
 readerType = itk.ImageFileReader[IType]
 readerType2 = itk.ImageFileReader[im]
-readerType3 = itk.ImageFileReader.IUC2
+readerType3 = itk.ImageFileReader.IUS2
 
 assert readerType == readerType2 == readerType3
 

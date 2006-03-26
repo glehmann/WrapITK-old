@@ -1,0 +1,3 @@
+SET(ITKWISH "${WrapITK_BINARY_DIR}/Tcl/itkwish")
+
+ADD_TEST(TclPrintAll sh ${ITKWISH} ${CMAKE_CURRENT_SOURCE_DIR}/PrintAll.tcl)

@@ -1,3 +1,6 @@
+
+SUBDIRS(Tests)
+
 ###############################################################################
 # Add the ITKTclSupport library which contains the itkTclCommand class.
 

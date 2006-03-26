@@ -82,5 +82,5 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/itkwish.in
 
 
 #install the actual executable
-INSTALL_TARGETS("${WRAP_ITK_INSTALL_PREFIX}/Tcl" itkwish)
+INSTALL_TARGETS("${WRAP_ITK_INSTALL_PREFIX}/Tcl-SWIG" itkwish)
 INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Tcl" .tcl itkinteraction itktesting itkdata itkutils)

@@ -1,7 +1,7 @@
 ###############################################################################
 # Add the ITKTclSupport library which contains the itkTclCommand class.
 
-BEGIN_WRAPPER_LIBRARY("ITKTclSupport")
+BEGIN_WRAPPER_LIBRARY("ITKTclSupport" Tcl)
 
 SET(WRAPPER_LIBRARY_DEPENDS ITKCommonA)
 SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon)

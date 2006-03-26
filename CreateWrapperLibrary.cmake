@@ -150,15 +150,15 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
   # STEP 4
   # Generate the XML, index, and CXX files from the Cable input files, and add
   # the wrapper library.
-  IF(WRAP_ITK_PERL)
-    SET(library_type "SHARED")
-    SET(custom_library_prefix "")
-    CREATE_WRAPPER_FILES_AND_LIBRARY("Perl" "pl" "${wrap_perl_sources}"
-      "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
-      "${swig_library_files}" "${library_type}" "${custom_library_prefix}")
-  ENDIF(WRAP_ITK_PERL)
+#   IF(WRAP_ITK_PERL)
+#     SET(library_type "SHARED")
+#     SET(custom_library_prefix "")
+#     CREATE_WRAPPER_FILES_AND_LIBRARY("Perl" "pl" "${wrap_perl_sources}"
+#       "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
+#       "${swig_library_files}" "${library_type}" "${custom_library_prefix}")
+#   ENDIF(WRAP_ITK_PERL)
   
-  IF(WRAP_ITK_TCL)
+  IF(WRAP_ITK_TCL AND WRAPPER_LIBRARY_TCL)
     SET(library_type "SHARED")
     SET(custom_library_prefix "")
     # no .tcl files are created by SWIG, so pass an empty extension for the
@@ -167,23 +167,23 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     CREATE_WRAPPER_FILES_AND_LIBRARY("Tcl" "" "${wrap_tcl_sources}"
       "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
       "${swig_library_files}" "${library_type}" "${custom_library_prefix}")
-  ENDIF(WRAP_ITK_TCL)
+  ENDIF(WRAP_ITK_TCL AND WRAPPER_LIBRARY_TCL)
 
-  IF(WRAP_ITK_PYTHON)
+  IF(WRAP_ITK_PYTHON AND WRAPPER_LIBRARY_PYTHON)
     SET(library_type "MODULE")
     SET(custom_library_prefix "_")
     CREATE_WRAPPER_FILES_AND_LIBRARY("Python" "py" "${wrap_python_sources}"
       "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
       "${swig_library_files}" "${library_type}" "${custom_library_prefix}")
-  ENDIF(WRAP_ITK_PYTHON)
+  ENDIF(WRAP_ITK_PYTHON AND WRAPPER_LIBRARY_PYTHON)
 
-  IF(WRAP_ITK_JAVA)
+  IF(WRAP_ITK_JAVA AND WRAPPER_LIBRARY_JAVA)
     SET(library_type "MODULE")
     SET(custom_library_prefix "")
     CREATE_WRAPPER_FILES_AND_LIBRARY("Java" "java" "${wrap_java_sources}"
       "${master_index_files}" "${library_idx_files}" "${gccxml_inc_file}" 
       "${swig_library_files}" "${library_type}" "${custom_library_prefix}")
-  ENDIF(WRAP_ITK_JAVA)
+  ENDIF(WRAP_ITK_JAVA AND WRAPPER_LIBRARY_JAVA)
   
   # STEP 5
   # Call a macro from CreateLanguageSupport.cmake

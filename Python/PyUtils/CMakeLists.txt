@@ -1,7 +1,7 @@
 ###############################################################################
 # Add the ITKPythonSupport library which contains the itkPyCommand class.
 
-BEGIN_WRAPPER_LIBRARY("ITKPyUtils")
+BEGIN_WRAPPER_LIBRARY("ITKPyUtils" Python)
 
 SET(WRAPPER_LIBRARY_DEPENDS ITKCommonA)
 SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon)

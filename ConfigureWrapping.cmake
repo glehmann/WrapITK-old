@@ -94,6 +94,31 @@ MACRO(BEGIN_WRAPPER_LIBRARY library_name)
   # A full path to each input is required.
   SET(WRAPPER_LIBRARY_CXX_SOURCES ) 
 
+  IF("${ARGC}" EQUAL 2)
+    SET(WRAPPER_LIBRARY_PYTHON OFF)
+    SET(WRAPPER_LIBRARY_TCL OFF)
+    SET(WRAPPER_LIBRARY_JAVA OFF)
+    FOREACH(lang ${ARGV1})
+      IF("${lang}" STREQUAL "Python") 
+        SET(WRAPPER_LIBRARY_PYTHON ON)
+      ENDIF("${lang}" STREQUAL "Python")
+
+      IF("${lang}" STREQUAL "Tcl") 
+        SET(WRAPPER_LIBRARY_TCL ON)
+      ENDIF("${lang}" STREQUAL "Tcl")
+
+      IF("${lang}" STREQUAL "Java") 
+        SET(WRAPPER_LIBRARY_JAVA ON)
+      ENDIF("${lang}" STREQUAL "Java")
+    ENDFOREACH(lang)
+  ELSE("${ARGC}" EQUAL 2)
+    SET(WRAPPER_LIBRARY_PYTHON ON)
+    SET(WRAPPER_LIBRARY_TCL ON)
+    SET(WRAPPER_LIBRARY_JAVA ON)
+  ENDIF("${ARGC}" EQUAL 2)
+
+# MESSAGE("${library_name} ${WRAPPER_LIBRARY_PYTHON} ${WRAPPER_LIBRARY_TCL} ${WRAPPER_LIBRARY_JAVA}")
+
   # Call the language support initialization function from CreateLanguageSupport.cmake
   LANGUAGE_SUPPORT_INITIALIZE()
 ENDMACRO(BEGIN_WRAPPER_LIBRARY)

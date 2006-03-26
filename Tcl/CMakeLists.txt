@@ -66,12 +66,21 @@ TARGET_LINK_LIBRARIES(itkwish
 )
 
 # configure and install the driver itkwish script
+SET(CONFIG_WRAP_ITK_TCL_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/Tcl")
+SET(CONFIG_WRAP_ITK_TCL_SWIG_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/Tcl-SWIG")
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/itkwish.in
+               ${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/itkwish
+               @ONLY IMMEDIATE )
+INSTALL_FILES("/bin" FILES ${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/itkwish)
+
+# configure a itkwish usable in build tree
+SET(CONFIG_WRAP_ITK_TCL_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+SET(CONFIG_WRAP_ITK_TCL_SWIG_DIR "${WrapITK_BINARY_DIR}/bin")
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/itkwish.in
                ${CMAKE_CURRENT_BINARY_DIR}/itkwish
                @ONLY IMMEDIATE )
-INSTALL_FILES("/bin" FILES ${CMAKE_CURRENT_BINARY_DIR}/itkwish)
 
 
 #install the actual executable
-INSTALL_TARGETS("${WRAP_ITK_INSTALL_PREFIX}/Tcl/bin" itkwish)
+INSTALL_TARGETS("${WRAP_ITK_INSTALL_PREFIX}/Tcl" itkwish)
 INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Tcl" .tcl itkinteraction itktesting itkdata itkutils)

@@ -41,7 +41,8 @@ IF(WRAP_ITK_PERL)
    CREATE_SWIG_RUNTIME(-perl5 Perl "${PERL_LIBRARY}")
 ENDIF(WRAP_ITK_PERL)
 
-IF(WRAP_ITK_JAVA)
-   CREATE_SWIG_RUNTIME(-java Java "${JAVA_LIBRARY}")
-ENDIF(WRAP_ITK_JAVA)
-
+# java seems to not share the code with the other here, because of the JavaCWD class
+# IF(WRAP_ITK_JAVA)
+#    CREATE_SWIG_RUNTIME(-java Java "${JAVA_LIBRARY}")
+# ENDIF(WRAP_ITK_JAVA)
+# 

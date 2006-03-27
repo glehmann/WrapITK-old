@@ -96,3 +96,7 @@ FOREACH(Kit ${ITK_KITS})
 ENDFOREACH(Kit)
 ADD_LIBRARY(ITKJavaJarDummyLibrary ITKJavaJarDummyLibrary.c)
 ADD_DEPENDENCIES(ITKJavaJarDummyLibrary ITKJavaJar)
+
+
+SUBDIRS(CWD)
+

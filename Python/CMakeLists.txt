@@ -2,7 +2,6 @@
 # Create the PyUtils library
 
 SUBDIRS(PyUtils)
-SUBDIRS(Tests)
 
 ###############################################################################
 # Add doxygen support : Experimental
@@ -129,7 +128,7 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/WrapITK.pth.in"
              @ONLY IMMEDIATE)
 
 IF(PYTHON_EXECUTABLE)
-  FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/det_spp.py "try:\n  import distutils.sysconfig; print distutils.sysconfig.get_python_lib()\nexcept: pass")
+  FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/det_spp.py "try:\n  import distutils.sysconfig; print distutils.sysconfig.get_python_lib(1)\nexcept: pass")
   EXEC_PROGRAM("${PYTHON_EXECUTABLE}"
     ARGS "\"${CMAKE_CURRENT_BINARY_DIR}/det_spp.py\""
     OUTPUT_VARIABLE py_spp

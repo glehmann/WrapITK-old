@@ -83,7 +83,7 @@ SET(WRAP_ITK_MODULES VXLNumerics ITKCommonA ITKCommonB ITKNumerics
   ITKBasicFiltersA ITKBasicFiltersB ITKBasicFiltersC ITKIO
   ITKSpatialObject ITKAlgorithms)
 
-SUBDIRS(SwigRuntime ${ITK_KITS} Tests Testing)
+SUBDIRS(SwigRuntime ${ITK_KITS})
 
 ###############################################################################
 # Configure language-specific features

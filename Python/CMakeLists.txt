@@ -2,6 +2,7 @@
 # Create the PyUtils library
 
 SUBDIRS(PyUtils)
+SUBDIRS(Tests)
 
 ###############################################################################
 # Add doxygen support : Experimental

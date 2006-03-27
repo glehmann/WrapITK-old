@@ -133,30 +133,23 @@ SET(WRAPPER_SWIG_LIBRARY_OUTPUT_DIR "${PROJECT_BINARY_DIR}/SWIG")
 #-----------------------------------------------------------------------------
 # Find ITK
 #-----------------------------------------------------------------------------
-FIND_PACKAGE(ITK)
-IF(ITK_FOUND)
-  INCLUDE(${ITK_USE_FILE})
-ENDIF(ITK_FOUND)
+FIND_PACKAGE(ITK REQUIRED)
+INCLUDE(${ITK_USE_FILE})
+# we must be sure we have the right ITK version; WrapITK can't build with
+# an old version of ITK because some classes will not be there.
+# newer version should only cause some warnings
+SET(ITK_REQUIRED_VERSION "2.6.0")
+IF("${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}" STRLESS "${ITK_REQUIRED_VERSION}")
+  MESSAGE(FATAL_ERROR "ITK ${ITK_REQUIRED_VERSION} is required to build this version of WrapITK. Set ITK_DIR to point to the directory of ITK ${ITK_REQUIRED_VERSION}.")
+ENDIF("${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}" STRLESS "${ITK_REQUIRED_VERSION}")
 
 #-----------------------------------------------------------------------------
 # Load the CableSwig settings used by ITK, or find CableSwig otherwise.
 #-----------------------------------------------------------------------------
 #
 SET(CableSwig_DIR ${ITK_CableSwig_DIR})
-FIND_PACKAGE(CableSwig)
+FIND_PACKAGE(CableSwig REQUIRED)
 
-#-----------------------------------------------------------------------------
-# Complain if ITK or cableswig not found.
-#-----------------------------------------------------------------------------
-#
-IF(NOT ITK_FOUND)
-  MESSAGE(FATAL_ERROR
-          "Cannot build without ITK.  Please set ITK_DIR.")
-ENDIF(NOT ITK_FOUND)
-
-IF(NOT CableSwig_FOUND)
-  MESSAGE(FATAL_ERROR "CableSwig is required for ITK Wrapping. Setting ITK_DIR will find CableSwig if the latter was checked out with the former.")
-ENDIF(NOT CableSwig_FOUND)
 
 # We have found CableSwig.  Use the settings.
 SET(CABLE_INDEX ${CableSwig_cableidx_EXE})

@@ -1,5 +1,6 @@
 PROJECT(WrapITK)
 
+# check cmake version
 CMAKE_MINIMUM_REQUIRED(VERSION 2.2)
 
 ENABLE_TESTING()

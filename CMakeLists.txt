@@ -12,6 +12,10 @@ ENABLE_TESTING()
 
 # Set up options needed for ConfigureWrapping
 
+# load the language autodetection stuff for the insight journal
+INCLUDE(LanguageAutoDetection.cmake)
+
+
 OPTION(WRAP_ITK_TCL "Build cswig Tcl wrapper support." OFF)
 OPTION(WRAP_ITK_PYTHON "Build cswig Python wrapper support." OFF)
 OPTION(WRAP_ITK_JAVA "Build cswig Java wrapper support." OFF)
@@ -41,6 +45,7 @@ SET(WRAP_ITK_DIMS "2;3" CACHE STRING "dimensions available separated by semicolo
 OPTION(INSTALL_WRAP_ITK_COMPATIBILITY "Install FindWrapITK.cmake and WrapITK.pth (so cmake and python can find WrapITK) as part of the standard installation process. This requires admin privileges. These files can be separately installed by making the install_wrapitk_compatibility target. " ON)
 
 SET(WRAP_ITK_INSTALL_PREFIX "/lib/InsightToolkit/WrapITK/" CACHE PATH "subpath where where most of WrapITK files will be installed")
+
 
 # Output directories.
 SET(WRAP_ITK_SWIG_LIBRARY_DIR "${WrapITK_BINARY_DIR}/SWIG")

@@ -1,24 +1,23 @@
 SET(PYTHON python)
 
+# some tests will fail if dim=2 and unsigned short are not wrapped
 INTERSECTION(WRAP_2 2 "${WRAP_ITK_DIMS}")
-
-MESSAGE("------------${WRAP_2}-")
-
 IF(WRAP_unsigned_short AND WRAP_2)
-MESSAGE("/////////////")
   ADD_TEST(PythonTypemaps ${PYTHON} ${CMAKE_CURRENT_SOURCE_DIR}/typemaps.py)
+  
   ADD_TEST(PythonTemplate ${PYTHON} ${CMAKE_CURRENT_SOURCE_DIR}/template.py)
+  
+  ADD_TEST(PythonItkFunctions ${PYTHON}
+    ${CMAKE_CURRENT_SOURCE_DIR}/itk-functions.py
+    ${WrapITK_SOURCE_DIR}/images/cthead1.png out.png
+  )
+  
+  ADD_TEST(PythonModuleToModule ${PYTHON}
+    ${CMAKE_CURRENT_SOURCE_DIR}/module2module.py
+    ${WrapITK_SOURCE_DIR}/images/cthead1.png
+  )
 ENDIF(WRAP_unsigned_short AND WRAP_2)
 
-ADD_TEST(PythonItkFunctions ${PYTHON}
-  ${CMAKE_CURRENT_SOURCE_DIR}/itk-functions.py
-  ${WrapITK_SOURCE_DIR}/images/cthead1.png out.png
-)
-  
-ADD_TEST(PythonModuleToModule ${PYTHON}
-  ${CMAKE_CURRENT_SOURCE_DIR}/module2module.py
-  ${WrapITK_SOURCE_DIR}/images/cthead1.png
-)
   
 FOREACH(d ${WRAP_ITK_DIMS})
   FOREACH(t ${WRAP_ITK_SCALAR})

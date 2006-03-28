@@ -442,17 +442,15 @@ MACRO(CREATE_WRAPPER_LIBRARY library_name sources language library_type custom_l
   ADD_LIBRARY(${library_name} ${library_type}
     ${sources} ${WRAPPER_LIBRARY_CXX_SOURCES})
     
-  IF(ITK_WRAP_NEEDS_DEPEND)
-    IF(EXTERNAL_WRAP_ITK_PROJECT)
-      # Don't add dependencies on modules created by WrapITK
-      FILTER(dep_list "${WRAPPER_LIBRARY_DEPENDS}" "${WRAP_ITK_MODULES}")
-    ELSE(EXTERNAL_WRAP_ITK_PROJECT)
-      SET(dep_list ${WRAPPER_LIBRARY_DEPENDS})
-    ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
-    FOREACH(dep ${dep_list})
-      ADD_DEPENDENCIES(${library_name} ${custom_library_prefix}${dep}${language})
-    ENDFOREACH(dep)
-  ENDIF(ITK_WRAP_NEEDS_DEPEND)
+  IF(EXTERNAL_WRAP_ITK_PROJECT)
+    # Don't add dependencies on modules created by WrapITK
+    FILTER(dep_list "${WRAPPER_LIBRARY_DEPENDS}" "${WRAP_ITK_MODULES}")
+  ELSE(EXTERNAL_WRAP_ITK_PROJECT)
+    SET(dep_list ${WRAPPER_LIBRARY_DEPENDS})
+  ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
+  FOREACH(dep ${dep_list})
+    ADD_DEPENDENCIES(${library_name} ${custom_library_prefix}${dep}${language})
+  ENDFOREACH(dep)
   
   IF(custom_library_prefix)
     SET_TARGET_PROPERTIES(${library_name} PROPERTIES PREFIX "")

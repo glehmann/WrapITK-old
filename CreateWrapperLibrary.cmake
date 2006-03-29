@@ -208,6 +208,14 @@ ENDMACRO(CREATE_WRAPPER_FILES_AND_LIBRARY)
 
 MACRO(CREATE_WRAPPER_FILES library_name language extension mdx_files library_idx_files 
     cable_input_files gccxml_inc_file swig_library_files)
+
+  IF("${language}" STREQUAL "Java")
+    GET_FILENAME_COMPONENT(outdir ${WrapITK_BINARY_DIR}/Java/InsightToolkit ABSOLUTE)
+  ELSE("${language}" STREQUAL "Java")
+    GET_FILENAME_COMPONENT(outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR} ABSOLUTE)
+  ENDIF("${language}" STREQUAL "Java")
+
+    
   FOREACH(cable_file ${cable_input_files})
     GET_FILENAME_COMPONENT(base_name "${cable_file}" NAME_WE)
     SET(xml_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}.xml")
@@ -220,10 +228,10 @@ MACRO(CREATE_WRAPPER_FILES library_name language extension mdx_files library_idx
     # Create the idx file and provide an install rule
     CINDEX_CREATE_IDX_FILE("${library_name}" "${xml_file}" "${idx_file}")
     WRAP_ITK_INSTALL("/ClassIndex" "${idx_file}")
-    
+
     # Create the wrapper CXX file with cswig and an install rule for the generated language file
     CSWIG_CREATE_CXX_FILE("${library_name}" "${language}" "${idx_file}" "${xml_file}" "${cxx_file}"
-      "${master_index_files}" "${library_idx_files}" "${swig_library_files}")
+      "${master_index_files}" "${library_idx_files}" "${swig_library_files}" "${outdir}")
     STRING(REGEX REPLACE "wrap_" "" simple_base_name "${base_name}")
     IF(NOT "${extension}" STREQUAL "")
       SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INSTALL_INTDIR}${simple_base_name}.${extension}")
@@ -237,7 +245,7 @@ MACRO(CREATE_WRAPPER_FILES library_name language extension mdx_files library_idx
   FOREACH(swig_input ${WRAPPER_LIBRARY_SWIG_INPUTS})
     GET_FILENAME_COMPONENT(base_name ${swig_input} NAME_WE)
     SET(cxx_output "${WRAPPER_LIBRARY_OUTPUT_DIR}/${base_name}${language}.cxx")
-    CREATE_EXTRA_SWIG_FILE("${library_name}" "${language}" "${swig_input}" "${cxx_output}")
+    CREATE_EXTRA_SWIG_FILE("${library_name}" "${language}" "${swig_input}" "${cxx_output}" "${outdir}")
     IF(NOT "${extension}" STREQUAL "")
       SET(swig_language_file "${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_INSTALL_INTDIR}${base_name}.${extension}")
       WRAP_ITK_INSTALL("/${language}-SWIG" "${swig_language_file}")
@@ -354,7 +362,7 @@ SET(CSWIG_ARGS_Java
 SET(CSWIG_NO_EXCEPTION_REGEX_Python "ContinuousIndex\\.xml$")
 
 MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx 
-  master_index_files library_idx_files swig_library_files)
+  master_index_files library_idx_files swig_library_files outdir)
    SET(cindex)
    FOREACH(mdx ${master_index_files})
      SET(cindex ${cindex} -Cindex "${mdx}")
@@ -383,7 +391,7 @@ MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx
   # we have to get rid of the trailing /, because on windows, cswig will append
   # \filename, creating 'path/\filename', which it can't deal with. Without
   # the trailing /, things work fine for some reason.
-  GET_FILENAME_COMPONENT(outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR} ABSOLUTE)
+#   GET_FILENAME_COMPONENT(outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR} ABSOLUTE)
 
   ADD_CUSTOM_COMMAND(
    SOURCE ${input_idx}
@@ -406,11 +414,11 @@ MACRO(CSWIG_CREATE_CXX_FILE library_name language input_idx input_xml output_cxx
 ENDMACRO(CSWIG_CREATE_CXX_FILE)
 
 
-MACRO(CREATE_EXTRA_SWIG_FILE library_name language swig_input cxx_output)
+MACRO(CREATE_EXTRA_SWIG_FILE library_name language swig_input cxx_output outdir)
   # we have to get rid of the trailing /, because on windows, cswig will append
   # \filename, creating 'path/\filename', which it can't deal with. Without
   # the trailing /, things work fine for some reason.
-  GET_FILENAME_COMPONENT(outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR} ABSOLUTE)
+#   GET_FILENAME_COMPONENT(outdir ${LIBRARY_OUTPUT_PATH}/${WRAP_ITK_BUILD_INTDIR} ABSOLUTE)
 
   ADD_CUSTOM_COMMAND(
     COMMENT "run native swig on ${swig_input}"

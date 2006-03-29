@@ -47,9 +47,18 @@ FOREACH(Kit ${ITK_KITS})
     SET(KIT_JAVA_NAME ITK${Kit})
     SET(DEP_FILES ${ITK${Kit}_JAVA_DEPENDS})
   ENDIF(${Kit} MATCHES VXLNumerics)
+
   FOREACH(File ${DEP_FILES})
     SET(FULL_JAVA_DEP_FILES ${FULL_JAVA_DEP_FILES} ${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAP_ITK_JAVA_DIR}/InsightToolkit/${File}.java)
     SET(KIT_JAVACLASS_DEP_FILES ${KIT_JAVACLASS_DEP_FILES} ${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAP_ITK_JAVA_DIR}/InsightToolkit/${File}.class)
+    # a hack to fix java files location
+    ADD_CUSTOM_COMMAND(
+      OUTPUT ${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAP_ITK_JAVA_DIR}/InsightToolkit/${File}.java
+      DEPENDS ${WrapITK_BINARY_DIR}/bin/${File}.java
+      COMMAND cp
+      ARGS -f ${WrapITK_BINARY_DIR}/bin/*.java  ${WRAP_ITK_JAVA_DIR}/InsightToolkit/
+      COMMENT "Copy ${File}.java"
+    )
     ADD_CUSTOM_COMMAND(
       OUTPUT ${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAP_ITK_JAVA_DIR}/InsightToolkit/${File}.class
       DEPENDS ${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAP_ITK_JAVA_DIR}/InsightToolkit/${File}.java ${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAP_ITK_JAVA_DIR}/InsightToolkit/JavaCWD.java ${ITK_BASE_JAVA_FILE} ${ORDERING_DEP}
@@ -62,6 +71,16 @@ FOREACH(Kit ${ITK_KITS})
 
   SET(ITK_JAVA_KIT_LIBS ${ITK_JAVA_KIT_LIBS} ${KIT_JAVA_NAME}Java)
   SET(KIT_FILE_NAME ${WRAP_ITK_JAVA_DIR}/InsightToolkit/${KIT_JAVA_NAME}Java)
+
+  # a hack to fix java files location
+  ADD_CUSTOM_COMMAND(
+    OUTPUT ${KIT_FILE_NAME}.java
+    DEPENDS ${WrapITK_BINARY_DIR}/bin/${KIT_JAVA_NAME}Java.java
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E copy_if_different ${WrapITK_BINARY_DIR}/bin/${KIT_JAVA_NAME}Java.java  ${KIT_FILE_NAME}.java
+    COMMENT "Copy ${File}.java"
+  )
+
   ADD_CUSTOM_COMMAND(
     OUTPUT ${KIT_FILE_NAME}.class
     DEPENDS ${KIT_FILE_NAME}.java ${FULL_JAVA_DEP_FILES} ${ITK_BASE_JAVA_FILE} ${WRAPPER_LIBRARY_OUTPUT_DIR}/${WRAP_ITK_JAVA_DIR}/InsightToolkit/JavaCWD.java ${ORDERING_DEP}

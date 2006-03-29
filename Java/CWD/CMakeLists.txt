@@ -12,7 +12,7 @@ IF(WRAP_ITK_JAVA)
         -package InsightToolkit
         -java -c++ ${CMAKE_CURRENT_SOURCE_DIR}/JavaCWD.i
         TARGET ${LIBRARY_NAME}Java
-        OUTPUTS ${WrapITK_BINARY_DIR}/SwigRuntime/JavaCWDJava.cxx
+        OUTPUTS ${WrapITK_BINARY_DIR}/SwigRuntime/JavaCWDJava.cxx ${WrapITK_BINARY_DIR}/${WRAP_ITK_JAVA_DIR}/InsightToolkit/JavaCWD.java
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/JavaCWD.i ${CSWIG})
 ENDIF(WRAP_ITK_JAVA)
 

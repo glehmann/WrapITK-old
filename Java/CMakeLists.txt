@@ -69,7 +69,7 @@ IF(CMAKE_CONFIGURATION_TYPES)
     DEPENDS ${ITK_JAVA_KITS_FILES}
     COMMAND ${JAVA_ARCHIVE}
     ARGS -cf ${WRAP_ITK_JAVA_DIR}/${CMAKE_CFG_INTDIR}/InsightToolkit.jar
-    -C ${WRAP_ITK_JAVA_DIR}/${CMAKE_CFG_INTDIR} InsightToolkit
+    InsightToolkit
     COMMENT "Java Archive"
     )
   ADD_CUSTOM_TARGET(ITKJavaJar ALL DEPENDS ${WRAP_ITK_JAVA_DIR}/${CMAKE_CFG_INTDIR}/InsightToolkit.jar)
@@ -81,7 +81,7 @@ ELSE(CMAKE_CONFIGURATION_TYPES)
     DEPENDS ${ITK_JAVA_KITS_FILES}
     COMMAND ${JAVA_ARCHIVE}
     ARGS -cf ${WRAP_ITK_JAVA_DIR}/InsightToolkit.jar
-    -C $${WRAP_ITK_JAVA_DIR} InsightToolkit
+    InsightToolkit
     COMMENT "Java Archive"
     )
   ADD_CUSTOM_TARGET(ITKJavaJar ALL DEPENDS ${WRAP_ITK_JAVA_DIR}/InsightToolkit.jar)

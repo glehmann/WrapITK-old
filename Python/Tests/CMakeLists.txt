@@ -25,9 +25,9 @@ IF(WRAP_unsigned_short AND WRAP_2)
   )
 ENDIF(WRAP_unsigned_short AND WRAP_2)
 
-  
+UNIQUE(types "${WRAP_ITK_SCALAR};UC")
 FOREACH(d ${WRAP_ITK_DIMS})
-  FOREACH(t ${WRAP_ITK_SCALAR})
+  FOREACH(t ${types})
     ADD_TEST(PythonSimplePipeline${t}${d} ${PYTHON_EXECUTABLE}
       ${CMAKE_CURRENT_BINARY_DIR}/simple_pipeline.py
       ${t}

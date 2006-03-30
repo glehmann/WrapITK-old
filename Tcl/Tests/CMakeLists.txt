@@ -71,6 +71,14 @@ IF(WRAP_unsigned_short AND WRAP_2)
     10 240 10 170
   )
 
+  ADD_TEST(TclThresholdImageFilter
+    sh ${ITKWISH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/ThresholdImageFilter.tcl
+    ${WrapITK_SOURCE_DIR}/images/cthead1.png
+    TclThresholdImageFilter.png
+    150 150
+  )
+
 ENDIF(WRAP_unsigned_short AND WRAP_2)
 
 

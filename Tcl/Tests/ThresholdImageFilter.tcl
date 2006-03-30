@@ -3,10 +3,10 @@
 #
 package require InsightToolkit
 
-set reader [ itkImageFileReaderUS2_New ]
-set writer [ itkImageFileWriterUS2_New ]
+set reader [ itkImageFileReaderIUS2_New ]
+set writer [ itkImageFileWriterIUS2_New ]
 
-set filter [ itkThresholdImageFilterUS2_New ]
+set filter [ itkThresholdImageFilterIUS2_New ]
 
 $filter     SetInput [ $reader  GetOutput ]
 $writer     SetInput [ $filter  GetOutput ]

@@ -1,8 +1,9 @@
 WRAP_CLASS("itk::ImageToImageFilter" POINTER)
   # Wrap from each scalar type to each other, and also to uchar (for 8-bit saving)
   # and to ulong (for watershed).
+  UNIQUE(from_types "UC;${WRAP_ITK_SCALAR}")
   UNIQUE(to_types "UC;UL;${WRAP_ITK_SCALAR}")
-  WRAP_IMAGE_FILTER_COMBINATIONS("${WRAP_ITK_SCALAR}" "${to_types}")
+  WRAP_IMAGE_FILTER_COMBINATIONS("${from_types}" "${to_types}")
   
   # Wrap from ulong to other integral types, even if ulong isn't wrapped. This
   # is needed for the relabel components image filter.

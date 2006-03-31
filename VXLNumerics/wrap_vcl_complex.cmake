@@ -17,3 +17,8 @@ SET(WRAPPER_LIBRARY_CABLESWIG_INPUTS
 LANGUAGE_SUPPORT_ADD_CLASS("vcl_complex" "vcl_complex" "vcl_complexD" "double")
 LANGUAGE_SUPPORT_ADD_CLASS("vcl_complex" "vcl_complex" "vcl_complexF" "float")
 LANGUAGE_SUPPORT_ADD_CLASS("vcl_complex" "vcl_complex" "vcl_complexLD" "long double")
+
+# std::complex and vcl_complex are the same classes, but python don't know that
+LANGUAGE_SUPPORT_ADD_CLASS("complex" "std::complex" "vcl_complexD" "double")
+LANGUAGE_SUPPORT_ADD_CLASS("complex" "std::complex" "vcl_complexF" "float")
+LANGUAGE_SUPPORT_ADD_CLASS("complex" "std::complex" "vcl_complexLD" "long double")

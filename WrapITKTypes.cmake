@@ -20,7 +20,7 @@ MACRO(END_WRAP_TYPE)
    FOREACH(wrap ${WRAPPER_TEMPLATES})
       STRING(REGEX REPLACE "([0-9A-Za-z]*)[ ]*#[ ]*(.*)" "\\1" wrapTpl "${wrap}")
       STRING(REGEX REPLACE "([0-9A-Za-z]*)[ ]*#[ ]*(.*)" "\\2" wrapType "${wrap}")
-      SET(ITKT_${itk_Wrap_Prefix}${wrapTpl} "itk::${itk_Wrap_Class}< ${wrapType} >")
+      SET(ITKT_${itk_Wrap_Prefix}${wrapTpl} "${itk_Wrap_Class}< ${wrapType} >")
       SET(ITKM_${itk_Wrap_Prefix}${wrapTpl} "${itk_Wrap_Prefix}${wrapTpl}")
    ENDFOREACH(wrap)
 ENDMACRO(END_WRAP_TYPE)
@@ -32,14 +32,14 @@ ENDMACRO(END_WRAP_TYPE)
 # to be wrapped in there own file, most of the time in CommonA
 
 
-WRAP_TYPE("Offset" "O")
+WRAP_TYPE("itk::Offset" "O")
   FOREACH(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("${d}"  "${d}")
   ENDFOREACH(d)
 END_WRAP_TYPE()
 SET(itk_Wrap_Offset ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("Vector" "V")
+WRAP_TYPE("itk::Vector" "V")
   FOREACH(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("${ITKM_F}${d}"  "${ITKT_F},${d}")
     WRAP_TEMPLATE("${ITKM_D}${d}"  "${ITKT_D},${d}")
@@ -47,7 +47,7 @@ WRAP_TYPE("Vector" "V")
 END_WRAP_TYPE()
 SET(itk_Wrap_Vector ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("CovariantVector" "CV")
+WRAP_TYPE("itk::CovariantVector" "CV")
   FOREACH(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("${ITKM_F}${d}"  "${ITKT_F},${d}")
     WRAP_TEMPLATE("${ITKM_D}${d}"  "${ITKT_D},${d}")
@@ -55,7 +55,7 @@ WRAP_TYPE("CovariantVector" "CV")
 END_WRAP_TYPE()
 SET(itk_Wrap_CovariantVector ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("ContinuousIndex" "CI")
+WRAP_TYPE("itk::ContinuousIndex" "CI")
   FOREACH(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("${ITKM_F}${d}"  "${ITKT_F},${d}")
     WRAP_TEMPLATE("${ITKM_D}${d}"  "${ITKT_D},${d}")
@@ -63,13 +63,13 @@ WRAP_TYPE("ContinuousIndex" "CI")
 END_WRAP_TYPE()
 SET(itk_Wrap_ContinuousIndex ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("Array" "A")
+WRAP_TYPE("itk::Array" "A")
   WRAP_TEMPLATE("${ITKM_D}" "${ITKT_D}")
   WRAP_TEMPLATE("${ITKM_F}" "${ITKT_F}")
 END_WRAP_TYPE()
 SET(itk_Wrap_Array ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("FixedArray" "FA")
+WRAP_TYPE("itk::FixedArray" "FA")
   UNIQUE(array_sizes "${WRAP_ITK_DIMS};1")
   # make sure that 1-D FixedArrays are wrapped. Also wrap for each selected
   # image dimension.
@@ -90,7 +90,7 @@ WRAP_TYPE("FixedArray" "FA")
 END_WRAP_TYPE()
 SET(itk_Wrap_FixedArray ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("RGBPixel" "RGB")
+WRAP_TYPE("itk::RGBPixel" "RGB")
   IF(WRAP_rgb_unsigned_char)
     WRAP_TEMPLATE("${ITKM_UC}" "${ITKT_UC}")
   ENDIF(WRAP_rgb_unsigned_char)
@@ -101,7 +101,17 @@ WRAP_TYPE("RGBPixel" "RGB")
 END_WRAP_TYPE()
 SET(itk_Wrap_RGBPixel ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("Image" "I")
+WRAP_TYPE("std::complex" "C")
+  IF(WRAP_complex_float)
+    WRAP_TEMPLATE("${ITKM_F}"  "${ITKT_F}")
+  ENDIF(WRAP_complex_float)
+  IF(WRAP_complex_double)
+    WRAP_TEMPLATE("${ITKM_D}"  "${ITKT_D}")
+  ENDIF(WRAP_complex_double)
+END_WRAP_TYPE()
+SET(itk_Wrap_vcl_complex ${WRAPPER_TEMPLATES})
+
+WRAP_TYPE("itk::Image" "I")
   # Make a list of all of the selected image pixel types and also double (for
   # BSplineDeformableTransform), uchar (for 8-bit image output), and ulong
   # (for the watershed and relabel filters).
@@ -121,7 +131,7 @@ WRAP_TYPE("Image" "I")
 END_WRAP_TYPE()
 SET(itk_Wrap_Image ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("VectorImage" "VI")
+WRAP_TYPE("itk::VectorImage" "VI")
   # Make a list of all of the selected image pixel types and also uchar 
   # (for 8-bit image output)
   UNIQUE(wrap_image_types "${WRAP_ITK_SCALAR};UC")
@@ -134,7 +144,7 @@ WRAP_TYPE("VectorImage" "VI")
 END_WRAP_TYPE()
 SET(itk_Wrap_VectorImage ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("VariableLengthVector" "VLV")
+WRAP_TYPE("itk::VariableLengthVector" "VLV")
   # Make a list of all of the selected image pixel types and also uchar 
   # (for 8-bit image output)
   UNIQUE(wrap_image_types "${WRAP_ITK_SCALAR};UC")
@@ -145,7 +155,7 @@ WRAP_TYPE("VariableLengthVector" "VLV")
 END_WRAP_TYPE()
 SET(itk_Wrap_VariableLengthVector ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("Point" "P")
+WRAP_TYPE("itk::Point" "P")
   FOREACH(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("${ITKM_F}${d}"  "${ITKT_F},${d}")
     WRAP_TEMPLATE("${ITKM_D}${d}"  "${ITKT_D},${d}")
@@ -153,7 +163,7 @@ WRAP_TYPE("Point" "P")
 END_WRAP_TYPE()
 SET(itk_Wrap_Point ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("LevelSetNode" "LSN")
+WRAP_TYPE("itk::LevelSetNode" "LSN")
   # Only make level set nodes for the selected image pixel types
   FOREACH(d ${WRAP_ITK_DIMS})
     FOREACH(type ${WRAP_ITK_SCALAR})
@@ -163,7 +173,7 @@ WRAP_TYPE("LevelSetNode" "LSN")
 END_WRAP_TYPE()
 SET(itk_Wrap_LevelSetNode ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("BinaryBallStructuringElement" "SE")
+WRAP_TYPE("itk::BinaryBallStructuringElement" "SE")
   # Only make structuring elements for the selected image pixel types
   FOREACH(d ${WRAP_ITK_DIMS})
     FOREACH(type ${WRAP_ITK_SCALAR})
@@ -174,7 +184,7 @@ WRAP_TYPE("BinaryBallStructuringElement" "SE")
 END_WRAP_TYPE()
 SET(itk_Wrap_StructuringElement ${WRAPPER_TEMPLATES})
 
-WRAP_TYPE("SpatialObject" "SO")
+WRAP_TYPE("itk::SpatialObject" "SO")
   FOREACH(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("${d}"  "${d}")
   ENDFOREACH(d)
@@ -200,5 +210,6 @@ SET(WRAPPER_DEFAULT_INCLUDE
   "itkBinaryBallStructuringElement.h"
   "itkSpatialObject.h"
   "itkCommand.h"
+  "vcl_complex.h"
 )
 

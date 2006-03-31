@@ -46,4 +46,16 @@ WRAP_CLASS("itk::InPlaceImageFilter" POINTER)
     WRAP_IMAGE_FILTER_TYPES(VF F)
     WRAP_IMAGE_FILTER_TYPES(F VF)
   ENDIF(WRAP_vector_float AND WRAP_float)
+
+  # complex <-> scalar
+  IF(WRAP_complex_float AND WRAP_float)
+    WRAP_IMAGE_FILTER_TYPES(CF F)
+    WRAP_IMAGE_FILTER_TYPES(F CF)
+  ENDIF(WRAP_complex_float AND WRAP_float)
+
+  IF(WRAP_complex_double AND WRAP_double)
+    WRAP_IMAGE_FILTER_TYPES(CD D)
+    WRAP_IMAGE_FILTER_TYPES(D CD)
+  ENDIF(WRAP_complex_double AND WRAP_double)
+
 END_WRAP_CLASS()

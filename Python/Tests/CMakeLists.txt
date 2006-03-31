@@ -32,76 +32,86 @@ IF(WRAP_unsigned_short AND WRAP_2)
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/BinaryDilateImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/2th_cthead1.png
-    PythonBinaryDilateImageFilter.png
+    BinaryDilateImageFilter.png
+    --compare BinaryDilateImageFilter.png ${WrapITK_SOURCE_DIR}/images/BinaryDilateImageFilter.png
   )
 
   ADD_TEST(PythonBinaryErodeImageFilter
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/BinaryErodeImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/2th_cthead1.png
-    PythonBinaryErodeImageFilter.png
+    BinaryErodeImageFilter.png
+    --compare BinaryErodeImageFilter.png ${WrapITK_SOURCE_DIR}/images/BinaryErodeImageFilter.png
   )
 
   ADD_TEST(PythonBinaryThresholdImageFilter
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/BinaryThresholdImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
-    PythonBinaryThresholdImageFilter.png
+    BinaryThresholdImageFilter.png
     50 150
     0 65535
+    --compare BinaryThresholdImageFilter.png ${WrapITK_SOURCE_DIR}/images/BinaryThresholdImageFilter.png
   )
 
   ADD_TEST(PythonCastImageFilter
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/CastImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
-    PythonCastImageFilter.png
+    CastImageFilter.png
+    --compare CastImageFilter.png ${WrapITK_SOURCE_DIR}/images/cthead1.png
   )
 
   ADD_TEST(PythonGrayscaleDilateImageFilter
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/GrayscaleDilateImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
-    PythonGrayscaleDilateImageFilter.png
+    GrayscaleDilateImageFilter.png
+    --compare GrayscaleDilateImageFilter.png ${WrapITK_SOURCE_DIR}/images/GrayscaleDilateImageFilter.png
   )
 
   ADD_TEST(PythonGrayscaleErodeImageFilter
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/GrayscaleErodeImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
-    PythonGrayscaleErodeImageFilter.png
+    GrayscaleErodeImageFilter.png
+    --compare GrayscaleErodeImageFilter.png ${WrapITK_SOURCE_DIR}/images/GrayscaleErodeImageFilter.png
   )
 
   ADD_TEST(PythonMeanImageFilter
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/MeanImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
-    PythonMeanImageFilter.png
+    MeanImageFilter.png
     3
+    --compare MeanImageFilter.png ${WrapITK_SOURCE_DIR}/images/MeanImageFilter.png
   )
 
   ADD_TEST(PythonMedianImageFilter
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/MedianImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
-    PythonMedianImageFilter.png
+    MedianImageFilter.png
     3
+    --compare MedianImageFilter.png ${WrapITK_SOURCE_DIR}/images/MedianImageFilter.png
   )
 
   ADD_TEST(PythonSigmoidImageFilter
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/SigmoidImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
-    PythonSigmoidImageFilter.png
+    SigmoidImageFilter.png
     10 240 10 170
+    --compare SigmoidImageFilter.png ${WrapITK_SOURCE_DIR}/images/SigmoidImageFilter.png
   )
 
   ADD_TEST(PythonThresholdImageFilter
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/ThresholdImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
-    PythonThresholdImageFilter.png
+    ThresholdImageFilter.png
     150 150
+    --compare ThresholdImageFilter.png ${WrapITK_SOURCE_DIR}/images/ThresholdImageFilter.png
   )
 
 ENDIF(WRAP_unsigned_short AND WRAP_2)
@@ -112,7 +122,7 @@ IF(WRAP_float AND WRAP_2)
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/CurvatureAnisotropicDiffusionImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
-    PythonCurvatureAnisotropicDiffusionImageFilter.png
+    CurvatureAnisotropicDiffusionImageFilter.png
     5 0.125 3
   )
 
@@ -120,7 +130,7 @@ IF(WRAP_float AND WRAP_2)
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/CurvatureFlowImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
-    PythonCurvatureFlowImageFilter.png
+    CurvatureFlowImageFilter.png
     5 0.125 1.0
   )
 
@@ -128,7 +138,7 @@ IF(WRAP_float AND WRAP_2)
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/SmoothingRecursiveGaussianImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
-    PythonSmoothingRecursiveGaussianImageFilter.png
+    SmoothingRecursiveGaussianImageFilter.png
     3
   )
 
@@ -136,7 +146,7 @@ IF(WRAP_float AND WRAP_2)
     ${PYTHON}
     ${CMAKE_CURRENT_SOURCE_DIR}/LaplacianImageFilter.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
-    PythonLaplacianImageFilter.png
+    LaplacianImageFilter.png
   )
 
 ENDIF(WRAP_float AND WRAP_2)
@@ -152,6 +162,7 @@ FOREACH(d ${WRAP_ITK_DIMS})
       ${d}
       ${WrapITK_SOURCE_DIR}/images/cthead1.png
       simple_pipeline${t}${d}.img
+      --compare simple_pipeline${t}${d}.img ${WrapITK_SOURCE_DIR}/images/cthead1.png
     )
   ENDFOREACH(t)
 ENDFOREACH(d)

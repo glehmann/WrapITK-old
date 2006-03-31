@@ -7,6 +7,7 @@ from sys import argv
 
 dim = 2
 IType = itk.Image[itk.US, dim]
+OIType = itk.Image[itk.UC, dim]
 
 reader = itk.ImageFileReader[IType].New( FileName=argv[1] )
 filter  = itk.ThresholdImageFilter[IType].New( reader,
@@ -15,7 +16,8 @@ filter  = itk.ThresholdImageFilter[IType].New( reader,
 # use the Set notation
 filter.ThresholdAbove(  eval( argv[4] )  )
 
-writer = itk.ImageFileWriter[IType].New( filter, FileName=argv[2] )
+cast = itk.CastImageFilter[IType, OIType].New(filter)
+writer = itk.ImageFileWriter[OIType].New( cast, FileName=argv[2] )
 
 writer.Update()
 

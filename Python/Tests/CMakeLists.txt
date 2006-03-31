@@ -1,4 +1,15 @@
-SET(PYTHON "${PYTHON_EXECUTABLE}")
+
+# configure the test driver
+SET(PYTHON_TEST_LIB_PATH "${WrapITK_BINARY_DIR}/bin")
+SET(PYTHON_TEST_PYTHON_PATH "${WrapITK_BINARY_DIR}/Python")
+FIND_PROGRAM(IMAGE_COMPARE ImageCompare)
+
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/pythonTestDriver.py.in"
+              "${CMAKE_CURRENT_BINARY_DIR}/pythonTestDriver.py"
+              @ONLY IMMEDIATE)
+
+
+SET(PYTHON "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_BINARY_DIR}/pythonTestDriver.py")
 
 # some tests will fail if dim=2 and unsigned short are not wrapped
 INTERSECTION(WRAP_2 2 "${WRAP_ITK_DIMS}")

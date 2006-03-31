@@ -1,0 +1,54 @@
+#!@PYTHON_EXECUTABLE@
+
+# set environment variables
+
+import os, subprocess, sys
+from optparse import OptionParser
+
+env_lib_name = "LD_LIBRARY_PATH"
+if os.environ.has_key(env_lib_name) :
+  os.environ[env_lib_name] = "@PYTHON_TEST_LIB_PATH@:%s" % os.environ[env_lib_name]
+else:
+  os.environ[env_lib_name] = "@PYTHON_TEST_LIB_PATH@"
+
+env_python_path = "PYTHONPATH"
+if os.environ.has_key(env_python_path) :
+  os.environ[env_python_path] = "@PYTHON_TEST_PYTHON_PATH@:%s" % os.environ[env_python_path]
+else:
+  os.environ[env_python_path] = "@PYTHON_TEST_PYTHON_PATH@"
+
+
+
+# setup the option manager to be able to compare the resulting images in the same test
+
+optionParser = OptionParser(usage="usage: %prog [--compare image1 image2] test.py [arg1 [arg2 [...]]]")
+optionParser.add_option("-c", "--compare", action="append", dest="compare", default=[], metavar="IMAGE1 IMAGE2", nargs=2, help="compare IMAGE1 and IMAGE2 and exit with an error if the images are different. This options can appear several times to compare several images.")
+optionParser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="display the command line before running the programs.")
+
+(options, args) = optionParser.parse_args()
+
+if len(args) < 1:
+  optionParser.print_usage(sys.stderr)
+  sys.exit(1)
+
+# call the program, and exit if it fail
+
+command = ["@PYTHON_EXECUTABLE@"] + args
+if options.verbose:
+  print >> sys.stderr, "+", " ".join(command)
+returnValue = subprocess.call( command )
+if returnValue != 0 :
+  sys.exit( returnValue )
+
+# compare the images if needed
+for imageFile1, imageFile2 in options.compare :
+  command = ["@IMAGE_COMPARE@", imageFile1, imageFile2]
+  if options.verbose:
+    print >> sys.stderr, "+", " ".join(command)
+  returnValue = subprocess.call( command )
+  if returnValue != 0 :
+    sys.exit( returnValue )
+  
+
+# everything suceed - just exit
+sys.exit(0)

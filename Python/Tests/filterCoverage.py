@@ -27,10 +27,42 @@ if sys.version < '2.4' :
 	    if reverse :
 		i.reverse()
 	    return i
-			    
+
+# declares filter which will not be wrapped
+excludeSet = set(["UnaryFunctorImageFilter",
+  "ReconstructionImageFilter",
+  "PadImageFilter",
+  "ObjectMorphologyImageFilter",
+  "MovingHistogramDilateImageFilter",
+  "MovingHistogramErodeImageFilter",
+  "MovingHistogramImageFilter",
+  "MovingHistogramMorphologicalGradientImageFilter",
+  "MovingHistogramMorphologyImageFilter",
+  "MorphologyImageFilter",
+  "FFTWRealToComplexConjugateImageFilter",
+  "FFTWComplexConjugateToRealImageFilter",
+  "FFTRealToComplexConjugateImageFilter",
+  "FFTComplexConjugateToRealImageFilter",
+  "SCSLComplexConjugateToRealImageFilter",
+  "SCSLRealToComplexConjugateImageFilter",
+  "BinaryMorphologyImageFilter",
+  "BinaryFunctorImageFilter",
+  "TernaryFunctorImageFilter",
+  "ShiftScaleInPlaceImageFilter",
+  "FastIncrementalBinaryDilateImageFilter",
+  "BasicMorphologicalGradientImageFilter",
+  "TwoOutputExampleImageFilter",
+  "NaryFunctorImageFilter",
+  "NonThreadedShrinkImageFilter",
+  "RegionGrowImageFilter",
+  "ConnectedComponentFunctorImageFilter",
+  "BasicDilateImageFilter",
+  "BasicErodeImageFilter"])
+
+
 # get filters from sources
 filterFiles = commands.getoutput("find /usr/include/InsightToolkit -name 'itk*Filter.h'").splitlines()
-filters = set([f.split('/')[-1][len('itk'):-len('.h')] for f in filterFiles])
+filters = set([f.split('/')[-1][len('itk'):-len('.h')] for f in filterFiles]) - excludeSet
 fDict = {}
 for filterFile in filterFiles :
             d = filterFile.split('/')[4]
@@ -51,3 +83,4 @@ print
 print '%i filters' % len(filters)
 print '%i wrapped filters' % len(wrappers)
 print '%i non wrapped filters' % len(nonWrapped)
+print '%f%% covered' % (len(wrappers) / float(len(filters)) * 100)

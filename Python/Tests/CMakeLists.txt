@@ -149,6 +149,17 @@ IF(WRAP_float AND WRAP_2)
     LaplacianImageFilter.png
   )
 
+  ADD_TEST(PythonFFTImageFilter
+    ${PYTHON}
+    ${CMAKE_CURRENT_SOURCE_DIR}/FFTImageFilter.py
+    ${WrapITK_SOURCE_DIR}/images/cthead1.png
+    FFTImageFilterReal.png
+    FFTImageFilterImaginary.png
+    --compare FFTImageFilterReal.png ${WrapITK_SOURCE_DIR}/images/FFTImageFilterReal.png
+    --compare FFTImageFilterImaginary.png ${WrapITK_SOURCE_DIR}/images/FFTImageFilterImaginary.png
+#     --compare complexImage.mhd ${WrapITK_SOURCE_DIR}/images/complexImage.mhd
+  )
+
 ENDIF(WRAP_float AND WRAP_2)
 
 

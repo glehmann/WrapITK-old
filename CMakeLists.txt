@@ -74,16 +74,7 @@ SET(src "${WrapITK_SOURCE_DIR}/itk.swg")
 SET(tgt "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}/itk.swg")
 EXEC_PROGRAM(${CMAKE_COMMAND} ARGS -E copy_if_different ${src} ${tgt})
 
-# ITK_KITS must be in proper order -- modules that depend on other modules
-# must come later in the list.
-SET(ITK_KITS VXLNumerics CommonA CommonB Numerics 
-  BasicFiltersA BasicFiltersB BasicFiltersC IO
-  SpatialObject Algorithms)
-SET(WRAP_ITK_MODULES VXLNumerics ITKCommonA ITKCommonB ITKNumerics 
-  ITKBasicFiltersA ITKBasicFiltersB ITKBasicFiltersC ITKIO
-  ITKSpatialObject ITKAlgorithms)
-
-SUBDIRS(SwigRuntime ${ITK_KITS})
+SUBDIRS(SwigRuntime Modules)
 
 ###############################################################################
 # Configure language-specific features

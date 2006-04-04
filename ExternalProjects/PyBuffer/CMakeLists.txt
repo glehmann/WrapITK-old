@@ -1,3 +1,4 @@
+PROJECT(PyBuffer)
 FIND_PACKAGE(WrapITK REQUIRED)
 
 # Deal with numarray package  Options

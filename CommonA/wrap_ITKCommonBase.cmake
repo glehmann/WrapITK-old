@@ -14,12 +14,3 @@ WRAP_NON_TEMPLATE_CLASS("itk::Indent")
 WRAP_NON_TEMPLATE_CLASS("itk::StringStream")
 WRAP_NON_TEMPLATE_CLASS("itk::MetaDataDictionary")
 
-# gcc-xml on windows cannot be allowed to see the full MultiThreader
-# header because currently gcc-xml and cswig cannot properly wrap functions
-# that use __stdcall specifiers, which one part of MultiThreader.h does on
-# windows. Just pass the stub header which will keep gcc-xml away from the 
-# real header on windows.
-SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
-WRAP_INCLUDE("itkMultiThreaderStub.h")
-WRAP_NON_TEMPLATE_CLASS("itk::MultiThreader"      POINTER)
-

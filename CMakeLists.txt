@@ -72,17 +72,7 @@ INCLUDE(ConfigureWrapping.cmake)
 ADD_CUSTOM_TARGET(copy_itk_swg ALL)
 SET(src "${WrapITK_SOURCE_DIR}/itk.swg")
 SET(tgt "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}/itk.swg")
-ADD_CUSTOM_COMMAND(SOURCE ${src}
-  COMMAND ${CMAKE_COMMAND}
-  ARGS -E copy_if_different ${src} ${tgt}
-  OUTPUTS ${tgt}
-  TARGET copy_itk_swg
-  COMMENT "copy itk.swg file to proper place for build")
-# driver command to make the copy happen.
-ADD_CUSTOM_COMMAND(
-  SOURCE copy_itk_swg
-  DEPENDS ${tgt}
-  TARGET copy_itk_swg)
+EXEC_PROGRAM(${CMAKE_COMMAND} ARGS -E copy_if_different ${src} ${tgt})
 
 # ITK_KITS must be in proper order -- modules that depend on other modules
 # must come later in the list.

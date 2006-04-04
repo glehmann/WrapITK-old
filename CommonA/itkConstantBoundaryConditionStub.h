@@ -1,7 +1,7 @@
-#if !(defined(CABLE_CONFIGURATION) && defined(WIN32))
-// gcc-xml cannot be allowed to see the full ConstantBoundaryCondition header on 
-// windows. If we're not gcc_xml or not on windows, just pass through to the
-// proper header.
+#ifndef CABLE_CONFIGURATION
+// This file should *only* ever be included on windows systems!
+// gcc-xml cannot be allowed to see the full ConstantBoundaryCondition header.
+// If we're not gcc_xml, just pass through to the proper header.
 #include "itkConstantBoundaryCondition.h"
 #else
 // Here follows the restricted header made available just to gcc-xml on windows.
@@ -53,4 +53,4 @@ public:
 } // end namespace itk
 
 #endif // ifndef stuff
-#endif // end if CABLE_CONFIGURATION and WIN32
+#endif // end if CABLE_CONFIGURATION

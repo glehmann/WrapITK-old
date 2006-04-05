@@ -98,6 +98,7 @@ TODO: If that disablement works, delete this block entirely.
 #ifdef _WIN32
 #pragma warning ( disable : 4190 )
 #pragma warning ( disable : 4049 )
+#pragma warning ( disable : 4101 )
 #endif
 %}
 

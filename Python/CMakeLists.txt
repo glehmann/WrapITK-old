@@ -28,22 +28,26 @@ ENDIF(DOXYGEN_MAN_PATH)
 # bundled up into an install conventiently. Python will take care of turning
 # the / path separator into \ on windows if needed.
 
-SET(CONFIG_WRAP_ITK_DATA_ROOT "../Data")
-SET(CONFIG_WRAP_ITK_TEST_ROOT "../Testing")
-SET(CONFIG_PYTHON_CONFIGPY_DIR "Configuration")
-
 IF(CMAKE_CONFIGURATION_TYPES)
+  SET(CONFIG_WRAP_ITK_DATA_ROOT "../../Data")
+  SET(CONFIG_WRAP_ITK_TEST_ROOT "../../Testing")
+  SET(CONFIG_PYTHON_CONFIGPY_DIR "../Configuration")
+
   FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
     # SWIG-generated libs and *.py files are sent to ${config} subdir
     # This assumes that LIBRARY_OUTPUT_PATH is WrapITK_BINARY_DIR/bin (bad!)
     # TODO: We need a better way to do this.
-    SET(CONFIG_PYTHON_SWIGPY_DIR "../bin/${config}")
-    SET(CONFIG_PYTHON_SWIGLIB_DIR "../bin/${config}")
+    SET(CONFIG_PYTHON_SWIGPY_DIR "../../bin/${config}")
+    SET(CONFIG_PYTHON_SWIGLIB_DIR "../../bin/${config}")
     CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
                    "${WrapITK_BINARY_DIR}/Python/${config}/itkConfig.py"
                    @ONLY IMMEDIATE)
   ENDFOREACH(config)
 ELSE(CMAKE_CONFIGURATION_TYPES)
+  SET(CONFIG_WRAP_ITK_DATA_ROOT "../Data")
+  SET(CONFIG_WRAP_ITK_TEST_ROOT "../Testing")
+  SET(CONFIG_PYTHON_CONFIGPY_DIR "Configuration")
+
   SET(CONFIG_PYTHON_SWIGPY_DIR "../bin")
   SET(CONFIG_PYTHON_SWIGLIB_DIR "../bin")
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
@@ -118,15 +122,25 @@ INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Python" FILES ${WRAP_ITK_PYTHON_INSTAL
 ###############################################################################
 # Configure and install the custom python .pth files
 
-SET(CONFIG_WRAP_ITK_PYTHON_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/WrapITK.pth.in"
-             "${CMAKE_CURRENT_BINARY_DIR}/WrapITK.pth"
-             @ONLY IMMEDIATE)
-             
-SET(CONFIG_WRAP_ITK_PYTHON_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/Python")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/WrapITK.pth.in"
-             "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/WrapITK.pth"
-             @ONLY IMMEDIATE)
+IF(CMAKE_CONFIGURATION_TYPES)
+
+  FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
+    SET(CONFIG_WRAP_ITK_PYTHON_DIR "${CMAKE_CURRENT_BINARY_DIR}/${config}")
+
+    # SWIG-generated libs and *.py files are sent to ${config} subdir
+    # This assumes that LIBRARY_OUTPUT_PATH is WrapITK_BINARY_DIR/bin (bad!)
+    # TODO: We need a better way to do this.
+    CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/WrapITK.pth.in"
+                   "${CMAKE_CURRENT_BINARY_DIR}/${config}/WrapITK.pth"
+                   @ONLY IMMEDIATE)
+  ENDFOREACH(config)
+ELSE(CMAKE_CONFIGURATION_TYPES)
+  SET(CONFIG_WRAP_ITK_PYTHON_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+
+  CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/WrapITK.pth.in"
+                 "${CMAKE_CURRENT_BINARY_DIR}/WrapITK.pth"
+                 @ONLY IMMEDIATE)
+ENDIF(CMAKE_CONFIGURATION_TYPES)
 
 IF(PYTHON_EXECUTABLE)
   FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/det_spp.py "try:\n  import distutils.sysconfig; print distutils.sysconfig.get_python_lib(1)\nexcept: pass")

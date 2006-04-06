@@ -362,7 +362,7 @@ ENDMACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG)
 
 
 
-MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
+MACRO(PYTHON_SUPPORT_CONFIGURE_FILES)
   # Create the various files to make it easier to use the ITK wrappers, especially
   # with reference to the multitude of templates.
   # Currently, only Python is supported.
@@ -384,5 +384,5 @@ MACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
       # without first installing it into WrapITK.
       CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG("${PROJECT_BINARY_DIR}/Python/")
     ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
-ENDMACRO(LANGUAGE_SUPPORT_CONFIGURE_FILES)
+ENDMACRO(PYTHON_SUPPORT_CONFIGURE_FILES)
 

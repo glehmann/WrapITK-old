@@ -2,4 +2,6 @@ MACRO(ADD_TCL_TYPEMAP simple_name cpp_name swig_name template_params)
   # write me
 ENDMACRO(ADD_TCL_TYPEMAP)
 
-
+MACRO(TCL_SUPPORT_CONFIGURE_FILES)
+  # write me
+ENDMACRO(TCL_SUPPORT_CONFIGURE_FILES)

@@ -175,28 +175,15 @@ ENDIF(CSWIG_MISSING_VALUES)
 # Find wrapping language API libraries.
 #-----------------------------------------------------------------------------
 IF(WRAP_ITK_TCL)
-  FIND_PACKAGE(TCL)
-  # Hide useless settings provided by FindTCL.
-  FOREACH(entry TCL_LIBRARY_DEBUG
-                TK_LIBRARY_DEBUG
-                TCL_STUB_LIBRARY
-                TCL_STUB_LIBRARY_DEBUG
-                TK_STUB_LIBRARY
-                TK_STUB_LIBRARY_DEBUG
-                TK_WISH)
-    SET(${entry} "${${entry}}" CACHE INTERNAL "This value is not used by ITK.")
-  ENDFOREACH(entry)
+  INCLUDE("${WRAP_ITK_CMAKE_DIR}/Python/ConfigureWrapping.cmake")
 ENDIF(WRAP_ITK_TCL)
 
 IF(WRAP_ITK_PYTHON)
-  FIND_PACKAGE(PythonLibs)
-  FIND_PACKAGE(PythonInterp)
-  MARK_AS_ADVANCED(PYTHON_EXECUTABLE)
+  INCLUDE("${WRAP_ITK_CMAKE_DIR}/Python/ConfigureWrapping.cmake")
 ENDIF(WRAP_ITK_PYTHON)
 
 IF(WRAP_ITK_JAVA)
-  FIND_PACKAGE(Java)
-  FIND_PACKAGE(JNI)
+  INCLUDE("${WRAP_ITK_CMAKE_DIR}/Java/ConfigureWrapping.cmake")
 ENDIF(WRAP_ITK_JAVA)
 
 
@@ -204,23 +191,6 @@ ENDIF(WRAP_ITK_JAVA)
 # Set various variables in order
 ###############################################################################
 SET(CMAKE_SKIP_RPATH ON CACHE BOOL "ITK wrappers must not have runtime path information." FORCE)
-
-# make sure language include directories are added
-IF(WRAP_ITK_TCL)
-  INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
-ENDIF(WRAP_ITK_TCL)
-
-IF(WRAP_ITK_PYTHON)
-  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-ENDIF(WRAP_ITK_PYTHON)
-
-IF(WRAP_ITK_PERL)
-  INCLUDE_DIRECTORIES(${PERL_INCLUDE_PATH})
-ENDIF(WRAP_ITK_PERL)
-
-IF(WRAP_ITK_JAVA)
-  INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${JAVA_AWT_INCLUDE_PATH})
-ENDIF(WRAP_ITK_JAVA)
 
 #------------------------------------------------------------------------------
 # System dependant wraping stuff

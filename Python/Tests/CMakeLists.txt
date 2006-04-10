@@ -172,8 +172,8 @@ FOREACH(d ${WRAP_ITK_DIMS})
       ${t}
       ${d}
       ${WrapITK_SOURCE_DIR}/images/cthead1.png
-      simple_pipeline${t}${d}.img
-      --compare simple_pipeline${t}${d}.img ${WrapITK_SOURCE_DIR}/images/cthead1.png
+      simple_pipeline${t}${d}.nrrd
+      --compare simple_pipeline${t}${d}.nrrd ${WrapITK_SOURCE_DIR}/images/cthead1.png
     )
   ENDFOREACH(t)
 ENDFOREACH(d)

@@ -122,48 +122,47 @@ Python. This is not the case in the standard ITK wrappers.
 
 \end{itemize}
 
-Currently, WrapITK have been tested on Mandriva Linux \cite{MandrivaWebSite}, and MacOS X, and only
-supports Python properly; Java and Tcl libraries build
-correctly but the Java and Tcl support classes for loading these libraries is
-entirely out of date and is not working.
-
 The article you're reading is not as nice and complete than what we would have
 done, but it seems important to us to release our work and to get feedbacks
 as soon as possible. The article will continue to evolve with WrapITK.
 
+\section{Supported languages and plateforms}
+
+Java, Tcl and Python builds properly and are fully usable. However, Java and
+Tcl don't yet have the extended features added to Python\footnote{Any help
+to extend Java and Tcl support would be higly appreciated.}.
+
+WrapITK is mainly developed on Mandriva Linux \cite{MandrivaWebSite} and 
+MacOS X \cite{MacOsXWebSite} and so is well tested on this palteforms.
+It also builds on windows \cite{WindowsWebSite}, but require more testing
+to be sure everything work as it should. See below for details about how
+to report bugs are contribute patches.
+
+Several tests are available\footnote{There is currently 49 tests with the default
+configuration.} for Python, Tcl and Java. They can be run with the \verb$ctest$
+command.
+
+\section{Performance}
 
 \section{User guide}
 
   \subsection{Installation}
 
-    \subsubsection{Get the software}
+    \subsubsection{Get the software sources}
 
 A tarball archive is submitted with the article.
 
-To get the last version from the darcs repository can be obtained
-with the command 
-\verb$darcs get http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/$.
+The last version can be obtained from the development repository with darcs \cite{DarcsWebSite}.
+The command is
+\verb$darcs get --partial http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/$\footnote{Note
+that the {\em --partial} option is required on systems with case insensitive filesystem like
+windows or Mac Os X.}.
 
-For the user who don't want to use darcs \cite{DarcsWebSite} but want the last development version,
+For the user who don't want to use darcs \cite{DarcsWebSite} but still want the last development version,
 a nightly updated archive is available at
 \url{http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/WrapITK.tar.gz}.
 
-RPM packages for Mandriva Linux 2006 are available at \url{http://voxel.jouy.inra.fr/mdk/mima2}.
-
-% TODO: provide more binary packages - for mac and windows.
-
-    \subsubsection{CableSwig}
-
-WrapITK requires ITK and CableSwig to have been previously downloaded and built.
-To get CableSwig, simply run:
-\verb$cvs -d:pserver:anonymous@public.kitware.com:/cvsroot/CableSwig co CableSwig$
-(Note that no cvs login is needed here.)
-
-If you check out CableSwig into the \verb$Insight/Utilities$ directory, then it will be
-built as a part of ITK, and will be automatically detected by WrapITK when ITK
-is found.
-
-    \subsubsection{Required and optional patches}
+    \subsubsection{ITK}
 
 WrapITK will work properly with the ITK 2.6.0 release. 
 
@@ -172,6 +171,34 @@ patches to the ITK source in \verb$WrapITK/patches/optional$ which can be applie
 version 2.6.0. These optional patches provide
 better support for python by providing some methods like \verb$__str__$, or methods
 for standard python sequence interface (see below).
+
+    \subsubsection{CableSwig}
+
+WrapITK requires ITK and CableSwig \cite{ITKWebSite} to have been previously downloaded and built.
+To get a development version of CableSwig, simply run:
+\verb$cvs -d:pserver:anonymous@public.kitware.com:/cvsroot/CableSwig co CableSwig$
+(Note that no cvs login is needed here.)
+
+If you check out CableSwig into the \verb$Insight/Utilities$ directory, then it will be
+built as a part of ITK, and will be automatically detected by WrapITK when ITK
+is found.
+
+    \subsubsection{Python}
+
+Python \cite{PythonWebSite} is required only to build python support.
+WrapITK is reported to work with python 2.3 and python 2.4. However, the test framework
+requires the \verb$subprocess$ module available in standard only in python 2.4 and above.
+To run the python test with python 2.3, you have to install \verb$subprocess$.
+
+    \subsubsection{Tcl}
+
+Tcl \cite{TclWebSite} is required only to build tcl support.
+WrapITK have been tested with Tcl 8.4.11.
+
+    \subsubsection{Java}
+
+Java \cite{JavaWebSite} is required only to build java support.
+WrapITK have been tested with java \verb$1.5.0_06-b05$.
 
     \subsubsection{Build options}
 
@@ -233,6 +260,12 @@ directory for example.
     \subsubsection{Install WrapITK or use it in the build tree}
 
 Once built, WrapITK can be installed or used in place.
+
+    \subsubsection{Binary packages}
+
+RPM packages for Mandriva Linux 2006 are available at \url{http://voxel.jouy.inra.fr/mdk/mima2}.
+
+% TODO: provide more binary packages - for mac and windows.
 
   \subsection{Python usage}
 
@@ -440,13 +473,14 @@ Or a simple number can also be used.
 
 Here is the list of itk classes which can currently be substituted by python sequences:
 \begin{itemize}
+  \item \verb$Array$
+  \item \verb$ContinuousIndex$
   \item \verb$CovariantVector$
   \item \verb$FixedArray$
   \item \verb$Index$
   \item \verb$Offset$
   \item \verb$Size$
   \item \verb$Vector$
-  \item \verb$ContinuousIndex$
 \end{itemize}
 
      \subsubsection{Python specific functions in the {\em itk} module}
@@ -970,6 +1004,8 @@ begin your new contribution.} for example, is to build {\em all}
 the methods of the wrapped classes, and so to be sure everything builds as it should
 \footnote{We have found and fixed numbers of bug in ITK while adding
 more classes to WrapITK}.
+In WrapITK, we used them to avoid managing switches if some dependencies or not
+found: the project must found this dependencies or fail.
 
 
     \subsubsection{Building}
@@ -1021,7 +1057,7 @@ Numeric/Numarray/numpy \cite{NumericWebSite,NumarrayWebSite,NumpyWebSite} matric
 ITK images (and vice-versa).
 
 More examples can be found in the contributions to the Insight Journal
-\cite{InsightJournalWebSite}, or directly at \url{http://voxel.jouy.inra.fr/darcsweb/}.
+\cite{InsightJournalWebSite}, or directly at \url{http://voxel.jouy.inra.fr/darcs/contrib-itk/}.
 
     \subsubsection{BufferConversion: an example of extension for one language}
 
@@ -1086,9 +1122,32 @@ wrapping system, but there is still lots of work to do, especially to support mo
 filter dedicated to \verb$Vector$ pixels.
 \end{itemize}
 
-\verb$darcs$ \cite{DarcsWebSite} allow to easily contribute to WrapITK, by sending patch by email with
-the command \verb$darcs send$, while keeping credits for the work done.
+\verb$darcs$ \cite{DarcsWebSite} allow to easily contribute to WrapITK, by sending
+patch by email, while keeping credits for the work done.
 Feel free to send patches; they will be tested and integrated in the project.
+
+The basic commands to know are:
+\begin{itemize}
+
+  \item \verb$darcs get --partial http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/$
+to get a copy of WrapITK repository.
+
+  \item \verb$darcs whatsnew$ to display the changes you have done in
+your copy of the repository.
+
+  \item \verb$darcs record$ to record the changes you have made in your
+copy of the repository. darcs will propose you to select some changes
+to record. It is better to create one patch for each feature or bug
+fix, rather than one big patch for all your current changes.
+
+  \item \verb$darcs send$ to send by email the patches you have recorded with
+\verb$darcs record$.
+% TODO: which email adress ??
+
+\end{itemize}
+
+Read the {\em Getting started} section of the darcs manual \cite{DarcsWebSite}
+for more information.
 
 A web interface \cite{DarcswebWebSite} for the WrapITK's darcs
 repository is available at \url{http://voxel.jouy.inra.fr/darcsweb/}.
@@ -1102,6 +1161,8 @@ We would like to thank Charl P. Botha for is help to debug WrapITK on windows
 plateform, and for the patches he has contributed, as well as Richard Beare for
 his early interest in using itk with python, for his useful feedbacks, and for
 his work on buffer conversion in python.
+
+We thank Andr\'e Bongers.
 
 We thank Brad King for his assistance during the development process.
 

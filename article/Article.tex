@@ -264,6 +264,46 @@ Once built, WrapITK can be installed or used in place.
     \subsubsection{Binary packages}
 
 RPM packages for Mandriva Linux 2006 are available at \url{http://voxel.jouy.inra.fr/mdk/mima2}.
+To install WrapITK for mandriva linux 2006.0, just add a new media with the
+command
+
+\begin{verbatim}
+urpmi.addmedia mima2-2006.0 http://voxel.jouy.inra.fr/mdk/mima2/2006.0/i586/
+\end{verbatim}
+
+and install the package you want with 
+
+\begin{verbatim}
+urpmi python-itk
+\end{verbatim}
+
+This media also contain several packages which may be useful to use WrapITK,
+and which are not available in mandriva linux 2006.0. Here is the full list:
+\begin{itemize}
+  \item \verb$cmake$
+  \item \verb$itk-data$
+  \item \verb$itk-doc$
+  \item \verb$itk-examples$
+  \item \verb$itkvtk-devel$
+  \item \verb$libitk$
+  \item \verb$libitk-devel$
+  \item \verb$libvtk$
+  \item \verb$libvtk-devel$
+  \item \verb$libvtk-qt$
+  \item \verb$python-itk$
+  \item \verb$python-itk-numarray$
+  \item \verb$python-itkvtk$
+  \item \verb$python-vtk$
+  \item \verb$tcl-itk$
+  \item \verb$tcl-vtk$
+  \item \verb$vtk-data$
+  \item \verb$vtk-doc$
+  \item \verb$vtk-examples$
+  \item \verb$vtk-test-suite$
+  \item \verb$wrapitk-devel$
+\end{itemize}
+
+WrapITK is also available in cooker, the development version of mandriva.
 
 % TODO: provide more binary packages - for mac and windows.
 
@@ -1005,7 +1045,7 @@ the methods of the wrapped classes, and so to be sure everything builds as it sh
 \footnote{We have found and fixed numbers of bug in ITK while adding
 more classes to WrapITK}.
 In WrapITK, we used them to avoid managing switches if some dependencies or not
-found: the project must found this dependencies or fail.
+found: the project must found its dependencies or fail.
 
 
     \subsubsection{Building}

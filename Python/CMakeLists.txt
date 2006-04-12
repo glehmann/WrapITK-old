@@ -140,7 +140,13 @@ ELSE(CMAKE_CONFIGURATION_TYPES)
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/WrapITK.pth.in"
                  "${CMAKE_CURRENT_BINARY_DIR}/WrapITK.pth"
                  @ONLY IMMEDIATE)
+
 ENDIF(CMAKE_CONFIGURATION_TYPES)
+
+SET(CONFIG_WRAP_ITK_PYTHON_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/Python")
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/WrapITK.pth.in"
+            "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/WrapITK.pth"
+            @ONLY IMMEDIATE)
 
 IF(PYTHON_EXECUTABLE)
   FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/det_spp.py "try:\n  import distutils.sysconfig; print distutils.sysconfig.get_python_lib(1)\nexcept: pass")

@@ -10,7 +10,7 @@ WRAPPER_LIBRARY_CREATE_LIBRARY()
 
 IF(WRAP_ITK_PYTHON)
   TARGET_LINK_LIBRARIES(_${WRAPPER_LIBRARY_NAME}Python
-                        vtkImagingPythonD ITKCommon ITKBasicFilters)
+                        vtkImagingPython ITKCommon ITKBasicFilters)
   WRAP_ITK_INSTALL("/Python" "${CMAKE_CURRENT_SOURCE_DIR}/Python/itkvtk.py")
 ENDIF(WRAP_ITK_PYTHON)
 

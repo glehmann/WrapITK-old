@@ -115,7 +115,7 @@ ENDMACRO(CONFIGURE_TYPEMAPS)
 
 # load language specific code in language specific dir.
 
-INCLUDE(Python/CreateLanguageSupport.cmake)
-INCLUDE(Java/CreateLanguageSupport.cmake)
-INCLUDE(Tcl/CreateLanguageSupport.cmake)
+INCLUDE(${WRAP_ITK_CMAKE_DIR}/Python/CreateLanguageSupport.cmake)
+INCLUDE(${WRAP_ITK_CMAKE_DIR}/Java/CreateLanguageSupport.cmake)
+INCLUDE(${WRAP_ITK_CMAKE_DIR}/Tcl/CreateLanguageSupport.cmake)
 

@@ -185,6 +185,16 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
       "${swig_library_files}" "${library_type}" "${custom_library_prefix}")
   ENDIF(WRAP_ITK_JAVA AND WRAPPER_LIBRARY_JAVA)
   
+  # Create the sub directories for each CMAKE_CONFIGURATION_TYPES
+  # The generation of the XML, index and CXX files from the Cable input files
+  # will use these sub directories to store some alternative files. But if
+  # the directory doesn't exist, the generation fails !
+  IF(CMAKE_CONFIGURATION_TYPES)
+    FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
+      FILE(MAKE_DIRECTORY "${LIBRARY_OUTPUT_PATH}/${config}")
+    ENDFOREACH(config)
+  ENDIF(CMAKE_CONFIGURATION_TYPES)
+
   # STEP 5
   # Call a macro from CreateLanguageSupport.cmake
   # to create needed support files for wrapped languages.

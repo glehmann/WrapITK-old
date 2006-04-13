@@ -410,19 +410,28 @@ MACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG outdir)
   # to point to *both* the Python directory in the WrapITK build tree and the
   # directory where the current project's SWIG libraries have been placed.
   
-  SET(CONFIG_WRAP_ITK_PYTHON_DIR "${WrapITK_DIR}/Python")
   IF(CMAKE_CONFIGURATION_TYPES)
     FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
       # SWIG-generated libs and *.py files are sent to ${config} subdir
+      SET(CONFIG_WRAP_ITK_PYTHON_DIR "${WrapITK_DIR}/Python/${config}")
+      SET(CONFIG_PROJECT_PYTHON_DIR "${LIBRARY_OUTPUT_PATH}/../Python/${config}")
       SET(CONFIG_PROJECT_OUTPUT_DIR "${LIBRARY_OUTPUT_PATH}/${config}")
       CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ExternalProjectConfig.py.in"
-        "${outdir}/ProjectConfig-${config}.py"
-      @ONLY IMMEDIATE)
+        "${outdir}/ProjectConfig_${config}.py"
+        @ONLY IMMEDIATE)
+      CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ExternalProjectConfig.pth.in"
+        "${outdir}/${config}/${PROJECT_NAME}.pth"
+        @ONLY IMMEDIATE)
   ENDFOREACH(config)
   ELSE(CMAKE_CONFIGURATION_TYPES)
+    SET(CONFIG_WRAP_ITK_PYTHON_DIR "${WrapITK_DIR}/Python")
+    SET(CONFIG_PROJECT_PYTHON_DIR "${LIBRARY_OUTPUT_PATH}/../Python")
     SET(CONFIG_PROJECT_OUTPUT_DIR "${LIBRARY_OUTPUT_PATH}")
     CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ExternalProjectConfig.py.in"
       "${outdir}/ProjectConfig.py"
+      @ONLY IMMEDIATE)
+    CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ExternalProjectConfig.pth.in"
+      "${outdir}/${PROJECT_NAME}.pth"
       @ONLY IMMEDIATE)
   ENDIF(CMAKE_CONFIGURATION_TYPES)
 ENDMACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG)

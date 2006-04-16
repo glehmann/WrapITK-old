@@ -1,60 +1,34 @@
 
 
-from InsightToolkit import *
-
+import itk
 from sys import argv
 
+dim = 2
+PType = itk.US
+IType = itk.Image[PType, dim]
 
-scale = itkScaleTransform2_New()
-
-reader = itkImageFileReaderUS2_New()
-writer = itkImageFileWriterUS2_New()
-
-reader.SetFileName( argv[1] )
-writer.SetFileName( argv[2] )
-
-parameters = scale.GetParameters()
-
-parameters.SetElement( 0, eval( argv[3] ) )
-parameters.SetElement( 1, eval( argv[3] ) )
-
-reader.Update()
-
+reader = itk.ImageFileReader[IType].New(FileName=argv[1])
 inputImage = reader.GetOutput()
+# it is not required to update the filter: itk.size() update it
+# to get the information it needs
+size = itk.size(inputImage)
 
-size    = inputImage.GetLargestPossibleRegion().GetSize()
-
-centralPixel = itkIndex3()  
-
-centralPixel.SetElement( 0, size.GetElement(0) / 2 )
-centralPixel.SetElement( 1, size.GetElement(1) / 2 )
-
-centralPoint = itkPointD2() 
-
-spacing = inputImage.GetSpacing()
-
-interpolator = itkLinearInterpolateImageFunctionUS2D_New()
-
-centralPoint.SetElement(0, centralPixel.GetElement(0) )
-centralPoint.SetElement(1, centralPixel.GetElement(1) )
-
+scale = itk.ScaleTransform[itk.D, dim].New(Parameters=[eval( argv[3] ), eval( argv[3] )])
+# sequence typemap is not supported yet for itk::Point
+centralPoint = itk.Point[itk.D, dim]()
+centralPoint[0] = size[0] / 2.
+centralPoint[1] = size[1] / 2.
 scale.SetCenter( centralPoint )
-scale.SetParameters( parameters )
 
-resampler = itkResampleImageFilterUS2US2_New()
+interpolator = itkLinearInterpolateImageFunction[PType, dime, itk.D].New()
 
-resampler.SetInput( reader.GetOutput() )
-
+resampler = itkResampleImageFilter[IType, IType].New(reader)
 resampler.SetTransform( scale.GetPointer() )
 resampler.SetInterpolator( interpolator.GetPointer() )
 resampler.SetSize( size )
-resampler.SetOutputSpacing( spacing )
+resampler.SetOutputSpacing( inputImage.GetSpacing() )
 
-resampler.Update()
-
-
-writer.SetInput( resampler.GetOutput() )
-
+writer = itk.ImageFileWriter[IType].New(resampler, FileName=argv[2])
 writer.Update()
 
 

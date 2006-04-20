@@ -76,6 +76,8 @@ SET(ITK_PYTHON_FILES
   itkBase
   itkTemplate
   itkTypes
+  itkExtras
+  itkLazy
   )
 # Done listing files.
 

@@ -19,7 +19,7 @@ def LoadModule(name, namespace = None):
   # if this library and it's template instantiations have already been loaded
   # into sys.modules, bail out after loading the defined symbols into 'namespace'
   if hasattr(this_module, '__templates_loaded'):
-    if namespace:
+    if namespace is not None:
         swig = namespace.setdefault('swig', imp.new_module('swig'))
         swig.__dict__.update(this_module.swig.__dict__)
 
@@ -72,10 +72,10 @@ def LoadModule(name, namespace = None):
   # between this_module and namespace.
   
   this_module.swig = imp.new_module('swig')
-  if namespace: swig = namespace.setdefault('swig', imp.new_module('swig'))
+  if namespace is not None: swig = namespace.setdefault('swig', imp.new_module('swig'))
   for k, v in module.__dict__.items():
     if not k.startswith('__'): setattr(this_module.swig, k, v)
-    if namespace and not k.startswith('__'): setattr(swig, k, v)
+    if namespace is not None and not k.startswith('__'): setattr(swig, k, v)
 
   data = module_data[name]
   if data:
@@ -90,7 +90,7 @@ def LoadModule(name, namespace = None):
         try: templateContainer.__add__(templateParams, getattr(module, swigClassName))
         except Exception, e: DebugPrintError("%s not loaded from module %s because of exception:\n %s" %(swigClassName, name, e))
         setattr(this_module, pyClassName, templateContainer)
-        if namespace:
+        if namespace is not None:
           current_value = namespace.get(pyClassName)
           if current_value != None and current_value != templateContainer:
             DebugPrintError("Namespace already has a value for %s, which is not an itkTemplate instance for class %s. Overwriting old value." %(pyClassName, cppClassName))
@@ -103,7 +103,7 @@ def LoadModule(name, namespace = None):
         except Exception, e: DebugPrintError("%s not found in module %s because of exception:\n %s" %(swigClassName, name, e))
         itkTemplate.registerNoTpl(cppClassName, swigClass)
         setattr(this_module, pyClassName, swigClass)
-        if namespace:
+        if namespace is not None:
           current_value = namespace.get(pyClassName)
           if current_value != None and current_value != swigClass:
             DebugPrintError("Namespace already has a value for %s, which is not class %s. Overwriting old value." %(pyClassName, cppClassName))

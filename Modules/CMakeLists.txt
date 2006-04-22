@@ -1,13 +1,6 @@
-# ITK_KITS must be in proper order -- modules that depend on other modules
-# must come later in the list.
-
-# SET(ITK_KITS VXLNumerics CommonA CommonB Numerics 
-#   BasicFiltersA BasicFiltersB BasicFiltersC IO
-#   SpatialObject Algorithms)
-
 SET(modules
   VXLNumerics
-  ITKCommonA
+  Base
 )
 
 FOREACH(module 

@@ -47,7 +47,7 @@ def LoadModule(name, namespace = None):
   # to find those configuration files.
   data = module_data[name]
   if data:
-    deps = list(data.depends)
+    deps = list(data['depends'])
     deps.sort()
     for dep in deps:
       LoadModule(dep, namespace)
@@ -79,7 +79,7 @@ def LoadModule(name, namespace = None):
 
   data = module_data[name]
   if data:
-    for template in data.templates:
+    for template in data['templates']:
       if len(template) == 4: 
         # this is a template description      
         pyClassName, cppClassName, swigClassName, templateParams = template
@@ -173,46 +173,13 @@ class LibraryLoader(object):
       except: pass
 
 
-class ModuleData(dict):
-  """A dictionary that knows how to look up module configuration data from the
-  auto-generated configuration files. The location of these files is specified in
-  itkConfig."""
-  
-  def __getitem__(self, key):
-    try:
-      return dict.__getitem__(self, key)
-    except KeyError:
-      # search order for keyConfig.py: 
-      # (1) itkConfig.config_py directory
-      # (2) __file__/Configuration
-      # (3) ./Configuration
-      # (4) .
-      data = self.__find_file(key,
-        [itkConfig.config_py, os.path.join(__file__, 'Configuration'), 'Configuration', '.'])
-      if data:
-        return data
-      else:
-        DebugPrintError("Could not find configuration data for module %s." %key)
-        
-  def __find_file(self, module, paths):
-    configFile = "%sConfig.py" %module
-    for path in paths:
-      try: listing = os.listdir(path)
-      except: continue
-      if configFile in listing:
-        result = self.AttributeDict() # so we can write 'result.depends, etc., instead of result['depends']'
-        execfile(os.path.join(path, configFile), result)
-        self[file] = result
-        return result
-    return None
-  
-  class AttributeDict(dict):
-    """A dictionary that can be accessed with __getattribute__, so that d[key] or
-    d.key both return the value for that key."""    
-    def __getattribute__(self, key):
-      try:
-        return self[key]
-      except:
-        return dict.__getattribute__(self, key)
-
-module_data = ModuleData()
+# Make a list of all know modules (described in *Config.py files in the 
+# config_py directory) and load the information described in those Config.py
+# files.
+known_modules = [f[:-9] for f in os.listdir(itkConfig.config_py) if f.endswith('Config.py')]
+known_modules.sort()
+module_data = {}
+for module in known_modules:
+  data = {}
+  execfile(os.path.join(itkConfig.config_py, module + 'Config.py'), data)
+  module_data[module] = data

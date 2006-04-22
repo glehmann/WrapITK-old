@@ -58,10 +58,6 @@ MACRO(BEGIN_WRAPPER_LIBRARY library_name)
   # files will be placed. 
   SET(WRAPPER_LIBRARY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
-  # WRAPPER_LIBRARY_AUTO_LOAD. Controls whether this library will be auto-loaded
-  # by language support files.
-  SET(WRAPPER_LIBRARY_AUTO_LOAD ON) 
-
   # WRAPPER_LIBRARY_DEPENDS. List of names of other wrapper libraries that
   # define symbols used by this wrapper library.
   SET(WRAPPER_LIBRARY_DEPENDS )

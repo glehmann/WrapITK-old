@@ -124,7 +124,7 @@ To build an external project, first ensure that WrapITK has been properly built.
 Once an external project has been built, it can be tested directly from the build tree. Start python in the external project build directory's Python subdirectory, and run the command 'import ProjectConfig' (or 'import ProjectConfig-[Debug|Release|...]' if you were using an IDE, depending on which build configuration was set from the IDE). This command sets up the search paths properly so that WrapITK and the newly-created library files can be found. Then type 'import ...' (where '...' is replaced with the name of the external project; e.g. 'import BufferConversion'), and use the project.
 
 (2) Installation
-Simply type 'make install' (or run your IDE's install step) to install the external project into the WrapITK tree (provided WrapITK has already been installed). Now the external project can be used just like any of the other WrapITK libraries, and it will be imported into the 'itk' namespace when the 'import itk' command is issued from Python. (This can be disabled by setting WRAPPER_LIBRARY_AUTO_LOAD to off in the external project's CMakeLists.txt.)
+Simply type 'make install' (or run your IDE's install step) to install the external project into the WrapITK tree (provided WrapITK has already been installed). Now the external project can be used just like any of the other WrapITK libraries, and it will be imported into the 'itk' namespace when the 'import itk' command is issued from Python.
 
 
 DEVELOPER GUIDE

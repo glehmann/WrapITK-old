@@ -349,7 +349,7 @@ def New(self, *args, **kargs) :
 
   # now, try to add observer to display progress
   if auto_progress :
-    import ITKPyUtils, ITKCommonA
+    import ITKPyUtils, Base
     try :
       def progress() :
         clrLine = "\033[2000D\033[K"
@@ -361,7 +361,7 @@ def New(self, *args, **kargs) :
 
       command = ITKPyUtils.PyCommand.New()
       command.SetCommandCallable(progress)
-      newItkObject.AddObserver(ITKCommonA.ProgressEvent(), command.GetPointer())
+      newItkObject.AddObserver(Base.ProgressEvent(), command.GetPointer())
     except :
       # it seems that something goes wrong...
       # as this feature is designed for prototyping, it's not really a problem

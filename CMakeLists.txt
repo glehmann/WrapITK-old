@@ -73,8 +73,51 @@ ADD_CUSTOM_TARGET(copy_itk_swg ALL)
 SET(src "${WrapITK_SOURCE_DIR}/itk.swg")
 SET(tgt "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}/itk.swg")
 EXEC_PROGRAM(${CMAKE_COMMAND} ARGS -E copy_if_different ${src} ${tgt})
+SUBDIRS(SwigRuntime)
 
-SUBDIRS(SwigRuntime Modules)
+###############################################################################
+# Configure specific wrapper modules
+###############################################################################
+
+SET(selected_modules)
+FOREACH(optional_module 
+  BinaryMorphology
+  Calculators
+  Compose
+  Denoising
+  DistanceMap
+  EdgesAndContours
+  FFT
+  Filtering
+  IntensityFilters
+  Interpolators
+  IO
+  Iterators
+  LevelSet
+  Morphology
+  Numerics
+  #Patented
+  PixelMath
+  Registration
+  Resize
+  SegmentationAndThreshold
+  SegmentationValidation
+  SimpleFilters
+  SpatialObject
+  Transforms
+  UnaryPixelMath)
+  
+  OPTION(WRAP_${optional_module} "Build ${optional_module} module." ON)
+  MARK_AS_ADVANCED(WRAP_${optional_module})
+  IF(WRAP_${optional_module})
+    SET(selected_modules ${selected_modules} ${optional_module})
+  ENDIF(WRAP_${module})
+ENDFOREACH(optional_module)
+
+SET(WRAP_ITK_MODULES Base VXLNumerics ${selected_modules} CACHE INTERNAL "" FORCE)
+FOREACH(module ${WRAP_ITK_MODULES})
+  SUBDIRS(Modules/${module})
+ENDFOREACH(module)
 
 ###############################################################################
 # Configure language-specific features

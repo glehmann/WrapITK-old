@@ -25,13 +25,13 @@ IType = itk.Image[PType, dim]
 reader = itk.ImageFileReader[IType].New(FileName=sys.argv[1])
 
 sources = []
-image = ITKCommonA.Image[PType, dim].New()
+image = Base.Image[PType, dim].New()
 r = itk.ImageRegion._2()
 r.SetSize((10, 10))
 image.SetRegions(r)
 image.Allocate()
 
-sources.append(("ITKCommonA", image))
+sources.append(("Base", image))
 
 flip = ITKBasicFiltersA.FlipImageFilter[IType].New(reader)
 sources.append(("ITKBasicFiltersA", flip.GetOutput()))

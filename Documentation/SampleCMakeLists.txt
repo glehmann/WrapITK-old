@@ -21,14 +21,8 @@ SET(WRAPPER_LIBRARY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 # WRAPPER_LIBRARY_DEPENDS: Optional. List of names of other wrapper libraries that
 # define symbols used by this wrapper library. Defaults to an empty list.
 SET(WRAPPER_LIBRARY_DEPENDS
-  VXLNumerics 
-  ITKNumerics
-  ITKCommonB
-  ITKCommonA
-  ITKBasicFiltersA
-  ITKBasicFiltersB
-  ITKBasicFiltersC
-  ITKSpatialObject)
+  VXLNumerics
+  Base)
 
 # WRAPPER_LIBRARY_LINK_LIBRARIES: Optional. List of other libraries that should
 # be linked to the wrapper library. The SWIG runtime library is always linked.

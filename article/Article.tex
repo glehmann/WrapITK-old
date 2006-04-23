@@ -721,8 +721,8 @@ it can be extended, and how to write external projects.
   \subsection{WrapITK description}
 
      \subsubsection{Creating a CMakeLists.txt file for a wrapper library}
-Each WrapITK sub-library (e.g. \verb$ITKCommonA$, or \verb$ITKAlgorithms$) lives in a
-sub-directory of the WrapITK project (e.g. \verb$CommonA$ or \verb$Algorithms$) with a
+Each WrapITK sub-library (e.g. \verb$Base$, or \verb$SpatialObject$) lives in a
+sub-directory of the WrapITK project (within the \verb$Modules$ directory) with a
 \verb$CMakeLists.txt$ file that describes how that library  and language support files
 (e.g. python template definitions) is to be created. Moreover, any external
 project will need a similar file to describe how to create that library.
@@ -733,7 +733,7 @@ that will appear:
 
 \small \begin{verbatim}
 BEGIN_WRAPPER_LIBRARY("MySpatialObjectExtensions")
-SET(WRAPPER_LIBRARY_DEPENDS ITKSpatialObject ITKCommonA)
+SET(WRAPPER_LIBRARY_DEPENDS SpatialObject Base)
 SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon)
 WRAPPER_LIBRARY_CREATE_WRAP_FILES()
 WRAPPER_LIBRARY_CREATE_LIBRARY()
@@ -745,7 +745,7 @@ library with a given name. This macro is defined in \verb$ConfigureWrapping.cmak
 \verb$WRAPPER_LIBRARY_DEPENDS$ stores the list of WrapITK libraries on which the
 current library depends (e.g. which libraries wrap classes like \verb$Image$ or
 \verb$SpatialObject$, that are going to be used in the current library). Every project
-should at least depend on \verb$ITKCommonA$.
+should at least depend on \verb$Base$.
 
   \item \verb$WRAPPER_LIBRARY_LINK_LIBRARIES$ stores a set of other libraries to add at link
 time. This can be 3rd party libraries that you will use (be sure to properly set

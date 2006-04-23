@@ -132,18 +132,18 @@ DEVELOPER GUIDE
 What follows is a brief description of how the WrapITK build system works, haw it can be extended, and how to write external projects.
 
 (1) Creating a CMakeLists.txt file for a wrapper library
-Each WrapITK sub-library (e.g. 'ITKCommonA', or 'ITKAlgorithms') lives in a sub-directory of the WrapITK project (e.g. 'CommonA' or 'Algorithms') with a CMakeLists.txt file that describes how that library  and language support files (e.g. python template definitions) is to be created. Moreover, any external project will need a similar file to describe how to create that library.
+Each WrapITK sub-library (e.g. 'Base', or 'SpatialObject') lives in a sub-directory of the WrapITK project (within the 'Modules' directory) with a CMakeLists.txt file that describes how that library  and language support files (e.g. python template definitions) is to be created. Moreover, any external project will need a similar file to describe how to create that library.
 
 See "SampleCMakeLists.txt" in this directory for a description of each macro and option that can appear in such a file. What follows is the usual set of commands that will appear:
 
 BEGIN_WRAPPER_LIBRARY("MySpatialObjectExtensions")
-SET(WRAPPER_LIBRARY_DEPENDS ITKSpatialObject ITKCommonA)
+SET(WRAPPER_LIBRARY_DEPENDS SpatialObject Base)
 SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon)
 WRAPPER_LIBRARY_CREATE_WRAP_FILES()
 WRAPPER_LIBRARY_CREATE_LIBRARY()
 
 BEGIN_WRAPPER_LIBRARY() sets up the environment to wrap a set of classes into a library with a given name. This macro is defined in ConfigureWrapping.cmake.
-WRAPPER_LIBRARY_DEPENDS stores the list of WrapITK libraries on which the current library depends (e.g. which libraries wrap classes like Image or SpatialObject, that are going to be used in the current library). Every project should at least depend on ITKCommonA. 
+WRAPPER_LIBRARY_DEPENDS stores the list of WrapITK libraries on which the current library depends (e.g. which libraries wrap classes like Image or SpatialObject, that are going to be used in the current library). Every project should at least depend on Base. 
 WRAPPER_LIBRARY_LINK_LIBRARIES stores a set of other libraries to add at link time. This can be 3rd party libraries that you will use (be sure to properly set LINK_DIRECTORIES in this case), or more commonly, the ITK libraries that need to be linked in, like ITKCommon, ITKIO, or other. 
 WRAPPER_LIBRARY_CREATE_WRAP_FILES() scans all of the wrap_XXX.cmake files in the current directory and uses the directives within to create CableSwig input files for these classes. Information about template instantiations is also recorded for the language support files that are created next. This macro is defined in CreateCableSwigInputs.cmake, and calls language support macros from CreateLanguageSupport.cmake.
 Finally, WRAPPER_LIBRARY_CREATE_LIBRARY() creates rules to parse the CalbeSwig inputs and compile a wrapper library. This macro also causes various language support files to be created (python only currently) which make it easy to load that library in python, and which know about the template instances defined. This macro is defined in CreateWrapperLibrary.cmake, and calls language support macros from CreateLanguageSupport.cmake.

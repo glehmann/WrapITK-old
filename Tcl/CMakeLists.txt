@@ -6,7 +6,7 @@ SUBDIRS(Tests)
 
 BEGIN_WRAPPER_LIBRARY("ITKTclSupport" Tcl)
 
-SET(WRAPPER_LIBRARY_DEPENDS ITKCommonA)
+SET(WRAPPER_LIBRARY_DEPENDS Base)
 SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon)
 # Need to include the current dir because the compiler needs to find itkTclCommand.h
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
@@ -54,19 +54,11 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/itkTclConfigure.h.in
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 ADD_EXECUTABLE(itkwish itkTclAppInit.cxx)
-TARGET_LINK_LIBRARIES(itkwish
-  ITKAlgorithmsTcl
-  ITKBasicFiltersATcl
-  ITKBasicFiltersBTcl
-  ITKIOTcl
-  ITKNumericsTcl
-  ITKCommonATcl
-  ITKCommonBTcl
-  VXLNumericsTcl
-  SwigRuntimeTcl
-  ${TCL_LIBRARY}
-  ${TK_LIBRARY}
-)
+FOREACH(module ${WRAP_ITK_MODULES})
+  TARGET_LINK_LIBRARIES(itkwish ${module}Tcl)
+ENDFOREACH(module)
+
+TARGET_LINK_LIBRARIES(itkwish ${TCL_LIBRARY} ${TK_LIBRARY})
 
 # configure and install the driver itkwish script
 SET(CONFIG_WRAP_ITK_TCL_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/Tcl")

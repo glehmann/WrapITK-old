@@ -111,7 +111,7 @@ FOREACH(optional_module
   MARK_AS_ADVANCED(WRAP_${optional_module})
   IF(WRAP_${optional_module})
     SET(selected_modules ${selected_modules} ${optional_module})
-  ENDIF(WRAP_${module})
+  ENDIF(WRAP_${optional_module})
 ENDFOREACH(optional_module)
 
 SET(WRAP_ITK_MODULES Base VXLNumerics ${selected_modules} CACHE INTERNAL "" FORCE)

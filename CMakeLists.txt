@@ -111,7 +111,7 @@ SET(optional_modules
   SimpleFilters
   UnaryPixelMath)
 
-FOREACH(module ${optional_modules}  
+FOREACH(module ${optional_modules})
   OPTION(WRAP_${module} "Build ${module} module." ON)
   MARK_AS_ADVANCED(WRAP_${module})
   IF(WRAP_${optional_module})

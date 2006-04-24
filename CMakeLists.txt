@@ -79,11 +79,18 @@ SUBDIRS(SwigRuntime)
 # Configure specific wrapper modules
 ###############################################################################
 
-SET(selected_modules)
-FOREACH(optional_module 
+SET(WRAP_ITK_MODULES
+  VXLNumerics
+  Base
+  BaseNumerics
+  BaseTransforms
+  BaseSpatialObject)
+  
+SET(optional_modules 
   BinaryMorphology
   Calculators
   Compose
+  DeformableTransforms
   Denoising
   DistanceMap
   EdgesAndContours
@@ -95,7 +102,6 @@ FOREACH(optional_module
   Iterators
   LevelSet
   Morphology
-  Numerics
   #Patented
   PixelMath
   Registration
@@ -103,18 +109,16 @@ FOREACH(optional_module
   SegmentationAndThreshold
   SegmentationValidation
   SimpleFilters
-  SpatialObject
-  Transforms
   UnaryPixelMath)
-  
-  OPTION(WRAP_${optional_module} "Build ${optional_module} module." ON)
-  MARK_AS_ADVANCED(WRAP_${optional_module})
-  IF(WRAP_${optional_module})
-    SET(selected_modules ${selected_modules} ${optional_module})
-  ENDIF(WRAP_${optional_module})
-ENDFOREACH(optional_module)
 
-SET(WRAP_ITK_MODULES Base VXLNumerics ${selected_modules} CACHE INTERNAL "" FORCE)
+FOREACH(module ${optional_modules}  
+  OPTION(WRAP_${module} "Build ${module} module." ON)
+  MARK_AS_ADVANCED(WRAP_${module})
+  IF(WRAP_${optional_module})
+    SET(WRAP_ITK_MODULES ${WRAP_ITK_MODULES} ${module})
+  ENDIF(WRAP_${module})
+ENDFOREACH(module)
+
 FOREACH(module ${WRAP_ITK_MODULES})
   SUBDIRS(Modules/${module})
 ENDFOREACH(module)

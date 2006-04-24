@@ -1,6 +1,11 @@
 BEGIN_WRAPPER_LIBRARY(Registration)
 
-SET(WRAPPER_LIBRARY_DEPENDS Base)
+SET(WRAPPER_LIBRARY_DEPENDS 
+  Base 
+  BaseNumerics
+  BaseTransforms 
+  BaseSpatialObject
+)
 
 SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon ITKNumerics)
 

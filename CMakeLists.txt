@@ -114,7 +114,7 @@ SET(optional_modules
 FOREACH(module ${optional_modules})
   OPTION(WRAP_${module} "Build ${module} module." ON)
   MARK_AS_ADVANCED(WRAP_${module})
-  IF(WRAP_${optional_module})
+  IF(WRAP_${module})
     SET(WRAP_ITK_MODULES ${WRAP_ITK_MODULES} ${module})
   ENDIF(WRAP_${module})
 ENDFOREACH(module)

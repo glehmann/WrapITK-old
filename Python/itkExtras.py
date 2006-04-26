@@ -9,7 +9,8 @@ def auto_progress( b ):
 # Function to print itk object info
 import sys
 def echo(object, f=sys.stderr) :
-   ss = StringStream()
+   import itk
+   ss = itk.StringStream()
    try :
       try:
          object.Print(ss.GetStream())
@@ -37,7 +38,8 @@ def index(imageOrFilter) :
   
 # return a structuring elt
 def strel(dim, radius=1) :
-  st = BinaryBallStructuringElement[B, dim]()
+  import itk
+  st = itk.BinaryBallStructuringElement[itk.B, dim]()
   st.SetRadius(radius)
   # call the boring CreateStructuringElement() method
   st.CreateStructuringElement()
@@ -81,18 +83,20 @@ def class_(obj) :
 
 # return range
 def range(imageOrFilter) :
+  import itk
   img = image(imageOrFilter)
   img.UpdateOutputInformation()
   img.Update()
-  comp = MinimumMaximumImageCalculator[img].New(Image=img)
+  comp = itk.MinimumMaximumImageCalculator[img].New(Image=img)
   comp.Compute()
   return (comp.GetMinimum(), comp.GetMaximum())
 
 # write an image
 def write(imageOrFilter, fileName):
+  import itk
   img = image(imageOrFilter)
   img.UpdateOutputInformation()
-  writer = ImageFileWriter[img].New(Input=img, FileName=fileName)
+  writer = itk.ImageFileWriter[img].New(Input=img, FileName=fileName)
   writer.Update()
   
 # choose the method to call according to the dimension of the image
@@ -121,7 +125,6 @@ class show3D :
   def __init__(self, input=None, MinOpacity=0.0, MaxOpacity=0.2) :
     import qt
     import vtk
-    import itkvtk
     from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
     self.__MinOpacity__ = MinOpacity
     self.__MaxOpacity__ = MaxOpacity
@@ -182,12 +185,11 @@ class show3D :
       # a real fix would be to wrap c++ exception in vtk
       img.UpdateOutputInformation()
       img.Update()
-      import itkvtk
       self.__flipper__ = FlipImageFilter[img].New(Input=img)
       axes = self.__flipper__.GetFlipAxes()
       axes.SetElement(1, True)
       self.__flipper__.SetFlipAxes(axes)
-      self.__itkvtkConverter__ = itkvtk.ImageToVTKImageFilter[img].New(self.__flipper__)
+      self.__itkvtkConverter__ = itk.ImageToVTKImageFilter[img].New(self.__flipper__)
       self.__volumeMapper__.SetInput(self.__itkvtkConverter__.GetOutput())
       # needed to avoid warnings
       # self.__itkvtkConverter__.GetOutput() must be callable

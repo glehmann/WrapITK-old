@@ -172,7 +172,7 @@ CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake"
                @ONLY IMMEDIATE)
 
-SET(CONFIG_WRAP_ITK_DIR "${CMAKE_INSTALL_PREFIX}")
+SET(CONFIG_WRAP_ITK_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}")
 CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake"
                @ONLY IMMEDIATE)
@@ -219,3 +219,16 @@ ELSE(INSTALL_WRAP_ITK_COMPATIBILITY)
 ENDIF(INSTALL_WRAP_ITK_COMPATIBILITY)
 
 INSTALL_AT_ABSOLUTE_PATH(install_wrapitk_compatibility "${CMAKE_ROOT}/Modules" "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake")
+
+
+
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Python" FILES "${WRAP_ITK_CMAKE_DIR}/Python/CreateLanguageSupport.cmake")
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Java" FILES "${WRAP_ITK_CMAKE_DIR}/Java/CreateLanguageSupport.cmake")
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Tcl" FILES "${WRAP_ITK_CMAKE_DIR}/Tcl/CreateLanguageSupport.cmake")
+
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Python" FILES "${WRAP_ITK_CMAKE_DIR}/Python/ConfigureWrapping.cmake")
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Java" FILES "${WRAP_ITK_CMAKE_DIR}/Java/ConfigureWrapping.cmake")
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Tcl" FILES "${WRAP_ITK_CMAKE_DIR}/Tcl/ConfigureWrapping.cmake")
+
+INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Inputs/LanguageSupport" FILES "${WRAP_ITK_CMAKE_DIR}/ConfigurationInputs/LanguageSupport/ExternalProjectConfig.pth.in")
+

@@ -37,7 +37,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
     IF(EXTERNAL_WRAP_ITK_PROJECT)
       SET(install_index_file_content "${install_index_file_content}${WRAP_ITK_INSTALL_LOCATION}/ClassIndex/${base_name}.idx\n")
     ELSE(EXTERNAL_WRAP_ITK_PROJECT)
-      SET(install_index_file_content "${install_index_file_content}${CMAKE_INSTALL_PREFIX}/ClassIndex/${base_name}.idx\n")
+      SET(install_index_file_content "${install_index_file_content}${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/ClassIndex/${base_name}.idx\n")
     ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
   ENDFOREACH(source)
   

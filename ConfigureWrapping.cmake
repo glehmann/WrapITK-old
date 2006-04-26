@@ -171,7 +171,7 @@ ENDIF(CSWIG_MISSING_VALUES)
 # Find wrapping language API libraries.
 #-----------------------------------------------------------------------------
 IF(WRAP_ITK_TCL)
-  INCLUDE("${WRAP_ITK_CMAKE_DIR}/Python/ConfigureWrapping.cmake")
+  INCLUDE("${WRAP_ITK_CMAKE_DIR}/Tcl/ConfigureWrapping.cmake")
 ENDIF(WRAP_ITK_TCL)
 
 IF(WRAP_ITK_PYTHON)

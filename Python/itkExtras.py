@@ -28,6 +28,13 @@ def size(imageOrFilter) :
   img = image(imageOrFilter)
   return img.GetLargestPossibleRegion().GetSize()
   
+# return the index of an imageClass
+def index(imageOrFilter) :
+  # we don't need the entire output, only its size
+  imageOrFilter.UpdateOutputInformation()
+  img = image(imageOrFilter)
+  return img.GetLargestPossibleRegion().GetIndex()
+  
 # return a structuring elt
 def strel(dim, radius=1) :
   st = BinaryBallStructuringElement[B, dim]()

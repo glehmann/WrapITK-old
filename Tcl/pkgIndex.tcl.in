@@ -27,14 +27,7 @@ namespace eval itk {
   # Procedure to drive configuration of all packages.
   proc ConfigureItkTclPackages {version} {
     # Configure ITK Tcl packages.
-    ConfigureTclPackage VXLNumericsTcl     $version
-    ConfigureTclPackage ITKNumericsTcl     $version
-    ConfigureTclPackage BaseTcl       $version
-    ConfigureTclPackage ITKCommonBTcl       $version
-    ConfigureTclPackage ITKIOTcl           $version
-    ConfigureTclPackage ITKBasicFiltersATcl $version
-    ConfigureTclPackage ITKBasicFiltersBTcl $version
-    ConfigureTclPackage ITKAlgorithmsTcl   $version
+    @CONFIG_TCL_PACKAGES@
 
     package ifneeded InsightToolkit $version "
       package require itknumerics $version

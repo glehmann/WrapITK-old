@@ -26,6 +26,9 @@
 #  include <tcl.h>
 #endif
 
+// Include the list of modules that the user has selected to build
+#include "itkTclModules.h"
+
 //----------------------------------------------------------------------------
 // Definitions related to build tree locations:
 //   ITK_TCL_EXE_DIR  = Location of this executable.
@@ -64,20 +67,6 @@ int main(int argc, char** argv)
 }
 
 //----------------------------------------------------------------------------
-// Get the Tcl package initialization functions to call directly.
-extern "C"
-{
-  int Vxlnumericstcl_Init(Tcl_Interp*);
-  int Itknumericstcl_Init(Tcl_Interp*);
-  int Itkcommonatcl_Init(Tcl_Interp*);
-  int Itkcommonbtcl_Init(Tcl_Interp*);
-  int Itkiotcl_Init(Tcl_Interp*);
-  int Itkbasicfiltersatcl_Init(Tcl_Interp*);
-  int Itkbasicfiltersbtcl_Init(Tcl_Interp*);
-  int Itkalgorithmstcl_Init(Tcl_Interp*);
-}
-
-//----------------------------------------------------------------------------
 /** Main application initialization function.  */
 int itkTclAppInit(Tcl_Interp* interp)
 {
@@ -111,14 +100,13 @@ int itkTclAppInit(Tcl_Interp* interp)
     }
   
   // Initialize the built-in packages.
-  if(Vxlnumericstcl_Init(interp) != TCL_OK) { return TCL_ERROR; }
-  if(Itknumericstcl_Init(interp) != TCL_OK) { return TCL_ERROR; }
-  if(Itkcommonatcl_Init(interp) != TCL_OK) { return TCL_ERROR; }
-  if(Itkcommonbtcl_Init(interp) != TCL_OK) { return TCL_ERROR; }
-  if(Itkiotcl_Init(interp) != TCL_OK) { return TCL_ERROR; }
-  if(Itkbasicfiltersatcl_Init(interp) != TCL_OK) { return TCL_ERROR; }
-  if(Itkbasicfiltersbtcl_Init(interp) != TCL_OK) { return TCL_ERROR; }
-  if(Itkalgorithmstcl_Init(interp) != TCL_OK) { return TCL_ERROR; }
+  for (unsigned int i; i < NumITKModules; i++)
+    {
+    if( ModuleInitializers[i](interp) != TCL_OK ) 
+      {
+      return TCL_ERROR;
+      }
+    }
   
   // Initialize all ITK Tcl packages.
   static char initScript[] = "package require InsightToolkit " ITK_VERSION_STRING;

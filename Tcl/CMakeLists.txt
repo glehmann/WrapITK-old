@@ -76,7 +76,7 @@ ENDFOREACH(module)
 SET(CONFIG_MODULE_INIT_DECLARATIONS )
 FOREACH(module ${module_init_names})
   SET(CONFIG_MODULE_INIT_DECLARATIONS "${CONFIG_MODULE_INIT_DECLARATIONS}  int ${module}(Tcl_Interp*);\n")
-ENDFOREACH(module_init_names)
+ENDFOREACH(module)
 
 # Now we pack the addresses of the init function names into a comma-separated 
 # string, to be used in an array initializer

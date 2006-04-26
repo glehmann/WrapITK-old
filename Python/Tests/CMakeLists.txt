@@ -18,8 +18,8 @@ IF(WRAP_unsigned_short AND WRAP_2)
   
   ADD_TEST(PythonTemplate ${PYTHON} ${CMAKE_CURRENT_SOURCE_DIR}/template.py)
   
-  ADD_TEST(PythonItkFunctions ${PYTHON}
-    ${CMAKE_CURRENT_SOURCE_DIR}/itk-functions.py
+  ADD_TEST(PythonExtras ${PYTHON}
+    ${CMAKE_CURRENT_SOURCE_DIR}/extras.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png out.png
   )
   

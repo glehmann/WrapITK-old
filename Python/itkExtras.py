@@ -259,3 +259,76 @@ class show3D :
   def SetMinOpacity(self, val) :
     self.__MinOpacity__ = val
     self.AdaptColorAndOpacity()
+
+
+class pipeline:
+  """A convenient class to store the reference to the filters of a pipeline
+  
+  With this class, a method can create a pipeline of several filters and return
+  it without losing the references to the filters in this pipeline. The pipeline
+  object act almost like a filter (it has a GetOutput() method) and thus can
+  be simply integrated in another pipeline.
+  """
+  def __init__( self, input=None ):
+    self.clear()
+    self.SetInput( input )
+
+  def connect( self, filter ):
+    """Connect a new filter to the pipeline
+    
+    The output of the first filter will be used as the input of this
+    one and the filter passed as parameter will be added to the list
+    """
+    if self.GetOutput() != None:
+      filter.SetInput( self.GetOutput() )
+    self.append( filter )
+
+  def append( self, filter ):
+    """Add a new filter to the pipeline
+    
+    The new filter will not be connected. The user must connect it.
+    """
+    self.filter_list.append( filter )
+
+  def clear( self ):
+    """Clear the filter list
+    """
+    self.filter_list = []
+
+  def GetOutput( self ):
+    """Return the output of the pipeline
+    
+    If another output is needed, use
+    pipeline[-1].GetAnotherOutput() instead of this method, or subclass
+    pipeline to implement another GetOutput() method
+    """
+    if len(self) == 0:
+      return self.GetInput()
+    else :
+      return self[-1].GetOutput()
+
+  def SetInput( self, input ):
+    """Set the input of the pipeline
+    """
+    if len(self) != 0:
+      self[0].SetInput(input)
+    self.input = input
+
+  def GetInput( self ):
+    """Get the input of the pipeline
+    """
+    return self.input
+    
+  def Update( self ):
+    """Update the pipeline
+    """
+    if len(self) > 0:
+      return self[-1].Update()
+
+  def __getitem__( self, i ):
+     return self.filter_list[i]
+
+  def __len__( self ):
+     return len(self.filter_list)
+ 
+ 

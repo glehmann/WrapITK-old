@@ -11,6 +11,9 @@ itkConfig.ImportCallback = custom_callback
 
 import itk, sys
 
+# test the force load function
+itk.force_load()
+
 fileName = sys.argv[1]
 
 PType = itk.US

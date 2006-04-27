@@ -19,6 +19,12 @@ def auto_progress( b ):
     itkConfig.ImportCallback = None
   
 
+def force_load():
+  """force itk to load all the submodules"""
+  import itk
+  for k in dir(itk):
+    dir(getattr(itk, k))
+
 # Function to print itk object info
 import sys
 def echo(object, f=sys.stderr) :

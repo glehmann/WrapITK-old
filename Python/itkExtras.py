@@ -198,7 +198,8 @@ class show3D :
       # a real fix would be to wrap c++ exception in vtk
       img.UpdateOutputInformation()
       img.Update()
-      self.__flipper__ = FlipImageFilter[img].New(Input=img)
+      import itk
+      self.__flipper__ = itk.FlipImageFilter[img].New(Input=img)
       axes = self.__flipper__.GetFlipAxes()
       axes.SetElement(1, True)
       self.__flipper__.SetFlipAxes(axes)

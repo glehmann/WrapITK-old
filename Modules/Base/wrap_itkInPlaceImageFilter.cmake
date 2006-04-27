@@ -19,13 +19,21 @@ WRAP_CLASS("itk::InPlaceImageFilter" POINTER)
   # int <-> RGB
   IF(WRAP_rgb_unsigned_char AND WRAP_unsigned_char)
     WRAP_IMAGE_FILTER_TYPES(RGBUC UC)
-    WRAP_IMAGE_FILTER_TYPES(UC RGBUC)
   ENDIF(WRAP_rgb_unsigned_char AND WRAP_unsigned_char)
 
   IF(WRAP_rgb_unsigned_short AND WRAP_unsigned_short)
     WRAP_IMAGE_FILTER_TYPES(RGBUS US)
-    WRAP_IMAGE_FILTER_TYPES(US RGBUS)
   ENDIF(WRAP_rgb_unsigned_short AND WRAP_unsigned_short)
+
+  IF(WRAP_rgb_unsigned_char)
+    UNIQUE(types "UL;${WRAP_ITK_SCALAR}")
+    WRAP_IMAGE_FILTER_COMBINATIONS("${types}" "RGBUC")
+  ENDIF(WRAP_rgb_unsigned_char)
+
+  IF(WRAP_rgb_unsigned_short)
+    UNIQUE(types "UL;${WRAP_ITK_SCALAR}")
+    WRAP_IMAGE_FILTER_COMBINATIONS("${types}" "RGBUS")
+  ENDIF(WRAP_rgb_unsigned_short)
 
   # VectorImage <-> scalar
   UNIQUE(to_types "UC;${WRAP_ITK_SCALAR}")

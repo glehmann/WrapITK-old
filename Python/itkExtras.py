@@ -23,7 +23,7 @@ def force_load():
   """force itk to load all the submodules"""
   import itk
   for k in dir(itk):
-    dir(getattr(itk, k))
+    getattr(itk, k)
 
 # Function to print itk object info
 import sys

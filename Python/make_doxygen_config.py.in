@@ -2,8 +2,8 @@ import itk, itkTemplate, os, sys
 
 itk_header_dirs = (@CONFIG_ITK_PATH@)
 
-templates = [key for key, value in itk.__dict__.items() 
-  if isinstance(value, itkTemplate.itkTemplate)]
+templates = [key for key in dir(itk) 
+  if isinstance(getattr(itk, key), itkTemplate.itkTemplate)]
 
 header_list = []
 for t in templates:

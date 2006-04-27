@@ -12,7 +12,8 @@ if itkConfig.LazyLoading:
   lazyAttributes = {}
   for module, data in itkBase.module_data.items():
     templateNames = [ t[0] for t in data['templates'] ]
-    lazyAttributes.update( [(n, module) for n in templateNames] )
+    attributes = dict( [(n, module) for n in templateNames] )
+    lazyAttributes.update(attributes)
   if isinstance(thisModule, itkLazy.LazyITKModule):
     # Handle reload case where we've already done this once.
     # If we made a new module every time, multiple reload()s would fail

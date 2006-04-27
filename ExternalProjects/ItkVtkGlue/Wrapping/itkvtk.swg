@@ -41,14 +41,17 @@
 %}
 
 %typemap(out) vtkImageExport* {
+  PyImport_ImportModule("vtk");
   $result = vtkPythonGetObjectFromPointer ( (vtkImageExport*)$1 );
 }
 
 %typemap(out) vtkImageImport* {
+  PyImport_ImportModule("vtk");
   $result = vtkPythonGetObjectFromPointer ( (vtkImageImport*)$1 );
 }
 
 %typemap(out) vtkImageData* {
+  PyImport_ImportModule("vtk");
   $result = vtkPythonGetObjectFromPointer ( (vtkImageData*)$1 );
 }
 

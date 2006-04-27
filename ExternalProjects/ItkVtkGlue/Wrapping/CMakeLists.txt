@@ -15,6 +15,8 @@ IF(WRAP_ITK_PYTHON)
   ELSE("${VTK_VERSION}" STRLESS "${MIN_ITK_VER}")
     TARGET_LINK_LIBRARIES(_${WRAPPER_LIBRARY_NAME}Python vtkImagingPythonD ITKCommon ITKBasicFilters)
   ENDIF("${VTK_VERSION}" STRLESS "${MIN_ITK_VER}")
-#   WRAP_ITK_INSTALL("/Python" "${CMAKE_CURRENT_SOURCE_DIR}/Python/itkvtk.py")
+
+  # will be removed in the future
+  WRAP_ITK_INSTALL("/Python" "${CMAKE_CURRENT_SOURCE_DIR}/Python/itkvtk.py")
 ENDIF(WRAP_ITK_PYTHON)
 

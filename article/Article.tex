@@ -1116,23 +1116,20 @@ ItkVtkGlue wrap the classes used to convert data from ITK to VTK \cite{VtkWebSit
 Those classes comes from the InsightApplications \cite{ITKWebSite}, and make the conversion
 as simple in python as in C++. It has been tested with VTK 5.0.0.
 
-By default, those classes are not loaded in the \verb$itk$ module to avoid loading
-all the \verb$vtk$ module while importing \verb$itk$. The command \verb$import itkvtk$
-will load the module, and add the classes both in \verb$itkvtk$ and \verb$itk$ module.
-The classes are then usable as the other itk classes.
+With the python lazy loading, the classes are not loaded by default, and thus avoid
+loading the entire vtk code in memory. The classes are directly available in the
+\verb$itk$ module, and the underlaying code is loaded only when those classes are used.
 
 Example:
 \begin{verbatim}
 1> import itk
 
-2> import itkvtk
+2> reader = itk.ImageFileReader.IUC3.New()
 
-3> reader = itk.ImageFileReader.IUC3.New()
+3> converter = itk.ImageToVTKImageFilter.IUC3.New(reader)
 
-4> converter = itk.ImageToVTKImageFilter.IUC3.New(reader)
-
-5> converter.GetOutput()
-5> <libvtkFilteringPython.vtkImageData vtkobject at 0xb7675b60>
+4> converter.GetOutput()
+4> <libvtkFilteringPython.vtkImageData vtkobject at 0xb7675b60>
 \end{verbatim}
 
 

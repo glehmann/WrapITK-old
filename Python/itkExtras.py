@@ -5,6 +5,19 @@ def auto_progress( b ):
   import itkTemplate
   itkTemplate.auto_progress = b
   
+  import itkConfig
+  if b :
+    def loadingCallback(name, p):
+      import sys
+      clrLine = "\033[2000D\033[K"
+      print >> sys.stderr, clrLine+"Loading %s..." % name,
+      if p == 1 :
+        print >> sys.stderr, clrLine,
+    
+    itkConfig.ImportCallback = loadingCallback
+  else:
+    itkConfig.ImportCallback = None
+  
 
 # Function to print itk object info
 import sys

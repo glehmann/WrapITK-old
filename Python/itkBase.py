@@ -52,7 +52,7 @@ def LoadModule(name, namespace = None):
     for dep in deps:
       LoadModule(dep, namespace)
   
-  if itkConfig.ImportCallback: itkConfig.ImportCallback(name)
+  if itkConfig.ImportCallback: itkConfig.ImportCallback(name, 0)
   
   # SWIG-generated modules have 'Python' appended. Only load the SWIG module if
   # we haven't already.
@@ -108,6 +108,8 @@ def LoadModule(name, namespace = None):
           if current_value != None and current_value != swigClass:
             DebugPrintError("Namespace already has a value for %s, which is not class %s. Overwriting old value." %(pyClassName, cppClassName))
           namespace[pyClassName] = swigClass
+  
+  if itkConfig.ImportCallback: itkConfig.ImportCallback(name, 1)
   
 def DebugPrintError(error):
   if itkConfig.DebugLevel == itkConfig.WARN:

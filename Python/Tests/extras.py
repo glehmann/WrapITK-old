@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
 # also test the import callback feature
-def custom_callback(name):
-  print "loading %s submodule..." % name
+def custom_callback(name, progress):
+  if progress == 0:
+    print >> sys.stderr, "Loading %s..." % name,
+  if progress == 1:
+    print >> sys.stderr, "done"
 import itkConfig
 itkConfig.ImportCallback = custom_callback
 

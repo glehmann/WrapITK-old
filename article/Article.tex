@@ -633,6 +633,9 @@ While prototyping, it is a convenient way for the user to know if
 the execution time will be short or if he can do something more useful
 \footnote{like having a cup of tea} than waiting for the filter to complete.
 
+\verb$itk.auto_progress(True)$ also set an import callback which show the module name when
+the module are imported.
+
   \item \verb$itk.class_(object)$ return the class of an object. The \verb$__class__$
 attribute is often not what the user want with ITK. \verb$itk.class_$ is a convenient
 function to get the class of an ITK object.
@@ -698,12 +701,17 @@ basic callback function which display the name of the submodule being imported o
 the standard error output.
 \small \begin{verbatim}
 import sys, itkConfig
-def stderr_callback(name):
-  print >> sys.stderr, name
+def stderr_callback(name, progress):
+  if progress == 0:
+    print >> sys.stderr, "Loading %s..." % name,
+  if progress == 1:
+    print >> sys.stderr, "done"
 itkConfig.ImportCallback = stderr_callback
 import itk
 \end{verbatim} \normalsize
 
+\verb$progress$ take only the value $0$ and $1$, but may take values between $0$ and $1$
+in the future.
 
     \subsection{TCL usage}
 
@@ -768,7 +776,7 @@ macros from \verb$CreateLanguageSupport.cmake$.
 \end{itemize}
 
 
-     \subsubsection{Creating wrapXXX.cmake files to wrap classes}
+     \subsubsection{Creating wrap\_XXX.cmake files to wrap classes}
 
 A \verb$wrap_XXX.cmake$ file defines a group of classes and/or template instantiations
 to be wrapped. Often one such file is defined for each class wrapped, but this
@@ -1218,7 +1226,7 @@ ITK is a great library, with the drawback to be nearly unusable for prototyping,
 and to have a poor support for other languages than C++. WrapITK address those
 issue and finally give to ITK a good support for python. Java and Tcl, while
 not as much tweaked than python part, also take benefit of the higher number of
-wrapped classes, and of the increase of consistency in available types and names 
+wrapped classes, and of the increase of consistency in available types and names.
 
 
 

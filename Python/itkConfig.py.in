@@ -7,8 +7,9 @@ Currently-supported options are:
     in itkConfig). Default is WARN.
   ImportCallback: importing itk libraries can take a while. ImportCallback will
     be called when each new library is imported in the import process. 
-    ImportCallback must be a function that can take the name of the library
-    being imported as a parameter.
+    ImportCallback must be a function that takes two parameters: the name of 
+    the library being imported, and a float (between 0 and 1) reflecting the
+    fraction of the import that is completed.
   LazyLoading: Only load an itk library when needed. Before the library is
     loaded, the namespace will be inhabited with dummy objects."""
 

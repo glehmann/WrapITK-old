@@ -21,7 +21,6 @@
 # WRAP_covariant_vector_float 
 # WRAP_covariant_vector_double 
 # WRAP_ITK_DIMS
-# WRAP_ITK_SWIG_INCLUDE_DIR 
 # WRAP_ITK_JAVA_DIR -- directory for java classes to be placed
 # WRAP_ITK_CONFIG_DIR -- directory where XXX.in files for CONFIGURE_FILE
 #                        commands are to be found.

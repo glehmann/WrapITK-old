@@ -51,7 +51,6 @@ SET(WRAP_ITK_INSTALL_PREFIX "/lib/InsightToolkit/WrapITK/" CACHE PATH "subpath w
 
 
 # Output directories.
-SET(WRAP_ITK_SWIG_LIBRARY_DIR "${WrapITK_BINARY_DIR}/SWIG")
 SET(WRAP_ITK_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(WRAP_ITK_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(WRAP_ITK_JAVA_DIR "${WrapITK_BINARY_DIR}/Java")
@@ -68,11 +67,10 @@ INCLUDE(ConfigureWrapping.cmake)
 # files needed for a WrapITK build are placed: in the binary directory. (For
 # external projects, we look in the WrapITK binary dir and the project's binary
 # dir.)
-
-ADD_CUSTOM_TARGET(copy_itk_swg ALL)
 SET(src "${WrapITK_SOURCE_DIR}/itk.swg")
 SET(tgt "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}/itk.swg")
-EXEC_PROGRAM(${CMAKE_COMMAND} ARGS -E copy_if_different ${src} ${tgt})
+EXEC_PROGRAM(${CMAKE_COMMAND} ARGS -E copy_if_different "'${src}'" "'${tgt}'")
+
 SUBDIRS(SwigRuntime)
 
 ###############################################################################
@@ -143,7 +141,7 @@ IF(WRAP_ITK_JAVA)
 ENDIF(WRAP_ITK_JAVA)
 
 ###############################################################################
-# Configure WrapITKConfig.cmake and FindWrapITK.cmale for external projects
+# Configure WrapITKConfig.cmake and FindWrapITK.cmake for external projects
 ###############################################################################
 # First, configure for use directly from the build dir.
 SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")

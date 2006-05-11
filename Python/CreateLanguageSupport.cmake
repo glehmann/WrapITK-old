@@ -408,7 +408,7 @@ MACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG outdir)
     FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
       # SWIG-generated libs and *.py files are sent to ${config} subdir
       SET(CONFIG_WRAP_ITK_PYTHON_DIR "${WrapITK_DIR}/Python/${config}")
-      SET(CONFIG_PROJECT_PYTHON_DIR "${LIBRARY_OUTPUT_PATH}/../Python/${config}")
+      SET(CONFIG_PROJECT_PYTHON_DIR "${CMAKE_BINARY_DIR}/Python/${config}")
       SET(CONFIG_PROJECT_OUTPUT_DIR "${LIBRARY_OUTPUT_PATH}/${config}")
       CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ExternalProjectConfig.py.in"
         "${outdir}/ProjectConfig_${config}.py"
@@ -419,7 +419,7 @@ MACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG outdir)
   ENDFOREACH(config)
   ELSE(CMAKE_CONFIGURATION_TYPES)
     SET(CONFIG_WRAP_ITK_PYTHON_DIR "${WrapITK_DIR}/Python")
-    SET(CONFIG_PROJECT_PYTHON_DIR "${LIBRARY_OUTPUT_PATH}/../Python")
+    SET(CONFIG_PROJECT_PYTHON_DIR "${CMAKE_BINARY_DIR}/Python")
     SET(CONFIG_PROJECT_OUTPUT_DIR "${LIBRARY_OUTPUT_PATH}")
     CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ExternalProjectConfig.py.in"
       "${outdir}/ProjectConfig.py"

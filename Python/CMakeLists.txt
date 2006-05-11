@@ -76,19 +76,19 @@ SET(ITK_PYTHON_FILES
   itkBase
   itkTemplate
   itkTypes
-  itkExtras
+  itkExtras/__init__
   itkLazy
   )
 # Done listing files.
 
 # Now copy these files if necessary.
-SET(WRAP_ITK_PYTHON_INSTALL_FILES)
 
 IF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
   # In source build -- no need to copy Python file. Do need to set up the install.
-    FOREACH(file ${ITK_PYTHON_FILES})
+  FOREACH(file ${ITK_PYTHON_FILES})
     SET(install_tgt "${CMAKE_CURRENT_SOURCE_DIR}/${file}.py")
-    SET(WRAP_ITK_PYTHON_INSTALL_FILES ${WRAP_ITK_PYTHON_FILES} "${install_tgt}")
+    GET_FILENAME_COMPONENT(path "${file}" PATH)
+    INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Python/${path}" FILES ${install_tgt})
   ENDFOREACH(file)
 ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
   SET(WRAP_ITK_PYTHON_FILES)
@@ -101,7 +101,9 @@ ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
     SET(copy_tgt "${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_BUILD_INTDIR}${file}.py")
     SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} "${copy_tgt}")
     SET(install_tgt "${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_INSTALL_INTDIR}${file}.py")
-    SET(WRAP_ITK_PYTHON_INSTALL_FILES ${WRAP_ITK_PYTHON_INSTALL_FILES} "${install_tgt}")
+    GET_FILENAME_COMPONENT(path "${file}" PATH)
+    INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Python/${path}" FILES ${install_tgt})
+
     ADD_CUSTOM_COMMAND(SOURCE ${src}
       COMMAND ${CMAKE_COMMAND}
       ARGS -E copy ${src} ${copy_tgt}
@@ -116,9 +118,6 @@ ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
     DEPENDS ${WRAP_ITK_PYTHON_FILES}
     TARGET copy_python_files)
 ENDIF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
-
-# Install the package python files.
-INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Python" FILES ${WRAP_ITK_PYTHON_INSTALL_FILES})
 
 
 ###############################################################################

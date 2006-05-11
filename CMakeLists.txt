@@ -69,7 +69,7 @@ INCLUDE(ConfigureWrapping.cmake)
 # dir.)
 SET(src "${WrapITK_SOURCE_DIR}/itk.swg")
 SET(tgt "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}/itk.swg")
-EXEC_PROGRAM(${CMAKE_COMMAND} ARGS -E copy_if_different "'${src}'" "'${tgt}'")
+EXEC_PROGRAM(${CMAKE_COMMAND} ARGS -E copy_if_different "\"${src}\"" "\"${tgt}\"")
 
 SUBDIRS(SwigRuntime)
 

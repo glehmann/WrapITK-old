@@ -104,6 +104,9 @@ ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
     GET_FILENAME_COMPONENT(path "${file}" PATH)
     INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Python/${path}" FILES ${install_tgt})
 
+    # create the directory to avoid loosing case on windows
+    FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_INSTALL_INTDIR}${path})
+
     ADD_CUSTOM_COMMAND(SOURCE ${src}
       COMMAND ${CMAKE_COMMAND}
       ARGS -E copy ${src} ${copy_tgt}

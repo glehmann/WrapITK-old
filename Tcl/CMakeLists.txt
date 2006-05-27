@@ -109,6 +109,7 @@ TARGET_LINK_LIBRARIES(itkwish ${TCL_LIBRARY} ${TK_LIBRARY})
 # configure and install the driver itkwish script
 SET(CONFIG_WRAP_ITK_TCL_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/Tcl")
 SET(CONFIG_WRAP_ITK_TCL_SWIG_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/Tcl-SWIG")
+SET(CONFIG_WRAP_ITK_ITKWISH_DIR "${WrapITK_BINARY_DIR}/Tcl-SWIG")
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/itkwish.in
                ${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/itkwish
                @ONLY IMMEDIATE )
@@ -119,7 +120,8 @@ INSTALL_FILES("/bin" FILES ${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/itkwish)
 # the subdirs before searching in the current dir, and so find the pikIndex.tcl file in InstallOnly
 # first
 SET(CONFIG_WRAP_ITK_TCL_DIR "${WrapITK_BINARY_DIR}")
-SET(CONFIG_WRAP_ITK_TCL_SWIG_DIR "${WrapITK_BINARY_DIR}/bin")
+SET(CONFIG_WRAP_ITK_TCL_SWIG_DIR "${WrapITK_BINARY_DIR}/lib")
+SET(CONFIG_WRAP_ITK_ITKWISH_DIR "${WrapITK_BINARY_DIR}/bin")
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/itkwish.in
                ${CMAKE_CURRENT_BINARY_DIR}/itkwish
                @ONLY IMMEDIATE )

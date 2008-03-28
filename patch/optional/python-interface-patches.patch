@@ -1,10 +1,22 @@
+? .DS_Store
+? ls-no-explicit.txt
+? python-interface-patches.patch
+? testdriver.patch
+? wrapping-convenience-patches.patch
+? Code/.DS_Store
+? Code/BasicFilters/.DS_Store
+? Testing/.DS_Store
+? Testing/Data/.DS_Store
+? Testing/Data/Baseline/.DS_Store
+? Testing/Data/Baseline/Review/.DS_Store
+? Wrapping/WrapITK/patch
 Index: Code/Common/itkFixedArray.h
 ===================================================================
 RCS file: /cvsroot/Insight/Insight/Code/Common/itkFixedArray.h,v
 retrieving revision 1.38
 diff -u -r1.38 itkFixedArray.h
 --- Code/Common/itkFixedArray.h	20 Apr 2006 14:54:09 -0000	1.38
-+++ Code/Common/itkFixedArray.h	15 Jul 2006 14:40:47 -0000
++++ Code/Common/itkFixedArray.h	28 Mar 2008 14:21:35 -0000
 @@ -206,6 +206,34 @@
    SizeType      Size() const;
    void Fill(const ValueType&);
@@ -40,14 +52,62 @@ diff -u -r1.38 itkFixedArray.h
  private:
    /** Internal C array representation. */
    CArray  m_InternalArray;
+Index: Code/Common/itkImageRegionConstIterator.h
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkImageRegionConstIterator.h,v
+retrieving revision 1.22
+diff -u -r1.22 itkImageRegionConstIterator.h
+--- Code/Common/itkImageRegionConstIterator.h	22 Jun 2006 13:06:54 -0000	1.22
++++ Code/Common/itkImageRegionConstIterator.h	28 Mar 2008 14:21:35 -0000
+@@ -281,6 +281,16 @@
+     return *this;
+   }
+ 
++  // rename some operators for wrapping
++  void increment()
++  {
++    this->operator++();
++  }
++  void decrement()
++  {
++    this->operator--();
++  }
++  
+ private:
+   void Increment(); // advance in a direction other than the fastest moving
+   void Decrement(); // go back in a direction other than the fastest moving
+Index: Code/Common/itkImageRegionConstIteratorWithIndex.h
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkImageRegionConstIteratorWithIndex.h,v
+retrieving revision 1.11
+diff -u -r1.11 itkImageRegionConstIteratorWithIndex.h
+--- Code/Common/itkImageRegionConstIteratorWithIndex.h	30 Jan 2007 20:56:08 -0000	1.11
++++ Code/Common/itkImageRegionConstIteratorWithIndex.h	28 Mar 2008 14:21:35 -0000
+@@ -186,6 +186,16 @@
+    * will be set to be one pixel past the beginning of the region.
+    * \sa operator++ */
+   Self & operator--();
++
++  // rename some operators for wrapping
++  void increment()
++  {
++    this->operator++();
++  }
++  void decrement()
++  {
++    this->operator--();
++  }
+ };
+ 
+ /** \example itkImageIteratorTest.cpp */
 Index: Code/Common/itkIndex.h
 ===================================================================
 RCS file: /cvsroot/Insight/Insight/Code/Common/itkIndex.h,v
-retrieving revision 1.52
-diff -u -r1.52 itkIndex.h
---- Code/Common/itkIndex.h	13 Apr 2006 17:57:25 -0000	1.52
-+++ Code/Common/itkIndex.h	15 Jul 2006 14:40:47 -0000
-@@ -239,7 +239,7 @@
+retrieving revision 1.58
+diff -u -r1.58 itkIndex.h
+--- Code/Common/itkIndex.h	27 Mar 2008 18:05:54 -0000	1.58
++++ Code/Common/itkIndex.h	28 Mar 2008 14:21:36 -0000
+@@ -240,7 +240,7 @@
     * \warning No bound checking is performed
     * \sa GetIndex()
     * \sa SetElement() */
@@ -56,11 +116,10 @@ diff -u -r1.52 itkIndex.h
      { return m_Index[ element ]; }
  
    /** Return a basis vector of the form [0, ..., 0, 1, 0, ... 0] where the "1"
-@@ -259,6 +259,33 @@
+@@ -260,6 +260,32 @@
     *    Index<3> index = {5, 2, 7}; */
    IndexValueType m_Index[VIndexDimension];
    
-+
 +  // methods for python interface
 +  IndexValueType __getitem__(unsigned long dim) const 
 +    {
@@ -87,16 +146,77 @@ diff -u -r1.52 itkIndex.h
 +    return msg.str().c_str();
 +    }  
 +
- };
+ // The Windows implementaton of vnl_math_rnd() does not round the
+ // same way as other versions. It has an assembly "fast" implementation
+ // but with the drawback of rounding to the closest even number.
+Index: Code/Common/itkLightObject.cxx
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkLightObject.cxx,v
+retrieving revision 1.36
+diff -u -r1.36 itkLightObject.cxx
+--- Code/Common/itkLightObject.cxx	8 Nov 2007 19:55:45 -0000	1.36
++++ Code/Common/itkLightObject.cxx	28 Mar 2008 14:21:36 -0000
+@@ -116,7 +116,14 @@
+   this->PrintTrailer(os, indent);
+ }
  
- namespace Functor
+-
++const std::string LightObject::__str__() const
++{
++  OStringStream msg;
++  this->Print(msg);
++  return msg.str();
++}
++   
++   
+ /**
+  * This method is called when itkExceptionMacro executes. It allows 
+  * the debugger to break on error.
+Index: Code/Common/itkLightObject.h
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkLightObject.h,v
+retrieving revision 1.35
+diff -u -r1.35 itkLightObject.h
+--- Code/Common/itkLightObject.h	22 Aug 2007 12:56:44 -0000	1.35
++++ Code/Common/itkLightObject.h	28 Mar 2008 14:21:36 -0000
+@@ -101,6 +101,8 @@
+    * method, use it with care. */
+   virtual void SetReferenceCount(int);
+ 
++  const std::string __str__() const;
++  
+ protected:
+   LightObject():m_ReferenceCount(1) {}
+   virtual ~LightObject(); 
+Index: Code/Common/itkMatrix.h
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkMatrix.h,v
+retrieving revision 1.27
+diff -u -r1.27 itkMatrix.h
+--- Code/Common/itkMatrix.h	14 Feb 2008 04:55:49 -0000	1.27
++++ Code/Common/itkMatrix.h	28 Mar 2008 14:21:36 -0000
+@@ -216,6 +216,14 @@
+   /** Copy constructor. */
+   Matrix(const Self & matrix) : m_Matrix( matrix.m_Matrix ) {};
+  
++ // Rename some operators for wrapping
++  inline T& Get( unsigned int row, unsigned int col )
++    { return m_Matrix(row,col); }
++
++  inline void Set( unsigned int row, unsigned int col, T value )
++    { m_Matrix(row,col) = value; }
++  
++  
+ private:
+   InternalMatrixType     m_Matrix;
+ 
 Index: Code/Common/itkSize.h
 ===================================================================
 RCS file: /cvsroot/Insight/Insight/Code/Common/itkSize.h,v
-retrieving revision 1.20
-diff -u -r1.20 itkSize.h
---- Code/Common/itkSize.h	13 Apr 2006 17:57:26 -0000	1.20
-+++ Code/Common/itkSize.h	15 Jul 2006 14:40:47 -0000
+retrieving revision 1.22
+diff -u -r1.22 itkSize.h
+--- Code/Common/itkSize.h	27 Mar 2008 18:05:58 -0000	1.22
++++ Code/Common/itkSize.h	28 Mar 2008 14:21:36 -0000
 @@ -18,6 +18,7 @@
  #define __itkSize_h
  
@@ -105,9 +225,9 @@ diff -u -r1.20 itkSize.h
  
  namespace itk
  {
-@@ -188,6 +189,33 @@
-    * bracketed initializer. */
-   SizeValueType m_Size[VDimension];
+@@ -196,6 +197,33 @@
+   void operator=(const Self&); //purposely not implemented
+ #endif
  
 +
 +  const SizeValueType __getitem__(unsigned int dim) const 
@@ -139,112 +259,3 @@ diff -u -r1.20 itkSize.h
  };
  
  
-Index: Code/Common/itkImageRegionConstIterator.h
-===================================================================
-RCS file: /cvsroot/Insight/Insight/Code/Common/itkImageRegionConstIterator.h,v
-retrieving revision 1.20
-diff -u -r1.20 itkImageRegionConstIterator.h
---- Code/Common/itkImageRegionConstIterator.h	31 Jan 2006 00:48:40 -0000	1.20
-+++ Code/Common/itkImageRegionConstIterator.h	15 Jul 2006 14:40:48 -0000
-@@ -281,6 +281,16 @@
-     return *this;
-   }
- 
-+  // rename some operators for wrapping
-+  void increment()
-+  {
-+    this->operator++();
-+  }
-+  void decrement()
-+  {
-+    this->operator--();
-+  }
-+  
- private:
-   void Increment(); // advance in a direction other than the fastest moving
-   void Decrement(); // go back in a direction other than the fastest moving
-Index: Code/Common/itkImageRegionConstIteratorWithIndex.h
-===================================================================
-RCS file: /cvsroot/Insight/Insight/Code/Common/itkImageRegionConstIteratorWithIndex.h,v
-retrieving revision 1.10
-diff -u -r1.10 itkImageRegionConstIteratorWithIndex.h
---- Code/Common/itkImageRegionConstIteratorWithIndex.h	16 Aug 2005 18:04:33 -0000	1.10
-+++ Code/Common/itkImageRegionConstIteratorWithIndex.h	15 Jul 2006 14:40:48 -0000
-@@ -186,6 +186,16 @@
-    * will be set to be one pixel past the beginning of the region.
-    * \sa operator++ */
-   Self & operator--();
-+
-+  // rename some operators for wrapping
-+  void increment()
-+  {
-+    this->operator++();
-+  }
-+  void decrement()
-+  {
-+    this->operator--();
-+  }
- };
- 
- /** \example itkImageIteratorTest.cpp */
-Index: Code/Common/itkMatrix.h
-===================================================================
-RCS file: /cvsroot/Insight/Insight/Code/Common/itkMatrix.h,v
-retrieving revision 1.20
-diff -u -r1.20 itkMatrix.h
---- Code/Common/itkMatrix.h	18 Jul 2005 15:12:10 -0000	1.20
-+++ Code/Common/itkMatrix.h	15 Jul 2006 14:40:48 -0000
-@@ -160,6 +160,14 @@
-   /** Copy constructor. */
-   Matrix(const Self & matrix) : m_Matrix( matrix.m_Matrix ) {};
-  
-+ // Rename some operators for wrapping
-+  inline T& Get( unsigned int row, unsigned int col )
-+    { return m_Matrix(row,col); }
-+
-+  inline void Set( unsigned int row, unsigned int col, T value )
-+    { m_Matrix(row,col) = value; }
-+  
-+  
- private:
-   InternalMatrixType     m_Matrix;
- 
-Index: Code/Common/itkLightObject.cxx
-===================================================================
-RCS file: /cvsroot/Insight/Insight/Code/Common/itkLightObject.cxx,v
-retrieving revision 1.31
-diff -u -r1.31 itkLightObject.cxx
---- Code/Common/itkLightObject.cxx	6 Feb 2006 22:01:56 -0000	1.31
-+++ Code/Common/itkLightObject.cxx	23 Mar 2006 07:44:08 -0000
-@@ -115,7 +115,14 @@
-   this->PrintTrailer(os, indent);
- }
- 
--
-+const std::string LightObject::__str__() const
-+{
-+  OStringStream msg;
-+  this->Print(msg);
-+  return msg.str();
-+}
-+   
-+   
- /**
-  * This method is called when itkExceptionMacro executes. It allows 
-  * the debugger to break on error.
-Index: Code/Common/itkLightObject.h
-===================================================================
-RCS file: /cvsroot/Insight/Insight/Code/Common/itkLightObject.h,v
-retrieving revision 1.33
-diff -u -r1.33 itkLightObject.h
---- Code/Common/itkLightObject.h	6 Feb 2006 22:01:56 -0000	1.33
-+++ Code/Common/itkLightObject.h	23 Mar 2006 07:44:08 -0000
-@@ -101,6 +101,8 @@
-    * method, use it with care. */
-   virtual void SetReferenceCount(int);
- 
-+  const std::string __str__() const;
-+  
- protected:
-   LightObject():m_ReferenceCount(1) {}
-   virtual ~LightObject();

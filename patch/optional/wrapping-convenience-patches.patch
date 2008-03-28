@@ -1,51 +1,10 @@
-Index: Code/BasicFilters/itkCropImageFilter.h
-===================================================================
-RCS file: /cvsroot/Insight/Insight/Code/BasicFilters/itkCropImageFilter.h,v
-retrieving revision 1.7
-diff -u -r1.7 itkCropImageFilter.h
---- Code/BasicFilters/itkCropImageFilter.h	17 Mar 2006 14:22:26 -0000	1.7
-+++ Code/BasicFilters/itkCropImageFilter.h	15 Jul 2006 14:40:48 -0000
-@@ -78,6 +78,33 @@
-   itkSetMacro(LowerBoundaryCropSize, SizeType);
-   itkGetMacro(LowerBoundaryCropSize, SizeType);
- 
-+  void SetUpperBoundaryCropSize(const unsigned long bound)
-+    {
-+    SizeType s;
-+    s.Fill( bound );
-+    this->SetUpperBoundaryCropSize( s );
-+    }
-+    
-+  void SetLowerBoundaryCropSize(const unsigned long bound)
-+    {
-+    SizeType s;
-+    s.Fill( bound );
-+    this->SetLowerBoundaryCropSize( s );
-+    }
-+    
-+  void SetBoundaryCropSize(const SizeType & s)
-+    {
-+    this->SetUpperBoundaryCropSize( s );
-+    this->SetLowerBoundaryCropSize( s );
-+    }
-+
-+  void SetBoundaryCropSize(const unsigned long bound)
-+    {
-+    SizeType s;
-+    s.Fill( bound );
-+    this->SetBoundaryCropSize( s );
-+    }
-+
- #ifdef ITK_USE_CONCEPT_CHECKING
-   /** Begin concept checking */
-   itkConceptMacro(InputConvertibleToOutputCheck,
 Index: Code/BasicFilters/itkPadImageFilter.h
 ===================================================================
 RCS file: /cvsroot/Insight/Insight/Code/BasicFilters/itkPadImageFilter.h,v
 retrieving revision 1.13
 diff -u -r1.13 itkPadImageFilter.h
 --- Code/BasicFilters/itkPadImageFilter.h	27 Apr 2005 12:54:57 -0000	1.13
-+++ Code/BasicFilters/itkPadImageFilter.h	15 Jul 2006 14:40:48 -0000
++++ Code/BasicFilters/itkPadImageFilter.h	28 Mar 2008 14:20:57 -0000
 @@ -18,6 +18,7 @@
  #define __itkPadImageFilter_h
  
@@ -54,10 +13,10 @@ diff -u -r1.13 itkPadImageFilter.h
  
  namespace itk
  {
-@@ -78,6 +79,44 @@
-   itkSetVectorMacro(PadUpperBound, const unsigned long, ImageDimension);
+@@ -79,6 +80,44 @@
    itkGetVectorMacro(PadLowerBound, const unsigned long, ImageDimension);
    itkGetVectorMacro(PadUpperBound, const unsigned long, ImageDimension);
+                  
 +  
 +  void SetPadLowerBound(const itk::Size<ImageDimension> & bound)
 +    {
@@ -95,30 +54,48 @@ diff -u -r1.13 itkPadImageFilter.h
 +    s.Fill( bound );
 +    this->SetPadBound( s );
 +    }
-+
-                  
++ 
    /** PadImageFilter produces an image which is a different resolution
     * than its input image.  As such, PadImageFilter needs to
-Index: Code/BasicFilters/itkRescaleIntensityImageFilter.txx
+    * provide an implementation for GenerateOutputInformation() in order
+Index: Code/BasicFilters/itkCropImageFilter.h
 ===================================================================
-RCS file: /cvsroot/Insight/Insight/Code/BasicFilters/itkRescaleIntensityImageFilter.txx,v
-retrieving revision 1.10
-diff -u -r1.10 itkRescaleIntensityImageFilter.txx
---- Code/BasicFilters/itkRescaleIntensityImageFilter.txx	15 Jun 2005 16:13:48 -0000	1.10
-+++ Code/BasicFilters/itkRescaleIntensityImageFilter.txx	15 Jul 2006 14:40:48 -0000
-@@ -33,11 +33,11 @@
- RescaleIntensityImageFilter<TInputImage, TOutputImage>
- ::RescaleIntensityImageFilter()
- {
--  m_OutputMaximum   = NumericTraits<OutputPixelType>::Zero;
--  m_OutputMinimum   = NumericTraits<OutputPixelType>::max();
-+  m_OutputMaximum   = NumericTraits<OutputPixelType>::max();
-+  m_OutputMinimum   = NumericTraits<OutputPixelType>::NonpositiveMin();
+RCS file: /cvsroot/Insight/Insight/Code/BasicFilters/itkCropImageFilter.h,v
+retrieving revision 1.7
+diff -u -r1.7 itkCropImageFilter.h
+--- Code/BasicFilters/itkCropImageFilter.h	17 Mar 2006 14:22:26 -0000	1.7
++++ Code/BasicFilters/itkCropImageFilter.h	28 Mar 2008 14:20:57 -0000
+@@ -78,6 +78,33 @@
+   itkSetMacro(LowerBoundaryCropSize, SizeType);
+   itkGetMacro(LowerBoundaryCropSize, SizeType);
  
--  m_InputMaximum   = NumericTraits<InputPixelType>::Zero;
--  m_InputMinimum   = NumericTraits<InputPixelType>::max();
-+  m_InputMaximum   = NumericTraits<InputPixelType>::max();
-+  m_InputMinimum   = NumericTraits<InputPixelType>::NonpositiveMin();
-   
-   m_Scale = 1.0;
-   m_Shift = 0.0;
++  void SetUpperBoundaryCropSize(const unsigned long bound)
++    {
++    SizeType s;
++    s.Fill( bound );
++    this->SetUpperBoundaryCropSize( s );
++    }
++    
++  void SetLowerBoundaryCropSize(const unsigned long bound)
++    {
++    SizeType s;
++    s.Fill( bound );
++    this->SetLowerBoundaryCropSize( s );
++    }
++    
++  void SetBoundaryCropSize(const SizeType & s)
++    {
++    this->SetUpperBoundaryCropSize( s );
++    this->SetLowerBoundaryCropSize( s );
++    }
++
++  void SetBoundaryCropSize(const unsigned long bound)
++    {
++    SizeType s;
++    s.Fill( bound );
++    this->SetBoundaryCropSize( s );
++    }
++
+ #ifdef ITK_USE_CONCEPT_CHECKING
+   /** Begin concept checking */
+   itkConceptMacro(InputConvertibleToOutputCheck,
